@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "com.zelaux.betterdiagram.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ClientDataForDiagramEntity"
+  ],
+  "client": [
+    "DiagramScreenAccessorsImpl",
+    "DiagramScreenMixin",
+    "calculator.Calculator_DiagramScreen",
+    "calculator.Calculator_DiagramStickyNote"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

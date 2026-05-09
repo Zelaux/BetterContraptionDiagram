@@ -1,0 +1,26 @@
+{
+  "itemGroup.examplemod": "Example Mod Tab",
+
+  "better_contraption_diagram.axis_value": "%s",
+  "better_contraption_diagram.axis_arrow": "%s (%s)",
+  "better_contraption_diagram.axis_group.x": "Width",
+  "better_contraption_diagram.axis_group.y": "Height",
+  "better_contraption_diagram.axis_group.z": "Length",
+
+  "better_contraption_diagram.center_of_mass": "Center Of Mass",
+  "better_contraption_diagram.center_of_mass.tooltip": "%s %s",
+
+
+  "better_contraption_diagram.calculator.move_to_struct_center": "Move to Center",
+  "better_contraption_diagram.calculator.select_block": "Choose in Diagram",
+  "better_contraption_diagram.calculator.reset_block": "Reset",
+  "better_contraption_diagram.common.shift-ctrl-scale": "Press <<Shift>> to step by 0.5\nPress<<Ctrl>> to step by 10",
+
+
+  "better_contraption_diagram.configuration.title": "Better Contraption Diagram Configs",
+  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml": "Better Contraption Diagram Configs",
+  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml.title": "Better Contraption Diagram Configs",
+
+  "better_contraption_diagram.configuration.axisScale": "Axis Scale",
+  "better_contraption_diagram.configuration.axisOffset": "Axis Offset"
+}
