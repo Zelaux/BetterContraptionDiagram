@@ -9,25 +9,9 @@ import org.joml.Matrix4f;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
-public interface DiagramScreenAccessors {
-    DiagramStickyNote betterContraptionDiagram$note();
+public interface DiagramStickyNoteAccessors {
 
     Vector2d betterContraptionDiagram$getScreenCoords(Vector3d point, Vector3d cameraPos);
 
     Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point, Vector3d cameraPos);
-
-    boolean betterContraptionDiagram$configDirty();
-
-    DiagramConfig betterContraptionDiagram$config();
-
-    Matrix4f PROJECTION_MAT();
-
-    Vector3d LOCAL_CAMERA_POSITION();
-
-    @Nullable DiagramDataPacket betterContraptionDiagram$serverData();
-
-    DiagramEntity betterContraptionDiagram$diagram();
-    default WithClientData betterContraptionDiagram$clientData(){
-        return (WithClientData) betterContraptionDiagram$diagram();
-    }
 }

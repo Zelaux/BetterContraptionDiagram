@@ -6,8 +6,9 @@
     "ClientDataForDiagramEntity"
   ],
   "client": [
-    "DiagramScreenAccessorsImpl",
     "DiagramScreenMixin",
+    "accessors.DiagramScreenAccessorsImpl",
+    "accessors.DiagramStickyNoteAccessorsImpl",
     "calculator.Calculator_DiagramScreen",
     "calculator.Calculator_DiagramStickyNote"
   ],

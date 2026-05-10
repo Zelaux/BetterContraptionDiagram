@@ -3,10 +3,12 @@ package com.zelaux.betterdiagram.util;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.extend.DataKeys;
 import com.zelaux.betterdiagram.extend.DiagramScreenAccessors;
+import com.zelaux.betterdiagram.extend.DiagramStickyNoteAccessors;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.struct.MassStack;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
+import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Runtime;
@@ -106,6 +108,7 @@ public class CenterMassCalculator {
     }
 
     public static DiagramScreenAccessors accessors(DiagramScreen screen) {return (DiagramScreenAccessors) screen;}
+    public static DiagramStickyNoteAccessors accessors(DiagramStickyNote screen) {return (DiagramStickyNoteAccessors) screen;}
 
     public static Vector3d expectedCenterOfMass(WithClientData clientData, ClientSubLevel subLevel) {
         return clientData.betterContraptionDiagram$getClientData(DataKeys.EXPECTED_CENTER_OF_MASS, () ->
