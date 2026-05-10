@@ -116,7 +116,8 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen {
 
 
                 if(originCoords.distanceSquared(mouseX - diagramX, mouseY - diagramY) < 8.0 * 8.0) {
-                    tooltipList.add(Component.literal(StringUtil.plainDouble(stack.amountOf())).withColor(color));
+                    var value = Component.literal(StringUtil.plainDouble(stack.amountOf())).withColor(color);
+                    tooltipList.add(Component.translatable("better_contraption_diagram.weight.tooltip",value));
                     //addForceArrowTooltip(forceGroup, pointForce.groupSize().getValue(), forceMagnitude, color, tooltipLines);
                 }
 

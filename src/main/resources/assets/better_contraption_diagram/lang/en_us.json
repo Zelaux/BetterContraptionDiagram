@@ -11,6 +11,8 @@
   "better_contraption_diagram.eCOM": "Target Center Of Mass",
   "better_contraption_diagram.center_of_mass.tooltip": "%s %s",
   "better_contraption_diagram.eCOM.tooltip": "%s %s",
+  "better_contraption_diagram.weight.tooltip": "Weight %s",
+  "better_contraption_diagram.wight.tooltip0": "Weight %s",
 
 
   "better_contraption_diagram.calculator.move_to_struct_center": "Move to Center",
