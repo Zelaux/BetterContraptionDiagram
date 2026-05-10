@@ -26,13 +26,14 @@ import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
+import org.joml.Runtime;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.List;
 
-import static com.zelaux.betterdiagram.util.VecUtil.vectorToFormatted;
+import static com.zelaux.betterdiagram.util.VecUtil.*;
 
 @Mixin(DiagramScreen.class)
 public abstract class Calculator_DiagramScreen extends AbstractSimiScreen {
@@ -105,11 +106,28 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen {
         //final int color = (255 << 24) | 0x9D293A;
         final int shadowColor = 0xfff9f2de;
         Vector3d tmp = new Vector3d();
-        Vector3d offset = VecUtil.minVec3d(subLevel.getPlot().getBoundingBox());
+        Vector3d offset = minVec3d(subLevel.getPlot().getBoundingBox());
         for(int i = 0; i < stacks.length; i++) {
             var stackDir = stacks[i];
             if(stackDir.isEmpty()) continue;
-            int color = Content.AXIS_GROUPS[i].color() | (0xff << 24);
+            var group = Content.AXIS_GROUPS[i];
+            int color = group.color() | (0xff << 24);
+            if(Runtime.equals(maxAbsXY(orientation.transformInverse(tmp.set(DIRECTIONS[i]))), 0, 0.1f)) {
+
+                MassStack massStack = stackDir.get(0);
+                Vector2d originCoords = DiagramScreen.getScreenCoords(tmp.set(massStack.position()).add(offset), orientation, cameraPos, projMatrix, areaWidth, areaHeight);
+
+
+                if(originCoords.distanceSquared(mouseX - diagramX, mouseY - diagramY) < 8.0 * 8.0) {
+                    var value = Component.literal(StringUtil.plainDouble(massStack.amountOf())).withColor(color);
+                    tooltipList.add(Component.translatable("better_contraption_diagram.weight.wrong-axis.tooltip", group.axisName().copy().withColor(color),value));
+                    //addForceArrowTooltip(forceGroup, pointForce.groupSize().getValue(), forceMagnitude, color, tooltipLines);
+                }
+
+                BCDTextures.DIAGRAM_ICON_WEIGHT_SHADOW.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
+                BCDTextures.DIAGRAM_ICON_WEIGHT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(color));
+                continue;
+            }
             for(MassStack stack : stackDir) {
 
                 Vector2d originCoords = DiagramScreen.getScreenCoords(tmp.set(stack.position()).add(offset), orientation, cameraPos, projMatrix, areaWidth, areaHeight);
@@ -154,7 +172,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen {
         final Vector3d eCOM = CenterMassCalculator.expectedCenterOfMass(self);
         if(CenterMassCalculator.equals(eCOM, CenterMassCalculator.centerOfMass(self.subLevel))) return;
 
-        Vector2d screenCoords = DiagramScreen.getScreenCoords(VecUtil.minVec3d(self.subLevel.getPlot().getBoundingBox()).add(eCOM), LOCAL_ORIENTATION, LOCAL_CAMERA_POSITION, PROJECTION_MAT, DIAGRAM_TEXTURE.width, DIAGRAM_TEXTURE.height);
+        Vector2d screenCoords = DiagramScreen.getScreenCoords(minVec3d(self.subLevel.getPlot().getBoundingBox()).add(eCOM), LOCAL_ORIENTATION, LOCAL_CAMERA_POSITION, PROJECTION_MAT, DIAGRAM_TEXTURE.width, DIAGRAM_TEXTURE.height);
 
 
         if(screenCoords.distanceSquared(mouseX - areaOriginX, mouseY - areaOriginY) >= 8.0 * 8.0) return;

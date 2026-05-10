@@ -46,7 +46,7 @@ public class VecUtil {
         for(int i = 0; i < coords.length; i++) {
             orientation.transformInverse(tmp.set(DIRECTIONS[i]));
 
-            double scalar = Math.max(Math.abs(tmp.x), Math.abs(tmp.y));
+            double scalar = maxAbsXY(tmp);
             if(scalar == 0 || org.joml.Runtime.equals(scalar, 0, 0.1f)) {
                 scalar = 1;
                 tmp.zero();
@@ -58,6 +58,10 @@ public class VecUtil {
             else xyz[2] = i;
         }
         return new TransformedAxes(coords, xyz);
+    }
+
+    public static double maxAbsXY(Vector3d tmp) {
+        return Math.max(Math.abs(tmp.x), Math.abs(tmp.y));
     }
 
     @Unique

@@ -90,7 +90,7 @@ public abstract class DiagramScreenMixin {
             0, 1, 0, boundingBox.height(),
             0, 0, 1, boundingBox.length()
         };
-        ForceGroup[] groups = Content.AXIS_GROUPS;
+        var groups = Content.AXIS_GROUPS;
         Vector3d force = tmpCluster.force();
 
         var counterBlackHoleList = new CounterBlackHoleList<FormattedText>();
@@ -98,7 +98,7 @@ public abstract class DiagramScreenMixin {
             int off = i << 2;
             force.set(forces[off], forces[off + 1], forces[off + 2]);
 
-            ForceGroup group = groups[i];
+            ForceGroup group = groups[i].group;
             renderForceArrow(
                 graphics, group,
                 tmpCluster,

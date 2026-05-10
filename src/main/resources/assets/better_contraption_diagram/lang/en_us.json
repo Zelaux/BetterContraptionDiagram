@@ -12,6 +12,7 @@
   "better_contraption_diagram.center_of_mass.tooltip": "%s %s",
   "better_contraption_diagram.eCOM.tooltip": "%s %s",
   "better_contraption_diagram.weight.tooltip": "Weight %s",
+  "better_contraption_diagram.weight.wrong-axis.tooltip": "Weight distributed in axis %s is %s",
   "better_contraption_diagram.wight.tooltip0": "Weight %s",
 
 
