@@ -333,7 +333,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
 
         if(diagramScreen.subLevel.isRemoved() || diagramScreenAccessors.betterContraptionDiagram$diagram().isRemoved()) {
             super.onClose();
-            minecraft.screen = diagramScreen;
+            //minecraft.screen = diagramScreen;
             diagramScreen.onClose();
             return;
         }
@@ -398,23 +398,10 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    @Override
-    public void onClose() {
-        super.onClose();
-        final Minecraft minecraft = Minecraft.getInstance();
-        minecraft.setScreen(diagramScreen);
-    }
-
     public static void open(@NotNull final DiagramScreen owner) {
         final Minecraft minecraft = Minecraft.getInstance();
         final CenterMassMovingScreen screen = new CenterMassMovingScreen(owner);
-
-        //screen.config = config;
-        //screen.updateViewportOrientation();
-        if(minecraft.screen == owner) {
-            minecraft.screen = null;
-        }
-        minecraft.setScreen(screen);
+        minecraft.pushGuiLayer(screen);
         minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.VILLAGER_WORK_CARTOGRAPHER, 1.0f));
     }
 
