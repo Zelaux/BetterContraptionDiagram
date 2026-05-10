@@ -112,7 +112,7 @@ public abstract class DiagramScreenMixin {
                 graphics, group,
                 tmpCluster,
                 1 / axisScale,
-                mouseX - diagramX, mouseY - diagramY,
+                mouseX - areaOriginX, mouseY - areaOriginY,
                 counterBlackHoleList,
                 orientation, cameraPos, projMatrix,
                 areaWidth, areaHeight
