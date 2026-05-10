@@ -131,31 +131,23 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         mainLayout.arrangeElements();
 
         mainLayout.setX(diagramX - mainLayout.getWidth() / 2);
-        mainLayout.setY(diagramY - diagramScreen.DIAGRAM_TEXTURE.height / 2 - mainLayout.getHeight());
+        mainLayout.setY(diagramY - DiagramScreen.DIAGRAM_TEXTURE.height / 2 - mainLayout.getHeight());
         mainLayout.arrangeElements();
 
 
-        var orientation = DiagramScreen.LOCAL_ORIENTATION;
-
-        var cameraPos = diagramScreenAccessors.LOCAL_CAMERA_POSITION();
-        var projMatrix = diagramScreenAccessors.PROJECTION_MAT();
         var areaWidth = DiagramScreen.DIAGRAM_TEXTURE.width;
         var areaHeight = DiagramScreen.DIAGRAM_TEXTURE.height;
         var bb = diagramScreen.subLevel.getPlot().getBoundingBox();
 
 
-        mainProjectedAxes = VecUtil.projectAxises(orientation, projMatrix, areaWidth, areaHeight);
-        subProjectedAxes = VecUtil.projectAxises(noteAccessors.NOTE_ORIENTATION(), projMatrix, areaWidth, areaHeight);
+        mainProjectedAxes = VecUtil.projectAxises(DiagramScreen.LOCAL_ORIENTATION);
+        subProjectedAxes = VecUtil.projectAxises(noteAccessors.NOTE_ORIENTATION());
 
         int diaX = width / 2 - areaWidth / 2;
         int diaY = height / 2 - areaHeight / 2;
 
         mainGrid = addRenderableWidget(makeGrid(bb, diaX, diaY, mainProjectedAxes, diagramScreenAccessors));
         addSubGrid(bb, diaX, diaY);
-/*
-        subGrid = addRenderableWidget(
-            new GridClicker(minScreen.x, minScreen.y, maxScreen.x, maxScreen.y, sizeInBlocks)
-        ).gridColor(GridClicker.GRAY_COLOR);*/
 
         partialInterationForScreen = addWidget(new PartialInteration(
             diaX + 228, diaY + 8,
@@ -169,7 +161,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     private MyGridClicker makeGrid(BoundingBox3ic bb, int diaX, int diaY, TransformedAxes projectedAxes, ProjectionAccessor projectionAccessor) {
         var sizeInBlocks = new Vector2i();
 
-
         sizeInBlocks.add(projectedAxes.xInt.x * bb.width(), projectedAxes.xInt.y * bb.width());
         sizeInBlocks.add(projectedAxes.yInt.x * bb.height(), projectedAxes.yInt.y * bb.height());
         sizeInBlocks.add(projectedAxes.zInt.x * bb.length(), projectedAxes.zInt.y * bb.length());
@@ -180,14 +171,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         Vector2d maxScreen = projectionAccessor
             .betterContraptionDiagram$getScreenCoords(maxVec3d(bb).add(1, 1, 1), null)
             .add(diaX, diaY);
-        /*
-        Vector2d minScreen = DiagramScreen.getScreenCoords(
-            minVec3d(bb), orientation, cameraPos, projMatrix, areaWidth, areaHeight
-        ).add(diaX, diaY);*/
-/*
-        Vector2d maxScreen = DiagramScreen.getScreenCoords(
-            maxVec3d(bb).add(1, 1, 1), orientation, cameraPos, projMatrix, areaWidth, areaHeight
-        ).add(diaX, diaY);*/
 
         return new MyGridClicker(minScreen.x, minScreen.y, maxScreen.x, maxScreen.y, sizeInBlocks, projectedAxes, new Vector3d()).gridColor(GridClicker.GRAY_COLOR);
     }
@@ -205,32 +188,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         grid.offset=minVec3d(
             new BoundingBox3i(diagramScreenAccessors.betterContraptionDiagram$config().getNoteConfigs().getNoteScope())
         ).sub(minVec3d(bb));
-
-
-        /*var sizeInBlocks = new Vector2i();
-
-        sizeInBlocks.add(projectedAxises.xInt.x * bb.width(), projectedAxises.xInt.y * bb.width());
-        sizeInBlocks.add(projectedAxises.yInt.x * bb.height(), projectedAxises.yInt.y * bb.height());
-        sizeInBlocks.add(projectedAxises.zInt.x * bb.length(), projectedAxises.zInt.y * bb.length());
-
-        Vector2d minScreen=diagramScreenAccessors
-            .betterContraptionDiagram$getScreenCoords(minVec3d(bb),null)
-            .add(diaX,diaY);
-        Vector2d maxScreen=diagramScreenAccessors
-            .betterContraptionDiagram$getScreenCoords(maxVec3d(bb),null)
-            .add(diaX,diaY);
-        *//*
-        Vector2d minScreen = DiagramScreen.getScreenCoords(
-            minVec3d(bb), orientation, cameraPos, projMatrix, areaWidth, areaHeight
-        ).add(diaX, diaY);*//*
-         *//*
-        Vector2d maxScreen = DiagramScreen.getScreenCoords(
-            maxVec3d(bb).add(1, 1, 1), orientation, cameraPos, projMatrix, areaWidth, areaHeight
-        ).add(diaX, diaY);*//*
-
-        mainGrid = addRenderableWidget(
-            new GridClicker(minScreen.x, minScreen.y, maxScreen.x, maxScreen.y, sizeInBlocks)
-        ).gridColor(GridClicker.GRAY_COLOR);*/
     }
 
     private void gridToNormalVector(GridClicker grid, Vector2i gridPos, Vector3d out) {

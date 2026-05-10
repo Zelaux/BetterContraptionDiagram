@@ -61,16 +61,7 @@ public abstract class DiagramScreenMixin {
 
         if(screenCoords.distanceSquared(mouseX-areaOriginX,mouseY-areaOriginY) >= 8.0 * 8.0) return;
 
-        //Pose3d pose3d = this.subLevel.logicalPose();
         BoundingBox3ic box = subLevel.getPlot().getBoundingBox();
-        /*BetterContraptionDiagramClient.LOGGER.debug(
-            "{}|{}|{}|[{},{}]",
-            vecToString(pose3d.position()),
-            vecToString(pose3d.rotationPoint()),
-            vecToString(pose3d.scale()),
-            vecToString(box.minX(), box.minY(), box.minZ()),
-            vecToString(box.maxX(), box.maxY(), box.maxZ())
-        );*/
         centerOfMass.sub(box.minX(), box.minY(), box.minZ());
         int color = (0xff << 24) | Config.CENTER_OF_MASS_COLOR.getAsInt();
         MutableComponent centerOfMassTitle = Component.translatable("better_contraption_diagram.center_of_mass");

@@ -39,17 +39,13 @@ public class VecUtil {
         return new Vector3d(box.maxX(), box.maxY(), box.maxZ());
     }
 
-    public static TransformedAxes projectAxises(Quaternionf orientation, Matrix4f projMatrix, int areaWidth, int areaHeight) {
+    public static TransformedAxes projectAxises(Quaternionf orientation) {
         var coords = new Vector2d[3];
         int[] xyz = new int[3];
         Vector3d tmp = new Vector3d();
         for(int i = 0; i < coords.length; i++) {
-            /*Vector2d screenCoords = DiagramScreen
-                .getScreenCoords(
-                    tmp.set(DIRECTIONS[i]), orientation, ZERO_V, projMatrix, areaWidth, areaHeight
-                ).sub(0.5 * areaWidth, 0.5 * areaHeight);*/
-            //double scalar = maxAbsComponent(screenCoords);
             orientation.transformInverse(tmp.set(DIRECTIONS[i]));
+
             double scalar = Math.max(Math.abs(tmp.x), Math.abs(tmp.y));
             if(scalar == 0 || org.joml.Runtime.equals(scalar, 0, 0.1f)) {
                 scalar = 1;
