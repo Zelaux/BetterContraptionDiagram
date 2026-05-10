@@ -72,8 +72,8 @@ public class CenterMassCalculator {
         //diff.div(4);
 
         addStacks(stacks[0], VecUtil.X_V, expectedCOM, (long) diff.x);
-        //addStacks(stacks[1], VecUtil.Y_V, expectedCOM, (long) diff.y);
-        //addStacks(stacks[2], VecUtil.Z_V, expectedCOM, (long) diff.z);
+        addStacks(stacks[1], VecUtil.Y_V, expectedCOM, (long) diff.y);
+        addStacks(stacks[2], VecUtil.Z_V, expectedCOM, (long) diff.z);
 
         return stacks;
     }
