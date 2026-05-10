@@ -11,6 +11,7 @@ public interface BCDTextures {
 
     BCDTexture guiDiagram = atlas("gui/diagram",512, 256);
 
+
     BCDTexture DIAGRAM_ICON_EXPECTED_COM = icon(guiDiagram, 0, 0);
     BCDTexture DIAGRAM_ICON_EXPECTED_COM_TINY =  icon(guiDiagram, 1, 0);
     BCDTexture DIAGRAM_ICON_EXPECTED_COM_ARROW =  icon(guiDiagram, 2, 0);
@@ -20,4 +21,8 @@ public interface BCDTextures {
 
     BCDTexture DIAGRAM_ICON_WEIGHT= icon(guiDiagram, 0, 2);
     BCDTexture DIAGRAM_ICON_WEIGHT_SHADOW= icon(guiDiagram, 1, 2);
+
+    BCDTexture DIAGRAM_ICON_CALCULATOR = icon(guiDiagram, 0, 3);
+
+    BCDTexture DIAGRAM_ICON_BTN_BACKGROUND = icon(guiDiagram, 1, 3);
 }

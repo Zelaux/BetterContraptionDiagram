@@ -3,6 +3,7 @@ package com.zelaux.betterdiagram.mixin.calculator;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zelaux.betterdiagram.Content;
 import com.zelaux.betterdiagram.gui.CenterMassMovingScreen;
+import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
@@ -76,7 +77,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen {
         final int diagramX = this.width / 2 - DIAGRAM_TEXTURE.width / 2;
         final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
 
-        final DiagramButton openCenterMass = new DiagramButton(SimGUITextures.KEY_MIDDLE, diagramX + 9, diagramY + 9 + 20 * 4, Component.empty(), () -> {
+        final var openCenterMass = new BDiagramButton(BCDTextures.DIAGRAM_ICON_CALCULATOR, diagramX + 9, diagramY + 9 + 20 * 4, Component.empty(), () -> {
             CenterMassMovingScreen.open(self());
         });
 
