@@ -3,14 +3,15 @@ package com.zelaux.betterdiagram.mixin.calculator;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.Content;
+import com.zelaux.betterdiagram.extend.ProjectionAccessor;
 import com.zelaux.betterdiagram.gui.CenterMassMovingScreen;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
 import com.zelaux.betterdiagram.util.StringUtil;
-import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
@@ -32,11 +33,12 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.List;
+import java.util.function.Function;
 
 import static com.zelaux.betterdiagram.util.VecUtil.*;
 
 @Mixin(DiagramScreen.class)
-public abstract class Calculator_DiagramScreen extends AbstractSimiScreen {
+public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implements ProjectionAccessor {
 
     @Shadow
     @Final
@@ -76,6 +78,9 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen {
     @Shadow
     protected DiagramConfig config;
 
+    @Shadow
+    protected abstract boolean canDrawArrowAt(int x, int y, int width, int height);
+
     @Inject(at = @At(value = "TAIL"), method = "init")
     private void inject(CallbackInfo ci) {
 
@@ -112,15 +117,17 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen {
             if(stackDir.isEmpty()) continue;
             var group = Content.AXIS_GROUPS[i];
             int color = group.color() | (0xff << 24);
+            int MX = mouseX - diagramX;
+            int MY = mouseY - diagramY;
             if(Runtime.equals(maxAbsXY(orientation.transformInverse(tmp.set(DIRECTIONS[i]))), 0, 0.1f)) {
 
                 MassStack massStack = stackDir.get(0);
                 Vector2d originCoords = DiagramScreen.getScreenCoords(tmp.set(massStack.position()).add(offset), orientation, cameraPos, projMatrix, areaWidth, areaHeight);
 
 
-                if(originCoords.distanceSquared(mouseX - diagramX, mouseY - diagramY) < 8.0 * 8.0) {
+                if(originCoords.distanceSquared(MX, MY) < 8.0 * 8.0) {
                     var value = Component.literal(StringUtil.plainDouble(massStack.amountOf())).withColor(color);
-                    tooltipList.add(Component.translatable("better_contraption_diagram.weight.wrong-axis.tooltip", group.axisName().copy().withColor(color),value));
+                    tooltipList.add(Component.translatable("better_contraption_diagram.weight.wrong-axis.tooltip", group.axisName().copy().withColor(color), value));
                     //addForceArrowTooltip(forceGroup, pointForce.groupSize().getValue(), forceMagnitude, color, tooltipLines);
                 }
 
@@ -130,21 +137,48 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen {
             }
             for(MassStack stack : stackDir) {
 
-                Vector2d originCoords = DiagramScreen.getScreenCoords(tmp.set(stack.position()).add(offset), orientation, cameraPos, projMatrix, areaWidth, areaHeight);
-
-
-                if(originCoords.distanceSquared(mouseX - diagramX, mouseY - diagramY) < 8.0 * 8.0) {
-                    var value = Component.literal(StringUtil.plainDouble(stack.amountOf())).withColor(color);
-                    tooltipList.add(Component.translatable("better_contraption_diagram.weight.tooltip",value));
-                    //addForceArrowTooltip(forceGroup, pointForce.groupSize().getValue(), forceMagnitude, color, tooltipLines);
-                }
-
-                BCDTextures.DIAGRAM_ICON_WEIGHT_SHADOW.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
-                BCDTextures.DIAGRAM_ICON_WEIGHT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(color));
+                renderMassStack(graphics,
+                    MX,MY,
+                    stack,
+                    tmp,
+                    offset,
+                    color,shadowColor,
+                    BCDTextures.DIAGRAM_ICON_WEIGHT,BCDTextures.DIAGRAM_ICON_WEIGHT_SHADOW,
+                    value0->Component.translatable("better_contraption_diagram.weight.tooltip", value0));
                 //LINKED_TYPEWRITER_KEY_ENTRY
             }
+            if(stackDir.smallStack != null)
+                renderMassStack(graphics,
+                    MX,MY,
+                    stackDir.smallStack,
+                    tmp,
+                    offset,
+                    color,shadowColor,
+                    BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT,BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT_SHADOW,
+                    v->Component.translatable("better_contraption_diagram.small-weight.tooltip", v));
         }
 
+    }
+
+    private void renderMassStack(GuiGraphics graphics,
+                                 int MX,int MY,
+                                 MassStack stack,
+                                 Vector3d tmp,
+                                 Vector3d offset,
+                                 int color,int shadowColor,
+                                 BCDTexture icon,BCDTexture shadowIcon,
+                                 Function<Component, MutableComponent> tooltip) {
+        Vector2d originCoords = betterContraptionDiagram$getScreenCoords(tmp.set(stack.position()).add(offset));
+
+        //if(!this.canDrawArrowAt((int) originCoords.x, (int) originCoords.y, areaWidth, areaHeight)) continue;
+
+        if(originCoords.distanceSquared(MX, MY) < 8.0 * 8.0) {
+            var value = Component.literal(StringUtil.plainDouble(stack.amountOf())).withColor(color);
+            tooltipList.add(tooltip.apply(value));
+        }
+
+        shadowIcon.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
+        icon.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(color));
     }
 
     private @NotNull DiagramScreen self() {

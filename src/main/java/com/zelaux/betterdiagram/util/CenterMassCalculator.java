@@ -6,6 +6,7 @@ import com.zelaux.betterdiagram.extend.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.extend.DiagramStickyNoteAccessors;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.struct.MassStack;
+import com.zelaux.betterdiagram.struct.Weights;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
@@ -14,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Runtime;
 import org.joml.Vector3d;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 import static com.zelaux.betterdiagram.util.VecUtil.minVec3d;
@@ -23,9 +23,8 @@ public class CenterMassCalculator {
     public static final WithClientData.Key<Data> cacheKey = new WithClientData.Key<>();
     public static final float DELTA = 0.00001f;
 
-    public static ArrayList<MassStack> @NotNull [] makeMassStacks() {
-        //noinspection unchecked
-        return new ArrayList[]{new ArrayList<MassStack>(), new ArrayList<MassStack>(), new ArrayList<MassStack>()};
+    public static Weights @NotNull [] makeMassStacks() {
+        return new Weights[]{new Weights(), new Weights(), new Weights()};
     }
 
     public static Vector3d centerOfMass(ClientSubLevel subLevel) {
@@ -33,13 +32,13 @@ public class CenterMassCalculator {
             .sub(minVec3d(subLevel.getPlot().getBoundingBox()));
     }
 
-    public static ArrayList<MassStack>[] recalculateStacks(DiagramScreen screen) {
+    public static Weights[] recalculateStacks(DiagramScreen screen) {
         var accessors = accessors(screen);
         DiagramDataPacket diagramDataPacket = accessors.betterContraptionDiagram$serverData();
         return recalculateStacks(( accessors.betterContraptionDiagram$clientData()), screen.subLevel, diagramDataPacket == null ? 0 : diagramDataPacket.mass());
     }
 
-    public static ArrayList<MassStack>[] recalculateStacks(WithClientData clientData, ClientSubLevel subLevel, double mass) {
+    public static Weights[] recalculateStacks(WithClientData clientData, ClientSubLevel subLevel, double mass) {
 
         Vector3d expectedCOM = expectedCenterOfMass(clientData, subLevel);
         Vector3d currentCOM = centerOfMass(subLevel);
@@ -67,31 +66,58 @@ public class CenterMassCalculator {
         diff.mul(mass);
 
         diff.mul(4);
-        diff.round();
+        //diff.round();
 
         //diff.div(4);
 
-        addStacks(stacks[0], VecUtil.X_V, expectedCOM, (long) diff.x);
-        addStacks(stacks[1], VecUtil.Y_V, expectedCOM, (long) diff.y);
-        addStacks(stacks[2], VecUtil.Z_V, expectedCOM, (long) diff.z);
+        addStacks(stacks[0], VecUtil.X_V, expectedCOM, diff.x);
+        addStacks(stacks[1], VecUtil.Y_V, expectedCOM, diff.y);
+        addStacks(stacks[2], VecUtil.Z_V, expectedCOM, diff.z);
 
         return stacks;
     }
 
-    private static void addStacks(ArrayList<MassStack> list, Vector3d uni, Vector3d expectedCOM, long value) {
+    private static void addStacks(Weights list, Vector3d uni, Vector3d expectedCOM, double value0) {
+        long value= Math.round(value0);
+        final int maxIterations = Config.MAX_ITERATION.getAsInt();
+        final int maxFixDistance = Config.MAX_FIX_DISTANCE.getAsInt();
+        if(!Runtime.equals(value0,value,0.0001f)){
+            double v1 = ((value0-value) % 1f)/4f;
+            int[] scales={1,2,4,8};
+            double dst0 = 0.25 / v1;
+            long sig = /*v1 < 0 ? -1 : */1;
+            v1=Math.abs(v1);
+
+            smallStack:
+            {
+                for(int scale : scales) {
+                    double dst = dst0 * scale;
+                    if(dst > maxFixDistance) break;
+                    if(Runtime.equals(dst, (int) dst, 0.001f)) {
+                        list.smallStack =
+                            new MassStack(
+                                uni.mul(dst * sig, new Vector3d()).add(expectedCOM),
+                                 (v1 * 4 * scale) / 4f);
+                        break smallStack;
+                    }
+                }
+                list.smallStack =
+                    new MassStack(uni.mul(sig, new Vector3d()).add(expectedCOM), v1)
+                ;
+            }
+
+        }
         if(value == 0) return;
         long dst = 1;
-        double sigHalf = value < 0 ? -0.5 : 0.5;
         long sig = value < 0 ? -1 : 1;
+        //double sigHalf = value < 0 ? -0.5 : 0.5;
         value *= sig;
         long v = value;
         int iteration = 0;
-        final int maxIterations = Config.MAX_ITERATION.getAsInt();
-        final int maxFixDistance = Config.MAX_FIX_DISTANCE.getAsInt();
         while(v > 0) {
             iteration++;
             if(iteration > maxIterations) break;
-            list.add(
+            list.stacks.add(
                 new MassStack(uni.mul(dst * sig, new Vector3d()).add(expectedCOM), v / 4f)
             );
             do {

@@ -21,6 +21,8 @@ public interface BCDTextures {
 
     BCDTexture DIAGRAM_ICON_WEIGHT= icon(guiDiagram, 0, 2);
     BCDTexture DIAGRAM_ICON_WEIGHT_SHADOW= icon(guiDiagram, 1, 2);
+    BCDTexture DIAGRAM_ICON_SMALL_WEIGHT= icon(guiDiagram, 2, 2);
+    BCDTexture DIAGRAM_ICON_SMALL_WEIGHT_SHADOW= icon(guiDiagram, 3, 2);
 
     BCDTexture DIAGRAM_ICON_CALCULATOR = icon(guiDiagram, 0, 3);
 
