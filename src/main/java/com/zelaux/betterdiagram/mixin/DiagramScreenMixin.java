@@ -4,7 +4,6 @@ import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.Content;
 import com.zelaux.betterdiagram.struct.BlackHoleList;
 import com.zelaux.betterdiagram.struct.CounterBlackHoleList;
-import com.zelaux.betterdiagram.util.StringUtil;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
@@ -19,7 +18,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.jetbrains.annotations.NotNull;
 import org.joml.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
@@ -44,22 +42,6 @@ public abstract class DiagramScreenMixin {
     @Final
     public ClientSubLevel subLevel;
 
-    private static @NotNull String vecToString(Quaterniond force) {
-        return vecToString(force.x, force.y, force.z, force.w);
-    }
-
-    private static @NotNull String vecToString(double x, double y, double z, double... extra) {
-        String[] strings = new String[extra.length + 3];
-        strings[0] = StringUtil.plainDouble(x);
-        strings[1] = StringUtil.plainDouble(y);
-        strings[2] = StringUtil.plainDouble(z);
-        for(int i = 0; i < extra.length; i++) {
-            strings[i + 3] = StringUtil.plainDouble(extra[i]);
-        }
-
-        return "(" + String.join(",", strings) + ")";
-    }
-
     @Shadow
     protected abstract void renderForceArrow(GuiGraphics graphics, ForceGroup forceGroup, ForceClusterFinder.Cluster pointForce, double maxArrowLength, int mouseX, int mouseY, List<FormattedText> tooltipLines, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight);
 
@@ -67,25 +49,6 @@ public abstract class DiagramScreenMixin {
 
     @Shadow
     protected DiagramConfig config;
-
-    @Unique
-    private static @NotNull MutableComponent vectorToFormatted(Vector3d force) {
-        return Component.literal(vecToString(force));
-    }
-
-    @Unique
-    private static @NotNull String vecToString(Vector3d force) {
-        return vecToString(force.x, force.y, force.z);
-    }
-
-    @Unique
-    private static @NotNull String vecToString(double x, double y, double z) {
-        var sx = StringUtil.plainDouble(x);
-        var sy = StringUtil.plainDouble(y);
-        var sz = StringUtil.plainDouble(z);
-
-        return "(" + sx + ", " + sy + ", " + sz + ")";
-    }
 
     @Inject(at = @At(value = "TAIL"), method = "renderArrows")
     void addCenterOfMassTooltip(GuiGraphics graphics, int mouseX, int mouseY, int areaOriginX, int areaOriginY, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight, CallbackInfo ci) {
@@ -112,7 +75,7 @@ public abstract class DiagramScreenMixin {
         int color = (0xff << 24) | Config.CENTER_OF_MASS_COLOR.getAsInt();
         MutableComponent centerOfMassTitle = Component.translatable("better_contraption_diagram.center_of_mass");
         tooltipList.add(Component.translatable(
-            "better_contraption_diagram.center_of_mass.tooltip", centerOfMassTitle, vectorToFormatted(centerOfMass).withColor(color)
+            "better_contraption_diagram.center_of_mass.tooltip", centerOfMassTitle, VecUtil.vectorToFormatted(centerOfMass).withColor(color)
         ));
     }
 
@@ -171,7 +134,7 @@ public abstract class DiagramScreenMixin {
     @Inject(at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;addForceArrowTooltip(Ldev/ryanhcode/sable/api/physics/force/ForceGroup;IDILjava/util/List;)V"), method = "renderForceArrow")
     private void addForceDirectionIntoTooltips(GuiGraphics graphics, ForceGroup forceGroup, ForceClusterFinder.Cluster pointForce, double maxArrowLength, int mouseX, int mouseY, List<FormattedText> tooltipLines, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight, CallbackInfo ci) {
         Vector3d force = pointForce.force();
-        var e = vectorToFormatted(force).withColor(Config.FORCE_CORDS_COLOR.getAsInt());
+        var e = VecUtil.vectorToFormatted(force).withColor(Config.FORCE_CORDS_COLOR.getAsInt());
 
         if(tooltipLines instanceof BlackHoleList<FormattedText>) return;
         FormattedText last = tooltipLines.getLast();

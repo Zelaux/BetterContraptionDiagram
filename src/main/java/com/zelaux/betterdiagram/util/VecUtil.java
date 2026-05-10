@@ -1,13 +1,15 @@
 package com.zelaux.betterdiagram.util;
 
+import com.zelaux.betterdiagram.mixin.DiagramScreenMixin;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
+import org.joml.*;
+import org.spongepowered.asm.mixin.*;
 
+import java.lang.Math;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.ToDoubleFunction;
 
@@ -56,5 +58,40 @@ public class VecUtil {
             coords[i] = new Vector2d(tmp.x/scalar,tmp.y/scalar).round();
         }
         return coords;
+    }
+
+    @Unique
+    public static @NotNull MutableComponent vectorToFormatted(Vector3d force) {
+        return Component.literal(vecToString(force));
+    }
+
+    private static @NotNull String vecToString(Quaterniond force) {
+        return vecToString(force.x, force.y, force.z, force.w);
+    }
+
+    private static @NotNull String vecToString(double x, double y, double z, double... extra) {
+        String[] strings = new String[extra.length + 3];
+        strings[0] = StringUtil.plainDouble(x);
+        strings[1] = StringUtil.plainDouble(y);
+        strings[2] = StringUtil.plainDouble(z);
+        for(int i = 0; i < extra.length; i++) {
+            strings[i + 3] = StringUtil.plainDouble(extra[i]);
+        }
+
+        return "(" + String.join(",", strings) + ")";
+    }
+
+    @Unique
+    private static @NotNull String vecToString(Vector3d force) {
+        return vecToString(force.x, force.y, force.z);
+    }
+
+    @Unique
+    private static @NotNull String vecToString(double x, double y, double z) {
+        var sx = StringUtil.plainDouble(x);
+        var sy = StringUtil.plainDouble(y);
+        var sz = StringUtil.plainDouble(z);
+
+        return "(" + sx + ", " + sy + ", " + sz + ")";
     }
 }

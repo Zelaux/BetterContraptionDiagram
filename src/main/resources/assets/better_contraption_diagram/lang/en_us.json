@@ -8,7 +8,9 @@
   "better_contraption_diagram.axis_group.z": "Length",
 
   "better_contraption_diagram.center_of_mass": "Center Of Mass",
+  "better_contraption_diagram.eCOM": "Target Center Of Mass",
   "better_contraption_diagram.center_of_mass.tooltip": "%s %s",
+  "better_contraption_diagram.eCOM.tooltip": "%s %s",
 
 
   "better_contraption_diagram.calculator.move_to_struct_center": "Move to Center",

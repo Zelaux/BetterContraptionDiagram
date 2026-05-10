@@ -24,6 +24,10 @@ public class Config {
         .comment("color of center of mass")
         .defineInRange("centerOfMassColor",0x76614D,0,Integer.MAX_VALUE)
         ;
+    public static final ModConfigSpec.IntValue EXPECTED_CENTER_OF_MASS_COLOR = BUILDER
+        .comment("color of target center of mass")
+        .defineInRange("expectedCenterOfMassColor",0x764d4d,0,Integer.MAX_VALUE)
+        ;
     public static final ModConfigSpec.IntValue FORCE_CORDS_COLOR = BUILDER
         .comment("color of force cords")
         .defineInRange("forceCordsColor",ChatFormatting.DARK_GRAY.getColor(),0,Integer.MAX_VALUE)

@@ -1,18 +1,19 @@
 package com.zelaux.betterdiagram.mixin.calculator;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.Content;
 import com.zelaux.betterdiagram.gui.CenterMassMovingScreen;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
-import com.zelaux.betterdiagram.util.StringUtil;
 import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
+import com.zelaux.betterdiagram.util.StringUtil;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
+import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
-import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramButton;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.index.SimGUITextures;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
@@ -21,17 +22,17 @@ import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
+import org.joml.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.List;
+
+import static com.zelaux.betterdiagram.util.VecUtil.vectorToFormatted;
 
 @Mixin(DiagramScreen.class)
 public abstract class Calculator_DiagramScreen extends AbstractSimiScreen {
@@ -70,6 +71,9 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen {
     @Shadow
     @Final
     public ClientSubLevel subLevel;
+
+    @Shadow
+    protected DiagramConfig config;
 
     @Inject(at = @At(value = "TAIL"), method = "init")
     private void inject(CallbackInfo ci) {
@@ -142,4 +146,23 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen {
         pose.popPose();
     }
 
+    @Inject(at = @At(value = "TAIL"), method = "renderArrows")
+    void addCenterOfMassTooltip(GuiGraphics graphics, int mouseX, int mouseY, int areaOriginX, int areaOriginY, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight, CallbackInfo ci) {
+        if(!config.displayCenterOfMass()) return;
+        DiagramScreen self = self();
+        final Vector3d eCOM = CenterMassCalculator.expectedCenterOfMass(self);
+        if(CenterMassCalculator.equals(eCOM, CenterMassCalculator.centerOfMass(self.subLevel))) return;
+
+        Vector2d screenCoords = DiagramScreen.getScreenCoords(VecUtil.minVec3d(self.subLevel.getPlot().getBoundingBox()).add(eCOM), LOCAL_ORIENTATION, LOCAL_CAMERA_POSITION, PROJECTION_MAT, DIAGRAM_TEXTURE.width, DIAGRAM_TEXTURE.height);
+
+
+        if(screenCoords.distanceSquared(mouseX - areaOriginX, mouseY - areaOriginY) >= 8.0 * 8.0) return;
+        int color = (0xff00_0000) | Config.EXPECTED_CENTER_OF_MASS_COLOR.getAsInt();
+        MutableComponent centerOfMassTitle = Component.translatable("better_contraption_diagram.eCOM");
+        tooltipList.add(Component.translatable(
+            "better_contraption_diagram.eCOM.tooltip",
+            centerOfMassTitle.withColor(color),
+            vectorToFormatted(eCOM).withColor((0xff << 24) | Config.FORCE_CORDS_COLOR.getAsInt())
+        ));
+    }
 }
