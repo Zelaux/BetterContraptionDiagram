@@ -11,6 +11,7 @@ import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
+import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import lombok.AccessLevel;
@@ -176,9 +177,11 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     }
 
     private void addSubGrid(BoundingBox3ic bb, int diaX, int diaY) {
+        DiagramConfig.NoteConfigs noteConfigs = diagramScreenAccessors.betterContraptionDiagram$config().getNoteConfigs();
+        if(!noteConfigs.isActive()) return;
         var grid=subGrid = addRenderableWidget(
             makeGrid(
-                new BoundingBox3i(diagramScreenAccessors.betterContraptionDiagram$config().getNoteConfigs().getNoteScope()),
+                new BoundingBox3i(noteConfigs.getNoteScope()),
                 diagramStickyNote.getX()+noteAccessors.SUBLEVEL_RENDER_X_OFFSET(),
                 diagramStickyNote.getY()+noteAccessors.SUBLEVEL_RENDER_Y_OFFSET(),
                 subProjectedAxes,
@@ -186,7 +189,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             )
         );
         grid.offset=minVec3d(
-            new BoundingBox3i(diagramScreenAccessors.betterContraptionDiagram$config().getNoteConfigs().getNoteScope())
+            new BoundingBox3i(noteConfigs.getNoteScope())
         ).sub(minVec3d(bb));
     }
 
