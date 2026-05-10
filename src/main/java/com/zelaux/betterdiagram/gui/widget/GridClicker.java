@@ -12,6 +12,12 @@ public class GridClicker extends AbstractSimiWidget {
     public static final int BLACK_COLOR = (0xff << 24) | ChatFormatting.BLACK.getColor();
     public static final int GRAY_COLOR = (0xff << 24) | ChatFormatting.GRAY.getColor();
     public int gridColor = BLACK_COLOR;
+
+    public GridClicker gridColor(int gridColor) {
+        this.gridColor = gridColor;
+        return this;
+    }
+
     public final ArrayList<MouseConsumer> mouseConsumers = new ArrayList<>();
     private final ArrayList<MouseConsumer> mouseConsumers_old = new ArrayList<>();
     private final Vector2i sizeInBlocks;

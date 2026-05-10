@@ -137,7 +137,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
 
         mainGrid = addRenderableWidget(
             new GridClicker(minScreen.x, minScreen.y, maxScreen.x, maxScreen.y, sizeInBlocks)
-        );
+        ).gridColor(GridClicker.GRAY_COLOR);
 
         partialInterationForScreen = addWidget(new PartialInteration(
             diaX + 228, diaY + 8,
