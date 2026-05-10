@@ -9,12 +9,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
-public interface DiagramScreenAccessors {
+public interface DiagramScreenAccessors extends ProjectionAccessor{
     DiagramStickyNote betterContraptionDiagram$note();
-
-    Vector2d betterContraptionDiagram$getScreenCoords(Vector3d point, Vector3d cameraPos);
-
-    Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point, Vector3d cameraPos);
 
     boolean betterContraptionDiagram$configDirty();
 

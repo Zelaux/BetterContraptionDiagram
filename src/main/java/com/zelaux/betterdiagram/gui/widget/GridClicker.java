@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import org.joml.Vector2d;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
@@ -65,6 +66,13 @@ public class GridClicker extends AbstractSimiWidget {
     }
 
     public Vector2i toSimpleGridFromAbs(Vector2i gridAbs) {
+        int dx = 1 - ((sizeInBlocks.x >>> 31) << 1);
+        int dy = ((sizeInBlocks.y >>> 31) << 1) - 1;
+        if(dx < 0) gridAbs.x = Math.abs(sizeInBlocks.x) - 1 - gridAbs.x;
+        if(dy < 0) gridAbs.y = sizeInBlocks.y-1 - gridAbs.y;
+        return gridAbs;
+    }
+    public Vector2d toSimpleGridFromAbs(Vector2d gridAbs) {
         int dx = 1 - ((sizeInBlocks.x >>> 31) << 1);
         int dy = ((sizeInBlocks.y >>> 31) << 1) - 1;
         if(dx < 0) gridAbs.x = Math.abs(sizeInBlocks.x) - 1 - gridAbs.x;

@@ -39,14 +39,18 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
     private DiagramStickyNote note;
 
     @Shadow
-    public abstract Vector2d getScreenCoords(Vector3d plotSpacePoint, Quaternionfc orientation, Vector3dc localPosition, Matrix4fc projMatrix, int width, int height);
+    public static Vector2d getScreenCoords(Vector3d plotSpacePoint, Quaternionfc orientation, Vector3dc localPosition, Matrix4fc projMatrix, int width, int height) {
+        return null;
+    }
 
     @Shadow
     @Final
     public static Quaternionf LOCAL_ORIENTATION;
 
     @Shadow
-    public abstract Vector3d getPlotCoords(Vector2dc diagramSpacePoint, Quaternionfc orientation, Vector3dc localPosition, Matrix4fc projMatrix, int width, int height);
+    public static Vector3d getPlotCoords(Vector2dc diagramSpacePoint, Quaternionfc orientation, Vector3dc localPosition, Matrix4fc projMatrix, int width, int height) {
+        return null;
+    }
 
     @Override
     public DiagramStickyNote betterContraptionDiagram$note() {

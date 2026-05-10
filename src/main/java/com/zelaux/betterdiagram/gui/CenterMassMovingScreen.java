@@ -3,15 +3,16 @@ package com.zelaux.betterdiagram.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllKeys;
-import com.zelaux.betterdiagram.extend.ClientData;
-import com.zelaux.betterdiagram.extend.DiagramScreenAccessors;
-import com.zelaux.betterdiagram.extend.WithClientData;
+import com.zelaux.betterdiagram.extend.*;
 import com.zelaux.betterdiagram.gui.widget.GridClicker;
 import com.zelaux.betterdiagram.gui.widget.PartialInteration;
+import com.zelaux.betterdiagram.struct.TransformedAxes;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.VecUtil;
+import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
+import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import lombok.AccessLevel;
 import lombok.Setter;
 import net.createmod.catnip.gui.AbstractSimiScreen;
@@ -44,27 +45,50 @@ import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 
 import static com.zelaux.betterdiagram.util.UIUtil.*;
-import static com.zelaux.betterdiagram.util.VecUtil.maxVec3d;
-import static com.zelaux.betterdiagram.util.VecUtil.minVec3d;
+import static com.zelaux.betterdiagram.util.VecUtil.*;
 
 public class CenterMassMovingScreen extends AbstractSimiScreen {
     DiagramScreen diagramScreen;
+    DiagramStickyNote diagramStickyNote;
     DiagramScreenAccessors diagramScreenAccessors;
+    DiagramStickyNoteAccessors noteAccessors;
     ClientData clientData;
     @Setter(AccessLevel.PRIVATE)
     private EditBox editX, editY, editZ;
     private boolean programatic;
-    private GridClicker mainGrid;
-    private Vector2d[] projectedAxises;
+    private MyGridClicker mainGrid, subGrid;
+    private TransformedAxes mainProjectedAxes, subProjectedAxes;
     private PartialInteration partialInterationForScreen;
     private boolean wasDirty;
 
+
     public CenterMassMovingScreen(DiagramScreen diagramScreen) {
         this.diagramScreen = diagramScreen;
-        diagramScreenAccessors = (CenterMassCalculator.accessors(diagramScreen));
+        diagramScreenAccessors = CenterMassCalculator.accessors(diagramScreen);
+        diagramStickyNote = diagramScreenAccessors.betterContraptionDiagram$note();
+        noteAccessors = CenterMassCalculator.accessors(diagramStickyNote);
         clientData = new ClientData(((WithClientData) diagramScreenAccessors.betterContraptionDiagram$diagram()));
         expectedCenterOfMass()
         ;
+    }
+
+    public Vector3d expectedCenterOfMass() {
+        return CenterMassCalculator.expectedCenterOfMass(clientData, diagramScreen.subLevel);
+    }
+
+    private static double getOffset() {
+        double offset;
+        if(AllKeys.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) offset = 0.5;
+        else if(AllKeys.isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL)) offset = 10;
+        else offset = 1;
+        return offset;
+    }
+
+    public static void open(@NotNull final DiagramScreen owner) {
+        final Minecraft minecraft = Minecraft.getInstance();
+        final CenterMassMovingScreen screen = new CenterMassMovingScreen(owner);
+        minecraft.pushGuiLayer(screen);
+        minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.VILLAGER_WORK_CARTOGRAPHER, 1.0f));
     }
 
     @Override
@@ -73,9 +97,9 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         LinearLayout mainLayout = LinearLayout.vertical().spacing(5);
 
 
-        var editX = editBox(Component.literal("X"), VecUtil.GETTERS_3d[0], VecUtil.SETTERS_3d[0], this::editX);
-        var editY = editBox(Component.literal("Y"), VecUtil.GETTERS_3d[1], VecUtil.SETTERS_3d[1], this::editY);
-        var editZ = editBox(Component.literal("Z"), VecUtil.GETTERS_3d[2], VecUtil.SETTERS_3d[2], this::editZ);
+        var editX = editBox(Component.literal("X"), VecUtil.GETTERS_3d[0], SETTERS_3d[0], this::editX);
+        var editY = editBox(Component.literal("Y"), VecUtil.GETTERS_3d[1], SETTERS_3d[1], this::editY);
+        var editZ = editBox(Component.literal("Z"), VecUtil.GETTERS_3d[2], SETTERS_3d[2], this::editZ);
         updateEdit(expectedCenterOfMass());
         mainLayout.addChild(
             horizontal(5, editX, editY, editZ)
@@ -86,9 +110,9 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             positionUpdatedNotFromEditBox(expectedCenterOfMass());
         }, () -> Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"));
         final var selectBlock = makeButton(Component.translatable("better_contraption_diagram.calculator.select_block"), () -> {
-            selectBlock(this.mainGrid, (grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
+            selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
                 Vector3d COM = expectedCenterOfMass();
-                gridToNormalVector(gridPos, COM);
+                gridToNormalVector(grid, gridPos, COM);
                 positionUpdatedNotFromEditBox(COM);
             });
         }, () -> Component.translatable("better_contraption_diagram.calculator.select_block"));
@@ -119,25 +143,19 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         var areaHeight = DiagramScreen.DIAGRAM_TEXTURE.height;
         var bb = diagramScreen.subLevel.getPlot().getBoundingBox();
 
+
+        mainProjectedAxes = VecUtil.projectAxises(orientation, projMatrix, areaWidth, areaHeight);
+        subProjectedAxes = VecUtil.projectAxises(noteAccessors.NOTE_ORIENTATION(), projMatrix, areaWidth, areaHeight);
+
         int diaX = width / 2 - areaWidth / 2;
         int diaY = height / 2 - areaHeight / 2;
-        Vector2d minScreen = DiagramScreen.getScreenCoords(
-            minVec3d(bb), orientation, cameraPos, projMatrix, areaWidth, areaHeight
-        ).add(diaX, diaY);
-        Vector2d maxScreen = DiagramScreen.getScreenCoords(
-            maxVec3d(bb).add(1, 1, 1), orientation, cameraPos, projMatrix, areaWidth, areaHeight
-        ).add(diaX, diaY);
-        projectedAxises = VecUtil.projectAxises(orientation, projMatrix, areaWidth, areaHeight);
 
-        var sizeInBlocks = new Vector2i();
-
-        sizeInBlocks.add((int) (projectedAxises[0].x * bb.width()), (int) (projectedAxises[0].y * bb.width()));
-        sizeInBlocks.add((int) (projectedAxises[1].x * bb.height()), (int) (projectedAxises[1].y * bb.height()));
-        sizeInBlocks.add((int) (projectedAxises[2].x * bb.length()), (int) (projectedAxises[2].y * bb.length()));
-
-        mainGrid = addRenderableWidget(
+        mainGrid = addRenderableWidget(makeGrid(bb, diaX, diaY, mainProjectedAxes, diagramScreenAccessors));
+        addSubGrid(bb, diaX, diaY);
+/*
+        subGrid = addRenderableWidget(
             new GridClicker(minScreen.x, minScreen.y, maxScreen.x, maxScreen.y, sizeInBlocks)
-        ).gridColor(GridClicker.GRAY_COLOR);
+        ).gridColor(GridClicker.GRAY_COLOR);*/
 
         partialInterationForScreen = addWidget(new PartialInteration(
             diaX + 228, diaY + 8,
@@ -148,48 +166,113 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         mainLayout.visitWidgets(this::addRenderableWidget);
     }
 
-    private void gridToNormalVector(Vector2i gridPos, Vector3d COM) {
-        int xA = -1, yA = -1, zA = -1;
-        for(int i = 0; i < projectedAxises.length; i++) {
-            Vector2d axise = projectedAxises[i];
-            if(axise.x != 0) xA = i;
-            else if(axise.y != 0) yA = i;
-            else zA = i;
-        }
-        VecUtil.SETTERS_3d[xA].accept(COM, gridPos.x + 0.5);
-        VecUtil.SETTERS_3d[yA].accept(COM, gridPos.y + 0.5);
+    private MyGridClicker makeGrid(BoundingBox3ic bb, int diaX, int diaY, TransformedAxes projectedAxes, ProjectionAccessor projectionAccessor) {
+        var sizeInBlocks = new Vector2i();
+
+
+        sizeInBlocks.add(projectedAxes.xInt.x * bb.width(), projectedAxes.xInt.y * bb.width());
+        sizeInBlocks.add(projectedAxes.yInt.x * bb.height(), projectedAxes.yInt.y * bb.height());
+        sizeInBlocks.add(projectedAxes.zInt.x * bb.length(), projectedAxes.zInt.y * bb.length());
+
+        Vector2d minScreen = projectionAccessor
+            .betterContraptionDiagram$getScreenCoords(minVec3d(bb), null)
+            .add(diaX, diaY);
+        Vector2d maxScreen = projectionAccessor
+            .betterContraptionDiagram$getScreenCoords(maxVec3d(bb).add(1, 1, 1), null)
+            .add(diaX, diaY);
+        /*
+        Vector2d minScreen = DiagramScreen.getScreenCoords(
+            minVec3d(bb), orientation, cameraPos, projMatrix, areaWidth, areaHeight
+        ).add(diaX, diaY);*/
+/*
+        Vector2d maxScreen = DiagramScreen.getScreenCoords(
+            maxVec3d(bb).add(1, 1, 1), orientation, cameraPos, projMatrix, areaWidth, areaHeight
+        ).add(diaX, diaY);*/
+
+        return new MyGridClicker(minScreen.x, minScreen.y, maxScreen.x, maxScreen.y, sizeInBlocks, projectedAxes, new Vector3d()).gridColor(GridClicker.GRAY_COLOR);
     }
 
-    public void selectBlock(GridClicker grid, GridClicker.MouseConsumer consumer) {
-        enableGrid(grid);
-        grid.mouseConsumers.add((grid1, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
+    private void addSubGrid(BoundingBox3ic bb, int diaX, int diaY) {
+        var grid=subGrid = addRenderableWidget(
+            makeGrid(
+                new BoundingBox3i(diagramScreenAccessors.betterContraptionDiagram$config().getNoteConfigs().getNoteScope()),
+                diagramStickyNote.getX()+noteAccessors.SUBLEVEL_RENDER_X_OFFSET(),
+                diagramStickyNote.getY()+noteAccessors.SUBLEVEL_RENDER_Y_OFFSET(),
+                subProjectedAxes,
+                noteAccessors
+            )
+        );
+        grid.offset=minVec3d(
+            new BoundingBox3i(diagramScreenAccessors.betterContraptionDiagram$config().getNoteConfigs().getNoteScope())
+        ).sub(minVec3d(bb));
+
+
+        /*var sizeInBlocks = new Vector2i();
+
+        sizeInBlocks.add(projectedAxises.xInt.x * bb.width(), projectedAxises.xInt.y * bb.width());
+        sizeInBlocks.add(projectedAxises.yInt.x * bb.height(), projectedAxises.yInt.y * bb.height());
+        sizeInBlocks.add(projectedAxises.zInt.x * bb.length(), projectedAxises.zInt.y * bb.length());
+
+        Vector2d minScreen=diagramScreenAccessors
+            .betterContraptionDiagram$getScreenCoords(minVec3d(bb),null)
+            .add(diaX,diaY);
+        Vector2d maxScreen=diagramScreenAccessors
+            .betterContraptionDiagram$getScreenCoords(maxVec3d(bb),null)
+            .add(diaX,diaY);
+        *//*
+        Vector2d minScreen = DiagramScreen.getScreenCoords(
+            minVec3d(bb), orientation, cameraPos, projMatrix, areaWidth, areaHeight
+        ).add(diaX, diaY);*//*
+         *//*
+        Vector2d maxScreen = DiagramScreen.getScreenCoords(
+            maxVec3d(bb).add(1, 1, 1), orientation, cameraPos, projMatrix, areaWidth, areaHeight
+        ).add(diaX, diaY);*//*
+
+        mainGrid = addRenderableWidget(
+            new GridClicker(minScreen.x, minScreen.y, maxScreen.x, maxScreen.y, sizeInBlocks)
+        ).gridColor(GridClicker.GRAY_COLOR);*/
+    }
+
+    private void gridToNormalVector(GridClicker grid, Vector2i gridPos, Vector3d out) {
+
+        TransformedAxes projectedAxes = grid instanceof MyGridClicker my ? my.projectedAxes : mainProjectedAxes;
+        var offset = grid instanceof MyGridClicker my ? my.offset : ZERO_V;
+        int xi = projectedAxes.xyzIndex[0];
+        int yi = projectedAxes.xyzIndex[1];
+        SETTERS_3d[xi].accept(out, gridPos.x + 0.5+GETTERS_3d[xi].applyAsDouble(offset));
+        SETTERS_3d[yi].accept(out, gridPos.y + 0.5+GETTERS_3d[yi].applyAsDouble(offset));
+    }
+
+    private Vector2d normalToGridVector(Vector3d in, Vector2d gridPos) {
+        gridPos.x = VecUtil.GETTERS_3d[mainProjectedAxes.xyzIndex[0]].applyAsDouble(in) - 0.5;
+        gridPos.y = VecUtil.GETTERS_3d[mainProjectedAxes.xyzIndex[1]].applyAsDouble(in) - 0.5;
+        return gridPos;
+    }
+
+    public void selectBlock(GridClicker.MouseConsumer consumer) {
+        enableGrid((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
             consumer.consume(grid, rawMouse, gridPos, mouseX, mouseY, pointer);
-            disableGrid(grid);
+            disableGrid();
         });
     }
 
-    private void disableGrid(GridClicker grid) {
-
+    /**
+     * @see CenterMassMovingScreen#disableGrid
+     *
+     */
+    private void enableGrid(GridClicker.MouseConsumer mouseConsumer) {
         for(GuiEventListener child : children()) {
-            if(!(child instanceof AbstractWidget widget))continue;
-            if(widget instanceof GridClicker)continue;
-            widget.active=true;
+            if(!(child instanceof AbstractWidget widget)) continue;
+            if(widget instanceof GridClicker) {
+                if(!(widget instanceof MyGridClicker grid)) continue;
+                grid.mouseConsumers.add(mouseConsumer);
+                grid.drawMouse = true;
+                //partialInterationForScreen.active = false;
+                grid.gridColor = GridClicker.BLACK_COLOR;
+                continue;
+            }
+            widget.active = false;
         }
-        grid.mouseConsumers.clear();
-        grid.drawMouse = false;
-        grid.gridColor = GridClicker.GRAY_COLOR;
-        //partialInterationForScreen.active = true;
-    }
-
-    private void enableGrid(GridClicker grid) {
-        for(GuiEventListener child : children()) {
-            if(!(child instanceof AbstractWidget widget))continue;
-            if(widget instanceof GridClicker)continue;
-            widget.active=false;
-        }
-        grid.drawMouse = true;
-        //partialInterationForScreen.active = false;
-        grid.gridColor = GridClicker.BLACK_COLOR;
     }
 
     private Vector3d centerOfSubLevel() {
@@ -253,10 +336,10 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             positionUpdatedNotFromEditBox(v);
         }, () -> Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"));
         final var choose = makeButton(Component.literal("D"), 15, 20, () -> {
-            selectBlock(mainGrid, (grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
+            selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
 
                 Vector3d com = new Vector3d();
-                gridToNormalVector(gridPos, com);
+                gridToNormalVector(grid, gridPos, com);
                 Vector3d v = expectedCenterOfMass();
                 setter.accept(v, getter.applyAsDouble(com));
                 positionUpdatedNotFromEditBox(v);
@@ -282,14 +365,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     private void positionUpdatedNotFromEditBox(Vector3d v) {
         updateEdit(v);
         positionUpdated();
-    }
-
-    private static double getOffset() {
-        double offset;
-        if(AllKeys.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) offset = 0.5;
-        else if(AllKeys.isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL)) offset = 10;
-        else offset = 1;
-        return offset;
     }
 
     private @NotNull EditBox initEditBox(MutableComponent boxName, ObjDoubleConsumer<Vector3d> setter, Consumer<EditBox> boxConsumer) {
@@ -391,22 +466,42 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if(keyCode == 256 && this.shouldCloseOnEsc()) {
             if(mainGrid.drawMouse) {
-                disableGrid(mainGrid);
+                disableGrid();
                 return true;
             }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    public static void open(@NotNull final DiagramScreen owner) {
-        final Minecraft minecraft = Minecraft.getInstance();
-        final CenterMassMovingScreen screen = new CenterMassMovingScreen(owner);
-        minecraft.pushGuiLayer(screen);
-        minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.VILLAGER_WORK_CARTOGRAPHER, 1.0f));
+    private void disableGrid() {
+        for(GuiEventListener child : children()) {
+            if(!(child instanceof AbstractWidget widget)) continue;
+            if(widget instanceof GridClicker grid) {
+                grid.mouseConsumers.clear();
+                grid.drawMouse = false;
+                grid.gridColor = GridClicker.GRAY_COLOR;
+                continue;
+            }
+            widget.active = true;
+        }
+        //partialInterationForScreen.active = true;
     }
 
-    public Vector3d expectedCenterOfMass() {
-        return CenterMassCalculator.expectedCenterOfMass(clientData, diagramScreen.subLevel);
+    public static class MyGridClicker extends GridClicker {
+        public TransformedAxes projectedAxes;
+        public Vector3d offset;
+
+        public MyGridClicker(double x, double y, double x1, double y1, Vector2i sizeInBlocks, TransformedAxes projectedAxes, Vector3d offset) {
+            super(x, y, x1, y1, sizeInBlocks);
+            this.projectedAxes = projectedAxes;
+            this.offset = offset;
+        }
+
+        @Override
+        public MyGridClicker drawMouse(boolean drawMouse) {return (MyGridClicker) super.drawMouse(drawMouse);}
+
+        @Override
+        public MyGridClicker gridColor(int gridColor) {return (MyGridClicker) super.gridColor(gridColor);}
     }
 
 }

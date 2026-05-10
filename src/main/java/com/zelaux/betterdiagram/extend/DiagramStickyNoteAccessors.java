@@ -6,12 +6,21 @@ import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStick
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
-public interface DiagramStickyNoteAccessors {
+public interface DiagramStickyNoteAccessors extends ProjectionAccessor{
 
-    Vector2d betterContraptionDiagram$getScreenCoords(Vector3d point, Vector3d cameraPos);
+    Quaternionf NOTE_ORIENTATION();
+     Vector3d NOTE_LOCAL_CAM_POS();
+     Matrix4f NOTE_PROJ_MAT();
+     int SUBLEVEL_RENDER_WIDTH_PIXELS();
+     int SUBLEVEL_RENDER_HEIGHT_PIXELS();
 
-    Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point, Vector3d cameraPos);
+    int SUBLEVEL_RENDER_X_OFFSET();
+
+    int SUBLEVEL_RENDER_Y_OFFSET();
+
+    int renderXStart();
 }
