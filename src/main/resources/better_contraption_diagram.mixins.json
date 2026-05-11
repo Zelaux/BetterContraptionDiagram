@@ -7,6 +7,7 @@
   ],
   "client": [
     "DiagramScreenMixin",
+    "LevelRendererMixin",
     "accessors.DiagramScreenAccessorsImpl",
     "accessors.DiagramStickyNoteAccessorsImpl",
     "calculator.Calculator_DiagramScreen",
