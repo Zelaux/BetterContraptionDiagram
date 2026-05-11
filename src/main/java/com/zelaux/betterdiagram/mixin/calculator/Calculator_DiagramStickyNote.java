@@ -1,7 +1,6 @@
 package com.zelaux.betterdiagram.mixin.calculator;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.zelaux.betterdiagram.extend.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.MixinCalculatorUtil;

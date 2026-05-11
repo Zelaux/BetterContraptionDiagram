@@ -3,11 +3,9 @@ package com.zelaux.betterdiagram.struct;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 @FieldDefaults(level = AccessLevel.PUBLIC)
 @Getter

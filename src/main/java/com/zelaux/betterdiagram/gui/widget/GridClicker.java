@@ -110,7 +110,6 @@ public class GridClicker extends AbstractSimiWidget {
         }
 
         if(!drawMouse) return;
-        ;
         cellCornersFromGlobal(tmp.set(mouseX, mouseY), tmp2);
         graphics.fill(tmp.x, tmp.y, tmp2.x, tmp2.y, 0xaa5541E6);
     }

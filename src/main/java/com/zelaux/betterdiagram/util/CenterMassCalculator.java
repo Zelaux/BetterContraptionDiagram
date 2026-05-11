@@ -66,9 +66,6 @@ public class CenterMassCalculator {
         diff.mul(mass);
 
         diff.mul(4);
-        //diff.round();
-
-        //diff.div(4);
 
         addStacks(stacks[0], VecUtil.X_V, expectedCOM, diff.x);
         addStacks(stacks[1], VecUtil.Y_V, expectedCOM, diff.y);
@@ -88,40 +85,18 @@ public class CenterMassCalculator {
         else if(!Runtime.equals(value0,value,0.0001f)){
             double v1 = (value0-value)/4f;
 
-            int[] scales={1,2,4,8};
-            //0.25 * x = 1*N+v1
-            //0.25 * x -1*N = +v1
-            //0.25 * (x -4*N) = +v1
             long sigV1 = v1 < 0 ? -1 : 1;
             v1=Math.abs(v1);
             double dst0 = v1 / 0.25;
 
-            smallStack:
-            {
-                /*for(int scale : scales) {
-                    double dst = dst0 * scale;
-                    if(dst > maxFixDistance) break;
-                    if(Runtime.equals(dst, (int) dst, 0.001f)) {
-                        weights.smallStacks.add(
-                            new MassStack(
-                                uni.mul(dst * sig, new Vector3d()).add(expectedCOM),
-                                (v1 * 4 * scale) / 4f)
-                        );
-                        break smallStack;
-                    }
-                }*/
-
-                var unit = uni.mul(sigV1, new Vector3d());
-                for(double dst = dst0;dst<maxFixDistance && v1<Math.abs(value0);dst+=4,v1+=1){
-                    weights.smallStacks.add(new MassStack(new Vector3d(unit).mul(dst).add(expectedCOM), 0.25));
-                }
-                //value--;
+            var unit = uni.mul(sigV1, new Vector3d());
+            for(double dst = dst0; dst < maxFixDistance && v1 < Math.abs(value0); dst += 4, v1 += 1) {
+                weights.smallStacks.add(new MassStack(new Vector3d(unit).mul(dst).add(expectedCOM), 0.25));
             }
-
         }
         if(value == 0) return;
         long dst = 1;
-        //double sigHalf = value < 0 ? -0.5 : 0.5;
+
         value *= sig;
         long v = value;
         int iteration = 0;
@@ -166,9 +141,7 @@ public class CenterMassCalculator {
         public final Vector3d actualCOM = new Vector3d();
         public double mass;
 
-        public Data() {
-
-        }
+        public Data() {}
 
         public Vector3d expectedCOM() {return expectedCOM;}
 
@@ -184,7 +157,6 @@ public class CenterMassCalculator {
         }
 
         public static Data update(Data data, Vector3d expectedCOM, Vector3d currentCOM, double mass) {
-
             return Objects.requireNonNullElseGet(data, Data::new).set(expectedCOM, currentCOM, mass);
         }
 

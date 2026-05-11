@@ -40,7 +40,6 @@ import org.slf4j.Logger;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = BetterContraptionDiagram.MODID, dist = Dist.CLIENT)
@@ -63,7 +62,7 @@ public class BetterContraptionDiagramClient {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void itemTooltip(final ItemTooltipEvent event) {
-        if(!AllKeys.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT))return;
+        if(!AllKeys.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) return;
         List<Component> toolTips = event.getToolTip();
         int indexOf = toolTips.indexOf(HAS_CENTER_MASS);
         if(indexOf == -1) return;
@@ -75,26 +74,26 @@ public class BetterContraptionDiagramClient {
         var level = Minecraft.getInstance().level;
         var blockGetter = level != null ? level : EmptyBlockGetter.INSTANCE;
 
-        boolean wasHalf=false;
+        boolean wasHalf = false;
         int color = 0xFF_aaaaaa;
         for(BlockState possibleState : stateDefinition.getPossibleStates()) {
             Vector3dc blockCenterOfMass = MassTracker.BLOCK_CENTER_OF_MASS.apply(blockGetter, possibleState);
             if(!set.add(blockCenterOfMass)) continue;
-            if(set.size()==1){
+            if(set.size() == 1) {
                 if(blockCenterOfMass.equals(JOMLConversion.HALF)) {
                     wasHalf = true;
                     continue;
-                }else{
+                } else {
                     toolTips.remove(indexOf--);
                 }
             }
-            if(set.size()== 2 && wasHalf) {
+            if(set.size() == 2 && wasHalf) {
                 Vector3dc half = JOMLConversion.HALF;
                 toolTips.set(indexOf, comTooltip(half));
             }
             toolTips.add(++indexOf, comTooltip(blockCenterOfMass));
         }
-        if(set.size()==1 && wasHalf){
+        if(set.size() == 1 && wasHalf) {
             toolTips.remove(indexOf);
         }
     }
@@ -102,7 +101,7 @@ public class BetterContraptionDiagramClient {
     private static @NotNull MutableComponent comTooltip(Vector3dc half) {
         var position = VecUtil.vectorToFormatted(half).withColor(0xFF_aaaaaa);
 
-        return Component.literal(" ").append(Component.translatable("better_contraption_diagram.item.tooltip",position));
+        return Component.literal(" ").append(Component.translatable("better_contraption_diagram.item.tooltip", position));
     }
 
     private static final Component HAS_CENTER_MASS = new Component() {
@@ -111,7 +110,9 @@ public class BetterContraptionDiagramClient {
         public MutableComponent copy() {return this.tmp.copy();}
 
         public MutableComponent plainCopy() {return this.tmp.plainCopy();}
+
         public List<Component> getSiblings() {return this.tmp.getSiblings();}
+
         public ComponentContents getContents() {return this.tmp.getContents();}
 
         public Style getStyle() {return this.tmp.getStyle();}
@@ -120,10 +121,9 @@ public class BetterContraptionDiagramClient {
 
         @Override
         public boolean equals(Object obj) {
-
             if(this == obj) return true;
             if(obj instanceof Component mut) return mut.getSiblings().contains(this);
-             return false;
+            return false;
         }
     };
 
@@ -132,7 +132,7 @@ public class BetterContraptionDiagramClient {
         final double mass = ((BlockBehaviourAccessor) blockItem.getBlock()).getHasCollision() ?
             blockStateExtension.sable$getProperty(PhysicsBlockPropertyTypes.MASS.get()) :
             0;
-        if(mass==0)return null;
+        if(mass == 0) return null;
         return HAS_CENTER_MASS;
     }
 

@@ -6,7 +6,6 @@ import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStick
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
-import org.joml.Vector2d;
 import org.joml.Vector3d;
 
 public interface DiagramScreenAccessors extends ProjectionAccessor{

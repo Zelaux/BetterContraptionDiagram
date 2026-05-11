@@ -1,14 +1,13 @@
 package com.zelaux.betterdiagram.util;
 
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.asm.mixin.*;
 
 import java.text.DecimalFormat;
 
 public class StringUtil {
     private static final DecimalFormat ZERO_WITH_SOME_DIGITS = makeFormat("#.#####");
     private static final DecimalFormat ZERO_WITH_ZERO = makeFormat("#.#");
-    private static DecimalFormat[] formats = {
+    private static final DecimalFormat[] formats = {
         null,
         makeFormat("#.####"),
         makeFormat("#.###"),
@@ -17,8 +16,7 @@ public class StringUtil {
     };
 
     private static @NotNull DecimalFormat makeFormat(String pattern) {
-        DecimalFormat decimalFormat = new DecimalFormat(pattern);
-        return decimalFormat;
+        return new DecimalFormat(pattern);
     }
 
     public static @NotNull String plainDouble(double value) {

@@ -13,6 +13,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -52,7 +53,7 @@ public class BDiagramButton extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(final GuiGraphics guiGraphics, final int mouseX, final int mouseY, final float partialTicks) {
+    protected void renderWidget(final @NotNull GuiGraphics guiGraphics, final int mouseX, final int mouseY, final float partialTicks) {
         if(background!=null) background.render(guiGraphics, this.getX() - 1, this.getY() - 1);
 
         this.texture.render(guiGraphics, this.getX() - 1, this.getY() - 1, this.isHovered() || this.iconSwitch.getAsBoolean() ? DiagramScreen.BUTTON_COLOR : DiagramScreen.DULL_BUTTON_COLOR);
@@ -69,7 +70,7 @@ public class BDiagramButton extends AbstractWidget {
     }
 
     @Override
-    protected void updateWidgetNarration(final NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(final @NotNull NarrationElementOutput narrationElementOutput) {
 
     }
 

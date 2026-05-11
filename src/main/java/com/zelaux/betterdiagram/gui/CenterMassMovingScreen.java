@@ -252,7 +252,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     }
 
     private @NotNull ExtendedButton makeButton(MutableComponent title, int width, int height, Runnable onclicl, Supplier<Component> diagramTooltip) {
-        ExtendedButton extendedButton = new ExtendedButton(0, 0, width, height, title, self -> onclicl.run()) {
+        return new ExtendedButton(0, 0, width, height, title, self -> onclicl.run()) {
 
             @Override
             public void renderWidget(final GuiGraphics guiGraphics, final int mouseX, final int mouseY, final float partialTicks) {
@@ -264,7 +264,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
                 }
             }
         };
-        return extendedButton;
     }
 
     private void updateEdit(Vector3d expectedCenterOfMass) {
@@ -379,7 +378,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     }
 
     @Override
-    public void resize(Minecraft minecraft, int width, int height) {
+    public void resize(@NotNull Minecraft minecraft, int width, int height) {
         diagramScreen.resize(minecraft, width, height);
         super.resize(minecraft, width, height);
     }
@@ -408,20 +407,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        /*Vector2i left = new Vector2i(),right=new Vector2i();
-        Vector3d vector3d = ;
-        Quaternionf localOrientation = DiagramScreen.LOCAL_ORIENTATION;
-        Vector3d localCameraPosition = diagramScreenAccessors.LOCAL_CAMERA_POSITION();
-        Matrix4f projectionMat = diagramScreenAccessors.PROJECTION_MAT();
-
-        Vector2d eCOM = MixinCalculatorUtil.screenPositionOfExpectedCOM(
-            diagramScreen, localOrientation, localCameraPosition, projectionMat, DiagramScreen.DIAGRAM_TEXTURE.width, DiagramScreen.DIAGRAM_TEXTURE.height
-        );
-        if(eCOM!=null) {
-            mainGrid.cellCornersFromGlobal(left.set(eCOM), right);
-            graphics.fill(left.x, left.y, right.x, right.y, 0xaa5541E6);
-        }*/
+    protected void renderWindow(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
     }
 
 

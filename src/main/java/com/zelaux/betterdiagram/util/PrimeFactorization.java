@@ -1,12 +1,6 @@
 package com.zelaux.betterdiagram.util;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongList;
-import it.unimi.dsi.fastutil.longs.LongLists;
-
-import java.security.SecureRandom;
-
-import static com.google.common.math.LongMath.isPrime;
 
 public class PrimeFactorization {
 
