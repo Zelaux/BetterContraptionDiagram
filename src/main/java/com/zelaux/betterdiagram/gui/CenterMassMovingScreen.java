@@ -15,6 +15,7 @@ import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Setter;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.ChatFormatting;
@@ -57,7 +58,8 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     @Setter(AccessLevel.PRIVATE)
     private EditBox editX, editY, editZ;
     private boolean programatic;
-    private MyGridClicker mainGrid, subGrid;
+    @Getter
+    private boolean gridEnabled=false;
     private TransformedAxes mainProjectedAxes, subProjectedAxes;
     private PartialInteration partialInterationForScreen;
     private boolean wasDirty;
@@ -147,7 +149,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         int diaX = width / 2 - areaWidth / 2;
         int diaY = height / 2 - areaHeight / 2;
 
-        mainGrid = addRenderableWidget(makeGrid(bb, diaX, diaY, mainProjectedAxes, diagramScreenAccessors));
+        addRenderableWidget(makeGrid(bb, diaX, diaY, mainProjectedAxes, diagramScreenAccessors));
         addSubGrid(bb, diaX, diaY);
 
         partialInterationForScreen = addWidget(new PartialInteration(
@@ -179,7 +181,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     private void addSubGrid(BoundingBox3ic bb, int diaX, int diaY) {
         DiagramConfig.NoteConfigs noteConfigs = diagramScreenAccessors.betterContraptionDiagram$config().getNoteConfigs();
         if(!noteConfigs.isActive()) return;
-        var grid=subGrid = addRenderableWidget(
+        var grid= addRenderableWidget(
             makeGrid(
                 new BoundingBox3i(noteConfigs.getNoteScope()),
                 diagramStickyNote.getX()+noteAccessors.SUBLEVEL_RENDER_X_OFFSET(),
@@ -233,6 +235,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             }
             widget.active = false;
         }
+        gridEnabled=true;
     }
 
     private Vector3d centerOfSubLevel() {
@@ -425,7 +428,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if(keyCode == 256 && this.shouldCloseOnEsc()) {
-            if(mainGrid.drawMouse) {
+            if(gridEnabled) {
                 disableGrid();
                 return true;
             }
@@ -444,6 +447,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             }
             widget.active = true;
         }
+        gridEnabled=false;
         //partialInterationForScreen.active = true;
     }
 
