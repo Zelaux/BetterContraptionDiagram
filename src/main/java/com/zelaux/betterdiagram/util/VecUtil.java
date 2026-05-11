@@ -65,7 +65,7 @@ public class VecUtil {
     }
 
     @Unique
-    public static @NotNull MutableComponent vectorToFormatted(Vector3d force) {
+    public static @NotNull MutableComponent vectorToFormatted(Vector3dc force) {
         return Component.literal(vecToString(force));
     }
 
@@ -86,8 +86,8 @@ public class VecUtil {
     }
 
     @Unique
-    private static @NotNull String vecToString(Vector3d force) {
-        return vecToString(force.x, force.y, force.z);
+    private static @NotNull String vecToString(Vector3dc force) {
+        return vecToString(force.x(), force.y(), force.z());
     }
 
     @Unique

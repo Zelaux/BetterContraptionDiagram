@@ -238,7 +238,7 @@ dependencies {
     }
     api("dev.engine-room.flywheel:flywheel-neoforge-1.21.1:1.0.6")
     api("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") {
-        exclude group: "foundry.veil"
+//        exclude group: "foundry.veil"
     }
     def lombokVersion="1.18.42"
     compileOnly "org.projectlombok:lombok:$lombokVersion"
