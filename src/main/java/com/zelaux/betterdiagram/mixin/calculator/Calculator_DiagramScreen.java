@@ -32,6 +32,7 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -113,20 +114,17 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         Vector3d tmp = new Vector3d();
         Vector3d offset = minVec3d(subLevel.getPlot().getBoundingBox());
         for(int i = 0; i < stacks.length; i++) {
-            var stackDir = stacks[i];
-            if(stackDir.isEmpty()) continue;
+            var weights = stacks[i];
+            if(weights.isEmpty()) continue;
             var group = Content.AXIS_GROUPS[i];
             int color = group.color() | (0xff << 24);
             int MX = mouseX - diagramX;
             int MY = mouseY - diagramY;
             if(Runtime.equals(maxAbsXY(orientation.transformInverse(tmp.set(DIRECTIONS[i]))), 0, 0.1f)) {
-
-                MassStack massStack = stackDir.get(0);
-                Vector2d originCoords = DiagramScreen.getScreenCoords(tmp.set(massStack.position()).add(offset), orientation, cameraPos, projMatrix, areaWidth, areaHeight);
-
+                Vector2d originCoords = DiagramScreen.getScreenCoords(tmp.set(weights.position()).add(offset), orientation, cameraPos, projMatrix, areaWidth, areaHeight);
 
                 if(originCoords.distanceSquared(MX, MY) < 8.0 * 8.0) {
-                    var value = Component.literal(StringUtil.plainDouble(massStack.amountOf())).withColor(color);
+                    var value = Component.literal(StringUtil.plainDouble(weights.totalWeight())).withColor(color);
                     tooltipList.add(Component.translatable("better_contraption_diagram.weight.wrong-axis.tooltip", group.axisName().copy().withColor(color), value));
                     //addForceArrowTooltip(forceGroup, pointForce.groupSize().getValue(), forceMagnitude, color, tooltipLines);
                 }
@@ -135,29 +133,41 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 BCDTextures.DIAGRAM_ICON_WEIGHT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(color));
                 continue;
             }
-            for(MassStack stack : stackDir) {
-
-                renderMassStack(graphics,
-                    MX,MY,
-                    stack,
-                    tmp,
-                    offset,
-                    color,shadowColor,
-                    BCDTextures.DIAGRAM_ICON_WEIGHT,BCDTextures.DIAGRAM_ICON_WEIGHT_SHADOW,
-                    value0->Component.translatable("better_contraption_diagram.weight.tooltip", value0));
-                //LINKED_TYPEWRITER_KEY_ENTRY
-            }
-            if(stackDir.smallStack != null)
-                renderMassStack(graphics,
-                    MX,MY,
-                    stackDir.smallStack,
-                    tmp,
-                    offset,
-                    color,shadowColor,
-                    BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT,BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT_SHADOW,
-                    v->Component.translatable("better_contraption_diagram.small-weight.tooltip", v));
+            renderMassStacks(graphics,
+                weights.stacks,
+                MX,MY,
+                tmp,
+                offset,
+                color,shadowColor,
+                BCDTextures.DIAGRAM_ICON_WEIGHT,BCDTextures.DIAGRAM_ICON_WEIGHT_SHADOW,
+                v -> Component.translatable("better_contraption_diagram.weight.tooltip", v)
+            );
+            renderMassStacks(graphics,
+                weights.smallStacks,
+                MX,MY,
+                tmp,
+                offset,
+                color,shadowColor,
+                BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT,BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT_SHADOW,
+                v -> Component.translatable("better_contraption_diagram.small-weight.tooltip", v)
+            );
         }
 
+    }
+
+    private void renderMassStacks(GuiGraphics graphics, ArrayList<MassStack> stacks1, int MX, int MY, Vector3d tmp, Vector3d offset, int color, int shadowColor, BCDTexture diagramIconWeight, BCDTexture diagramIconWeightShadow, Function<Component, MutableComponent> componentMutableComponentFunction) {
+        for(MassStack stack : stacks1) {
+
+            renderMassStack(graphics,
+                MX, MY,
+                stack,
+                tmp,
+                offset,
+                color, shadowColor,
+                diagramIconWeight, diagramIconWeightShadow,
+                componentMutableComponentFunction);
+            //LINKED_TYPEWRITER_KEY_ENTRY
+        }
     }
 
     private void renderMassStack(GuiGraphics graphics,

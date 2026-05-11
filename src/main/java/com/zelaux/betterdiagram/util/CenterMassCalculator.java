@@ -77,39 +77,50 @@ public class CenterMassCalculator {
         return stacks;
     }
 
-    private static void addStacks(Weights list, Vector3d uni, Vector3d expectedCOM, double value0) {
-        long value= Math.round(value0);
+    private static void addStacks(Weights weights, Vector3d uni, Vector3d expectedCOM, double value0) {
+        weights.totalWeight=value0;
+        long value= (long) Math.floor(value0);
         final int maxIterations = Config.MAX_ITERATION.getAsInt();
         final int maxFixDistance = Config.MAX_FIX_DISTANCE.getAsInt();
-        if(!Runtime.equals(value0,value,0.0001f)){
-            double v1 = ((value0-value) % 1f)/4f;
+
+        long sig = value0 < 0 ? -1 : 1;
+        if(equals(Math.abs(value0-value),1)) value += sig;
+        else if(!Runtime.equals(value0,value,0.0001f)){
+            double v1 = (value0-value)/4f;
+
             int[] scales={1,2,4,8};
-            double dst0 = 0.25 / v1;
-            long sig = /*v1 < 0 ? -1 : */1;
+            //0.25 * x = 1*N+v1
+            //0.25 * x -1*N = +v1
+            //0.25 * (x -4*N) = +v1
+            long sigV1 = v1 < 0 ? -1 : 1;
             v1=Math.abs(v1);
+            double dst0 = v1 / 0.25;
 
             smallStack:
             {
-                for(int scale : scales) {
+                /*for(int scale : scales) {
                     double dst = dst0 * scale;
                     if(dst > maxFixDistance) break;
                     if(Runtime.equals(dst, (int) dst, 0.001f)) {
-                        list.smallStack =
+                        weights.smallStacks.add(
                             new MassStack(
                                 uni.mul(dst * sig, new Vector3d()).add(expectedCOM),
-                                 (v1 * 4 * scale) / 4f);
+                                (v1 * 4 * scale) / 4f)
+                        );
                         break smallStack;
                     }
+                }*/
+
+                var unit = uni.mul(sigV1, new Vector3d());
+                for(double dst = dst0;dst<maxFixDistance && v1<Math.abs(value0);dst+=4,v1+=1){
+                    weights.smallStacks.add(new MassStack(new Vector3d(unit).mul(dst).add(expectedCOM), 0.25));
                 }
-                list.smallStack =
-                    new MassStack(uni.mul(sig, new Vector3d()).add(expectedCOM), v1)
-                ;
+                //value--;
             }
 
         }
         if(value == 0) return;
         long dst = 1;
-        long sig = value < 0 ? -1 : 1;
         //double sigHalf = value < 0 ? -0.5 : 0.5;
         value *= sig;
         long v = value;
@@ -117,7 +128,7 @@ public class CenterMassCalculator {
         while(v > 0) {
             iteration++;
             if(iteration > maxIterations) break;
-            list.stacks.add(
+            weights.stacks.add(
                 new MassStack(uni.mul(dst * sig, new Vector3d()).add(expectedCOM), v / 4f)
             );
             do {
