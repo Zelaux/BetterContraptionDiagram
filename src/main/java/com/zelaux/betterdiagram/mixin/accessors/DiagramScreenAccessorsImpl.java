@@ -14,6 +14,8 @@ import java.util.Objects;
 
 @Mixin(DiagramScreen.class)
 public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccessors {
+
+
     @Shadow
     @Final
     private DiagramEntity diagram;
@@ -52,6 +54,9 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
         return null;
     }
 
+    @Shadow
+    protected abstract boolean canDrawArrowAt(int x, int y, int width, int height);
+
     @Override
     public DiagramStickyNote betterContraptionDiagram$note() {
         return note;
@@ -63,6 +68,14 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
             LOCAL_ORIENTATION,
             Objects.requireNonNullElse(cameraPos, LOCAL_CAMERA_POSITION),
             PROJECTION_MAT,
+            DiagramScreen.DIAGRAM_TEXTURE.width,
+            DiagramScreen.DIAGRAM_TEXTURE.height
+        );
+    }
+    @Override
+    public boolean bcd$canDrawAt(int x, int y) {
+        return canDrawArrowAt(
+            x,y,
             DiagramScreen.DIAGRAM_TEXTURE.width,
             DiagramScreen.DIAGRAM_TEXTURE.height
         );

@@ -219,13 +219,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         Vector2d screenCoords = DiagramScreen.getScreenCoords(minVec3d(self.subLevel.getPlot().getBoundingBox()).add(eCOM), LOCAL_ORIENTATION, LOCAL_CAMERA_POSITION, PROJECTION_MAT, DIAGRAM_TEXTURE.width, DIAGRAM_TEXTURE.height);
 
 
-        if(screenCoords.distanceSquared(mouseX - areaOriginX, mouseY - areaOriginY) >= 8.0 * 8.0) return;
-        int color = (0xff00_0000) | Config.EXPECTED_CENTER_OF_MASS_COLOR.getAsInt();
-        MutableComponent centerOfMassTitle = Component.translatable("better_contraption_diagram.eCOM");
-        tooltipList.add(Component.translatable(
-            "better_contraption_diagram.eCOM.tooltip",
-            centerOfMassTitle.withColor(color),
-            vectorToFormatted(eCOM).withColor((0xff << 24) | Config.FORCE_CORDS_COLOR.getAsInt())
-        ));
+        MixinCalculatorUtil.displayECOMTooltip(mouseX, mouseY, areaOriginX, areaOriginY, screenCoords, tooltipList, eCOM);
     }
+
 }

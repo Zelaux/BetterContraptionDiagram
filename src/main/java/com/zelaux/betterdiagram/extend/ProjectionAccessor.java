@@ -11,4 +11,6 @@ public interface ProjectionAccessor {
     Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point, Vector3d cameraPos);
     default Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point){return betterContraptionDiagram$getPlotCoords(point,null);}
 
+    boolean bcd$canDrawAt(int x,int y);
+
 }

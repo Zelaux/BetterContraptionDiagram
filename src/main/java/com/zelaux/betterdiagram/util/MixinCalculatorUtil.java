@@ -3,6 +3,7 @@ package com.zelaux.betterdiagram.util;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
+import com.zelaux.betterdiagram.Config;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
@@ -17,6 +18,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -24,6 +28,10 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
+
+import java.util.List;
+
+import static com.zelaux.betterdiagram.util.VecUtil.vectorToFormatted;
 
 public class MixinCalculatorUtil {
 
@@ -142,5 +150,16 @@ public class MixinCalculatorUtil {
 
         ps.popPose();
         bufferSource.endLastBatch();
+    }
+
+    public static void displayECOMTooltip(int mouseX, int mouseY, float areaOriginX, float areaOriginY, Vector2d screenCoords, List<FormattedText> tooltipList1, Vector3d eCOM) {
+        if(screenCoords.distanceSquared(mouseX - areaOriginX, mouseY - areaOriginY) >= 8.0 * 8.0) return;
+        int color = (0xff00_0000) | Config.EXPECTED_CENTER_OF_MASS_COLOR.getAsInt();
+        MutableComponent centerOfMassTitle = Component.translatable("better_contraption_diagram.eCOM");
+        tooltipList1.add(Component.translatable(
+            "better_contraption_diagram.eCOM.tooltip",
+            centerOfMassTitle.withColor(color),
+            vectorToFormatted(eCOM).withColor((0xff << 24) | Config.FORCE_CORDS_COLOR.getAsInt())
+        ));
     }
 }

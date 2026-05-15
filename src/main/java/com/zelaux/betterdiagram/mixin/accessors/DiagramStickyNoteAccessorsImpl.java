@@ -47,6 +47,9 @@ public abstract class DiagramStickyNoteAccessorsImpl implements DiagramStickyNot
     @Final
     private int renderXStart;
 
+    @Shadow
+    private DiagramScreen parent;
+
     @Override
     public Vector2d betterContraptionDiagram$getScreenCoords(Vector3d point, Vector3d cameraPos) {
         //NOTE_ORIENTATION, NOTE_LOCAL_CAM_POS, NOTE_PROJ_MAT, SUBLEVEL_RENDER_WIDTH_PIXELS, SUBLEVEL_RENDER_HEIGHT_PIXELS
@@ -59,6 +62,19 @@ public abstract class DiagramStickyNoteAccessorsImpl implements DiagramStickyNot
         );
     }
 
+
+    private boolean canDrawArrowAt(final int x, final int y, final int width, final int height) {
+        final int padding = 8;
+        return x >= padding && x < width - padding && y >= padding && y < height - padding;
+    }
+    @Override
+    public boolean bcd$canDrawAt(int x, int y) {
+        return canDrawArrowAt(
+            x,y,
+            SUBLEVEL_RENDER_WIDTH_PIXELS,
+            SUBLEVEL_RENDER_HEIGHT_PIXELS
+        );
+    }
     @Override
     public Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point, Vector3d cameraPos) {
         return DiagramScreen.getPlotCoords(point,
