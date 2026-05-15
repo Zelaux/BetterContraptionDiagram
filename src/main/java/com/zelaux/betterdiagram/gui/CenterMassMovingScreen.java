@@ -223,14 +223,12 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
                     //RenderSystem.disableBlend();
                 }
             },
-            new BoundingBox2i(
+            BoundingBox2i.box2d(
                 diaX + 228, diaY + 8,
                 (diaX + 243 + 8), (diagramY + 8 + 14 + 8)
             ),
-            new BoundingBox2i(
-                diaX, diaY,
-                diaX + DiagramScreen.DIAGRAM_TEXTURE.width, diaY + DiagramScreen.DIAGRAM_TEXTURE.height
-            )
+             BoundingBox2i.box2d(diagramScreen),
+             BoundingBox2i.box2d(diagramStickyNote)
         ));
 
 
