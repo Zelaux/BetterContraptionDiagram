@@ -1,12 +1,15 @@
 package com.zelaux.betterdiagram.gui;
 
+import com.ibm.icu.impl.Pair;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.*;
 import com.simibubi.create.AllKeys;
+import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.extend.*;
 import com.zelaux.betterdiagram.gui.widget.GridClicker;
 import com.zelaux.betterdiagram.gui.widget.PartialInteration;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
+import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
@@ -14,6 +17,9 @@ import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
+import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
+import foundry.veil.api.client.render.framebuffer.FramebufferAttachmentDefinition;
+import foundry.veil.api.client.render.framebuffer.FramebufferStack;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,25 +33,32 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 import org.joml.Vector2d;
 import org.joml.Vector2i;
 import org.joml.Vector3d;
 import org.lwjgl.glfw.GLFW;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 
+import static com.zelaux.betterdiagram.gui.widget.PartialInteration.boxes;
+import static com.zelaux.betterdiagram.gui.widget.PartialInteration.partialInteration;
 import static com.zelaux.betterdiagram.util.UIUtil.*;
 import static com.zelaux.betterdiagram.util.VecUtil.*;
 
@@ -59,10 +72,11 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     private EditBox editX, editY, editZ;
     private boolean programatic;
     @Getter
-    private boolean gridEnabled=false;
+    private boolean gridEnabled = false;
     private TransformedAxes mainProjectedAxes, subProjectedAxes;
     private PartialInteration partialInterationForScreen;
     private boolean wasDirty;
+    private final ArrayList<Pair<MyGridClicker, PartialInteration>> grids = new ArrayList<>();
 
 
     public CenterMassMovingScreen(DiagramScreen diagramScreen) {
@@ -90,13 +104,26 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     public static void open(@NotNull final DiagramScreen owner) {
         final Minecraft minecraft = Minecraft.getInstance();
         final CenterMassMovingScreen screen = new CenterMassMovingScreen(owner);
-        minecraft.pushGuiLayer(screen);
+
+
+        minecraft.screen = Objects.requireNonNull(screen);
+        screen.init(minecraft, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
+        minecraft.getNarrator().sayNow(screen.getNarrationMessage());
+
         minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.VILLAGER_WORK_CARTOGRAPHER, 1.0f));
     }
 
     @Override
     protected void init() {
         super.init();
+        if(fbo == null || fbo.getWidth() != width || fbo.getHeight() != height) {
+            freeFramebuffers();
+            fbo = AdvancedFbo.withSize(width, height)
+                             .setFormat(FramebufferAttachmentDefinition.Format.RGBA8)
+                             .addColorTextureBuffer()
+                             .setDepthTextureBuffer()
+                             .build(true);
+        }
         LinearLayout mainLayout = LinearLayout.vertical().spacing(5);
 
 
@@ -149,16 +176,117 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         int diaX = width / 2 - areaWidth / 2;
         int diaY = height / 2 - areaHeight / 2;
 
-        addRenderableWidget(makeGrid(bb, diaX, diaY, mainProjectedAxes, diagramScreenAccessors));
-        addSubGrid(bb, diaX, diaY);
 
+        ResourceLocation location = ResourceLocation.fromNamespaceAndPath(BetterContraptionDiagram.MODID, "fbo");
         partialInterationForScreen = addWidget(new PartialInteration(
-            diaX + 228, diaY + 8,
-            (diaX + 243 + 8) - (diaX + 228), (diagramY + 8 + 14 + 8) - (diagramY + 8),
-            diagramScreen
+            diagramScreen,
+            (object, graphics, mouseX, mouseY, partialTick) -> {
+                graphics.flush();
+                FramebufferStack.push(location);
+                fbo.bind(true);
+                //RenderSystem.clearColor(0.0F, 0.0F, 0.0F, 0.0F);
+                //fbo.clear(GL11C.GL_COLOR_BUFFER_BIT | GL11C.GL_DEPTH_BUFFER_BIT);
+
+                fbo.clear(1.0F, 1.0F, 1.0F, 0.0F, 1.0F, fbo.getClearMask(), fbo.getDrawBuffers());
+                //final AdvancedFbo drawFbo = VeilRenderSystem.renderer().getDynamicBufferManger().getDynamicFbo(fbo);
+                //drawFbo.bind(true);
+
+                RenderSystem.enableDepthTest();
+                RenderSystem.enableColorLogicOp();
+                RenderSystem.enableBlend();
+                RenderSystem.defaultBlendFunc();
+                graphics.fill(0, 0, this.width, this.height, -10, 0x4fffffff);
+                //graphics.fill(0, 0, this.width/4, this.height, -10, 0xaaffffff);
+                //graphics.fill(width/4, 0, this.width/2, this.height, -10, 0xffffffff);
+                //graphics.fill( this.width/2, 0, this.width, this.height, 100, 0xaaffffff);
+
+
+                PoseStack pose = graphics.pose();
+                pose.pushPose();
+                object.render(graphics, mouseX, mouseY, partialTick);
+                pose.popPose();
+
+                graphics.flush();
+
+                FramebufferStack.pop(location);
+
+                if(fbo.isColorTextureAttachment(0)) {
+                    int textureId = fbo.getColorTextureAttachment(0).getId();
+
+                    RenderSystem.enableBlend();
+                    RenderSystem.defaultBlendFunc();
+                    //RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+                    this.drawFboTexture(graphics, textureId, 0, 0, graphics.guiWidth(), graphics.guiHeight());
+
+                    graphics.flush();
+                    //RenderSystem.disableBlend();
+                }
+            },
+            new BoundingBox2i(
+                diaX + 228, diaY + 8,
+                (diaX + 243 + 8), (diagramY + 8 + 14 + 8)
+            ),
+            new BoundingBox2i(
+                diaX, diaY,
+                diaX + DiagramScreen.DIAGRAM_TEXTURE.width, diaY + DiagramScreen.DIAGRAM_TEXTURE.height
+            )
         ));
 
+
+        grids.clear();
+
+        MyGridClicker myGridClicker = makeGrid(bb, diaX, diaY, mainProjectedAxes, diagramScreenAccessors);
+        MyGridClicker subGrid = addSubGrid(bb, diaX, diaY);
+        ArrayList<Pair<MyGridClicker, PartialInteration>> g = grids;
+
+        addGrid(myGridClicker, boxes(BoundingBox2i.box2d(this)),
+            subGrid == null ? BoundingBox2i.EMPTY_ARRAY : boxes(BoundingBox2i.box2d(subGrid))
+        );
+        if(subGrid!=null) addGrid(subGrid, boxes(BoundingBox2i.box2d(subGrid)),BoundingBox2i.EMPTY_ARRAY);
+
         mainLayout.visitWidgets(this::addRenderableWidget);
+    }
+
+    private void addGrid(MyGridClicker myGridClicker, BoundingBox2i[] boxes1, BoundingBox2i[] boxes) {
+        grids.add(Pair.of(
+            myGridClicker,
+            addRenderableWidget(
+                partialInteration(
+                    myGridClicker,
+                    boxes1,
+                    boxes
+                )
+            )
+        ));
+    }
+
+    private void drawFboTexture(GuiGraphics graphics, int id, int x, int y, int width, int height) {
+        //if(true)return;
+        RenderSystem.setShaderTexture(0, id);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.enableBlend();
+        final Matrix4f matrix4f = graphics.pose().last().pose();
+        final BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+
+        final float x1 = x, x2 = x + width;
+        final float y1 = y, y2 = y + height;
+        bufferbuilder.addVertex(matrix4f, x1, y1, 0.0f).setUv(0.0f, 1.0f).setColor(0xFFFFFFFF);
+        bufferbuilder.addVertex(matrix4f, x1, y2, 0.0f).setUv(0.0f, 0.0f).setColor(0xFFFFFFFF);
+        bufferbuilder.addVertex(matrix4f, x2, y2, 0.0f).setUv(1.0f, 0.0f).setColor(0xFFFFFFFF);
+        bufferbuilder.addVertex(matrix4f, x2, y1, 0.0f).setUv(1.0f, 1.0f).setColor(0xFFFFFFFF);
+        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+        RenderSystem.disableBlend();
+    }
+
+    private AdvancedFbo fbo;
+
+    private void freeFramebuffers() {
+        if(fbo != null) {
+            fbo.free();
+            fbo = null;
+        }
+
     }
 
     private MyGridClicker makeGrid(BoundingBox3ic bb, int diaX, int diaY, TransformedAxes projectedAxes, ProjectionAccessor projectionAccessor) {
@@ -178,21 +306,21 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         return new MyGridClicker(minScreen.x, minScreen.y, maxScreen.x, maxScreen.y, sizeInBlocks, projectedAxes, new Vector3d()).gridColor(GridClicker.GRAY_COLOR);
     }
 
-    private void addSubGrid(BoundingBox3ic bb, int diaX, int diaY) {
+    private MyGridClicker addSubGrid(BoundingBox3ic bb, int diaX, int diaY) {
         DiagramConfig.NoteConfigs noteConfigs = diagramScreenAccessors.betterContraptionDiagram$config().getNoteConfigs();
-        if(!noteConfigs.isActive()) return;
-        var grid= addRenderableWidget(
-            makeGrid(
-                new BoundingBox3i(noteConfigs.getNoteScope()),
-                diagramStickyNote.getX()+noteAccessors.SUBLEVEL_RENDER_X_OFFSET(),
-                diagramStickyNote.getY()+noteAccessors.SUBLEVEL_RENDER_Y_OFFSET(),
-                subProjectedAxes,
-                noteAccessors
-            )
+        if(!noteConfigs.isActive()) return null;
+
+        var grid = makeGrid(
+            new BoundingBox3i(noteConfigs.getNoteScope()),
+            diagramStickyNote.getX() + noteAccessors.SUBLEVEL_RENDER_X_OFFSET(),
+            diagramStickyNote.getY() + noteAccessors.SUBLEVEL_RENDER_Y_OFFSET(),
+            subProjectedAxes,
+            noteAccessors
         );
-        grid.offset=minVec3d(
+        grid.offset = minVec3d(
             new BoundingBox3i(noteConfigs.getNoteScope())
         ).sub(minVec3d(bb));
+        return grid;
     }
 
     private void gridToNormalVector(GridClicker grid, Vector2i gridPos, Vector3d out) {
@@ -201,8 +329,8 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         var offset = grid instanceof MyGridClicker my ? my.offset : ZERO_V;
         int xi = projectedAxes.xyzIndex[0];
         int yi = projectedAxes.xyzIndex[1];
-        SETTERS_3d[xi].accept(out, gridPos.x + 0.5+GETTERS_3d[xi].applyAsDouble(offset));
-        SETTERS_3d[yi].accept(out, gridPos.y + 0.5+GETTERS_3d[yi].applyAsDouble(offset));
+        SETTERS_3d[xi].accept(out, gridPos.x + 0.5 + GETTERS_3d[xi].applyAsDouble(offset));
+        SETTERS_3d[yi].accept(out, gridPos.y + 0.5 + GETTERS_3d[yi].applyAsDouble(offset));
     }
 
     private Vector2d normalToGridVector(Vector3d in, Vector2d gridPos) {
@@ -225,17 +353,17 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     private void enableGrid(GridClicker.MouseConsumer mouseConsumer) {
         for(GuiEventListener child : children()) {
             if(!(child instanceof AbstractWidget widget)) continue;
-            if(widget instanceof GridClicker) {
-                if(!(widget instanceof MyGridClicker grid)) continue;
-                grid.mouseConsumers.add(mouseConsumer);
-                grid.drawMouse = true;
-                //partialInterationForScreen.active = false;
-                grid.gridColor = GridClicker.BLACK_COLOR;
-                continue;
-            }
             widget.active = false;
         }
-        gridEnabled=true;
+        for(Pair<MyGridClicker, PartialInteration> pair : grids) {
+            pair.second.active=true;
+            MyGridClicker grid = pair.first;
+            grid.mouseConsumers.add(mouseConsumer);
+            grid.drawMouse = true;
+            //partialInterationForScreen.active = false;
+            grid.gridColor = GridClicker.BLACK_COLOR;
+        }
+        gridEnabled = true;
     }
 
     private Vector3d centerOfSubLevel() {
@@ -370,11 +498,20 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
 
         if(diagramScreen.subLevel.isRemoved() || diagramScreenAccessors.betterContraptionDiagram$diagram().isRemoved()) {
             super.onClose();
-            //minecraft.screen = diagramScreen;
+            //minecraft.scfreen = diagramScreen;
             diagramScreen.onClose();
             return;
         }
         diagramScreen.tick();
+    }
+
+    @Override
+    public void onClose() {
+        //ClientHooks.popGuiLayer(minecraft);
+        //this.minecraft.popGuiLayer();
+        removed();
+        minecraft.screen = diagramScreen;
+        freeFramebuffers();
     }
 
     @Override
@@ -385,12 +522,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        PoseStack pose = graphics.pose();
-        pose.pushPose();
-        pose.translate(0, 0, -2);
-        diagramScreen.render(graphics, mouseX, mouseY, partialTicks);
-        pose.popPose();
-        graphics.flush();
+        partialInterationForScreen.render(graphics, mouseX, mouseY, partialTicks);
 
         if(wasDirty) {
             this.repositionElements();
@@ -400,10 +532,18 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     }
 
     @Override
+    protected void renderMenuBackground(GuiGraphics partialTick) {
+        if(gridEnabled) super.renderMenuBackground(partialTick);
+    }
+
+    @Override
     protected void renderWindowBackground(final GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTicks) {
-        RenderSystem.disableDepthTest();
-        graphics.fill(0, 0, this.width, this.height, -10, 0x4fffffff);
-        RenderSystem.enableDepthTest();
+        //RenderSystem.disableDepthTest();
+        //graphics.fill(0, 0, this.width/2, this.height, -10, 0x4fffffff);
+        //graphics.fill(width/2, height/2, this.width, this.height, 0, 0xaa00ffff);
+
+        //if(gridEnabled)
+        //RenderSystem.enableDepthTest();
     }
 
     @Override
@@ -421,19 +561,22 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
-
+/**
+ * @see CenterMassMovingScreen#enableGrid(GridClicker.MouseConsumer)
+ * */
     private void disableGrid() {
         for(GuiEventListener child : children()) {
             if(!(child instanceof AbstractWidget widget)) continue;
-            if(widget instanceof GridClicker grid) {
-                grid.mouseConsumers.clear();
-                grid.drawMouse = false;
-                grid.gridColor = GridClicker.GRAY_COLOR;
-                continue;
-            }
             widget.active = true;
         }
-        gridEnabled=false;
+        for(Pair<MyGridClicker, PartialInteration> pair : grids) {
+            //pair.second.active=false;
+            MyGridClicker grid = pair.first;
+            grid.mouseConsumers.clear();
+            grid.drawMouse = false;
+            grid.gridColor = GridClicker.GRAY_COLOR;
+        }
+        gridEnabled = false;
         //partialInterationForScreen.active = true;
     }
 

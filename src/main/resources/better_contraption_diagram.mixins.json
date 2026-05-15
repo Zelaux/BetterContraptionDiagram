@@ -6,12 +6,14 @@
     "ClientDataForDiagramEntity"
   ],
   "client": [
+    "BufferSourceMixin",
     "DiagramScreenMixin",
     "LevelRendererMixin",
     "accessors.DiagramScreenAccessorsImpl",
     "accessors.DiagramStickyNoteAccessorsImpl",
     "calculator.Calculator_DiagramScreen",
-    "calculator.Calculator_DiagramStickyNote"
+    "calculator.Calculator_DiagramStickyNote",
+    "fix.DiagramScreenFixMixin"
   ],
   "injectors": {
     "defaultRequire": 1
