@@ -137,7 +137,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         final var centerButton = makeButton(Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"), () -> {
             Vector3d COM = expectedCenterOfMass();
             COM.set(centerOfSubLevel());
-            positionUpdatedNotFromEditBox(tmp.set(COM).sub(bb.minX(),bb.minY(),bb.minZ()));
+            positionUpdatedNotFromEditBox(tmp.set(COM).sub(bb.minX(), bb.minY(), bb.minZ()));
         }, () -> Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"));
         final var selectBlock = makeButton(Component.translatable("better_contraption_diagram.calculator.select_block"), () -> {
             selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
@@ -151,7 +151,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         final var resetBlock = makeButton(Component.translatable("better_contraption_diagram.calculator.reset_block"), () -> {
             Vector3d COM = expectedCenterOfMass();
             COM.set(currentCenterOfMass());
-            positionUpdatedNotFromEditBox(tmp.set(COM).sub(bb.minX(),bb.minY(),bb.minZ()));
+            positionUpdatedNotFromEditBox(tmp.set(COM).sub(bb.minX(), bb.minY(), bb.minZ()));
         }, () -> Component.translatable("better_contraption_diagram.calculator.reset_block"));
         mainLayout.addChild(
             horizontal(5, centerButton, selectBlock, resetBlock)
@@ -391,6 +391,10 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     }
 
     private @NotNull ExtendedButton makeButton(MutableComponent title, int width, int height, Runnable onclicl, Supplier<Component> diagramTooltip) {
+        return makeButton0(title, width, height, onclicl, () -> List.of(diagramTooltip.get()));
+    }
+
+    private @NotNull ExtendedButton makeButton0(MutableComponent title, int width, int height, Runnable onclicl, Supplier<List<Component>> diagramTooltip) {
         return new ExtendedButton(0, 0, width, height, title, self -> onclicl.run()) {
 
             @Override
@@ -398,7 +402,8 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
                 super.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
 
                 if(diagramTooltip != null && this.isHovered()) {
-                    final List<FormattedText> lines = List.of(diagramTooltip.get());
+                    //noinspection unchecked,rawtypes
+                    final List<FormattedText> lines = (List)diagramTooltip.get();
                     DiagramScreen.renderTooltip(guiGraphics, mouseX, mouseY, lines);
                 }
             }
@@ -420,33 +425,36 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
                                            Consumer<EditBox> boxConsumer) {
         final var editBox = initEditBox(boxName, setter, boxConsumer);
 
-        MutableComponent translatable = Component.translatable("better_contraption_diagram.common.shift-ctrl-scale");
-        final var tmp=new Vector3d();
-        final var tmp2=new Vector3d();
+        List<Component> shiftCtrlScale = List.of(
+            Component.translatable("better_contraption_diagram.common.shift-scale"),
+            Component.translatable("better_contraption_diagram.common.ctrl-scale")
+        );
+        final var tmp = new Vector3d();
+        final var tmp2 = new Vector3d();
         final var bb = diagramScreen.subLevel.getPlot().getBoundingBox();
-        final var incBtn = makeButton(Component.literal("+"), 15, 10, () -> {
+        final var incBtn = makeButton0(Component.literal("+"), 15, 10, () -> {
             var COM = expectedCenterOfMass();
-            tmp.set(COM).sub(minVec3d(bb,tmp2));
+            tmp.set(COM).sub(minVec3d(bb, tmp2));
             setter.accept(tmp, getter.applyAsDouble(tmp) + getOffset());
             COM.set(tmp).add(tmp2);
             positionUpdatedNotFromEditBox(tmp);
-        }, () -> translatable);
-        final var decBtn = makeButton(Component.literal("-"), 15, 10, () -> {
+        }, () -> shiftCtrlScale);
+        final var decBtn = makeButton0(Component.literal("-"), 15, 10, () -> {
             var COM = expectedCenterOfMass();
-            tmp.set(COM).sub(minVec3d(bb,tmp2));
+            tmp.set(COM).sub(minVec3d(bb, tmp2));
             setter.accept(tmp, getter.applyAsDouble(tmp) - getOffset());
             COM.set(tmp).add(tmp2);
             positionUpdatedNotFromEditBox(tmp);
-        }, () -> translatable);
+        }, () -> shiftCtrlScale);
         final var center = makeButton(Component.literal("C"), 15, 20, () -> {
             var COM = expectedCenterOfMass();
             setter.accept(COM, getter.applyAsDouble(centerOfSubLevel()));
-            positionUpdatedNotFromEditBox(tmp.set(COM).sub(minVec3d(bb,tmp2)));
+            positionUpdatedNotFromEditBox(tmp.set(COM).sub(minVec3d(bb, tmp2)));
         }, () -> Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"));
         final var choose = makeButton(Component.literal("D"), 15, 20, () -> {
             selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
                 gridToNormalVector(grid, gridPos, tmp);
-                tmp.add(minVec3d(bb,tmp2));
+                tmp.add(minVec3d(bb, tmp2));
                 Vector3d v = expectedCenterOfMass();
                 setter.accept(v, getter.applyAsDouble(tmp));
                 positionUpdatedNotFromEditBox(tmp.set(v).sub(tmp2));
@@ -455,7 +463,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         final var reset = makeButton(Component.literal("R"), 15, 20, () -> {
             var v = expectedCenterOfMass();
             setter.accept(v, getter.applyAsDouble(currentCenterOfMass()));
-            positionUpdatedNotFromEditBox(tmp.set(v).sub(minVec3d(bb,tmp2)));
+            positionUpdatedNotFromEditBox(tmp.set(v).sub(minVec3d(bb, tmp2)));
         }, () -> Component.translatable("better_contraption_diagram.calculator.reset_block"));
 
         MutableComponent append = boxName.append(":");
