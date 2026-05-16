@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.zelaux.betterdiagram.Config;
+import com.zelaux.betterdiagram.struct.MassStack;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
@@ -161,5 +162,9 @@ public class MixinCalculatorUtil {
             centerOfMassTitle.withColor(color),
             vectorToFormatted(eCOM).withColor((0xff << 24) | Config.FORCE_CORDS_COLOR.getAsInt())
         ));
+    }
+
+    public interface TooltipAdder {
+        void apply(List<FormattedText> tooltips, MassStack stack, Component v);
     }
 }

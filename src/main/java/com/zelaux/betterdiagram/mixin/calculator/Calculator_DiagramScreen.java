@@ -11,6 +11,7 @@ import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
 import com.zelaux.betterdiagram.util.StringUtil;
+import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
@@ -20,10 +21,10 @@ import dev.simulated_team.simulated.index.SimGUITextures;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.theme.Color;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
@@ -32,9 +33,9 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import static com.zelaux.betterdiagram.util.VecUtil.*;
 
@@ -115,20 +116,23 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         boolean shouldClipWeights = !this.bcd$isDiagramScreen;
         this.bcd$isDiagramScreen = false;
         if(stacks == null) return;
-        mouseX-=areaOriginX;
-        mouseY-=areaOriginY;
-        ProjectionAccessor accessor = shouldClipWeights? (ProjectionAccessor) note :this;
+        mouseX -= areaOriginX;
+        mouseY -= areaOriginY;
+        ProjectionAccessor accessor = shouldClipWeights ? (ProjectionAccessor) note : this;
 
         //final int color = (255 << 24) | 0x9D293A;
         final int shadowColor = 0xfff9f2de;
-        Vector3d tmp = new Vector3d();
+        Vector3d tmp = new Vector3d(), projectedAxis = new Vector3d();
         Vector3d offset = minVec3d(subLevel.getPlot().getBoundingBox());
+        Vector3d eCOM = CenterMassCalculator.expectedCenterOfMass(self());
         for(int i = 0; i < stacks.length; i++) {
             var weights = stacks[i];
             if(weights.isEmpty()) continue;
             var group = Content.AXIS_GROUPS[i];
             int color = group.color() | (0xff << 24);
-            if(Runtime.equals(maxAbsXY(orientation.transformInverse(tmp.set(DIRECTIONS[i]))), 0, 0.1f)) {
+            Vector3d AXIS = DIRECTIONS[i];
+            projectedAxis.set(orientation.transformInverse(tmp.set(AXIS)));
+            if(Runtime.equals(maxAbsXY(projectedAxis), 0, 0.1f)) {
                 Vector2d originCoords = DiagramScreen.getScreenCoords(tmp.set(weights.position()), orientation, cameraPos, projMatrix, areaWidth, areaHeight);
                 if(shouldClipWeights && !canDrawArrowAt((int) originCoords.x, (int) originCoords.y, areaWidth, areaHeight))
                     continue;
@@ -149,7 +153,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 offset,
                 color, shadowColor,
                 BCDTextures.DIAGRAM_ICON_WEIGHT, BCDTextures.DIAGRAM_ICON_WEIGHT_SHADOW,
-                v -> Component.translatable("better_contraption_diagram.weight.tooltip", v),
+                (list, m, v) -> list.add(Component.translatable("better_contraption_diagram.weight.tooltip", v)),
                 shouldClipWeights, accessor);
             renderMassStacks(graphics,
                 weights.smallStacks,
@@ -158,7 +162,15 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 offset,
                 color, shadowColor,
                 BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT, BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT_SHADOW,
-                v -> Component.translatable("better_contraption_diagram.small-weight.tooltip", v),
+                (list, mass, v) -> list.add(//TODO maybe multi line with tab?
+                    Component.translatable("better_contraption_diagram.small-weight.tooltip", v,
+                        Component.translatable("better_contraption_diagram.small-weight.distance.tooltip",
+                                     Component.literal(StringUtil.plainDouble(Math.abs(mass.position().dot(AXIS) - eCOM.dot(AXIS))))
+                                              .withColor(ChatFormatting.GRAY.getColor())
+                                 )
+                            .withColor(ChatFormatting.DARK_GRAY.getColor())
+                    )
+                ),
                 shouldClipWeights, accessor);
         }
 
@@ -172,7 +184,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                                   int color, int shadowColor,
                                   BCDTexture diagramIconWeight,
                                   BCDTexture diagramIconWeightShadow,
-                                  Function<Component, MutableComponent> componentMutableComponentFunction,
+                                  MixinCalculatorUtil.TooltipAdder componentMutableComponentFunction,
                                   boolean shouldClipWeights, ProjectionAccessor accessor
     ) {
         for(MassStack stack : stacks1) {
@@ -196,7 +208,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                                  Vector3d offset,
                                  int color, int shadowColor,
                                  BCDTexture icon, BCDTexture shadowIcon,
-                                 Function<Component, MutableComponent> tooltip,
+                                 MixinCalculatorUtil.TooltipAdder tooltip,
                                  boolean shouldClipWeights,
                                  ProjectionAccessor accessor) {
         Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(tmp.set(stack.position()));
@@ -206,7 +218,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
 
         if(originCoords.distanceSquared(MX, MY) < 8.0 * 8.0) {
             var value = Component.literal(StringUtil.plainDouble(stack.amountOf())).withColor(color);
-            tooltipList.add(tooltip.apply(value));
+            tooltip.apply(tooltipList, stack, value);
         }
 
         shadowIcon.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
