@@ -1,6 +1,8 @@
 {
   "itemGroup.examplemod": "Example Mod Tab",
 
+  "better_contraption_diagram.diagram-button": "Mass Calculator",
+
   "better_contraption_diagram.axis_value": "%s",
   "better_contraption_diagram.axis_arrow": "%s (%s)",
   "better_contraption_diagram.axis_group.x": "Width",

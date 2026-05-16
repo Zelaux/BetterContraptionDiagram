@@ -92,7 +92,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final int diagramX = this.width / 2 - DIAGRAM_TEXTURE.width / 2;
         final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
 
-        final var openCenterMass = new BDiagramButton(BCDTextures.DIAGRAM_ICON_CALCULATOR, diagramX + 9, diagramY + 9 + 20 * 4, Component.empty(), () -> {
+        final var openCenterMass = new BDiagramButton(BCDTextures.DIAGRAM_ICON_CALCULATOR, diagramX + 9, diagramY + 9 + 20 * 4, Component.translatable("better_contraption_diagram.diagram-button"), () -> {
             CenterMassMovingScreen.open(self());
         });
 
