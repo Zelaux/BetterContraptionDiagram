@@ -75,7 +75,8 @@ public class CenterMassCalculator {
     }
 
     private static void addStacks(Weights weights, Vector3d uni, Vector3d expectedCOM, double value0) {
-        weights.totalWeight=value0;
+        if(equals(value0,0))value0=0;
+        weights.totalWeight=value0/4f;
         long value= (long) Math.floor(value0);
         final int maxIterations = Config.MAX_ITERATION.getAsInt();
         final int maxFixDistance = Config.MAX_FIX_DISTANCE.getAsInt();
