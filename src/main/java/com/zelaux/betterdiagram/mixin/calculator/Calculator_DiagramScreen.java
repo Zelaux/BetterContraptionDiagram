@@ -130,7 +130,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
             int color = group.color() | (0xff << 24);
             if(Runtime.equals(maxAbsXY(orientation.transformInverse(tmp.set(DIRECTIONS[i]))), 0, 0.1f)) {
                 Vector2d originCoords = DiagramScreen.getScreenCoords(tmp.set(weights.position()).add(offset), orientation, cameraPos, projMatrix, areaWidth, areaHeight);
-                if(shouldClipWeights && !canDrawArrowAt((int) originCoords.x, (int) originCoords.x, areaWidth, areaHeight))
+                if(shouldClipWeights && !canDrawArrowAt((int) originCoords.x, (int) originCoords.y, areaWidth, areaHeight))
                     continue;
                 if(originCoords.distanceSquared(mouseX, mouseY) < 8.0 * 8.0) {
                     var value = Component.literal(StringUtil.plainDouble(weights.totalWeight())).withColor(color);
@@ -200,7 +200,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                                  boolean shouldClipWeights,
                                  ProjectionAccessor accessor) {
         Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(tmp.set(stack.position()).add(offset));
-        if(shouldClipWeights && !accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.x))
+        if(shouldClipWeights && !accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.y))
             return;
         //if(!this.canDrawArrowAt((int) originCoords.x, (int) originCoords.y, areaWidth, areaHeight)) continue;
 
