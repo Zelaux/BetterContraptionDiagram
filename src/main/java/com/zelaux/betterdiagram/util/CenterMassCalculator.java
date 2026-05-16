@@ -17,8 +17,6 @@ import org.joml.Vector3d;
 
 import java.util.Objects;
 
-import static com.zelaux.betterdiagram.util.VecUtil.minVec3d;
-
 public class CenterMassCalculator {
     public static final WithClientData.Key<Data> cacheKey = new WithClientData.Key<>();
     public static final float DELTA = 0.00001f;
@@ -27,9 +25,8 @@ public class CenterMassCalculator {
         return new Weights[]{new Weights(), new Weights(), new Weights()};
     }
 
-    public static Vector3d centerOfMass(ClientSubLevel subLevel) {
-        return new Vector3d(subLevel.logicalPose().rotationPoint())
-            .sub(minVec3d(subLevel.getPlot().getBoundingBox()));
+    public static @NotNull Vector3d centerOfMass(ClientSubLevel subLevel) {
+        return new Vector3d(subLevel.logicalPose().rotationPoint());
     }
 
     public static Weights[] recalculateStacks(DiagramScreen screen) {
@@ -124,8 +121,9 @@ public class CenterMassCalculator {
     public static DiagramStickyNoteAccessors accessors(DiagramStickyNote screen) {return (DiagramStickyNoteAccessors) screen;}
 
     public static Vector3d expectedCenterOfMass(WithClientData clientData, ClientSubLevel subLevel) {
+        Vector3d com = centerOfMass(subLevel);
         return clientData.betterContraptionDiagram$getClientData(DataKeys.EXPECTED_CENTER_OF_MASS, () ->
-            centerOfMass(subLevel)
+            com
         );
     }
 

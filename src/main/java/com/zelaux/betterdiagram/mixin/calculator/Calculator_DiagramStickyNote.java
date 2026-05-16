@@ -10,7 +10,6 @@ import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScree
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Direction;
-import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
