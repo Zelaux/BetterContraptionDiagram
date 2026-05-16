@@ -68,14 +68,6 @@ public abstract class DiagramStickyNoteAccessorsImpl implements DiagramStickyNot
         return x >= padding && x < width - padding && y >= padding && y < height - padding;
     }
     @Override
-    public boolean bcd$canDrawAt(int x, int y) {
-        return canDrawArrowAt(
-            x,y,
-            SUBLEVEL_RENDER_WIDTH_PIXELS,
-            SUBLEVEL_RENDER_HEIGHT_PIXELS
-        );
-    }
-    @Override
     public Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point, Vector3d cameraPos) {
         return DiagramScreen.getPlotCoords(point,
             NOTE_ORIENTATION,
@@ -84,6 +76,25 @@ public abstract class DiagramStickyNoteAccessorsImpl implements DiagramStickyNot
             SUBLEVEL_RENDER_WIDTH_PIXELS,
             SUBLEVEL_RENDER_HEIGHT_PIXELS
         );
+    }
+
+    @Override
+    public boolean bcd$canDrawAt(int x, int y) {
+        return canDrawArrowAt(
+            x,y,
+            SUBLEVEL_RENDER_WIDTH_PIXELS,
+            SUBLEVEL_RENDER_HEIGHT_PIXELS
+        );
+    }
+
+    @Override
+    public int bcd$originX() {
+        return ((DiagramStickyNote)(Object)this).getX()+SUBLEVEL_RENDER_X_OFFSET;
+    }
+
+    @Override
+    public int bcd$originY() {
+        return ((DiagramStickyNote)(Object)this).getY()+SUBLEVEL_RENDER_Y_OFFSET;
     }
 
     public Quaternionf NOTE_ORIENTATION() {return NOTE_ORIENTATION;}

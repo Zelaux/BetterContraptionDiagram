@@ -310,8 +310,8 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
 
         var grid = makeGrid(
             new BoundingBox3i(noteConfigs.getNoteScope()),
-            diagramStickyNote.getX() + noteAccessors.SUBLEVEL_RENDER_X_OFFSET(),
-            diagramStickyNote.getY() + noteAccessors.SUBLEVEL_RENDER_Y_OFFSET(),
+            noteAccessors.bcd$originX(),
+            noteAccessors.bcd$originY(),
             subProjectedAxes,
             noteAccessors
         );

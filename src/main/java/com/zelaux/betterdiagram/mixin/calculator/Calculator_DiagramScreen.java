@@ -1,7 +1,6 @@
 package com.zelaux.betterdiagram.mixin.calculator;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.Content;
 import com.zelaux.betterdiagram.extend.ProjectionAccessor;
 import com.zelaux.betterdiagram.gui.CenterMassMovingScreen;
@@ -16,6 +15,7 @@ import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
+import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import dev.simulated_team.simulated.index.SimGUITextures;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import net.createmod.catnip.gui.AbstractSimiScreen;
@@ -82,6 +82,9 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
     @Shadow
     protected abstract boolean canDrawArrowAt(int x, int y, int width, int height);
 
+    @Shadow
+    private DiagramStickyNote note;
+
     @Inject(at = @At(value = "TAIL"), method = "init")
     private void inject(CallbackInfo ci) {
 
@@ -96,19 +99,26 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         addRenderableWidget(openCenterMass);
     }
 
-    @Inject(at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;renderArrows(Lnet/minecraft/client/gui/GuiGraphics;IIIILorg/joml/Quaternionfc;Lorg/joml/Vector3dc;Lorg/joml/Matrix4fc;II)V"), method = "renderWindow")
-    private void renderWindow1(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+    @Unique
+    private boolean bcd$isDiagramScreen = false;
+
+    @Inject(at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;renderArrows(Lnet/minecraft/client/gui/GuiGraphics;IIIILorg/joml/Quaternionfc;Lorg/joml/Vector3dc;Lorg/joml/Matrix4fc;II)V"), method = "renderWindow")
+    private void markRenderArrowsFromDiagramScreen(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+        bcd$isDiagramScreen = true;
+
+    }
+
+    @Inject(method = "renderArrows", at = @At(value = "TAIL"))
+    private void renderWeightAfterArrows(GuiGraphics graphics, int mouseX, int mouseY, int areaOriginX, int areaOriginY, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight, CallbackInfo ci) {
         //var stacks = ((WithClientData) diagram).betterContraptionDiagram$getClientData(DataKeys.MASS_STACKS, null);
         var stacks = CenterMassCalculator.recalculateStacks(self());
+        boolean shouldClipWeights = !this.bcd$isDiagramScreen;
+        this.bcd$isDiagramScreen = false;
         if(stacks == null) return;
-        final int diagramX = this.width / 2 - DIAGRAM_TEXTURE.width / 2;
-        final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
+        mouseX-=areaOriginX;
+        mouseY-=areaOriginY;
+        ProjectionAccessor accessor = shouldClipWeights? (ProjectionAccessor) note :this;
 
-        var orientation = LOCAL_ORIENTATION;
-        var cameraPos = LOCAL_CAMERA_POSITION;
-        var projMatrix = PROJECTION_MAT;
-        var areaWidth = DIAGRAM_TEXTURE.width;
-        var areaHeight = DIAGRAM_TEXTURE.height;
         //final int color = (255 << 24) | 0x9D293A;
         final int shadowColor = 0xfff9f2de;
         Vector3d tmp = new Vector3d();
@@ -118,12 +128,11 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
             if(weights.isEmpty()) continue;
             var group = Content.AXIS_GROUPS[i];
             int color = group.color() | (0xff << 24);
-            int MX = mouseX - diagramX;
-            int MY = mouseY - diagramY;
             if(Runtime.equals(maxAbsXY(orientation.transformInverse(tmp.set(DIRECTIONS[i]))), 0, 0.1f)) {
                 Vector2d originCoords = DiagramScreen.getScreenCoords(tmp.set(weights.position()).add(offset), orientation, cameraPos, projMatrix, areaWidth, areaHeight);
-
-                if(originCoords.distanceSquared(MX, MY) < 8.0 * 8.0) {
+                if(shouldClipWeights && !canDrawArrowAt((int) originCoords.x, (int) originCoords.x, areaWidth, areaHeight))
+                    continue;
+                if(originCoords.distanceSquared(mouseX, mouseY) < 8.0 * 8.0) {
                     var value = Component.literal(StringUtil.plainDouble(weights.totalWeight())).withColor(color);
                     tooltipList.add(Component.translatable("better_contraption_diagram.weight.wrong-axis.tooltip", group.axisName().copy().withColor(color), value));
                     //addForceArrowTooltip(forceGroup, pointForce.groupSize().getValue(), forceMagnitude, color, tooltipLines);
@@ -135,27 +144,37 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
             }
             renderMassStacks(graphics,
                 weights.stacks,
-                MX,MY,
+                mouseX, mouseY,
                 tmp,
                 offset,
-                color,shadowColor,
-                BCDTextures.DIAGRAM_ICON_WEIGHT,BCDTextures.DIAGRAM_ICON_WEIGHT_SHADOW,
-                v -> Component.translatable("better_contraption_diagram.weight.tooltip", v)
-            );
+                color, shadowColor,
+                BCDTextures.DIAGRAM_ICON_WEIGHT, BCDTextures.DIAGRAM_ICON_WEIGHT_SHADOW,
+                v -> Component.translatable("better_contraption_diagram.weight.tooltip", v),
+                shouldClipWeights, accessor);
             renderMassStacks(graphics,
                 weights.smallStacks,
-                MX,MY,
+                mouseX, mouseY,
                 tmp,
                 offset,
-                color,shadowColor,
-                BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT,BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT_SHADOW,
-                v -> Component.translatable("better_contraption_diagram.small-weight.tooltip", v)
-            );
+                color, shadowColor,
+                BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT, BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT_SHADOW,
+                v -> Component.translatable("better_contraption_diagram.small-weight.tooltip", v),
+                shouldClipWeights, accessor);
         }
 
     }
 
-    private void renderMassStacks(GuiGraphics graphics, ArrayList<MassStack> stacks1, int MX, int MY, Vector3d tmp, Vector3d offset, int color, int shadowColor, BCDTexture diagramIconWeight, BCDTexture diagramIconWeightShadow, Function<Component, MutableComponent> componentMutableComponentFunction) {
+    private void renderMassStacks(GuiGraphics graphics,
+                                  ArrayList<MassStack> stacks1,
+                                  int MX, int MY,
+                                  Vector3d tmp,
+                                  Vector3d offset,
+                                  int color, int shadowColor,
+                                  BCDTexture diagramIconWeight,
+                                  BCDTexture diagramIconWeightShadow,
+                                  Function<Component, MutableComponent> componentMutableComponentFunction,
+                                  boolean shouldClipWeights, ProjectionAccessor accessor
+    ) {
         for(MassStack stack : stacks1) {
 
             renderMassStack(graphics,
@@ -165,21 +184,24 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 offset,
                 color, shadowColor,
                 diagramIconWeight, diagramIconWeightShadow,
-                componentMutableComponentFunction);
+                componentMutableComponentFunction, shouldClipWeights, accessor);
             //LINKED_TYPEWRITER_KEY_ENTRY
         }
     }
 
     private void renderMassStack(GuiGraphics graphics,
-                                 int MX,int MY,
+                                 int MX, int MY,
                                  MassStack stack,
                                  Vector3d tmp,
                                  Vector3d offset,
-                                 int color,int shadowColor,
-                                 BCDTexture icon,BCDTexture shadowIcon,
-                                 Function<Component, MutableComponent> tooltip) {
-        Vector2d originCoords = betterContraptionDiagram$getScreenCoords(tmp.set(stack.position()).add(offset));
-
+                                 int color, int shadowColor,
+                                 BCDTexture icon, BCDTexture shadowIcon,
+                                 Function<Component, MutableComponent> tooltip,
+                                 boolean shouldClipWeights,
+                                 ProjectionAccessor accessor) {
+        Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(tmp.set(stack.position()).add(offset));
+        if(shouldClipWeights && !accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.x))
+            return;
         //if(!this.canDrawArrowAt((int) originCoords.x, (int) originCoords.y, areaWidth, areaHeight)) continue;
 
         if(originCoords.distanceSquared(MX, MY) < 8.0 * 8.0) {

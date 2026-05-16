@@ -5,6 +5,7 @@ import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
+import dev.simulated_team.simulated.index.SimGUITextures;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
@@ -57,6 +58,10 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
     @Shadow
     protected abstract boolean canDrawArrowAt(int x, int y, int width, int height);
 
+    @Shadow
+    @Final
+    public static SimGUITextures DIAGRAM_TEXTURE;
+
     @Override
     public DiagramStickyNote betterContraptionDiagram$note() {
         return note;
@@ -79,6 +84,16 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
             DiagramScreen.DIAGRAM_TEXTURE.width,
             DiagramScreen.DIAGRAM_TEXTURE.height
         );
+    }
+
+    @Override
+    public int bcd$originX() {
+        return ((DiagramScreen)(Object)this).width/2-DIAGRAM_TEXTURE.width/2;
+    }
+
+    @Override
+    public int bcd$originY() {
+        return ((DiagramScreen)(Object)this).height/2-DIAGRAM_TEXTURE.height/2;
     }
     @Override
     public Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point, Vector3d cameraPos){

@@ -13,4 +13,7 @@ public interface ProjectionAccessor {
 
     boolean bcd$canDrawAt(int x,int y);
 
+    int bcd$originX();
+    int bcd$originY();
+
 }
