@@ -82,8 +82,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     public CenterMassMovingScreen(DiagramScreen diagramScreen) {
         this.diagramScreen = diagramScreen;
         diagramScreenAccessors = CenterMassCalculator.accessors(diagramScreen);
-        diagramStickyNote = diagramScreenAccessors.betterContraptionDiagram$note();
-        noteAccessors = CenterMassCalculator.accessors(diagramStickyNote);
+
         clientData = new ClientData(((WithClientData) diagramScreenAccessors.betterContraptionDiagram$diagram()));
         expectedCenterOfMass()
         ;
@@ -124,6 +123,8 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
                              .setDepthTextureBuffer()
                              .build(true);
         }
+        diagramStickyNote = diagramScreenAccessors.betterContraptionDiagram$note();
+        noteAccessors = CenterMassCalculator.accessors(diagramStickyNote);
         LinearLayout mainLayout = LinearLayout.vertical().spacing(5);
 
 
