@@ -1,0 +1,37 @@
+{
+  "better_contraption_diagram.diagram-button": "Калькулятор Центра Масс",
+
+  "better_contraption_diagram.axis_value": "%s",
+  "better_contraption_diagram.axis_arrow": "%s (%s)",
+  "better_contraption_diagram.axis_group.x": "Ширина",
+  "better_contraption_diagram.axis_group.y": "Высота",
+  "better_contraption_diagram.axis_group.z": "Длинна",
+
+  "better_contraption_diagram.center_of_mass": "Центр масс",
+  "better_contraption_diagram.eCOM": "Ожидаемый Центр Масс",
+  "better_contraption_diagram.center_of_mass.tooltip": "%s %s",
+  "better_contraption_diagram.eCOM.tooltip": "%s %s",
+  "better_contraption_diagram.weight.tooltip": "Вес %s",
+  "better_contraption_diagram.small-weight.distance.tooltip": "(дистанция %s)",
+  "better_contraption_diagram.small-weight.tooltip": "Не распределённый вес %s %s",
+  "better_contraption_diagram.weight.wrong-axis.tooltip": "Веса для распределения по оси %s: %s",
+
+
+  "better_contraption_diagram.item.tooltip": "Возможный центр масс %s",
+  "better_contraption_diagram.item-open.tooltip": "Нажмите <<Shift>> чтобы увидеть возможные центра масс",
+
+
+  "better_contraption_diagram.calculator.move_to_struct_center": "Подвинуть в центр",
+  "better_contraption_diagram.calculator.select_block": "Выбрать на Диаграмме",
+  "better_contraption_diagram.calculator.reset_block": "Сбросить",
+  "better_contraption_diagram.common.shift-scale": "Нажмите <<Shift>> чтобы сдвинуть на 0.5",
+  "better_contraption_diagram.common.ctrl-scale": "Нажмите <<Ctrl>> чтобы сдвинуть на 10",
+
+
+  "better_contraption_diagram.configuration.title": "Better Contraption Diagram Configs",
+  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml": "Better Contraption Diagram Configs",
+  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml.title": "Better Contraption Diagram Configs",
+
+  "better_contraption_diagram.configuration.axisScale": "Длинны координатных осей",
+  "better_contraption_diagram.configuration.axisOffset": "Сдвиг координатной оси"
+}

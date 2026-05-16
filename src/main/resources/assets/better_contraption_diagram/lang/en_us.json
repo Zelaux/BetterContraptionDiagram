@@ -1,6 +1,4 @@
 {
-  "itemGroup.examplemod": "Example Mod Tab",
-
   "better_contraption_diagram.diagram-button": "Mass Calculator",
 
   "better_contraption_diagram.axis_value": "%s",
@@ -17,7 +15,6 @@
   "better_contraption_diagram.small-weight.distance.tooltip": "(distance %s)",
   "better_contraption_diagram.small-weight.tooltip": "Undistributable weight %s %s",
   "better_contraption_diagram.weight.wrong-axis.tooltip": "Weight distributed in axis %s is %s",
-  "better_contraption_diagram.wight.tooltip0": "Weight %s",
 
 
   "better_contraption_diagram.item.tooltip": "Possible center of mass %s",
