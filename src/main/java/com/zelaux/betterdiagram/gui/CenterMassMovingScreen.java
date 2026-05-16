@@ -6,8 +6,11 @@ import com.mojang.blaze3d.vertex.*;
 import com.simibubi.create.AllKeys;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.extend.*;
+import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.gui.widget.GridClicker;
 import com.zelaux.betterdiagram.gui.widget.PartialInteration;
+import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
@@ -24,6 +27,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.createmod.catnip.gui.AbstractSimiScreen;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -35,6 +39,7 @@ import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
@@ -387,19 +392,35 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     }
 
     private AbstractWidget makeButton(MutableComponent title, Runnable onclicl, Supplier<Component> diagramTooltip) {
-        return makeButton(title, 64, 24, onclicl, diagramTooltip);
+        return makeButton(title, 64, 24, BCDTextures.Diagram.DIAGRAM_BACKGROUND_64_24, onclicl, diagramTooltip);
     }
 
-    private @NotNull ExtendedButton makeButton(MutableComponent title, int width, int height, Runnable onclicl, Supplier<Component> diagramTooltip) {
-        return makeButton0(title, width, height, onclicl, () -> List.of(diagramTooltip.get()));
+    private @NotNull ExtendedButton makeButton(MutableComponent title, int width, int height, BCDTexture texture, Runnable onclicl, Supplier<Component> diagramTooltip) {
+        return makeButton0(title, width, height,texture, onclicl, () -> List.of(diagramTooltip.get()));
     }
 
-    private @NotNull ExtendedButton makeButton0(MutableComponent title, int width, int height, Runnable onclicl, Supplier<List<Component>> diagramTooltip) {
+    private @NotNull ExtendedButton makeButton0(MutableComponent title, int width, int height, BCDTexture texture, Runnable onclicl, Supplier<List<Component>> diagramTooltip) {
+
         return new ExtendedButton(0, 0, width, height, title, self -> onclicl.run()) {
+
+            public static final Color GRAY = new Color(0xaaaaaaaa);
 
             @Override
             public void renderWidget(final GuiGraphics guiGraphics, final int mouseX, final int mouseY, final float partialTicks) {
-                super.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
+                Minecraft mc = Minecraft.getInstance();
+                //guiGraphics.blitSprite(SPRITES.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+
+                Color c;
+                if(!active) c = GRAY;
+                else if(this.isHovered()) c = DiagramScreen.BUTTON_COLOR;
+                else c=Color.WHITE /*c = DiagramScreen.DULL_BUTTON_COLOR*/;
+
+                texture.render(guiGraphics, this.getX() - 1, this.getY() - 1, c);
+
+                final FormattedText buttonText = mc.font.ellipsize(this.getMessage(), this.width - 6); // Remove 6 pixels so that the text is always contained within the button's borders
+                guiGraphics.drawCenteredString(mc.font, Language.getInstance().getVisualOrder(buttonText), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, getFGColor());
+
+                //super.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
 
                 if(diagramTooltip != null && this.isHovered()) {
                     //noinspection unchecked,rawtypes
@@ -432,26 +453,26 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         final var tmp = new Vector3d();
         final var tmp2 = new Vector3d();
         final var bb = diagramScreen.subLevel.getPlot().getBoundingBox();
-        final var incBtn = makeButton0(Component.literal("+"), 15, 10, () -> {
+        final var incBtn = makeButton0(Component.literal("+"),  12, 10, BCDTextures.Diagram.DIAGRAM_BACKGROUND_12_10, () -> {
             var COM = expectedCenterOfMass();
             tmp.set(COM).sub(minVec3d(bb, tmp2));
             setter.accept(tmp, getter.applyAsDouble(tmp) + getOffset());
             COM.set(tmp).add(tmp2);
             positionUpdatedNotFromEditBox(tmp);
         }, () -> shiftCtrlScale);
-        final var decBtn = makeButton0(Component.literal("-"), 15, 10, () -> {
+        final var decBtn = makeButton0(Component.literal("-"), 12, 10, BCDTextures.Diagram.DIAGRAM_BACKGROUND_12_10, () -> {
             var COM = expectedCenterOfMass();
             tmp.set(COM).sub(minVec3d(bb, tmp2));
             setter.accept(tmp, getter.applyAsDouble(tmp) - getOffset());
             COM.set(tmp).add(tmp2);
             positionUpdatedNotFromEditBox(tmp);
         }, () -> shiftCtrlScale);
-        final var center = makeButton(Component.literal("C"), 15, 20, () -> {
+        final var center = makeButton(Component.literal("C"), 16, 20, BCDTextures.Diagram.DIAGRAM_BACKGROUND_16_20, () -> {
             var COM = expectedCenterOfMass();
             setter.accept(COM, getter.applyAsDouble(centerOfSubLevel()));
             positionUpdatedNotFromEditBox(tmp.set(COM).sub(minVec3d(bb, tmp2)));
         }, () -> Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"));
-        final var choose = makeButton(Component.literal("D"), 15, 20, () -> {
+        final var choose = makeButton(Component.literal("D"), 16, 20, BCDTextures.Diagram.DIAGRAM_BACKGROUND_16_20, () -> {
             selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
                 gridToNormalVector(grid, gridPos, tmp);
                 tmp.add(minVec3d(bb, tmp2));
@@ -460,7 +481,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
                 positionUpdatedNotFromEditBox(tmp.set(v).sub(tmp2));
             });
         }, () -> Component.translatable("better_contraption_diagram.calculator.select_block"));
-        final var reset = makeButton(Component.literal("R"), 15, 20, () -> {
+        final var reset = makeButton(Component.literal("R"), 16, 20, BCDTextures.Diagram.DIAGRAM_BACKGROUND_16_20, () -> {
             var v = expectedCenterOfMass();
             setter.accept(v, getter.applyAsDouble(currentCenterOfMass()));
             positionUpdatedNotFromEditBox(tmp.set(v).sub(minVec3d(bb, tmp2)));

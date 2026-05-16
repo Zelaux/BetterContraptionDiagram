@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram;
 
+import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -39,6 +40,10 @@ public class BetterContraptionDiagram {
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+    }
+
+    public static ResourceLocation resource(String location) {
+        return ResourceLocation.fromNamespaceAndPath(MODID,location);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

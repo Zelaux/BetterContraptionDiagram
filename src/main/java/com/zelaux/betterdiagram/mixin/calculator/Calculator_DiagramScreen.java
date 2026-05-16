@@ -11,7 +11,6 @@ import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
 import com.zelaux.betterdiagram.util.StringUtil;
-import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
@@ -92,7 +91,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final int diagramX = this.width / 2 - DIAGRAM_TEXTURE.width / 2;
         final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
 
-        final var openCenterMass = new BDiagramButton(BCDTextures.DIAGRAM_ICON_CALCULATOR, diagramX + 9, diagramY + 9 + 20 * 4, Component.translatable("better_contraption_diagram.diagram-button"), () -> {
+        final var openCenterMass = new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_CALCULATOR, diagramX + 9, diagramY + 9 + 20 * 4, Component.translatable("better_contraption_diagram.diagram-button"), () -> {
             CenterMassMovingScreen.open(self());
         });
 
@@ -142,8 +141,8 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                     //addForceArrowTooltip(forceGroup, pointForce.groupSize().getValue(), forceMagnitude, color, tooltipLines);
                 }
 
-                BCDTextures.DIAGRAM_ICON_WEIGHT_SHADOW.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
-                BCDTextures.DIAGRAM_ICON_WEIGHT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(color));
+                BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT_SHADOW.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
+                BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(color));
                 continue;
             }
             renderMassStacks(graphics,
@@ -152,7 +151,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 tmp,
                 offset,
                 color, shadowColor,
-                BCDTextures.DIAGRAM_ICON_WEIGHT, BCDTextures.DIAGRAM_ICON_WEIGHT_SHADOW,
+                BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT, BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT_SHADOW,
                 (list, m, v) -> list.add(Component.translatable("better_contraption_diagram.weight.tooltip", v)),
                 shouldClipWeights, accessor);
             renderMassStacks(graphics,
@@ -161,7 +160,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 tmp,
                 offset,
                 color, shadowColor,
-                BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT, BCDTextures.DIAGRAM_ICON_SMALL_WEIGHT_SHADOW,
+                BCDTextures.Diagram.DIAGRAM_ICON_SMALL_WEIGHT, BCDTextures.Diagram.DIAGRAM_ICON_SMALL_WEIGHT_SHADOW,
                 (list, mass, v) -> list.add(//TODO maybe multi line with tab?
                     Component.translatable("better_contraption_diagram.small-weight.tooltip", v,
                         Component.translatable("better_contraption_diagram.small-weight.distance.tooltip",
@@ -234,7 +233,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final Vector2d screenCoords = MixinCalculatorUtil.screenPositionOfExpectedCOM(self(), LOCAL_ORIENTATION, LOCAL_CAMERA_POSITION, PROJECTION_MAT, DIAGRAM_TEXTURE.width, DIAGRAM_TEXTURE.height);
         if(screenCoords == null) return;
 
-        final var tex = BCDTextures.DIAGRAM_ICON_EXPECTED_COM;
+        final var tex = BCDTextures.Diagram.DIAGRAM_ICON_EXPECTED_COM;
 
         final PoseStack pose = graphics.pose();
         pose.pushPose();

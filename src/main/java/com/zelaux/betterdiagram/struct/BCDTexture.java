@@ -65,16 +65,19 @@ public class BCDTexture implements ScreenElement {
     public static BCDTexture texture(final BCDTexture owner, final int startX, final int startY, final int width, final int height) {
         return new BCDTexture(owner.location, startX, startY, width, height, owner.texWidth, owner.texHeight);
     }
-    public static BCDTexture icon(final BCDTexture owner, final int startX, final int startY) {
-        return icon(owner,startX,startY,16);
+    public static BCDTexture gridCell(final AtlasTexture owner, final int startX, final int startY) {
+        return gridCell(owner,startX,startY, owner.gridCellWidth, owner.gridCellHeight);
     }
-    public static BCDTexture icon(final BCDTexture owner, final int startX, final int startY,final int size) {
-        return texture(owner, startX*size, startY*size,size,size);
+    public static BCDTexture gridCell(final BCDTexture owner, final int startX, final int startY, final int size) {
+        return gridCell(owner, startX, startY,size,size);
+    }
+    public static BCDTexture gridCell(final BCDTexture owner, final int startX, final int startY, final int w,final int h) {
+        return texture(owner, startX*w, startY*h,w,h);
     }
 
     public static BCDTexture texture(final String location, final int width, final int height) {return new BCDTexture(location, width, height);}
 
-    public static BCDTexture atlas(final String location, final int width, final int height) {return new BCDTexture(location,0,0, width, height,width, height);}
+    public static AtlasTexture atlas(final String location, final int width, final int height, int cellWidth, int cellHeight) {return new AtlasTexture(location,width,height,cellWidth,cellHeight);}
 
     public static BCDTexture texture(final int startX, final int startY) {return new BCDTexture(startX, startY);}
 
