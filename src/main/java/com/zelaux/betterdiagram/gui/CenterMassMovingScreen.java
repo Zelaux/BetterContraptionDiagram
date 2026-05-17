@@ -411,7 +411,15 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
 
         return new ExtendedButton(0, 0, width, height, title, self -> onclicl.run()) {
 
-            public static final Color GRAY = new Color(0xaaaaaaaa);
+            public static final Color GRAY = new Color(0xffaaaaaa);
+
+            @Override
+            public int getFGColor() {
+                if(!active) return super.getFGColor();
+                if(!isHovered()) return DiagramScreen.DULL_BUTTON_COLOR.getRGB();
+                //return DiagramScreen.DULL_BUTTON_COLOR.getRGB();
+                return DiagramScreen.BUTTON_COLOR.getRGB();
+            }
 
             @Override
             public void renderWidget(final GuiGraphics guiGraphics, final int mouseX, final int mouseY, final float partialTicks) {
@@ -420,13 +428,18 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
 
                 Color c;
                 if(!active) c = GRAY;
-                else if(this.isHovered()) c = DiagramScreen.BUTTON_COLOR;
-                else c=Color.WHITE /*c = DiagramScreen.DULL_BUTTON_COLOR*/;
+                    //else if(this.isHovered()) c = DiagramScreen.BUTTON_COLOR;
+                else c = Color.WHITE /*c = DiagramScreen.DULL_BUTTON_COLOR*/;
 
-                texture.render(guiGraphics, this.getX() - 1, this.getY() - 1, c);
+                texture.render(guiGraphics, this.getX(), this.getY(), c);
 
                 final FormattedText buttonText = mc.font.ellipsize(this.getMessage(), this.width - 6); // Remove 6 pixels so that the text is always contained within the button's borders
-                guiGraphics.drawCenteredString(mc.font, Language.getInstance().getVisualOrder(buttonText), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, getFGColor());
+                FormattedCharSequence text = Language.getInstance().getVisualOrder(buttonText);
+                int x = this.getX() + this.width / 2;
+                int y = this.getY() + (this.height - 8) / 2;
+                int color = getFGColor();
+                int x1 = x - mc.font.width(text) / 2;
+                guiGraphics.drawString(mc.font, text, x1, y, color, false);
 
                 //super.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
 
