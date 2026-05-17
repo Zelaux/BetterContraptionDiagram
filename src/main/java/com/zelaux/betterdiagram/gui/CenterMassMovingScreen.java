@@ -4,9 +4,11 @@ import com.ibm.icu.impl.Pair;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.simibubi.create.AllKeys;
+import com.simibubi.create.foundation.gui.widget.Label;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
+import com.zelaux.betterdiagram.Content;
 import com.zelaux.betterdiagram.extend.*;
-import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
+import com.zelaux.betterdiagram.gui.widget.FloatScrollInput;
 import com.zelaux.betterdiagram.gui.widget.GridClicker;
 import com.zelaux.betterdiagram.gui.widget.PartialInteration;
 import com.zelaux.betterdiagram.index.BCDTextures;
@@ -45,6 +47,7 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FormattedCharSequence;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
@@ -60,7 +63,6 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
 
 import static com.zelaux.betterdiagram.gui.widget.PartialInteration.boxes;
 import static com.zelaux.betterdiagram.gui.widget.PartialInteration.partialInteration;
@@ -68,6 +70,7 @@ import static com.zelaux.betterdiagram.util.UIUtil.*;
 import static com.zelaux.betterdiagram.util.VecUtil.*;
 
 public class CenterMassMovingScreen extends AbstractSimiScreen {
+    public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.###");
     DiagramScreen diagramScreen;
     DiagramStickyNote diagramStickyNote;
     DiagramScreenAccessors diagramScreenAccessors;
@@ -129,9 +132,9 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         LinearLayout mainLayout = LinearLayout.vertical().spacing(5);
 
 
-        var editX = editBox(Component.literal("X"), VecUtil.GETTERS_3d[0], SETTERS_3d[0], this::editX);
-        var editY = editBox(Component.literal("Y"), VecUtil.GETTERS_3d[1], SETTERS_3d[1], this::editY);
-        var editZ = editBox(Component.literal("Z"), VecUtil.GETTERS_3d[2], SETTERS_3d[2], this::editZ);
+        var editX = editBox(0, this::editX);
+        var editY = editBox(1, this::editY);
+        var editZ = editBox(2, this::editZ);
         BoundingBox3ic bb = diagramScreen.subLevel.getPlot().getBoundingBox();
         updateEdit(minVec3d(bb).negate().add(expectedCenterOfMass()));
         mainLayout.addChild(
@@ -185,7 +188,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
 
 
         ResourceLocation location = ResourceLocation.fromNamespaceAndPath(BetterContraptionDiagram.MODID, "fbo");
-        partialInterationForScreen = addWidget(new PartialInteration(
+        partialInterationForScreen = (new PartialInteration(
             diagramScreen,
             (object, graphics, mouseX, mouseY, partialTick) -> {
                 graphics.flush();
@@ -251,6 +254,11 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         if(subGrid != null) addGrid(subGrid, boxes(BoundingBox2i.box2d(subGrid)), BoundingBox2i.EMPTY_ARRAY);
 
         mainLayout.visitWidgets(this::addRenderableWidget);
+
+        addWidget(partialInterationForScreen);
+        for(var pair : grids) {
+            addWidget(pair.second);
+        }
     }
 
     private Vector3d expectedCenterOfMassOffset() {
@@ -260,7 +268,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     private void addGrid(MyGridClicker myGridClicker, BoundingBox2i[] boxes1, BoundingBox2i[] boxes) {
         grids.add(Pair.of(
             myGridClicker,
-            addRenderableWidget(
+            addRenderableOnly(
                 partialInteration(
                     myGridClicker,
                     boxes1,
@@ -432,18 +440,19 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     }
 
     private void updateEdit(Vector3d expectedCenterOfMass) {
-        DecimalFormat format = new DecimalFormat("#.#####");
         programatic = true;
-        editX.setValue(format.format(expectedCenterOfMass.x));
-        editY.setValue(format.format(expectedCenterOfMass.y));
-        editZ.setValue(format.format(expectedCenterOfMass.z));
+        editX.setValue(DECIMAL_FORMAT.format(expectedCenterOfMass.x));
+        editY.setValue(DECIMAL_FORMAT.format(expectedCenterOfMass.y));
+        editZ.setValue(DECIMAL_FORMAT.format(expectedCenterOfMass.z));
         programatic = false;
     }
 
-    private @NotNull LayoutElement editBox(MutableComponent boxName,
-                                           ToDoubleFunction<Vector3d> getter,
-                                           ObjDoubleConsumer<Vector3d> setter,
-                                           Consumer<EditBox> boxConsumer) {
+    private @NotNull LayoutElement editBox(int axisIndex, Consumer<EditBox> boxConsumer) {
+        Content.BCDForceGroup axisGroup = Content.AXIS_GROUPS[axisIndex];
+        final var boxName = axisGroup.axisName.copy();
+        final var setter = SETTERS_3d[axisIndex];
+        final var getter = GETTERS_3d[axisIndex];
+
         final var editBox = initEditBox(boxName, setter, boxConsumer);
 
         List<Component> shiftCtrlScale = List.of(
@@ -453,7 +462,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         final var tmp = new Vector3d();
         final var tmp2 = new Vector3d();
         final var bb = diagramScreen.subLevel.getPlot().getBoundingBox();
-        final var incBtn = makeButton0(Component.literal("+"),  12, 10, BCDTextures.Diagram.DIAGRAM_BACKGROUND_12_10, () -> {
+        final var incBtn = makeButton0(Component.literal("+"), 12, 10, BCDTextures.Diagram.DIAGRAM_BACKGROUND_12_10, () -> {
             var COM = expectedCenterOfMass();
             tmp.set(COM).sub(minVec3d(bb, tmp2));
             setter.accept(tmp, getter.applyAsDouble(tmp) + getOffset());
@@ -512,8 +521,52 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         positionUpdated();
     }
 
-    private @NotNull EditBox initEditBox(MutableComponent boxName, ObjDoubleConsumer<Vector3d> setter, Consumer<EditBox> boxConsumer) {
-        final var editBox = new EditBox(minecraft.font, 64, 20, boxName);
+    private @NotNull LayoutElement initEditBox(MutableComponent boxName, ObjDoubleConsumer<Vector3d> setter, Consumer<EditBox> boxConsumer) {
+        FloatScrollInput scrollInput = new FloatScrollInput(0, 0, 44, 20) {
+            @Override
+            protected void updateTooltip() {
+                toolTip.clear();
+                toolTip.add(scrollToModify.plainCopy().withStyle( ChatFormatting.WHITE));
+                toolTip.add(shiftScrollsFaster.plainCopy().withStyle(ChatFormatting.ITALIC, ChatFormatting.WHITE));
+                toolTip.add(shiftScrollsSlower.plainCopy().withStyle(ChatFormatting.ITALIC, ChatFormatting.WHITE));
+            }
+
+            @Override
+            protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+                if(this.isHovered()) {
+                    List<Component> tooltip = this.getToolTip();
+                    if(tooltip.isEmpty())
+                        return;
+                    //int ttx = this.lockedTooltipX == -1 ? mouseX : this.lockedTooltipX + this.getX();
+                    //int tty = this.lockedTooltipY == -1 ? mouseY : this.lockedTooltipY + this.getY();
+
+                    //Font font = Minecraft.getInstance().font;
+                    //noinspection rawtypes,unchecked
+                    DiagramScreen.renderTooltip(graphics, mouseX, mouseY, (List) tooltip);
+                }
+            }
+        }
+            .calling(v -> {
+                if(programatic) return;
+                Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox());
+                Vector3d COM = expectedCenterOfMass();
+                setter.accept(COM.sub(offset), v);
+                COM.add(offset);
+                positionUpdatedNotFromEditBox(offset.negate().add(COM));
+                //positionUpdated();
+            })
+            .withRange(Float.MIN_VALUE, Float.MAX_VALUE)
+            .titled(boxName)
+            .format(x -> Component.literal(DECIMAL_FORMAT.format(x)))
+            .withStepFunction(ctx->ctx.control?0.5f:(ctx.shift?10:1))
+            ;
+        final var editBox = new EditBox(minecraft.font, scrollInput.getWidth(), scrollInput.getHeight(), boxName) {
+            @Override
+            public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+                return scrollInput.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+            }
+        };
+        EditBoxAccessors boxAccessors = EditBoxAccessors.of(editBox);
         editBox.setFilter(s -> {
             if(s.isEmpty() || s.equals("-"))
                 return true;
@@ -527,13 +580,20 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             }
         });
         editBox.setResponder(s -> {
-            if(programatic) return;
+            boxAccessors.bcd$displayPos(0);
+            if(programatic) {
+                scrollInput.setState(Float.parseFloat(s));
+                return;
+            }
             try {
                 double v = Double.parseDouble(s);
+                scrollInput.setState(Float.parseFloat(s));
+
                 Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox());
                 Vector3d COM = expectedCenterOfMass();
                 setter.accept(COM.sub(offset), v);
                 COM.add(offset);
+                //positionUpdatedNotFromEditBox(offset.negate().add(COM));
                 positionUpdated();
                 editBox.setTooltip(null);
             } catch(NumberFormatException e) {
@@ -541,7 +601,10 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             }
         });
         boxConsumer.accept(editBox);
-        return editBox;
+        return stackFill(
+            editBox,
+            scrollInput
+        );
     }
 
     private void positionUpdated() {

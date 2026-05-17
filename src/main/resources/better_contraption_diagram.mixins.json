@@ -11,6 +11,7 @@
     "LevelRendererMixin",
     "accessors.DiagramScreenAccessorsImpl",
     "accessors.DiagramStickyNoteAccessorsImpl",
+    "accessors.EditBoxMixin",
     "calculator.Calculator_DiagramScreen",
     "calculator.Calculator_DiagramStickyNote",
     "fix.DiagramScreenFixMixin"
