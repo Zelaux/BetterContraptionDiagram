@@ -488,14 +488,23 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         }, () -> Component.translatable("better_contraption_diagram.calculator.reset_block"));
 
         MutableComponent append = boxName.append(":");
-        return horizontal(1,
-            label(append),
+        Label label = label(append)
+            .colored(axisGroup.color)
+            .withShadow();
+        label.setHeight(font.lineHeight);
+
+        LayoutElement[] widgets = new LayoutElement[]{
+            label,
             editBox,
-            vertical(0, incBtn, decBtn),
+            //vertical(0, incBtn, decBtn),
             center,
             choose,
             reset
-        );
+        };
+        LinearLayout layout = LinearLayout.horizontal().spacing(0);
+        layout.defaultCellSetting().alignVerticallyMiddle();
+        for(var widget : widgets) layout.addChild(widget);
+        return layout;
     }
 
     private void positionUpdatedNotFromEditBox(Vector3d v) {
