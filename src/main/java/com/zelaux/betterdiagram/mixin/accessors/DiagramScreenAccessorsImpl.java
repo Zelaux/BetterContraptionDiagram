@@ -62,6 +62,13 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
     @Final
     public static SimGUITextures DIAGRAM_TEXTURE;
 
+    @Shadow
+    @Final
+    private static int TOOLTIP_LABEL_COLOR;
+
+    @Override
+    public int TOOLTIP_LABEL_COLOR() {return TOOLTIP_LABEL_COLOR;}
+
     @Override
     public DiagramStickyNote betterContraptionDiagram$note() {
         return note;
