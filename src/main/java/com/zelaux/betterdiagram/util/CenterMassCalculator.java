@@ -7,11 +7,14 @@ import com.zelaux.betterdiagram.extend.DiagramStickyNoteAccessors;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.struct.Weights;
+import dev.ryanhcode.sable.api.physics.force.ForceGroups;
+import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Runtime;
 import org.joml.Vector3d;
 
@@ -26,13 +29,13 @@ public class CenterMassCalculator {
     }
 
     public static @NotNull Vector3d centerOfMass(ClientSubLevel subLevel) {
-        return new Vector3d(subLevel.logicalPose().rotationPoint());
+        return subLevel.logicalPose().rotationPoint();
     }
 
     public static Weights[] recalculateStacks(DiagramScreen screen) {
         var accessors = accessors(screen);
         DiagramDataPacket diagramDataPacket = accessors.betterContraptionDiagram$serverData();
-        return recalculateStacks(( accessors.betterContraptionDiagram$clientData()), screen.subLevel, diagramDataPacket == null ? 0 : diagramDataPacket.mass());
+        return recalculateStacks((accessors.betterContraptionDiagram$clientData()), screen.subLevel, diagramDataPacket == null ? 0 : diagramDataPacket.mass());
     }
 
     public static Weights[] recalculateStacks(WithClientData clientData, ClientSubLevel subLevel, double mass) {
@@ -72,19 +75,19 @@ public class CenterMassCalculator {
     }
 
     private static void addStacks(Weights weights, Vector3d uni, Vector3d expectedCOM, double value0) {
-        if(equals(value0,0))value0=0;
-        weights.totalWeight=value0/4f;
-        long value= (long) Math.floor(value0);
+        if(equals(value0, 0)) value0 = 0;
+        weights.totalWeight = value0 / 4f;
+        long value = (long) Math.floor(value0);
         final int maxIterations = Config.MAX_ITERATION.getAsInt();
         final int maxFixDistance = Config.MAX_FIX_DISTANCE.getAsInt();
 
         long sig = value0 < 0 ? -1 : 1;
-        if(equals(Math.abs(value0-value),1)) value += sig;
-        else if(!Runtime.equals(value0,value,0.0001f)){
-            double v1 = (value0-value)/4f;
+        if(equals(Math.abs(value0 - value), 1)) value += sig;
+        else if(!Runtime.equals(value0, value, 0.0001f)) {
+            double v1 = (value0 - value) / 4f;
 
             long sigV1 = v1 < 0 ? -1 : 1;
-            v1=Math.abs(v1);
+            v1 = Math.abs(v1);
             double dst0 = v1 / 0.25;
 
             var unit = uni.mul(sigV1, new Vector3d());
@@ -106,7 +109,7 @@ public class CenterMassCalculator {
             );
             do {
                 dst++;
-                if(dst>maxFixDistance)return;
+                if(dst > maxFixDistance) return;
             } while(value % dst != 0 && dst < value);
 
             v = value / dst;
@@ -118,22 +121,37 @@ public class CenterMassCalculator {
     }
 
     public static DiagramScreenAccessors accessors(DiagramScreen screen) {return (DiagramScreenAccessors) screen;}
+
     public static DiagramStickyNoteAccessors accessors(DiagramStickyNote screen) {return (DiagramStickyNoteAccessors) screen;}
 
     public static Vector3d expectedCenterOfMass(WithClientData clientData, ClientSubLevel subLevel) {
         Vector3d com = centerOfMass(subLevel);
         return clientData.betterContraptionDiagram$getClientData(DataKeys.EXPECTED_CENTER_OF_MASS, () ->
-            com
+            new Vector3d(com)
         );
     }
 
-    public static boolean equals(double v1, double v2){
-        return Runtime.equals(v1,v2,DELTA);
+    public static boolean equals(double v1, double v2) {
+        return Runtime.equals(v1, v2, DELTA);
     }
+
     public static boolean equals(Vector3d COM1, Vector3d COM2) {
         if(COM1 == null) return COM2 == null;
         return COM1.equals(COM2, DELTA);
     }
+
+    public static Vector3d calculateGravityDirection(ClientSubLevel subLevel, DiagramDataPacket serverData, @Nullable Vector3d output) {
+        //DimensionPhysicsData.getGravity(level)
+        QueuedForceGroup.PointForce first = serverData.forces().get(ForceGroups.GRAVITY.get()).getFirst();
+        Vector3d force = output == null ? new Vector3d(first.force()) : output.set(first.force());
+
+        force.div(serverData.mass());
+
+        subLevel.logicalPose().transformNormal(force);
+
+        return force;
+    }
+
 
     public static class Data {
         public final Vector3d expectedCOM = new Vector3d();

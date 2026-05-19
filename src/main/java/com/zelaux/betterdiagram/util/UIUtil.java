@@ -4,8 +4,12 @@ import com.simibubi.create.foundation.gui.widget.Label;
 import net.minecraft.client.gui.layouts.FrameLayout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class UIUtil {
     public static FrameLayout stackFill(LayoutElement... widgets) {
@@ -30,5 +34,10 @@ public class UIUtil {
         label.text = text;
 
         return label;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static List<FormattedText> formattedText(List<Component> components) {
+        return (List) components;
     }
 }

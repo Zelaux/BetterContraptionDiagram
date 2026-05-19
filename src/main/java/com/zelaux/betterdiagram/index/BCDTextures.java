@@ -33,6 +33,8 @@ public interface BCDTextures {
 
 
         BCDTexture DIAGRAM_ICON_CALCULATOR = gridCell(atlas, 0, 3);
+        BCDTexture DIAGRAM_ICON_INFO = gridCell(atlas, 0, 4);
+
         BCDTexture DIAGRAM_ICON_BTN_BACKGROUND = gridCell(atlas, 1, 3);
         BCDTexture DIAGRAM_ICON_SMALL_WEIGHT_SHADOW= gridCell(atlas, 3, 2);
     }

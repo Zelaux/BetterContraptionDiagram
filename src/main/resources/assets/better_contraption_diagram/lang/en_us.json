@@ -35,5 +35,15 @@
   "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml.title": "Better Contraption Diagram Configs",
 
   "better_contraption_diagram.configuration.axisScale": "Axis Scale",
-  "better_contraption_diagram.configuration.axisOffset": "Axis Offset"
+  "better_contraption_diagram.configuration.axisOffset": "Axis Offset",
+
+
+
+
+
+  "better_contraption_diagram.extra-info.diagram-button": "Extra Information",
+  "better_contraption_diagram.extra-info.gravity": "Current Gravity Constant: %s",
+  "better_contraption_diagram.extra-info.sum-of-forces.title": "Sum of force",
+  "better_contraption_diagram.extra-info.sum-of-forces.displacement": "displacement: %s",
+  "better_contraption_diagram.extra-info.sum-of-forces.direction": "direction: %s"
 }

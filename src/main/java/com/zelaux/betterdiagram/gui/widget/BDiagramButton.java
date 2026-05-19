@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram.gui.widget;
 
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.BCDTexture;
+import com.zelaux.betterdiagram.util.UIUtil;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.index.SimSoundEvents;
 import lombok.Getter;
@@ -17,13 +18,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class BDiagramButton extends AbstractWidget {
 
     private BCDTexture texture;
     private final Runnable onClick;
-    private Supplier<Component> diagramTooltip;
+    private TooltipListProvider diagramTooltip;
     @Getter
     @Setter
     public BCDTexture background= BCDTextures.Diagram.DIAGRAM_ICON_BTN_BACKGROUND;
@@ -59,8 +61,8 @@ public class BDiagramButton extends AbstractWidget {
         this.texture.render(guiGraphics, this.getX() - 1, this.getY() - 1, this.isHovered() || this.iconSwitch.getAsBoolean() ? DiagramScreen.BUTTON_COLOR : DiagramScreen.DULL_BUTTON_COLOR);
 
         if(this.diagramTooltip != null && this.isHovered()) {
-            final List<FormattedText> lines = List.of(this.diagramTooltip.get());
-            DiagramScreen.renderTooltip(guiGraphics, mouseX, mouseY, lines);
+            final var lines = this.diagramTooltip.get();
+            DiagramScreen.renderTooltip(guiGraphics, mouseX, mouseY, UIUtil.formattedText(lines));
         }
     }
 
@@ -74,13 +76,19 @@ public class BDiagramButton extends AbstractWidget {
 
     }
 
-    public BDiagramButton setDiagramTooltip(final Supplier<Component> diagramTooltip) {
+    public BDiagramButton withTooltip(final TooltipListProvider diagramTooltip) {
         this.diagramTooltip = diagramTooltip;
         return this;
+    }
+    public BDiagramButton withTooltip(final Supplier<Component> diagramTooltip) {
+        return withTooltip(()->List.of(diagramTooltip.get()));
     }
 
     public BDiagramButton setIconSwitch(final BooleanSupplier switcher) {
         this.iconSwitch = switcher;
         return this;
+    }
+    public interface TooltipListProvider{
+        List<Component> get();
     }
 }

@@ -4,13 +4,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zelaux.betterdiagram.Content;
 import com.zelaux.betterdiagram.extend.ProjectionAccessor;
 import com.zelaux.betterdiagram.gui.CenterMassMovingScreen;
+import com.zelaux.betterdiagram.gui.tooltip.DiagramInfoTooltip;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.MassStack;
-import com.zelaux.betterdiagram.util.CenterMassCalculator;
-import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
-import com.zelaux.betterdiagram.util.StringUtil;
+import com.zelaux.betterdiagram.util.*;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
@@ -90,13 +89,18 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
 
         final int diagramX = this.width / 2 - DIAGRAM_TEXTURE.width / 2;
         final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
+        var layout = UIUtil.vertical(4,
+            new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_CALCULATOR, 0, 0, Component.translatable("better_contraption_diagram.diagram-button"), () -> {
+                CenterMassMovingScreen.open(self());
+            }),
+            new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_INFO, 0, 0,
+                Component.translatable("better_contraption_diagram.extra-info.diagram-button"), () -> {})
+                .withTooltip(new DiagramInfoTooltip(self(),this.subLevel, this.serverData))
 
-        final var openCenterMass = new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_CALCULATOR, diagramX + 9, diagramY + 9 + 20 * 4, Component.translatable("better_contraption_diagram.diagram-button"), () -> {
-            CenterMassMovingScreen.open(self());
-        });
-
-
-        addRenderableWidget(openCenterMass);
+        );
+        layout.setPosition(diagramX + 9, diagramY + 9 + 20 * 4);
+        layout.arrangeElements();
+        layout.visitWidgets(this::addRenderableWidget);
     }
 
     @Unique
@@ -167,7 +171,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                                      Component.literal(StringUtil.plainDouble(Math.abs(mass.position().dot(AXIS) - eCOM.dot(AXIS))))
                                               .withColor(ChatFormatting.GRAY.getColor())
                                  )
-                            .withColor(ChatFormatting.DARK_GRAY.getColor())
+                                 .withColor(ChatFormatting.DARK_GRAY.getColor())
                     )
                 ),
                 shouldClipWeights, accessor);

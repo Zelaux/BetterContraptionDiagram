@@ -36,6 +36,9 @@ public class VecUtil {
     public static @NotNull Vector3d minVec3d(BoundingBox3ic box,Vector3d vec) {
         return vec.set(box.minX(), box.minY(), box.minZ());
     }
+    public static @NotNull Vector3d subMinVec3d(Vector3d vec, BoundingBox3ic box) {
+        return vec.sub(box.minX(), box.minY(), box.minZ());
+    }
 
 
     public static @NotNull Vector3d maxVec3d(BoundingBox3ic box) {
