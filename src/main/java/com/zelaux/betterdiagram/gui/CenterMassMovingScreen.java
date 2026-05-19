@@ -71,7 +71,7 @@ import static com.zelaux.betterdiagram.util.VecUtil.*;
 
 public class CenterMassMovingScreen extends AbstractSimiScreen {
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.###");
-    DiagramScreen diagramScreen;
+    public DiagramScreen diagramScreen;
     DiagramStickyNote diagramStickyNote;
     DiagramScreenAccessors diagramScreenAccessors;
     DiagramStickyNoteAccessors noteAccessors;
