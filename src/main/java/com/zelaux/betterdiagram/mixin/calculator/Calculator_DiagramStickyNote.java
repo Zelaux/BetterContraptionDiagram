@@ -64,7 +64,7 @@ public class Calculator_DiagramStickyNote {
         final Vector3d centerOfMass = CenterMassCalculator.expectedCenterOfMass(parent);
         if(CenterMassCalculator.equals(centerOfMass, CenterMassCalculator.centerOfMass(parent.subLevel))) return;
 
-        Vector2d screenCoords = DiagramScreen.getScreenCoords(VecUtil.minVec3d(parent.subLevel.getPlot().getBoundingBox()).add(centerOfMass), NOTE_ORIENTATION, NOTE_LOCAL_CAM_POS, NOTE_PROJ_MAT, SUBLEVEL_RENDER_WIDTH_PIXELS, SUBLEVEL_RENDER_HEIGHT_PIXELS);
+        Vector2d screenCoords = DiagramScreen.getScreenCoords(new Vector3d(centerOfMass), NOTE_ORIENTATION, NOTE_LOCAL_CAM_POS, NOTE_PROJ_MAT, SUBLEVEL_RENDER_WIDTH_PIXELS, SUBLEVEL_RENDER_HEIGHT_PIXELS);
 
         stack.pushPose();
 
@@ -81,7 +81,7 @@ public class Calculator_DiagramStickyNote {
             MixinCalculatorUtil.displayECOMTooltip(bcd$mouse.x, bcd$mouse.y,
                 areaOffsetX,areaOffsetY,
                 screenCoords
-                , parent.tooltipList, centerOfMass)
+                , parent.tooltipList, VecUtil.subMinVec3d(new Vector3d(centerOfMass),parent.subLevel.getPlot().getBoundingBox()))
             ;
         } else {
             final float centerX = SUBLEVEL_RENDER_WIDTH_PIXELS / 2f;
@@ -92,7 +92,7 @@ public class Calculator_DiagramStickyNote {
             MixinCalculatorUtil.displayECOMTooltip(bcd$mouse.x, bcd$mouse.y,
                 areaOffsetX,areaOffsetY,
                 target.mul(40, bcd$tmp1).add(centerX, centerY)
-                , parent.tooltipList, centerOfMass)
+                , parent.tooltipList, VecUtil.subMinVec3d(new Vector3d(centerOfMass),parent.subLevel.getPlot().getBoundingBox()))
             ;
             TransformStack.of(stack)
                           .translate(centerX, centerY, 0)

@@ -95,7 +95,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
             }),
             new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_INFO, 0, 0,
                 Component.translatable("better_contraption_diagram.extra-info.diagram-button"), () -> {})
-                .withTooltip(new DiagramInfoTooltip(self(),this.subLevel, this.serverData))
+                .withTooltip(new DiagramInfoTooltip(self(), this.subLevel, this.serverData))
 
         );
         layout.setPosition(diagramX + 9, diagramY + 9 + 20 * 4);
@@ -253,10 +253,12 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final Vector3d eCOM = CenterMassCalculator.expectedCenterOfMass(self);
         if(CenterMassCalculator.equals(eCOM, CenterMassCalculator.centerOfMass(self.subLevel))) return;
 
-        Vector2d screenCoords = DiagramScreen.getScreenCoords(minVec3d(self.subLevel.getPlot().getBoundingBox()).add(eCOM), LOCAL_ORIENTATION, LOCAL_CAMERA_POSITION, PROJECTION_MAT, DIAGRAM_TEXTURE.width, DIAGRAM_TEXTURE.height);
+        Vector2d screenCoords = DiagramScreen.getScreenCoords(new Vector3d(eCOM), LOCAL_ORIENTATION, LOCAL_CAMERA_POSITION, PROJECTION_MAT, DIAGRAM_TEXTURE.width, DIAGRAM_TEXTURE.height);
 
 
-        MixinCalculatorUtil.displayECOMTooltip(mouseX, mouseY, areaOriginX, areaOriginY, screenCoords, tooltipList, eCOM);
+        MixinCalculatorUtil.displayECOMTooltip(mouseX, mouseY, areaOriginX, areaOriginY, screenCoords, tooltipList
+            , VecUtil.subMinVec3d(new Vector3d(eCOM), subLevel.getPlot().getBoundingBox())
+        );
     }
 
 }
