@@ -1,5 +1,7 @@
 package com.zelaux.betterdiagram.util;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
@@ -25,7 +27,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
@@ -42,7 +43,10 @@ public class MixinCalculatorUtil {
         if(CenterMassCalculator.equals(centerOfMass, CenterMassCalculator.centerOfMass(self.subLevel))) return null;
         return DiagramScreen.getScreenCoords(new Vector3d(centerOfMass), localOrientation, localCameraPosition, projectionMat, areaWidth, areaHeight);
     }
-
+/**
+ * @see dev.ryanhcode.sable.mixin.debug_render.LevelRendererMixin#renderLevel(DeltaTracker, boolean, Camera, GameRenderer, LightTexture, Matrix4f, Matrix4f, CallbackInfo)
+ * @see dev.ryanhcode.sable.neoforge.mixin.block_outline_render.LevelRendererMixin#sable$preRenderHitOutline(LevelRenderer, Camera, HitResult, DeltaTracker, PoseStack, MultiBufferSource, Operation, LocalBooleanRef)
+ * */
     public static void renderLevel(DeltaTracker deltaTracker,
                                    boolean bl,
                                    Camera camera,
@@ -59,7 +63,7 @@ public class MixinCalculatorUtil {
             return;
         }
         HitResult hitResult = minecraft.hitResult;
-        final PoseStack poseStack = new PoseStack();
+        final PoseStack ps = new PoseStack();
         if(!(hitResult instanceof BlockHitResult blockHitResult)) return;
 
 
@@ -67,45 +71,19 @@ public class MixinCalculatorUtil {
         BlockState blockstate = level.getBlockState(blockPos);
         if(blockstate.isAir())return;
         final ClientSubLevel subLevel = (ClientSubLevel) Sable.HELPER.getContaining(level, blockPos);
-        if(subLevel==null){
-
-            renderCenterOfMass(camera, matrix4f, level, blockHitResult, minecraft, poseStack, blockPos);
-            return;
-        }
-
-        poseStack.pushPose();
-
-        final Pose3dc pose = subLevel.renderPose();
-
-        sable$sublevelCamera.setCamera(camera);
-        sable$sublevelCamera.setPose(pose);
-        final Vec3 cameraPosition = sable$sublevelCamera.getPosition();
-        final Vec3 realCameraPosition = camera.getPosition();
-
-        final Vector3dc position = pose.position();
-        final Vector3dc rotationPoint = pose.rotationPoint();
-        final Quaterniondc orientation = pose.orientation();
-        final Vector3dc scale = pose.scale();
-
-        poseStack.translate(
-            (float) (position.x() - realCameraPosition.x),
-            (float) (position.y() - realCameraPosition.y),
-            (float) (position.z() - realCameraPosition.z)
-        );
-        poseStack.mulPose(sable$orientationStorage.set(orientation));
-        poseStack.translate(
-            (float) -(rotationPoint.x() - cameraPosition.x),
-            (float) -(rotationPoint.y() - cameraPosition.y),
-            (float) -(rotationPoint.z() - cameraPosition.z)
-        );
-        poseStack.scale((float) scale.x(), (float) scale.y(), (float) scale.z());
-
-        renderCenterOfMass(sable$sublevelCamera, matrix4f, level, blockHitResult, minecraft, poseStack, blockPos);
+        renderCenterOfMass(camera, matrix4f, level, blockHitResult, minecraft, ps, blockPos,subLevel);
 
 
     }
 
-    private static void renderCenterOfMass(Camera camera, Matrix4f matrix4f, ClientLevel level, BlockHitResult blockHitResult, Minecraft minecraft, PoseStack ps, BlockPos blockPos) {
+    private static void renderCenterOfMass(Camera camera,
+                                           Matrix4f matrix4f,
+                                           ClientLevel level,
+                                           BlockHitResult blockHitResult,
+                                           Minecraft minecraft,
+                                           PoseStack ps,
+                                           BlockPos blockPos,
+                                           @Nullable ClientSubLevel subLevel) {
         final MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
         final VertexConsumer consumer = bufferSource.getBuffer(RenderType.LINES);
 
@@ -113,25 +91,32 @@ public class MixinCalculatorUtil {
         final double cy = camera.getPosition().y;
         final double cz = camera.getPosition().z;
 
-
+        ps.pushPose();
         ps.mulPose(matrix4f);
 
         BlockState blockstate = level.getBlockState(blockPos);
-        //this.renderHitOutline(ps, consumer, camera.getEntity(), cx, cy-1, cz, blockPos, blockstate);
-
-
-        ps.pushPose();
 
         Vector3dc blockCenterOfMass = MassTracker.BLOCK_CENTER_OF_MASS.apply(level, blockstate);
-        if(blockCenterOfMass.equals(JOMLConversion.HALF))return;
+        if(blockCenterOfMass.equals(JOMLConversion.HALF)) {
+          return;}
         double mass = PhysicsBlockPropertyHelper.getMass(level, blockPos, blockstate);
-        if(CenterMassCalculator.equals(mass,0))return;
+        if(CenterMassCalculator.equals(mass,0)) {
+            return;}
 
         final Vector3dc offset = new Vector3d(JOMLConversion.toJOML(blockHitResult.getBlockPos())).add(blockCenterOfMass);
 
-        ps.translate(offset.x() - cx, offset.y() - cy, offset.z() - cz);
-        //ps.mulPose(new Quaternionf(renderPose.orientation()));
 
+        if(subLevel!=null){
+            final Pose3dc renderPose = subLevel.renderPose();
+
+            Vector3dc center = renderPose.position();
+            Vector3dc locCenter = renderPose.rotationPoint();
+            ps.translate(center.x() - cx, center.y() - cy, center.z() - cz);
+            ps.mulPose(new Quaternionf(renderPose.orientation()));
+            ps.translate(offset.x() - locCenter.x(), offset.y() - locCenter.y(), offset.z() - locCenter.z());
+        }else{
+            ps.translate(offset.x() - cx, offset.y() - cy, offset.z() - cz);
+        }
         float size0 = 2.0f / 16.0f;
         int[] scales ={1,2,3};
         for(int scale : scales) {
