@@ -127,7 +127,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final int shadowColor = 0xfff9f2de;
         Vector3d tmp = new Vector3d(), projectedAxis = new Vector3d();
         Vector3d offset = minVec3d(subLevel.getPlot().getBoundingBox());
-        Vector3d eCOM = CenterMassCalculator.expectedCenterOfMass(self());
+        var eCOM = CenterMassCalculator.expectedCenterOfMass(self());
         for(int i = 0; i < stacks.length; i++) {
             var weights = stacks[i];
             if(weights.isEmpty()) continue;
@@ -250,7 +250,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
     void addCenterOfMassTooltip(GuiGraphics graphics, int mouseX, int mouseY, int areaOriginX, int areaOriginY, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight, CallbackInfo ci) {
         if(!config.displayCenterOfMass()) return;
         DiagramScreen self = self();
-        final Vector3d eCOM = CenterMassCalculator.expectedCenterOfMass(self);
+        final var eCOM = CenterMassCalculator.expectedCenterOfMass(self);
         if(CenterMassCalculator.equals(eCOM, CenterMassCalculator.centerOfMass(self.subLevel))) return;
 
         Vector2d screenCoords = DiagramScreen.getScreenCoords(new Vector3d(eCOM), LOCAL_ORIENTATION, LOCAL_CAMERA_POSITION, PROJECTION_MAT, DIAGRAM_TEXTURE.width, DIAGRAM_TEXTURE.height);

@@ -1,7 +1,8 @@
 package com.zelaux.betterdiagram.util;
 
 import com.zelaux.betterdiagram.Config;
-import com.zelaux.betterdiagram.extend.DataKeys;
+import com.zelaux.betterdiagram.data.BCDData;
+import com.zelaux.betterdiagram.extend.ClientData;
 import com.zelaux.betterdiagram.extend.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.extend.DiagramStickyNoteAccessors;
 import com.zelaux.betterdiagram.extend.WithClientData;
@@ -17,11 +18,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Runtime;
 import org.joml.Vector3d;
+import org.joml.Vector3dc;
 
 import java.util.Objects;
 
 public class CenterMassCalculator {
-    public static final WithClientData.Key<Data> cacheKey = new WithClientData.Key<>();
     public static final float DELTA = 0.00001f;
 
     public static Weights @NotNull [] makeMassStacks() {
@@ -35,27 +36,32 @@ public class CenterMassCalculator {
     public static Weights[] recalculateStacks(DiagramScreen screen) {
         var accessors = accessors(screen);
         DiagramDataPacket diagramDataPacket = accessors.betterContraptionDiagram$serverData();
-        return recalculateStacks((accessors.betterContraptionDiagram$clientData()), screen.subLevel, diagramDataPacket == null ? 0 : diagramDataPacket.mass());
+        if(diagramDataPacket==null)return null;
+        return recalculateStacks((accessors.betterContraptionDiagram$clientData()), screen.subLevel, diagramDataPacket.mass());
     }
 
     public static Weights[] recalculateStacks(WithClientData clientData, ClientSubLevel subLevel, double mass) {
+        BCDData data = clientData.bcdiagram$dataOrNull();
+        if(data == null) return null;
 
-        Vector3d expectedCOM = expectedCenterOfMass(clientData, subLevel);
+        var expectedCOM = expectedCenterOfMass(clientData, subLevel);
         Vector3d currentCOM = centerOfMass(subLevel);
         if(expectedCOM.equals(currentCOM, DELTA) || mass == 0) {
-            clientData.betterContraptionDiagram$deleteClientData(DataKeys.MASS_STACKS);
-            clientData.betterContraptionDiagram$deleteClientData(cacheKey);
+
+            clientData.bcdiagram$updateData(
+                data.withNoAxisData()
+            );
             return null;
         }
-        Data data = clientData.betterContraptionDiagram$getClientData(cacheKey);
-        var stacks = clientData.betterContraptionDiagram$getClientData(DataKeys.MASS_STACKS, CenterMassCalculator::makeMassStacks);
+        Cache cache = data.cache;
+        var stacks = data.axisWeightStacks;
 
-        if(data != null && data.isApproxEquals(expectedCOM, currentCOM, mass)) {
+        if(cache != null && cache.isApproxEquals(expectedCOM, currentCOM, mass)) {
             return stacks;
         }
+        if(stacks == null) stacks = makeMassStacks();
 
-
-        clientData.betterContraptionDiagram$putClientData(cacheKey, Data.update(data, expectedCOM, currentCOM, mass));
+        data = data.withCache(Cache.update(cache, expectedCOM, currentCOM, mass));
 
 
         stacks[0].clear();
@@ -71,10 +77,13 @@ public class CenterMassCalculator {
         addStacks(stacks[1], VecUtil.Y_V, expectedCOM, diff.y);
         addStacks(stacks[2], VecUtil.Z_V, expectedCOM, diff.z);
 
+        clientData.bcdiagram$updateData(
+            data = data.withAxisWeightStacks(stacks)
+        );
         return stacks;
     }
 
-    private static void addStacks(Weights weights, Vector3d uni, Vector3d expectedCOM, double value0) {
+    private static void addStacks(Weights weights, Vector3d uni, Vector3dc expectedCOM, double value0) {
         if(equals(value0, 0)) value0 = 0;
         weights.totalWeight = value0 / 4f;
         long value = (long) Math.floor(value0);
@@ -116,7 +125,7 @@ public class CenterMassCalculator {
         }
     }
 
-    public static Vector3d expectedCenterOfMass(DiagramScreen screen) {
+    public static Vector3dc expectedCenterOfMass(DiagramScreen screen) {
         return expectedCenterOfMass((accessors(screen).betterContraptionDiagram$clientData()), screen.subLevel);
     }
 
@@ -124,10 +133,20 @@ public class CenterMassCalculator {
 
     public static DiagramStickyNoteAccessors accessors(DiagramStickyNote screen) {return (DiagramStickyNoteAccessors) screen;}
 
-    public static Vector3d expectedCenterOfMass(WithClientData clientData, ClientSubLevel subLevel) {
-        Vector3d com = centerOfMass(subLevel);
-        return clientData.betterContraptionDiagram$getClientData(DataKeys.EXPECTED_CENTER_OF_MASS, () ->
-            new Vector3d(com)
+    @NotNull
+    public static Vector3dc expectedCenterOfMass(WithClientData clientData, ClientSubLevel subLevel) {
+        BCDData data = clientData.bcdiagram$dataOrNull();
+        if(data == null || data.eCOM() == null) return centerOfMass(subLevel);
+        return data.eCOM();
+    }
+
+    public static void expectedCenterOfMass(ClientData clientData, Vector3d newValue) {
+        if(newValue == null) {
+            clientData.bcdiagram$updateData(null);
+            return;
+        }
+        clientData.bcdiagram$updateData(
+            clientData.bcdiagram$dataOrCreate().withECOM(new Vector3d(newValue))
         );
     }
 
@@ -135,7 +154,7 @@ public class CenterMassCalculator {
         return Runtime.equals(v1, v2, DELTA);
     }
 
-    public static boolean equals(Vector3d COM1, Vector3d COM2) {
+    public static boolean equals(Vector3dc COM1, Vector3dc COM2) {
         if(COM1 == null) return COM2 == null;
         return COM1.equals(COM2, DELTA);
     }
@@ -153,12 +172,12 @@ public class CenterMassCalculator {
     }
 
 
-    public static class Data {
+    public static class Cache {
         public final Vector3d expectedCOM = new Vector3d();
         public final Vector3d actualCOM = new Vector3d();
         public double mass;
 
-        public Data() {}
+        public Cache() {}
 
         public Vector3d expectedCOM() {return expectedCOM;}
 
@@ -166,18 +185,18 @@ public class CenterMassCalculator {
 
         public double mass() {return mass;}
 
-        public Data set(Vector3d expectedCOM, Vector3d actualCOM, double mass) {
+        public Cache set(Vector3dc expectedCOM, Vector3d actualCOM, double mass) {
             this.expectedCOM.set(expectedCOM);
             this.actualCOM.set(actualCOM);
             this.mass = mass;
             return this;
         }
 
-        public static Data update(Data data, Vector3d expectedCOM, Vector3d currentCOM, double mass) {
-            return Objects.requireNonNullElseGet(data, Data::new).set(expectedCOM, currentCOM, mass);
+        public static Cache update(Cache cache, Vector3dc expectedCOM, Vector3d currentCOM, double mass) {
+            return Objects.requireNonNullElseGet(cache, Cache::new).set(expectedCOM, currentCOM, mass);
         }
 
-        private boolean isApproxEquals(Vector3d expectedCOM, Vector3d currentCOM, double mass) {
+        private boolean isApproxEquals(Vector3dc expectedCOM, Vector3d currentCOM, double mass) {
             return this.expectedCOM.equals(expectedCOM, DELTA) && actualCOM.equals(currentCOM, DELTA) && Runtime.equals(mass, this.mass, DELTA);
         }
     }

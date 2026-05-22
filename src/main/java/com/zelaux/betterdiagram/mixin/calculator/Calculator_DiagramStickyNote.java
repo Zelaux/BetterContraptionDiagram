@@ -61,7 +61,7 @@ public class Calculator_DiagramStickyNote {
     private void XX(GuiGraphics guiGraphics, PoseStack stack, CallbackInfo ci) {
         if(!(CenterMassCalculator.accessors(parent)).betterContraptionDiagram$config().displayCenterOfMass()) return;
 
-        final Vector3d centerOfMass = CenterMassCalculator.expectedCenterOfMass(parent);
+        final var centerOfMass = CenterMassCalculator.expectedCenterOfMass(parent);
         if(CenterMassCalculator.equals(centerOfMass, CenterMassCalculator.centerOfMass(parent.subLevel))) return;
 
         Vector2d screenCoords = DiagramScreen.getScreenCoords(new Vector3d(centerOfMass), NOTE_ORIENTATION, NOTE_LOCAL_CAM_POS, NOTE_PROJ_MAT, SUBLEVEL_RENDER_WIDTH_PIXELS, SUBLEVEL_RENDER_HEIGHT_PIXELS);

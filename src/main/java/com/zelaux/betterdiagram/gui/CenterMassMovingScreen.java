@@ -50,10 +50,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix4f;
-import org.joml.Vector2d;
-import org.joml.Vector2i;
-import org.joml.Vector3d;
+import org.joml.*;
 import org.lwjgl.glfw.GLFW;
 
 import java.text.DecimalFormat;
@@ -143,23 +140,21 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
 
         final var tmp = new Vector3d();
         final var centerButton = makeButton(Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"), () -> {
-            Vector3d COM = expectedCenterOfMass();
-            COM.set(centerOfSubLevel());
-            positionUpdatedNotFromEditBox(tmp.set(COM).sub(bb.minX(), bb.minY(), bb.minZ()));
+            Vector3d newValue = centerOfSubLevel();
+            expectedCenterOfMass(newValue);
+            positionUpdatedNotFromEditBox(VecUtil.subMinVec3d(tmp.set(newValue), bb));
         }, () -> Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"));
         final var selectBlock = makeButton(Component.translatable("better_contraption_diagram.calculator.select_block"), () -> {
             selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
                 Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox());
-                Vector3d COM = expectedCenterOfMass();
-                gridToNormalVector(grid, gridPos, tmp.set(COM).sub(offset));
-                COM.set(tmp).add(offset);
-                positionUpdatedNotFromEditBox(tmp);
+                gridToNormalVector(grid, gridPos, tmp.set(expectedCenterOfMass()).sub(offset));
+                expectedCenterOfMass(tmp.add(offset));
+                positionUpdatedNotFromEditBox(tmp.sub(offset));
             });
         }, () -> Component.translatable("better_contraption_diagram.calculator.select_block"));
         final var resetBlock = makeButton(Component.translatable("better_contraption_diagram.calculator.reset_block"), () -> {
-            Vector3d COM = expectedCenterOfMass();
-            COM.set(currentCenterOfMass());
-            positionUpdatedNotFromEditBox(tmp.set(COM).sub(bb.minX(), bb.minY(), bb.minZ()));
+            expectedCenterOfMass(null);
+            positionUpdatedNotFromEditBox(tmp.set(currentCenterOfMass()).sub(bb.minX(), bb.minY(), bb.minZ()));
         }, () -> Component.translatable("better_contraption_diagram.calculator.reset_block"));
         mainLayout.addChild(
             horizontal(5, centerButton, selectBlock, resetBlock)
@@ -394,9 +389,13 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     }
 
 
-    public Vector3d expectedCenterOfMass() {
+    public Vector3dc expectedCenterOfMass() {
         return CenterMassCalculator
             .expectedCenterOfMass(clientData, diagramScreen.subLevel);
+    }
+
+    public void expectedCenterOfMass(Vector3d newValue) {
+        CenterMassCalculator.expectedCenterOfMass(clientData, newValue);
     }
 
     private AbstractWidget makeButton(MutableComponent title, Runnable onclicl, Supplier<Component> diagramTooltip) {
@@ -404,7 +403,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     }
 
     private @NotNull ExtendedButton makeButton(MutableComponent title, int width, int height, BCDTexture texture, Runnable onclicl, Supplier<Component> diagramTooltip) {
-        return makeButton0(title, width, height,texture, onclicl, () -> List.of(diagramTooltip.get()));
+        return makeButton0(title, width, height, texture, onclicl, () -> List.of(diagramTooltip.get()));
     }
 
     private @NotNull ExtendedButton makeButton0(MutableComponent title, int width, int height, BCDTexture texture, Runnable onclicl, Supplier<List<Component>> diagramTooltip) {
@@ -445,7 +444,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
 
                 if(diagramTooltip != null && this.isHovered()) {
                     //noinspection unchecked,rawtypes
-                    final List<FormattedText> lines = (List)diagramTooltip.get();
+                    final List<FormattedText> lines = (List) diagramTooltip.get();
                     DiagramScreen.renderTooltip(guiGraphics, mouseX, mouseY, lines);
                 }
             }
@@ -476,37 +475,35 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         final var tmp2 = new Vector3d();
         final var bb = diagramScreen.subLevel.getPlot().getBoundingBox();
         final var incBtn = makeButton0(Component.literal("+"), 12, 10, BCDTextures.Diagram.DIAGRAM_BACKGROUND_12_10, () -> {
-            var COM = expectedCenterOfMass();
-            tmp.set(COM).sub(minVec3d(bb, tmp2));
+            tmp.set(expectedCenterOfMass()).sub(minVec3d(bb, tmp2));
             setter.accept(tmp, getter.applyAsDouble(tmp) + getOffset());
-            COM.set(tmp).add(tmp2);
-            positionUpdatedNotFromEditBox(tmp);
+            expectedCenterOfMass(tmp.add(tmp2));
+            positionUpdatedNotFromEditBox(tmp.sub(tmp2));
         }, () -> shiftCtrlScale);
         final var decBtn = makeButton0(Component.literal("-"), 12, 10, BCDTextures.Diagram.DIAGRAM_BACKGROUND_12_10, () -> {
-            var COM = expectedCenterOfMass();
-            tmp.set(COM).sub(minVec3d(bb, tmp2));
+            tmp.set(expectedCenterOfMass()).sub(minVec3d(bb, tmp2));
             setter.accept(tmp, getter.applyAsDouble(tmp) - getOffset());
-            COM.set(tmp).add(tmp2);
-            positionUpdatedNotFromEditBox(tmp);
+            expectedCenterOfMass(tmp.add(tmp2));
+            positionUpdatedNotFromEditBox(tmp.sub(tmp2));
         }, () -> shiftCtrlScale);
         final var center = makeButton(Component.literal("C"), 16, 20, BCDTextures.Diagram.DIAGRAM_BACKGROUND_16_20, () -> {
-            var COM = expectedCenterOfMass();
-            setter.accept(COM, getter.applyAsDouble(centerOfSubLevel()));
-            positionUpdatedNotFromEditBox(tmp.set(COM).sub(minVec3d(bb, tmp2)));
+            setter.accept(tmp.set(expectedCenterOfMass()), getter.applyAsDouble(centerOfSubLevel()));
+            expectedCenterOfMass(tmp);
+            positionUpdatedNotFromEditBox(tmp.sub(minVec3d(bb, tmp2)));
         }, () -> Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"));
         final var choose = makeButton(Component.literal("D"), 16, 20, BCDTextures.Diagram.DIAGRAM_BACKGROUND_16_20, () -> {
             selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
                 gridToNormalVector(grid, gridPos, tmp);
                 tmp.add(minVec3d(bb, tmp2));
-                Vector3d v = expectedCenterOfMass();
-                setter.accept(v, getter.applyAsDouble(tmp));
-                positionUpdatedNotFromEditBox(tmp.set(v).sub(tmp2));
+                setter.accept(tmp.set(expectedCenterOfMass()), getter.applyAsDouble(tmp));
+                expectedCenterOfMass(tmp);
+                positionUpdatedNotFromEditBox(tmp.sub(tmp2));
             });
         }, () -> Component.translatable("better_contraption_diagram.calculator.select_block"));
         final var reset = makeButton(Component.literal("R"), 16, 20, BCDTextures.Diagram.DIAGRAM_BACKGROUND_16_20, () -> {
-            var v = expectedCenterOfMass();
-            setter.accept(v, getter.applyAsDouble(currentCenterOfMass()));
-            positionUpdatedNotFromEditBox(tmp.set(v).sub(minVec3d(bb, tmp2)));
+            setter.accept(tmp.set(expectedCenterOfMass()), getter.applyAsDouble(currentCenterOfMass()));
+            expectedCenterOfMass(tmp);
+            positionUpdatedNotFromEditBox(tmp.sub(minVec3d(bb, tmp2)));
         }, () -> Component.translatable("better_contraption_diagram.calculator.reset_block"));
 
         MutableComponent append = boxName.append(":");
@@ -535,11 +532,13 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     }
 
     private @NotNull LayoutElement initEditBox(MutableComponent boxName, ObjDoubleConsumer<Vector3d> setter, Consumer<EditBox> boxConsumer) {
+
+         final Vector3d tmpCOM=new Vector3d(),tmpOffset=new Vector3d();
         FloatScrollInput scrollInput = new FloatScrollInput(0, 0, 44, 20) {
             @Override
             protected void updateTooltip() {
                 toolTip.clear();
-                toolTip.add(scrollToModify.plainCopy().withStyle( ChatFormatting.WHITE));
+                toolTip.add(scrollToModify.plainCopy().withStyle(ChatFormatting.WHITE));
                 toolTip.add(shiftScrollsFaster.plainCopy().withStyle(ChatFormatting.ITALIC, ChatFormatting.WHITE));
                 toolTip.add(shiftScrollsSlower.plainCopy().withStyle(ChatFormatting.ITALIC, ChatFormatting.WHITE));
             }
@@ -561,18 +560,16 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         }
             .calling(v -> {
                 if(programatic) return;
-                Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox());
-                Vector3d COM = expectedCenterOfMass();
-                setter.accept(COM.sub(offset), v);
-                COM.add(offset);
-                positionUpdatedNotFromEditBox(offset.negate().add(COM));
+                Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox(),tmpOffset);
+                setter.accept(tmpCOM.set(expectedCenterOfMass()).sub(offset), v);
+                expectedCenterOfMass(tmpCOM.add(offset));
+                positionUpdatedNotFromEditBox(tmpCOM.sub(offset));
                 //positionUpdated();
             })
             .withRange(Float.MIN_VALUE, Float.MAX_VALUE)
             .titled(boxName)
             .format(x -> Component.literal(DECIMAL_FORMAT.format(x)))
-            .withStepFunction(ctx->ctx.control?0.5f:(ctx.shift?10:1))
-            ;
+            .withStepFunction(ctx -> ctx.control ? 0.5f : (ctx.shift ? 10 : 1));
         final var editBox = new EditBox(minecraft.font, scrollInput.getWidth(), scrollInput.getHeight(), boxName) {
             @Override
             public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
@@ -602,10 +599,10 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
                 double v = Double.parseDouble(s);
                 scrollInput.setState(Float.parseFloat(s));
 
-                Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox());
-                Vector3d COM = expectedCenterOfMass();
-                setter.accept(COM.sub(offset), v);
-                COM.add(offset);
+                Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox(),tmpOffset);
+
+                setter.accept(tmpCOM.set(expectedCenterOfMass()).sub(offset), v);
+                expectedCenterOfMass(tmpCOM.add(offset));
                 //positionUpdatedNotFromEditBox(offset.negate().add(COM));
                 positionUpdated();
                 editBox.setTooltip(null);

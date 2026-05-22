@@ -1,8 +1,8 @@
 package com.zelaux.betterdiagram.extend;
 
+import com.zelaux.betterdiagram.data.BCDData;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Supplier;
 
 public class ClientData implements WithClientData {
     public WithClientData data;
@@ -11,34 +11,18 @@ public class ClientData implements WithClientData {
         this.data = data;
     }
 
-    public <T> T get(WithClientData.Key<T> key) {
-        return data.betterContraptionDiagram$getClientData(key, null);
-    }
-
-    public <T> T get(WithClientData.Key<T> key, Supplier<T> generator) {
-        return data.betterContraptionDiagram$getClientData(key, generator);
-    }
-
-    public <T> T remove(WithClientData.Key<T> key) {
-        return data.betterContraptionDiagram$deleteClientData(key);
-    }
-
-    public <T> void put(WithClientData.Key<T> key, T data) {
-        this.data.betterContraptionDiagram$putClientData(key, data);
+    @Override
+    public @Nullable BCDData bcdiagram$dataOrNull() {
+        return data.bcdiagram$dataOrNull();
     }
 
     @Override
-    public <T> T betterContraptionDiagram$getClientData(Key<T> key, @Nullable Supplier<T> generator) {
-        return data.betterContraptionDiagram$getClientData(key, generator);
+    public @NotNull BCDData bcdiagram$dataOrCreate() {
+        return data.bcdiagram$dataOrCreate();
     }
 
     @Override
-    public <T> void betterContraptionDiagram$putClientData(Key<T> key, T data) {
-        this.data.betterContraptionDiagram$putClientData(key, data);
-    }
-
-    @Override
-    public <T> T betterContraptionDiagram$deleteClientData(Key<T> key) {
-        return this.data.betterContraptionDiagram$deleteClientData(key);
+    public @NotNull BCDData bcdiagram$updateData(BCDData data) {
+        return this.data.bcdiagram$updateData(data);
     }
 }
