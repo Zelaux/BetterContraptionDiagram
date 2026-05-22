@@ -3,17 +3,18 @@
   "package": "com.zelaux.betterdiagram.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ClientDataForDiagramEntity"
+    "ClientDataForDiagramEntity",
+    "COM_view.com_view_GoggleOverlayRenderer"
   ],
   "client": [
     "BufferSourceMixin",
     "DiagramScreenMixin",
-    "LevelRendererMixin",
     "accessors.DiagramScreenAccessorsImpl",
     "accessors.DiagramStickyNoteAccessorsImpl",
     "accessors.EditBoxMixin",
     "calculator.Calculator_DiagramScreen",
     "calculator.Calculator_DiagramStickyNote",
+    "COM_view.LevelRendererMixin",
     "fix.DiagramScreenFixMixin"
   ],
   "injectors": {

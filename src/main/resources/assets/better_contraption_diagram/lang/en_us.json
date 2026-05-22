@@ -18,6 +18,7 @@
 
 
   "better_contraption_diagram.item.tooltip": "Possible center of mass %s",
+  "better_contraption_diagram.google-overlay.com-offset": "Center of mass offset %s",
   "better_contraption_diagram.item-open.tooltip": "Press <<Shift>> to view possible centers of mass",
 
 

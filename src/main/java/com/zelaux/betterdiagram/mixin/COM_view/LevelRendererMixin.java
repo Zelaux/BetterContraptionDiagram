@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.mixin;
+package com.zelaux.betterdiagram.mixin.COM_view;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

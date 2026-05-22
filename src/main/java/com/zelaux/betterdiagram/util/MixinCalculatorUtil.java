@@ -15,25 +15,31 @@ import dev.ryanhcode.sable.mixinhelpers.block_outline_render.SubLevelCamera;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
+import joptsimple.internal.Strings;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.List;
 
+import static com.zelaux.betterdiagram.Config.COM_viewType;
 import static com.zelaux.betterdiagram.util.VecUtil.vectorToFormatted;
+import static net.createmod.catnip.lang.LangBuilder.DEFAULT_SPACE_WIDTH;
 
 public class MixinCalculatorUtil {
 
@@ -59,7 +65,7 @@ public class MixinCalculatorUtil {
                                    SubLevelCamera sable$sublevelCamera, Quaternionf sable$orientationStorage) {
         final Minecraft minecraft = Minecraft.getInstance();
         if(!GogglesItem.isWearingGoggles(minecraft.player))return;
-        if (!minecraft.getEntityRenderDispatcher().shouldRenderHitBoxes() && !minecraft.getDebugOverlay().showDebugScreen() || Minecraft.getInstance().showOnlyReducedInfo()) {
+        if (!COM_viewType.get().shouldShow(minecraft.player.isShiftKeyDown()) || Minecraft.getInstance().showOnlyReducedInfo()) {
             return;
         }
         HitResult hitResult = minecraft.hitResult;
@@ -147,6 +153,25 @@ public class MixinCalculatorUtil {
             centerOfMassTitle.withColor(color),
             vectorToFormatted(eCOM).withColor((0xff << 24) | Config.FORCE_CORDS_COLOR.getAsInt())
         ));
+    }
+
+    public static int getIndents(Font font, int defaultIndents) {
+        int spaceWidth = font.width(" ");
+        if (DEFAULT_SPACE_WIDTH == spaceWidth) {
+            return defaultIndents;
+        }
+        return Mth.ceil(DEFAULT_SPACE_WIDTH * defaultIndents / spaceWidth);
+    }
+
+    public static void forGoogles(List<Component> tooltip, int indent, MutableComponent component) {
+        tooltip.add(indented(indent, component)
+        );
+    }
+
+    public static @NotNull MutableComponent indented(int indent, MutableComponent component) {
+        return Component
+            .literal(Strings.repeat(' ', getIndents(Minecraft.getInstance().font, 4 + indent)))
+            .append(component);
     }
 
     public interface TooltipAdder {

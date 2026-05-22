@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram;
 
+import com.zelaux.betterdiagram.struct.ComViewType;
 import net.minecraft.ChatFormatting;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -34,6 +35,12 @@ public class Config {
     public static final ModConfigSpec.IntValue MAX_FIX_DISTANCE = BUILDER
             .comment("max mass stack distance")
             .defineInRange("maxFixDistance", 1000, 1, 100_000);
+    public static final ModConfigSpec.EnumValue<ComViewType> COM_viewType_Goggles = BUILDER
+            .comment("center of mass tooltip view type with goggles")
+            .defineEnum("comViewTypeGoggle", ComViewType.SHIFT);
+    public static final ModConfigSpec.EnumValue<ComViewType> COM_viewType = BUILDER
+            .comment("center of mass box view type with goggles")
+            .defineEnum("comViewType", ComViewType.F3_OR_HITBOX);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 
