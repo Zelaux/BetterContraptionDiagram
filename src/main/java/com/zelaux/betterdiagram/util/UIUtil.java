@@ -10,15 +10,23 @@ import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class UIUtil {
     public static FrameLayout stackFill(LayoutElement... widgets) {
-        var layout =  new FrameLayout(0, 0);;
+        var layout = new FrameLayout(0, 0);
+        ;
         for(var widget : widgets) layout.addChild(widget);
         return layout;
     }
+
     public static LinearLayout horizontal(int spacing, LayoutElement... widgets) {
+        return horizontal(spacing, null, widgets);
+    }
+
+    public static LinearLayout horizontal(int spacing, Consumer<LinearLayout> config, LayoutElement... widgets) {
         LinearLayout layout = LinearLayout.horizontal().spacing(spacing);
+        if(config != null) config.accept(layout);
         for(var widget : widgets) layout.addChild(widget);
         return layout;
     }

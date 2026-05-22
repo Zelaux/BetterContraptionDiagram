@@ -8,9 +8,7 @@ import com.simibubi.create.foundation.gui.widget.Label;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.Content;
 import com.zelaux.betterdiagram.extend.*;
-import com.zelaux.betterdiagram.gui.widget.FloatScrollInput;
-import com.zelaux.betterdiagram.gui.widget.GridClicker;
-import com.zelaux.betterdiagram.gui.widget.PartialInteration;
+import com.zelaux.betterdiagram.gui.widget.*;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
@@ -82,6 +80,14 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     private PartialInteration partialInterationForScreen;
     private boolean wasDirty;
     private final ArrayList<Pair<MyGridClicker, PartialInteration>> grids = new ArrayList<>();
+    private static final MutableComponent[] tooltipAxisOnOff={
+        Component.translatable("better_contraption_diagram.diagram.disable-axis","X"),
+        Component.translatable("better_contraption_diagram.diagram.enable-axis","X"),
+        Component.translatable("better_contraption_diagram.diagram.disable-axis","Y"),
+        Component.translatable("better_contraption_diagram.diagram.enable-axis","Y"),
+        Component.translatable("better_contraption_diagram.diagram.disable-axis","Z"),
+        Component.translatable("better_contraption_diagram.diagram.enable-axis","Z"),
+    };
 
 
     public CenterMassMovingScreen(DiagramScreen diagramScreen) {
@@ -157,7 +163,26 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             positionUpdatedNotFromEditBox(tmp.set(currentCenterOfMass()).sub(bb.minX(), bb.minY(), bb.minZ()));
         }, () -> Component.translatable("better_contraption_diagram.calculator.reset_block"));
         mainLayout.addChild(
-            horizontal(5, centerButton, selectBlock, resetBlock)
+            horizontal(5, centerButton, selectBlock, resetBlock,
+                new CompositeWidgetLayouted(horizontal(0, i -> {},
+                    new BDiagramButton(BCDTextures.Diagram.ICONS_X, 0, 0, Component.literal("X"), () -> clientData.flipAxisStates(0))
+                        .setIconSwitch(() -> clientData.axisStates(0))
+                        .withTooltip(() -> tooltipAxisOnOff[1-clientData.axisStatesInt(0)])
+                    ,
+
+                    new BDiagramButton(BCDTextures.Diagram.ICONS_Y, 0, 0, Component.literal("Y"), () -> clientData.flipAxisStates(1))
+                        .withTooltip(() -> tooltipAxisOnOff[3-clientData.axisStatesInt(1)])
+                        .setIconSwitch(() -> clientData.axisStates(1)),
+
+                    new BDiagramButton(BCDTextures.Diagram.ICONS_Z, 0, 0, Component.literal("Z"), () -> clientData.flipAxisStates(2))
+                        .withTooltip(() -> tooltipAxisOnOff[5-clientData.axisStatesInt(2)])
+                        .setIconSwitch(() -> clientData.axisStates(2)
+                        )
+                ))
+                    .margin(4)
+                    .background(BCDTextures.Diagram.BACKGROUND_XYZ)
+
+            )
         );
 
         final int diagramX = this.width / 2;
@@ -533,7 +558,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
 
     private @NotNull LayoutElement initEditBox(MutableComponent boxName, ObjDoubleConsumer<Vector3d> setter, Consumer<EditBox> boxConsumer) {
 
-         final Vector3d tmpCOM=new Vector3d(),tmpOffset=new Vector3d();
+        final Vector3d tmpCOM = new Vector3d(), tmpOffset = new Vector3d();
         FloatScrollInput scrollInput = new FloatScrollInput(0, 0, 44, 20) {
             @Override
             protected void updateTooltip() {
@@ -560,7 +585,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         }
             .calling(v -> {
                 if(programatic) return;
-                Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox(),tmpOffset);
+                Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox(), tmpOffset);
                 setter.accept(tmpCOM.set(expectedCenterOfMass()).sub(offset), v);
                 expectedCenterOfMass(tmpCOM.add(offset));
                 positionUpdatedNotFromEditBox(tmpCOM.sub(offset));
@@ -599,7 +624,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
                 double v = Double.parseDouble(s);
                 scrollInput.setState(Float.parseFloat(s));
 
-                Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox(),tmpOffset);
+                Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox(), tmpOffset);
 
                 setter.accept(tmpCOM.set(expectedCenterOfMass()).sub(offset), v);
                 expectedCenterOfMass(tmpCOM.add(offset));

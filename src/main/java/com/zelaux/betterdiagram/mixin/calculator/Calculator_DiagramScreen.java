@@ -3,6 +3,7 @@ package com.zelaux.betterdiagram.mixin.calculator;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zelaux.betterdiagram.Content;
 import com.zelaux.betterdiagram.extend.ProjectionAccessor;
+import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.gui.CenterMassMovingScreen;
 import com.zelaux.betterdiagram.gui.tooltip.DiagramInfoTooltip;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
@@ -128,9 +129,10 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         Vector3d tmp = new Vector3d(), projectedAxis = new Vector3d();
         Vector3d offset = minVec3d(subLevel.getPlot().getBoundingBox());
         var eCOM = CenterMassCalculator.expectedCenterOfMass(self());
+        WithClientData clientData = (WithClientData) diagram;
         for(int i = 0; i < stacks.length; i++) {
             var weights = stacks[i];
-            if(weights.isEmpty()) continue;
+            if(weights.isEmpty() || !clientData.axisStates(i)) continue;
             var group = Content.AXIS_GROUPS[i];
             int color = group.color() | (0xff << 24);
             Vector3d AXIS = DIRECTIONS[i];
@@ -257,7 +259,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
 
 
         MixinCalculatorUtil.displayECOMTooltip(mouseX, mouseY, areaOriginX, areaOriginY, screenCoords, tooltipList
-            , VecUtil.subMinVec3d(new Vector3d(eCOM), subLevel.getPlot().getBoundingBox())
+            , subMinVec3d(new Vector3d(eCOM), subLevel.getPlot().getBoundingBox())
         );
     }
 

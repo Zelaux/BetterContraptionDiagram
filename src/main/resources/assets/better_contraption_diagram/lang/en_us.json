@@ -26,6 +26,9 @@
   "better_contraption_diagram.calculator.select_block": "Choose in Diagram",
   "better_contraption_diagram.calculator.reset_block": "Reset",
 
+  "better_contraption_diagram.diagram.disable-axis": "Disable axis %s",
+  "better_contraption_diagram.diagram.enable-axis": "Enable axis %s",
+
   "better_contraption_diagram.gui.scrollInput.ctrlScrollsSlower": "Ctrl to Scroll Slower",
   "better_contraption_diagram.common.shift-scale": "Press <<Shift>> to step by 0.5",
   "better_contraption_diagram.common.ctrl-scale": "Press<<Ctrl>> to step by 10",

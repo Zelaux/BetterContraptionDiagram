@@ -13,31 +13,33 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class BDiagramButton extends AbstractWidget {
 
-    private BCDTexture texture;
+    private BCDTexture[] textures;
     private final Runnable onClick;
     private TooltipListProvider diagramTooltip;
     @Getter
     @Setter
-    public BCDTexture background= BCDTextures.Diagram.DIAGRAM_ICON_BTN_BACKGROUND;
+    public BCDTexture background = BCDTextures.Diagram.DIAGRAM_ICON_BTN_BACKGROUND;
 
 
     private BooleanSupplier iconSwitch;
 
-    public BDiagramButton(final BCDTexture texture, final int x, final int y, final Component message, final Runnable onClick) {
-        super(x, y, texture.width, texture.height, message);
-        this.texture = texture;
+    public BDiagramButton(final BCDTexture textures, final int x, final int y, final Component message, final Runnable onClick) {
+        this(new BCDTexture[]{textures, textures}, x, y, message, onClick);
+    }
+
+    public BDiagramButton(final BCDTexture[] textures, final int x, final int y, final Component message, final Runnable onClick) {
+        super(x, y, textures[0].width, textures[0].height, message);
+        this.textures = textures;
         this.onClick = onClick;
-        this.iconSwitch = this::isHovered;
+        this.iconSwitch = null;
     }
 
     @Override
@@ -46,19 +48,20 @@ public class BDiagramButton extends AbstractWidget {
         this.onClick.run();
     }
 
-    public void setTexture(final BCDTexture texture) {
-        this.texture = texture;
+    public void setTextures(final BCDTexture textures, boolean active) {
+        this.textures[active ? 1 : 0] = textures;
     }
 
-    public BCDTexture getTexture() {
-        return this.texture;
+    public BCDTexture getTexture(boolean active) {
+        return this.textures[active ? 1 : 0];
     }
 
     @Override
     protected void renderWidget(final @NotNull GuiGraphics guiGraphics, final int mouseX, final int mouseY, final float partialTicks) {
-        if(background!=null) background.render(guiGraphics, this.getX() - 1, this.getY() - 1);
+        if(background != null) background.render(guiGraphics, this.getX() - 1, this.getY() - 1);
 
-        this.texture.render(guiGraphics, this.getX() - 1, this.getY() - 1, this.isHovered() || this.iconSwitch.getAsBoolean() ? DiagramScreen.BUTTON_COLOR : DiagramScreen.DULL_BUTTON_COLOR);
+        boolean active = iconSwitch!=null&& this.iconSwitch.getAsBoolean();
+        this.textures[active ? 1 : 0].render(guiGraphics, this.getX() - 1, this.getY() - 1, this.isHovered()  ? DiagramScreen.BUTTON_COLOR : DiagramScreen.DULL_BUTTON_COLOR);
 
         if(this.diagramTooltip != null && this.isHovered()) {
             final var lines = this.diagramTooltip.get();
@@ -80,15 +83,17 @@ public class BDiagramButton extends AbstractWidget {
         this.diagramTooltip = diagramTooltip;
         return this;
     }
+
     public BDiagramButton withTooltip(final Supplier<Component> diagramTooltip) {
-        return withTooltip(()->List.of(diagramTooltip.get()));
+        return withTooltip(() -> List.of(diagramTooltip.get()));
     }
 
     public BDiagramButton setIconSwitch(final BooleanSupplier switcher) {
         this.iconSwitch = switcher;
         return this;
     }
-    public interface TooltipListProvider{
+
+    public interface TooltipListProvider {
         List<Component> get();
     }
 }
