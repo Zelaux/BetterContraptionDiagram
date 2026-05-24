@@ -8,7 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.*;
 import org.spongepowered.asm.mixin.*;
 
+import java.io.Serializable;
 import java.lang.Math;
+import java.util.Comparator;
+import java.util.Objects;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.ToDoubleFunction;
 
@@ -22,6 +25,18 @@ public class VecUtil {
     public static final ObjDoubleConsumer<Vector3d>[] SETTERS_3d = genArr((t, v) -> t.x = v, (t, v) -> t.y = v, (t, v) -> t.z = v);
     public static final ToDoubleFunction<Vector2d>[] GETTERS_2d = genArr(Vector2d::x, Vector2d::y);
     public static final ObjDoubleConsumer<Vector2d>[] SETTERS_2d = genArr((t, v) -> t.x = v, (t, v) -> t.y = v);
+    public static final Comparator<? super Vector3dc> CMP_AS_ARR = (o1, o2) -> {
+        int i;
+        i=Double.compare(o1.x(),o2.x());
+        if(i!=0)return i;
+        i=Double.compare(o1.y(),o2.y());
+        if(i!=0)return i;
+        i=Double.compare(o1.z(),o2.z());
+        return i;
+    };
+    public static final Comparator<? super Vector3dc> CMP_LEN = Comparator.comparingDouble(Vector3dc::lengthSquared);
+    public static final Comparator<? super Vector3dc> CMP_LEN_05 = (Comparator<Vector3dc> & Serializable)
+        (c1, c2) -> Double.compare(c1.distanceSquared(0.5,0.5,0.5), c2.distanceSquared(0.5,0.5,0.5));
 
     @SafeVarargs
     private static <T> T[] genArr(T... arr) {

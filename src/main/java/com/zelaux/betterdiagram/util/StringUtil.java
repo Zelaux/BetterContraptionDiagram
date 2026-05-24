@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.text.DecimalFormat;
 
 public class StringUtil {
-    private static final DecimalFormat ZERO_WITH_SOME_DIGITS = makeFormat("#.#####");
+    public static final DecimalFormat ZERO_WITH_SOME_DIGITS = makeFormat("#.#####");
     private static final DecimalFormat ZERO_WITH_ZERO = makeFormat("#.#");
     private static final DecimalFormat[] formats = {
         null,

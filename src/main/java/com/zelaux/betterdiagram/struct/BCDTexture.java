@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram.struct;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
+import lombok.NonNull;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.ScreenElement;
 import net.createmod.catnip.theme.Color;
@@ -9,8 +10,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class BCDTexture implements ScreenElement {
-    @NotNull
+    @NonNull
     public final ResourceLocation location;
 
     public final int width, height;
@@ -32,8 +35,7 @@ public class BCDTexture implements ScreenElement {
 
 
     public BCDTexture(final String namespace, final String location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {
-        final ResourceLocation loc = ResourceLocation.tryBuild(namespace, "textures/" + location + ".png");
-        assert loc != null; //location should never be null here, if it is, we messed up
+        final ResourceLocation loc = ResourceLocation.fromNamespaceAndPath(namespace, "textures/" + location + ".png");
         this.location = loc;
         this.width = width;
         this.height = height;
@@ -51,7 +53,7 @@ public class BCDTexture implements ScreenElement {
         this(BetterContraptionDiagram.MODID, location, startX, startY, width, height, texWidth, texHeight);
     }
 
-    public BCDTexture(final ResourceLocation location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {
+    public BCDTexture(@NonNull final ResourceLocation location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {
         this.location = location;
         this.width = width;
         this.height = height;

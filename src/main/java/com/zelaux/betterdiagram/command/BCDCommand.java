@@ -3,13 +3,11 @@ package com.zelaux.betterdiagram.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.zelaux.betterdiagram.gui.COMScreen;
+import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
+import com.zelaux.betterdiagram.util.CenterMassCache;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.StringUtil;
 import com.zelaux.betterdiagram.util.VecUtil;
-import dev.ryanhcode.sable.api.physics.mass.MassTracker;
-import dev.ryanhcode.sable.companion.math.JOMLConversion;
-import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
 import foundry.veil.impl.ClientEnumArgument;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -17,7 +15,6 @@ import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -77,7 +74,7 @@ public class BCDCommand {
             )
             .executes(context -> {
                 Minecraft minecraft = Minecraft.getInstance();
-                minecraft.setScreen(new COMScreen(minecraft.player));
+                minecraft.setScreen(new COMScreen(COMScreen.GLOBAL_CONTEXT,minecraft.player));
                 return 1;
             })
         ;
@@ -85,20 +82,26 @@ public class BCDCommand {
         dispatcher.register(Commands.literal("bcd").redirect(
             dispatcher.register(bcdCommand)
         ));
+        dispatcher.register(Commands.literal("bcdresp")
+            .executes(x->{
+                Minecraft.getInstance().player.respawn();
+                x.getSource().sendSuccess(()->Component.literal("Ok."),true);
+                return 1;
+            }));
 
     }
 
     private static int allMass(HolderLookup.RegistryLookup<Block> blocks, Direction.Axis axis, Level level, CommandSourceStack source) {     //ArrayList<BlockState> states = new ArrayList<>();
         int total = 0;
-        Map<Double, List<Pair>> map = collectMass(blocks, level)
-            .values()
-            .stream()
-            .flatMap(it -> it.values().stream())
-            .flatMap(Collection::stream)
-            .collect(Collectors.groupingBy(it -> choose(axis, it.COM)));
+        Map<Double, List<CenterMassCache.Pair>> map = CenterMassCache.getCOM2_Block2States(blocks, level)
+                                                                     .values()
+                                                                     .stream()
+                                                                     .flatMap(it -> it.values().stream())
+                                                                     .flatMap(Collection::stream)
+                                                                     .collect(Collectors.groupingBy(it -> choose(axis, it.COM)));
         for(var entry : map.entrySet()) {
             var COM = toVecCompoent(entry.getKey(), axis);
-            List<Pair> pairs = entry.getValue();
+            List<CenterMassCache.Pair> pairs = entry.getValue();
             source.sendSuccess(() -> COM
                     .withStyle(it -> it.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, buildPairs(pairs))))
                 , true);
@@ -141,7 +144,7 @@ public class BCDCommand {
     private static int allMass(HolderLookup.RegistryLookup<Block> blocks, Level level, CommandSourceStack source) {
         //ArrayList<BlockState> states = new ArrayList<>();
         int total = 0;
-        for(var entry : collectMass(blocks, level).entrySet()) {
+        for(var entry : CenterMassCache.getCOM2_Block2States(blocks, level).entrySet()) {
             Vector3dc COM = entry.getKey();
             var pairs = entry.getValue().keySet();
             source.sendSuccess(() -> VecUtil.vectorToFormatted(COM)
@@ -165,11 +168,11 @@ public class BCDCommand {
         return it;
     }
 
-    private static Component buildPairs(List<Pair> pairs) {
+    private static Component buildPairs(List<CenterMassCache.Pair> pairs) {
         var it = Component.empty();
 
         for(int i = 0; i < pairs.size(); i++) {
-            Pair pair = pairs.get(i);
+            CenterMassCache.Pair pair = pairs.get(i);
             if(i > 0) it = it.append(", ");
             it.append(pair.state.getBlock().getName());
 
@@ -184,7 +187,7 @@ public class BCDCommand {
         }
         //ArrayList<BlockState> states = new ArrayList<>();
         int total = 0;
-        for(var entry : collectMass(blocks, level).entrySet()) {
+        for(var entry : CenterMassCache.getCOM2_Block2States(blocks, level).entrySet()) {
             var vector3dc = entry.getKey();
             var blocksWithStates = entry.getValue();
             if(!CenterMassCalculator.equals(choose(axis, vector3dc), value)) continue;
@@ -222,28 +225,6 @@ public class BCDCommand {
         return state.getBlock().asItem();
     }
 
-
-    static Map<Vector3dc, Map<Block, List<Pair>>> groupedOffsets = null;
-
-    public static @NotNull Map<Vector3dc, Map<Block, List<Pair>>> collectMass(HolderLookup.RegistryLookup<Block> blocks, Level level) {
-        if(groupedOffsets != null) return groupedOffsets;
-        Map<Vector3dc, Map<Block, List<Pair>>> collect = blocks
-            .listElements()
-            .flatMap(x -> x.value().getStateDefinition().getPossibleStates().stream())
-            .map(state -> {
-                double mass = PhysicsBlockPropertyHelper.getMass(level, BlockPos.ZERO, state);
-                if(CenterMassCalculator.equals(mass, 0)) return null;
-
-                Vector3dc blockCenterOfMass = MassTracker.BLOCK_CENTER_OF_MASS.apply(level, state);
-                if(blockCenterOfMass.equals(JOMLConversion.HALF)) return null;
-                return new Pair(state, blockCenterOfMass);
-            }).filter(Objects::nonNull).collect(
-                Collectors.groupingBy(x1 -> x1.COM, Collectors.groupingBy(x1 -> x1.state.getBlock()))
-            );
-        return groupedOffsets = collect;
-    }
-
-    public record Pair(BlockState state, Vector3dc COM) {}
 
     ;
 }
