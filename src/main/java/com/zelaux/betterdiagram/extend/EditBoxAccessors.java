@@ -9,5 +9,9 @@ public interface EditBoxAccessors {
     }
     int bcd$displayPos();
 
+    int bcd$highlightPos();
+
     void bcd$displayPos(int displayPos);
+
+    void bcd$highlightPos(int highlightPos);
 }

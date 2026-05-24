@@ -9,6 +9,7 @@
   "client": [
     "BufferSourceMixin",
     "DiagramScreenMixin",
+    "accessors.AbstractContainerScreenMixin",
     "accessors.DiagramScreenAccessorsImpl",
     "accessors.DiagramStickyNoteAccessorsImpl",
     "accessors.EditBoxMixin",

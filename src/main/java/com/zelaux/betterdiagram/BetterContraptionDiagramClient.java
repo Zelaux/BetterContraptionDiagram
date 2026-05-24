@@ -2,8 +2,11 @@ package com.zelaux.betterdiagram;
 
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllKeys;
+import com.zelaux.betterdiagram.command.BCDCommand;
+import com.zelaux.betterdiagram.gui.COMScreen;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
+import dev.ryanhcode.sable.command.SableCommand;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.mixinterface.block_properties.BlockStateExtension;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyTypes;
@@ -17,6 +20,7 @@ import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -24,13 +28,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,8 +67,24 @@ public class BetterContraptionDiagramClient {
         int priority = 7;
 
         BlockPropertiesTooltip.register(registrate, "center_mass", BetterContraptionDiagramClient::getCenterMassComponent, priority++);
+
+
+        final IEventBus neoBus = NeoForge.EVENT_BUS;
+        neoBus.addListener(this::registerCommand);
+        neoBus.addListener(this::listenForItemDrop);
+    }
+    public void listenForItemDrop(ItemTossEvent event){
+        Player player = event.getPlayer();
+        Minecraft instance = Minecraft.getInstance();
+        if(player != instance.player)return;
+        if(instance.screen instanceof COMScreen comScreen) {
+            comScreen.handleItemDrop(event);
+        }
     }
 
+    private void registerCommand(final RegisterClientCommandsEvent event) {
+        BCDCommand.register(event.getDispatcher(), event.getBuildContext());
+    }
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void itemTooltip(final ItemTooltipEvent event) {
         if(!AllKeys.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) return;

@@ -1,7 +1,6 @@
 package com.zelaux.betterdiagram.struct.math;
 
 
-import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Contract;
 import org.joml.Vector2i;
 import org.joml.Vector2ic;
@@ -26,7 +25,7 @@ public sealed interface BoundingBox2ic permits BoundingBox2i {
      * @return if this box intersects with the given other box
      */
     default boolean intersects(final int minX, final int minY, final int maxX, final int maxY) {
-        return this.maxX() >= minX && this.maxY() >= minY && this.minX() <= maxX && this.minY() <= maxY ;
+        return this.maxX() >= minX && this.maxY() >= minY && this.minX() <= maxX && this.minY() <= maxY;
     }
 
     /**
@@ -40,7 +39,7 @@ public sealed interface BoundingBox2ic permits BoundingBox2i {
      * @return if this box contains the given point
      */
     default boolean contains(final int x, final int y) {
-        return x >= this.minX() && x <= this.maxX() && y >= this.minY() && y <= this.maxY();
+        return this.minX() <= x && x <= this.maxX() && this.minY() <= y && y <= this.maxY();
     }
 
     /**
@@ -79,7 +78,7 @@ public sealed interface BoundingBox2ic permits BoundingBox2i {
      * @return the result stored in dest
      */
     default BoundingBox2i expandTo(final Vector2ic point, final BoundingBox2i dest) {
-        return this.expandTo(point.x(), point.y(),  dest);
+        return this.expandTo(point.x(), point.y(), dest);
     }
 
     /**
@@ -177,9 +176,6 @@ public sealed interface BoundingBox2ic permits BoundingBox2i {
     }
 
 
-
-
-
     /**
      * @return the center of this box
      */
@@ -235,5 +231,17 @@ public sealed interface BoundingBox2ic permits BoundingBox2i {
         return (this.maxX() - this.minX()) * (this.maxY() - this.minY());
     }
 
+    default int centerY() {
+        int max = maxY();
+        int min = minY();
+
+        return (int) (((long)max + min) / 2);
+    }
+    default int centerX() {
+        int max = maxX();
+        int min = minX();
+
+        return (int) (((long)max + min) / 2);
+    }
 }
 

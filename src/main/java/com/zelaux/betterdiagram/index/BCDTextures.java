@@ -10,7 +10,10 @@ public interface BCDTextures {
     int U = 16,U1=U,U2=U*2,U3=U*3;
     int S=16;
 
+    interface COMScreen{
+        AtlasTexture atlas = atlas("gui/COM_screen",256,256,161,16);
 
+    }
     interface Diagram{
         AtlasTexture atlas = atlas("gui/diagram",512, 256, 16, 16);
 
