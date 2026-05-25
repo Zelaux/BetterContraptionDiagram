@@ -110,11 +110,13 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if(scrollWidget.isOverBarRegion(mouseX,mouseY))return scrollWidget.mouseClicked(mouseX,mouseY,button);
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if(scrollWidget.scrolling())return scrollWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
         Slot clickedSlot = accessors.bcd$clickedSlot();
         if(clickedSlot == null && accessors.bcd$findSlot(mouseX, mouseY) == null) {
             if(this.getFocused() != null && this.isDragging() && button == 0)

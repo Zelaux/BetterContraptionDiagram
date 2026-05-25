@@ -1,6 +1,7 @@
 package com.zelaux.betterdiagram.gui.screen.COM;
 
 import com.zelaux.betterdiagram.gui.widget.ScrollBar;
+import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -58,6 +59,19 @@ public class MyScrollBar extends ScrollBar {
     @Override
     protected @NotNull ResourceLocation getScrollerSprite() {
         return active?SCROLLER_SPRITE:SCROLLER_DISABLED_SPRITE;
+    }
+
+    @Override
+    public int getScrollBarHeight() {
+        return 15;
+    }
+
+    @Override
+    public void setupScrollBarRegion(BoundingBox2i region) {
+        region.setSized(
+            getX()+175,getY()+18,
+            12,110
+        );
     }
 
     @Override
