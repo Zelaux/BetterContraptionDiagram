@@ -63,6 +63,12 @@ public class CenterOfMassMenu extends AbstractContainerMenu {
                 trySetFilterSlot(Minecraft.getInstance().player, stack,this);
                 return stack;
             }
+
+            @Override
+            public void setByPlayer(ItemStack stack,ItemStack oldStack) {
+                setCarried(stack);
+                trySetFilterSlot(player,stack,this);
+            }
         });
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 9; j++) {
