@@ -216,11 +216,13 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
             }
         });
 
-
+    if(context.buildOnInit){
+        performSearch();
+    }
     }
 
     private void performSearch() {
-
+        context.buildOnInit=true;
         SearchEntry[] searchEntries = new SearchEntry[3];
         int i = 0;
         for(Entry entry : context.entries) {

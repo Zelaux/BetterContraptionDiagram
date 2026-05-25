@@ -22,34 +22,29 @@ import java.util.Map;
 import java.util.Objects;
 
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PUBLIC)
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class Context {
-    Entry[] entries;
+    public Entry[] entries;
     @NotNull
     private ItemStack filterItem=ItemStack.EMPTY;
 
-
-    int selectedPair=-1;
-
-
+    public int selectedPair=-1;
     @Getter
     @Nullable
     private BlockItem blockItem = null;
+
+    public boolean buildOnInit=false;
 
     private final Lazy<COMPair[]> pairs = Lazy.of(() -> {
         if(blockItem == null) return COMPair.EMPTY_ARRAY;
         var centers = CenterMassCache.getBlock2Pairs(Minecraft.getInstance().player).get(blockItem.getBlock());
         if(centers == null || centers.isEmpty()) {return COMPair.EMPTY_ARRAY;}
-
         return centers
             .entrySet()
             .stream()
             .sorted(Map.Entry.comparingByKey(VecUtil.CMP_AS_ARR))
             .map(COMPair::make).toArray(COMPair[]::new);
-
-
     });
 
     public static Context newContext() {
