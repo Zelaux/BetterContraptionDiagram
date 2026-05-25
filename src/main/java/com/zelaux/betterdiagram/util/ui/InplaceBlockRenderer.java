@@ -3,24 +3,20 @@ package com.zelaux.betterdiagram.util.ui;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.simibubi.create.content.schematics.client.SchematicRenderer;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
-import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.render.VirtualRenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.Lazy;
@@ -31,13 +27,15 @@ import java.lang.ref.WeakReference;
 public class InplaceBlockRenderer {
 
     public static class WorldContainer {
+        private static final SchematicRenderer[] NONE = new SchematicRenderer[0];
         private BlockEntity myEntity;
         private PonderLevel myLevel;
         private WeakReference<Level> myHolderLevel;
-        private final Lazy<SchematicRenderer> myLevelRenderer = Lazy.of(() -> myLevel == null ? null : new SchematicRenderer(myLevel));
+        private final Lazy<SchematicRenderer[]> myLevelRenderer = Lazy.of(() -> myLevel == null ? NONE : new SchematicRenderer[]{new SchematicRenderer(myLevel)});
 
         public SchematicRenderer levelRenderer() {
-            return myLevelRenderer.get();
+            SchematicRenderer[] renderers = myLevelRenderer.get();
+            return renderers == NONE ? null : renderers[0];
         }
 
         @Nullable
@@ -100,7 +98,7 @@ public class InplaceBlockRenderer {
 
 
         BlockEntity orCreate = worldContainer.getOrCreate(state, level);
-        xx(graphics, state,orCreate, worldContainer.levelRenderer(), partialTick);
+        xx(graphics, state, orCreate, worldContainer.levelRenderer(), partialTick);
 
         //VertexConsumer cutout = graphics.bufferSource().getBuffer(RenderType.cutoutMipped());
         Lighting.setupFor3DItems();
@@ -111,7 +109,7 @@ public class InplaceBlockRenderer {
         Lighting.setupForEntityInInventory();
         PoseStack pose = guiGraphics.pose();
         pose.pushPose();
-        if(false){
+        if(false) {
             var renderer = Minecraft.getInstance().getBlockRenderer();
 
             RenderSystem.enableCull();
@@ -122,7 +120,7 @@ public class InplaceBlockRenderer {
 
             ));
         }
-        if(schematicRenderer!=null){
+        if(schematicRenderer != null) {
             //RenderSystem.enableCull();
             Lighting.setupLevel();
             //RenderSystem.enableDepthTest();
@@ -133,7 +131,7 @@ public class InplaceBlockRenderer {
 
             instance.draw();
             //RenderSystem.enableCull();
-        }else if(orCreate != null) {
+        } else if(orCreate != null) {
             var renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher();
 
             ;

@@ -39,9 +39,9 @@ public class Context {
     private BlockItem blockItem = null;
 
     private final Lazy<COMPair[]> pairs = Lazy.of(() -> {
-        if(blockItem == null) return null;
+        if(blockItem == null) return COMPair.EMPTY_ARRAY;
         var centers = CenterMassCache.getBlock2Pairs(Minecraft.getInstance().player).get(blockItem.getBlock());
-        if(centers == null || centers.isEmpty()) {return null;}
+        if(centers == null || centers.isEmpty()) {return COMPair.EMPTY_ARRAY;}
 
         return centers
             .entrySet()
@@ -90,6 +90,8 @@ public class Context {
 
 
     public record COMPair(Vector3dc center, ArrayList<CenterMassCache.Pair> pairs) {
+        public static final COMPair[] EMPTY_ARRAY = new COMPair[0];
+
         public static COMPair make(Map.Entry<Vector3dc, ArrayList<CenterMassCache.Pair>> pair) {
             return new COMPair(pair.getKey(), pair.getValue());
         }
