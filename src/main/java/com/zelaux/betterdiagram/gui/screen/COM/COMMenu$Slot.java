@@ -2,14 +2,11 @@ package com.zelaux.betterdiagram.gui.screen.COM;
 
 import com.zelaux.betterdiagram.util.ui.InplaceBlockRenderer;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
 
 @OnlyIn(Dist.CLIENT)
 class COMMenu$Slot extends BSlotItemHandler {
@@ -27,7 +24,7 @@ class COMMenu$Slot extends BSlotItemHandler {
         if(!this.mutable)return ItemStack.EMPTY;
         return super.safeTake(count, decrement, player);
     }
-public final InplaceBlockRenderer.Container entityContainer=new InplaceBlockRenderer.Container();
+public final InplaceBlockRenderer.WorldContainer entityWorldContainer =new InplaceBlockRenderer.WorldContainer();
     @Override
     public ItemStack getItem() {
         return super.getItem().copy();

@@ -17,6 +17,7 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CenterOfMassMenu extends AbstractContainerMenu {
     /**
@@ -29,7 +30,7 @@ public class CenterOfMassMenu extends AbstractContainerMenu {
     @Getter
     private int rowOffset;
 
-    public record ItemEntry(ItemStack stack, CenterMassCache.Pair cachePair){
+    public record ItemEntry(ItemStack stack, List<CenterMassCache.Pair> cachePairs){
 
     }
 

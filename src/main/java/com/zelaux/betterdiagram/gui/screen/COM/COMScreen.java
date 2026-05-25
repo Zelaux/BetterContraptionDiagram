@@ -254,12 +254,10 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
                 Block block = entry.getKey();
                 Item item = Item.BY_BLOCK.get(block);
                 if(item == null) continue;
-                for(CenterMassCache.Pair pair : entry.getValue()) {
-                    items.add(new CenterOfMassMenu.ItemEntry(
-                        new ItemStack(item),
-                        pair
-                    ));
-                }
+                items.add(new CenterOfMassMenu.ItemEntry(
+                    new ItemStack(item),
+                    entry.getValue()
+                ));
             }
         }
         long endNano=System.nanoTime();
@@ -277,91 +275,127 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 4210752, false);
     }
 
-    boolean wasError = true;
-    private final InplaceBlockRenderer.Container blockEntityContainer = new InplaceBlockRenderer.Container();
+    boolean wasError = false;
+    private final InplaceBlockRenderer.WorldContainer blockEntityWorldContainer = new InplaceBlockRenderer.WorldContainer();
 
     @Override
     public void removed() {
         super.removed();
-        blockEntityContainer.clear();
+        blockEntityWorldContainer.clear();
     }
 
     @Override
     protected void renderSlotContents(GuiGraphics guiGraphics, ItemStack itemstack, Slot slot, @org.jetbrains.annotations.Nullable String countString) {
-        if(try3dRender(guiGraphics, slot)) return;
         super.renderSlotContents(guiGraphics, itemstack, slot, countString);
 
     }
 
     private boolean try3dRender(GuiGraphics guiGraphics, Slot slot) {
         if(!(slot instanceof COMMenu$Slot mySlot) || slot.getItem().isEmpty()) return false;
+        if(slot!=hoveredSlot)return false;
         int rowOffset = menu.rowOffset();
         int rawIndex = mySlot.index();
         int rawRow = rawIndex / 9, rawCol = rawIndex % 9;
         int index = rawCol + (rawRow + rowOffset) * 9;
 
-        int x = slot.x ;
-        int y = slot.y ;
         if(index >= menu.items.size()) return false;
         CenterOfMassMenu.ItemEntry entry = menu.items.get(index);
-        if(entry.cachePair() == null) return false;
+        if(entry.cachePairs() == null || entry.cachePairs().isEmpty()) return false;
 
-        BlockState state = entry.cachePair().state;
-        renderBlockState(guiGraphics, state, x, y, partialTick, 8, 10, blockEntityContainer);
-        return true;
+        var pairs = entry.cachePairs();
+
+        renderLeftSide(guiGraphics, pairs, mySlot.entityWorldContainer);
+
+        return false;
+    }
+
+    private void renderLeftSide(GuiGraphics guiGraphics, List<CenterMassCache.Pair> pairs, InplaceBlockRenderer.WorldContainer worldContainer) {
+        int perRow = PREVIEW_PANEL_PER_ROW;
+        int size = PREVIEW_PANEL_CELL_SIZE;
+
+        int ox = leftPos-perRow*size;
+        int oy = topPos;
+        for(int i = 0; i < pairs.size(); i++) {
+
+            var pair = pairs.get(i);
+            int row = i / perRow, col = i % perRow;
+            int x = ox + col * size, y = oy + row * size;
+            boolean isSelected =false&&  context.selectedPair == i;
+            boolean isHovered =false;
+
+            worldContainer.updateBlockstateIfMatch(pair.state);
+            BCDTextures.COMScreen.choosePreviewSlotTexture(isHovered, isSelected).render(
+                guiGraphics, x, y
+            );
+            renderBlockState(guiGraphics, pair.state, x, y, partialTick, PREVIEW_PANEL_CELL_HALF_SIZE, 12, worldContainer);
+            if(isHovered) {
+
+                guiGraphics.renderTooltip(this.font, List.of(
+                    Component.literal(BlockStateParser.serialize(pair.state)),
+                    VecUtil.vectorToFormatted(pair.COM)
+                ), Optional.empty(), 0, 0);
+            }
+        }
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.partialTick = partialTick;
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        if(wasError)return;
+        try {
+            this.partialTick = partialTick;
+            super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        Slot slot = menu.slots.get(0);
-        if(context.blockItem() != null) {
-            int ox = leftPos + PREVIEW_PANEL_OFFSET_X, oy = topPos + PREVIEW_PANEL_OFFSET_Y;
+            if(hoveredSlot!=null )try3dRender(guiGraphics, hoveredSlot);
+            Slot slot = menu.slots.get(0);
+            if(context.blockItem() != null) {
+                int ox = leftPos + PREVIEW_PANEL_OFFSET_X, oy = topPos + PREVIEW_PANEL_OFFSET_Y;
 
 
-            try {
-                int perRow = PREVIEW_PANEL_PER_ROW;
-                int size = PREVIEW_PANEL_CELL_SIZE;
-                Context.COMPair[] pairs = context.pairs();
-                for(int i = 0; i < pairs.length; i++) {
-                    Context.COMPair pair = pairs[i];
-                    int row = i / perRow, col = i % perRow;
-                    int x = ox + col * size, y = oy + row * size;
-                    boolean isSelected = context.selectedPair == i;
-                    boolean isHovered =
-                        x <= mouseX && mouseX <= x + size &&
-                        y <= mouseY && mouseY <= y + size;
-                    BCDTextures.COMScreen.choosePreviewSlotTexture(isHovered, isSelected).render(
-                        guiGraphics, x, y
-                    );
-                    CenterMassCache.Pair first = pair.pairs().getFirst();
-                    renderBlockState(guiGraphics, first.state, x, y, partialTick, PREVIEW_PANEL_CELL_HALF_SIZE, 12, blockEntityContainer);
-                    if(isHovered) {
+                try {
+                    int perRow = PREVIEW_PANEL_PER_ROW;
+                    int size = PREVIEW_PANEL_CELL_SIZE;
+                    Context.COMPair[] pairs = context.pairs();
+                    for(int i = 0; i < pairs.length; i++) {
+                        Context.COMPair pair = pairs[i];
+                        int row = i / perRow, col = i % perRow;
+                        int x = ox + col * size, y = oy + row * size;
+                        boolean isSelected = context.selectedPair == i;
+                        boolean isHovered =
+                            x <= mouseX && mouseX <= x + size &&
+                            y <= mouseY && mouseY <= y + size;
+                        BCDTextures.COMScreen.choosePreviewSlotTexture(isHovered, isSelected).render(
+                            guiGraphics, x, y
+                        );
+                        CenterMassCache.Pair first = pair.pairs().getFirst();
+                        renderBlockState(guiGraphics, first.state, x, y, partialTick, PREVIEW_PANEL_CELL_HALF_SIZE, 12, blockEntityWorldContainer);
+                        if(isHovered) {
 
-                        guiGraphics.renderTooltip(this.font, List.of(
-                            Component.literal(BlockStateParser.serialize(first.state)),
-                            VecUtil.vectorToFormatted(first.COM)
-                        ), Optional.empty(), mouseX, mouseY);
+                            guiGraphics.renderTooltip(this.font, List.of(
+                                Component.literal(BlockStateParser.serialize(first.state)),
+                                VecUtil.vectorToFormatted(first.COM)
+                            ), Optional.empty(), mouseX, mouseY);
+                        }
                     }
-                }
 
-            } catch(Exception e) {
-                e.printStackTrace(System.err);
-                wasError = false;
+                } catch(Exception e) {
+                    e.printStackTrace(System.err);
+                    wasError = true;
+                }
             }
+            com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            this.renderTooltip(guiGraphics, mouseX, mouseY);
+        } catch(Exception e) {
+            e.printStackTrace(System.err);
+            wasError=true;
         }
-        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
 
     }
 
-    private void renderBlockState(GuiGraphics guiGraphics, BlockState state, int x, int y, float partialTick, int size, int scale, InplaceBlockRenderer.Container blockEntityContainer1) {
+    private void renderBlockState(GuiGraphics guiGraphics, BlockState state, int x, int y, float partialTick, int size, int scale, InplaceBlockRenderer.WorldContainer blockEntityWorldContainer1) {
         InplaceBlockRenderer.renderInplace(
             guiGraphics,
             state,
-            blockEntityContainer1,
+            blockEntityWorldContainer1,
             x + size, y + size,
             partialTick,
             Minecraft.getInstance().level,
