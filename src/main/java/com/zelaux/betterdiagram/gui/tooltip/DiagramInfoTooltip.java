@@ -53,7 +53,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
             }
         });
         Vector3d mergedDisplacement = tmp.set(sumOfForces).cross(sumOfMoments).div(sumOfForces.lengthSquared()).add(COM);
-        VecUtil.subMinVec3d(mergedDisplacement, subLevel.getPlot().getBoundingBox());
+        //VecUtil.subMinVec3d(mergedDisplacement, subLevel.getPlot().getBoundingBox());
 
 
         final var displacementComponent = VecFormat.Presets.lightGray(mergedDisplacement);
