@@ -195,7 +195,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
                                list.addAll(displayOCBMode(OffCenterBlocksShowState.showAll));
                                return list;
                            })
-                           .colors(Color.WHITE, new Color(0xaa, 0xaa, 0xaa))
                            .setIconSwitch((active, hovered) -> clientData.offCenteredView().ordinal())
                 ))
                     .margin(4)
