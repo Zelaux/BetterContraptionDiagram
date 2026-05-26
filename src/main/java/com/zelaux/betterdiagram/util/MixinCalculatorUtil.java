@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.zelaux.betterdiagram.Config.COM_viewType;
-import static com.zelaux.betterdiagram.util.VecUtil.vectorToFormatted;
 import static net.createmod.catnip.lang.LangBuilder.DEFAULT_SPACE_WIDTH;
 
 public class MixinCalculatorUtil {
@@ -161,7 +160,7 @@ public class MixinCalculatorUtil {
         tooltipList1.add(Component.translatable(
             "better_contraption_diagram.eCOM.tooltip",
             centerOfMassTitle.withColor(color),
-            vectorToFormatted(eCOM).withColor((0xff << 24) | Config.FORCE_CORDS_COLOR.getAsInt())
+            VecFormat.Presets.forceCords(eCOM)
         ));
     }
 
@@ -203,7 +202,7 @@ public class MixinCalculatorUtil {
         int hoveredIndex = -1;
         OffCenteredBlock hovered = null;
         for(OffCenteredBlock block : blocks) {
-            MutableComponent localBlockPos = vectorToFormatted(tmp,Colors.GRAY).withColor(Colors.DARK_GRAY.getRGB());
+            MutableComponent localBlockPos = VecFormat.Presets.gray(tmp);
 
             Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(JOMLConversion.toJOML(block.pos().getCenter(), tmp));
             if(shouldClipWeights && !accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.y)) continue;
@@ -222,7 +221,7 @@ public class MixinCalculatorUtil {
 
                 tooltipList.add(Component.translatable(
                     "better_contraption_diagram.google-overlay.com-offset",
-                    vectorToFormatted(block.COM(),Colors.GRAY).withColor(Colors.DARK_GRAY.getRGB())
+                    VecFormat.Presets.gray(block.COM())
                 ));
                 tooltipList.add(Component.translatable(
                     "better_contraption_diagram.diagram.offenter-blocks.blockpos",

@@ -4,10 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
-import com.zelaux.betterdiagram.util.CenterMassCache;
-import com.zelaux.betterdiagram.util.CenterMassCalculator;
-import com.zelaux.betterdiagram.util.StringUtil;
-import com.zelaux.betterdiagram.util.VecUtil;
+import com.zelaux.betterdiagram.util.*;
 import foundry.veil.impl.ClientEnumArgument;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -147,8 +144,8 @@ public class BCDCommand {
         for(var entry : CenterMassCache.getCOM2_Block2States(blocks, level).entrySet()) {
             Vector3dc COM = entry.getKey();
             var pairs = entry.getValue().keySet();
-            source.sendSuccess(() -> VecUtil.vectorToFormatted(COM)
-                                            .withStyle(it -> it.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, buildPairs(pairs))))
+            source.sendSuccess(() -> VecFormat.Presets.blockCenterOfMass(COM)
+                                              .withStyle(it -> it.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, buildPairs(pairs))))
                 , true);
             total++;
         }

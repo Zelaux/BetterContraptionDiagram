@@ -6,7 +6,7 @@ import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
-import com.zelaux.betterdiagram.util.VecUtil;
+import com.zelaux.betterdiagram.util.VecFormat;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
@@ -64,7 +64,7 @@ public class com_view_GoggleOverlayRenderer {
 
         tooltip.add(
             MixinCalculatorUtil.indented(0,
-                Component.translatable("better_contraption_diagram.google-overlay.com-offset", VecUtil.vectorToFormatted(blockCenterOfMass).withColor(0xaaaaaa))
+                Component.translatable("better_contraption_diagram.google-overlay.com-offset", VecFormat.Presets.gray(blockCenterOfMass))
             )
         );
     }

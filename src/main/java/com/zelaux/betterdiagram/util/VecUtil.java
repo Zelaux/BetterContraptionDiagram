@@ -4,12 +4,8 @@ import com.zelaux.betterdiagram.func.DoubleGetter;
 import com.zelaux.betterdiagram.func.DoubleSetter;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
-import net.createmod.catnip.theme.Color;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.joml.*;
-import org.spongepowered.asm.mixin.*;
 
 import java.io.Serializable;
 import java.lang.Math;
@@ -89,33 +85,6 @@ public class VecUtil {
     }
 
 
-    public static @NotNull MutableComponent vectorToFormatted(Vector3dc force) {
-        return Component.literal(vecToString(force));
-    }
-
-    public static @NotNull MutableComponent vectorToFormatted(Vector3dc force, Color numberColor) {
-        return vectorToFormatted(force,numberColor,numberColor,numberColor);
-    }
-    public static @NotNull MutableComponent vectorToFormatted(Vector3dc force, Color xColor, Color yColor, Color zColor) {
-        double x = force.x();
-        double y = force.y();
-        double z = force.z();
-        var sx = StringUtil.plainDouble(x);
-        var sy = StringUtil.plainDouble(y);
-        var sz = StringUtil.plainDouble(z);
-
-
-        return Component
-            .literal("(")
-            .append(Component.literal(sx).withColor(xColor.getRGB()))
-            .append(", ")
-            .append(Component.literal(sy).withColor(yColor.getRGB()))
-            .append(", ")
-            .append(Component.literal(sz).withColor(zColor.getRGB()))
-            .append(")")
-            ;
-    }
-
     private static @NotNull String vecToString(Quaterniond force) {
         return vecToString(force.x, force.y, force.z, force.w);
     }
@@ -132,17 +101,4 @@ public class VecUtil {
         return "(" + String.join(",", strings) + ")";
     }
 
-    @Unique
-    private static @NotNull String vecToString(Vector3dc force) {
-        return vecToString(force.x(), force.y(), force.z());
-    }
-
-    @Unique
-    private static @NotNull String vecToString(double x, double y, double z) {
-        var sx = StringUtil.plainDouble(x);
-        var sy = StringUtil.plainDouble(y);
-        var sz = StringUtil.plainDouble(z);
-
-        return "(" + sx + ", " + sy + ", " + sz + ")";
-    }
 }

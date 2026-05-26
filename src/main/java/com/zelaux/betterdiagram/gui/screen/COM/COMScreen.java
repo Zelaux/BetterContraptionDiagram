@@ -8,10 +8,7 @@ import com.zelaux.betterdiagram.gui.widget.PartialInteration;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
-import com.zelaux.betterdiagram.util.CenterMassCache;
-import com.zelaux.betterdiagram.util.CenterMassCalculator;
-import com.zelaux.betterdiagram.util.UIUtil;
-import com.zelaux.betterdiagram.util.VecUtil;
+import com.zelaux.betterdiagram.util.*;
 import com.zelaux.betterdiagram.util.ui.InplaceBlockRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -345,7 +342,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
 
                 guiGraphics.renderTooltip(this.font, List.of(
                     Component.literal(BlockStateParser.serialize(pair.state)),
-                    VecUtil.vectorToFormatted(pair.COM)
+                    VecFormat.Presets.blockCenterOfMass(pair.COM)
                 ), Optional.empty(), 0, 0);
             }
         }
@@ -386,7 +383,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
 
                             guiGraphics.renderTooltip(this.font, List.of(
                                 Component.literal(BlockStateParser.serialize(first.state)),
-                                VecUtil.vectorToFormatted(first.COM)
+                                VecFormat.Presets.blockCenterOfMass(first.COM)
                             ), Optional.empty(), mouseX, mouseY);
                         }
                     }

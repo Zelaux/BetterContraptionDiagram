@@ -3,6 +3,7 @@ package com.zelaux.betterdiagram.gui.tooltip;
 import com.zelaux.betterdiagram.extend.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
+import com.zelaux.betterdiagram.util.VecFormat;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
@@ -13,7 +14,6 @@ import org.joml.Vector3d;
 
 import java.util.List;
 
-import static com.zelaux.betterdiagram.util.VecUtil.vectorToFormatted;
 
 public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
     private static final Vector3d tmp = new Vector3d();
@@ -38,7 +38,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
         DiagramDataPacket serverData = diagramScreeenAcc.betterContraptionDiagram$serverData();
         if(serverData==null)return List.of();
         final var gravityDirection = CenterMassCalculator.calculateGravityDirection(subLevel, serverData, tmp);
-        final var gravityComponent = vectorToFormatted(gravityDirection).withColor(0xFF_aaaaaa);
+        final var gravityComponent = VecFormat.Presets.lightGray(gravityDirection);
         tmp.zero();
         sumOfForces.zero();
         sumOfMoments.zero();
@@ -56,8 +56,8 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
         VecUtil.subMinVec3d(mergedDisplacement, subLevel.getPlot().getBoundingBox());
 
 
-        final var displacementComponent = vectorToFormatted(mergedDisplacement).withColor(0xFF_aaaaaa);
-        final var directionComponent = vectorToFormatted(sumOfForces).withColor(0xFF_aaaaaa);
+        final var displacementComponent = VecFormat.Presets.lightGray(mergedDisplacement);
+        final var directionComponent = VecFormat.Presets.lightGray(sumOfForces);
         return List.of(
             Component.translatable("better_contraption_diagram.extra-info.diagram-button").withColor(tooltipColor),
             Component.translatable("better_contraption_diagram.extra-info.gravity", gravityComponent),

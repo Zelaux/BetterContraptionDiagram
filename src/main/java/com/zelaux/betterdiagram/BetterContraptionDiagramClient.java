@@ -6,7 +6,7 @@ import com.simibubi.create.AllKeys;
 import com.zelaux.betterdiagram.command.BCDCommand;
 import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
 import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
-import com.zelaux.betterdiagram.util.VecUtil;
+import com.zelaux.betterdiagram.util.VecFormat;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.mixinterface.block_properties.BlockStateExtension;
@@ -17,7 +17,6 @@ import dev.simulated_team.simulated.mixin.accessor.BlockBehaviourAccessor;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
 import mezz.jei.neoforge.events.PermanentEventSubscriptions;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.*;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +26,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -51,7 +49,6 @@ import org.slf4j.Logger;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.function.Function;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = BetterContraptionDiagram.MODID, dist = Dist.CLIENT)
@@ -146,7 +143,7 @@ public class BetterContraptionDiagramClient {
     }
 
     private static @NotNull MutableComponent comTooltip(Vector3dc half) {
-        var position = VecUtil.vectorToFormatted(half).withColor(0xFF_aaaaaa);
+        var position = VecFormat.Presets.blockCenterOfMass(half);
 
         return Component.literal(" ").append(Component.translatable("better_contraption_diagram.item.tooltip", position));
     }

@@ -4,6 +4,7 @@ import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.Content;
 import com.zelaux.betterdiagram.struct.BlackHoleList;
 import com.zelaux.betterdiagram.struct.CounterBlackHoleList;
+import com.zelaux.betterdiagram.util.VecFormat;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
@@ -63,10 +64,10 @@ public abstract class DiagramScreenMixin {
 
         BoundingBox3ic box = subLevel.getPlot().getBoundingBox();
         centerOfMass.sub(box.minX(), box.minY(), box.minZ());
-        int color = (0xff << 24) | Config.CENTER_OF_MASS_COLOR.getAsInt();
+
         MutableComponent centerOfMassTitle = Component.translatable("better_contraption_diagram.center_of_mass");
         tooltipList.add(Component.translatable(
-            "better_contraption_diagram.center_of_mass.tooltip", centerOfMassTitle, VecUtil.vectorToFormatted(centerOfMass).withColor(color)
+            "better_contraption_diagram.center_of_mass.tooltip", centerOfMassTitle, VecFormat.Presets.centerOfMass(centerOfMass)
         ));
     }
 
@@ -125,7 +126,7 @@ public abstract class DiagramScreenMixin {
     @Inject(at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;addForceArrowTooltip(Ldev/ryanhcode/sable/api/physics/force/ForceGroup;IDILjava/util/List;)V"), method = "renderForceArrow")
     private void addForceDirectionIntoTooltips(GuiGraphics graphics, ForceGroup forceGroup, ForceClusterFinder.Cluster pointForce, double maxArrowLength, int mouseX, int mouseY, List<FormattedText> tooltipLines, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight, CallbackInfo ci) {
         Vector3d force = pointForce.force();
-        var e = VecUtil.vectorToFormatted(force).withColor(Config.FORCE_CORDS_COLOR.getAsInt());
+        var e = VecFormat.Presets.forceCords(force);
 
         if(tooltipLines instanceof BlackHoleList<FormattedText>) return;
         FormattedText last = tooltipLines.getLast();
