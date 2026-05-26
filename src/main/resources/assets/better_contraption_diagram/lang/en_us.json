@@ -7,22 +7,22 @@
   "better_contraption_diagram.axis_group.y": "Height",
   "better_contraption_diagram.axis_group.z": "Length",
 
-  "better_contraption_diagram.center_of_mass": "Center Of Mass",
-  "better_contraption_diagram.eCOM": "Target Center Of Mass",
+  "better_contraption_diagram.center_of_mass": "Center of Mass",
+  "better_contraption_diagram.eCOM": "Target Center of Mass",
   "better_contraption_diagram.center_of_mass.tooltip": "%s %s",
   "better_contraption_diagram.eCOM.tooltip": "%s %s",
-  "better_contraption_diagram.weight.tooltip": "Weight %s",
-  "better_contraption_diagram.small-weight.distance.tooltip": "(distance %s)",
-  "better_contraption_diagram.small-weight.tooltip": "Undistributable weight %s %s",
-  "better_contraption_diagram.weight.wrong-axis.tooltip": "Weight distributed in axis %s is %s",
+  "better_contraption_diagram.weight.tooltip": "Weight: %s",
+  "better_contraption_diagram.small-weight.distance.tooltip": "(at distance %s)",
+  "better_contraption_diagram.small-weight.tooltip": "Residual weight: %2$s %1$s",
+  "better_contraption_diagram.weight.wrong-axis.tooltip": "Weight along axis %1$s: %2$s",
 
 
-  "better_contraption_diagram.item.tooltip": "Possible center of mass %s",
-  "better_contraption_diagram.google-overlay.com-offset": "Center of mass offset %s",
+  "better_contraption_diagram.item.tooltip": "Possible center of mass: %s",
+  "better_contraption_diagram.google-overlay.com-offset": "Center of mass offset: %s",
 
-  "better_contraption_diagram.diagram.offenter-blocks.blockpos": "Local Block Position %s",
+  "better_contraption_diagram.diagram.offenter-blocks.blockpos": "Local Block Position: %s",
 
-  "better_contraption_diagram.item-open.tooltip": "Press <<Shift>> to view possible centers of mass",
+  "better_contraption_diagram.item-open.tooltip": "Hold [Shift] to view possible centers of mass",
 
 
   "better_contraption_diagram.calculator.move_to_struct_center": "Move to Center",
@@ -32,35 +32,35 @@
   "better_contraption_diagram.diagram.disable-axis": "Disable axis %s",
   "better_contraption_diagram.diagram.enable-axis": "Enable axis %s",
 
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.switch.lmb": "Press LMB to select next",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.switch.rmb": "Press RMB to select previous",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.none.name": "Mode None",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.none.desc": "Do not show blocks with shifted Center Of Mass",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.name": "Mode Show",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.desc": "Show blocks with shifted Center Of Mass only when Axis has Undistributable weight",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.name": "Mode Show All",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.desc": "Show all blocks with shifted Center Of Mass",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.switch.lmb": "Left-click to select next",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.switch.rmb": "Right-click to select previous",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.none.name": "Hidden",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.none.desc": "Do not show blocks with shifted Center of Mass",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.name": "Smart",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.desc": "Show blocks with shifted Center of Mass only when the axis is uncompensated",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.name": "Always Show",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.desc": "Show all blocks with a shifted Center of Mass along enabled axes",
   "better_contraption_diagram.diagram.offcenter-blocks-mode.hold-to-browse":  "Hold [%1$s] to Find Pair",
 
   "better_contraption_diagram.gui.scrollInput.ctrlScrollsSlower": "Ctrl to Scroll Slower",
-  "better_contraption_diagram.common.shift-scale": "Press <<Shift>> to step by 0.5",
-  "better_contraption_diagram.common.ctrl-scale": "Press<<Ctrl>> to step by 10",
+  "better_contraption_diagram.common.shift-scale": "Hold [Shift] to step by 0.5",
+  "better_contraption_diagram.common.ctrl-scale": "Hold [Ctrl] to step by 10",
 
 
-  "better_contraption_diagram.configuration.title": "Better Contraption Diagram Configs",
-  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml": "Better Contraption Diagram Configs",
-  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml.title": "Better Contraption Diagram Configs",
+  "better_contraption_diagram.configuration.title": "Better Contraption Diagram Settings",
+  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml": "Better Contraption Diagram Settings",
+  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml.title": "Better Contraption Diagram Settings",
 
   "better_contraption_diagram.configuration.axisScale": "Axis Scale",
   "better_contraption_diagram.configuration.axisOffset": "Axis Offset",
 
 
-  "better_contraption_diagram.command.too-many-blocks": "Too many blocks has center of mass at 0.5",
+  "better_contraption_diagram.command.too-many-blocks": "Too many blocks have a center of mass at 0.5",
 
-  "better_contraption_diagram.com-menu.field-tooltip": "Right Click to disable",
+  "better_contraption_diagram.com-menu.field-tooltip": "Right-click to disable",
   "better_contraption_diagram.com-menu.invert-mode.normal": "Mode: Same",
   "better_contraption_diagram.com-menu.invert-move.inverted": "Mode: Pair",
-  "better_contraption_diagram.com-menu.invert-move.info": "Use Pair to find block with opposite center of mass offset.",
+  "better_contraption_diagram.com-menu.invert-move.info": "Use 'Pair' to find blocks with the opposite center of mass offset.",
   "better_contraption_diagram.com-menu.search": "Search Blocks",
 
 
@@ -69,7 +69,7 @@
 
   "better_contraption_diagram.extra-info.diagram-button": "Extra Information",
   "better_contraption_diagram.extra-info.gravity": "Current Gravity Constant: %s",
-  "better_contraption_diagram.extra-info.sum-of-forces.title": "Sum of force",
-  "better_contraption_diagram.extra-info.sum-of-forces.displacement": "displacement: %s",
-  "better_contraption_diagram.extra-info.sum-of-forces.direction": "direction: %s"
+  "better_contraption_diagram.extra-info.sum-of-forces.title": "Sum of Forces",
+  "better_contraption_diagram.extra-info.sum-of-forces.displacement": "Displacement: %s",
+  "better_contraption_diagram.extra-info.sum-of-forces.direction": "Direction: %s"
 }
