@@ -1,25 +1,34 @@
+# Better Contraption Diagram
 
-Installation information
-=======
+Welcome to Better Contraption Diagram, a mod offering tools for easier aircraft building with Create: Aeronautics.
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+## Video Preview
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+[![Watch the video](https://img.youtube.com/vi/nX1PpjTCweQ /0.jpg)](https://www.youtube.com/watch?v=nX1PpjTCweQ )
+*Click the image above to watch the features in action.*
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+### Core Features
+
+*   **CoM Targeting Tool:** 
+    A specialized screen where you can set a "target" Center of Mass.
+    The mod calculates exactly where and how much weight you need to add to achieve it.
+*   **Counterbalancing Helper:** Easily identify and match block pairs with opposite CoM offsets to keep your build stable.
+
+### Extra Features
+
+*   **Extra Force Data:** Displays precise force direction coordinates and the resultant force vector.
+* **In-world block CoM:** Highlights the Center of Mass of the specific block you are looking at (requires _Engineer's Goggles_ and _F3_ menu to be active).
+
+
+
+## Requirements
+* [Create](https://github.com/Creators-of-Create/Create)
+* [Create: Aeronautics](https://github.com/Creators-of-Aeronautics/Simulated-Project)
+
+
+
+
+## License
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
