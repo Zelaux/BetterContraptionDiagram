@@ -220,8 +220,6 @@ public class MixinCalculatorUtil {
                     hoveredDistance2 = dst2;
                     hoveredIndex = tooltipList.size();
                 }
-                tooltipList.add(localBlockPos);
-
                 tooltipList.add(Component.translatable(
                     "better_contraption_diagram.google-overlay.com-offset",
                     VecFormat.Presets.gray(block.COM())
