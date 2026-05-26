@@ -17,8 +17,7 @@
     "accessors.EditBoxMixin",
     "calculator.Calculator_DiagramScreen",
     "calculator.Calculator_DiagramStickyNote",
-    "COM_view.LevelRendererMixin",
-    "fix.DiagramScreenFixMixin"
+    "COM_view.LevelRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

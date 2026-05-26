@@ -42,6 +42,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
@@ -126,14 +127,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     @Override
     protected void init() {
         super.init();
-        if(fbo == null || fbo.getWidth() != width || fbo.getHeight() != height) {
-            freeFramebuffers();
-            fbo = AdvancedFbo.withSize(width, height)
-                             .setFormat(FramebufferAttachmentDefinition.Format.RGBA8)
-                             .addColorTextureBuffer()
-                             .setDepthTextureBuffer()
-                             .build(true);
-        }
         diagramStickyNote = diagramScreenAccessors.betterContraptionDiagram$note();
         noteAccessors = CenterMassCalculator.accessors(diagramStickyNote);
         LinearLayout mainLayout = LinearLayout.vertical().spacing(5);
@@ -236,52 +229,10 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         int diaY = height / 2 - areaHeight / 2;
 
 
-        ResourceLocation location = ResourceLocation.fromNamespaceAndPath(BetterContraptionDiagram.MODID, "fbo");
+        //ResourceLocation location = ResourceLocation.fromNamespaceAndPath(BetterContraptionDiagram.MODID, "fbo");
         partialInterationForScreen = (new PartialInteration(
             diagramScreen,
-            (object, graphics, mouseX, mouseY, partialTick) -> {
-                graphics.flush();
-                FramebufferStack.push(location);
-                fbo.bind(true);
-                //RenderSystem.clearColor(0.0F, 0.0F, 0.0F, 0.0F);
-                //fbo.clear(GL11C.GL_COLOR_BUFFER_BIT | GL11C.GL_DEPTH_BUFFER_BIT);
-
-                fbo.clear(1.0F, 1.0F, 1.0F, 0.0F, 1.0F, fbo.getClearMask(), fbo.getDrawBuffers());
-                //final AdvancedFbo drawFbo = VeilRenderSystem.renderer().getDynamicBufferManger().getDynamicFbo(fbo);
-                //drawFbo.bind(true);
-
-                RenderSystem.enableDepthTest();
-                RenderSystem.enableColorLogicOp();
-                RenderSystem.enableBlend();
-                RenderSystem.defaultBlendFunc();
-                graphics.fill(0, 0, this.width, this.height, -10, 0x4fffffff);
-                //graphics.fill(0, 0, this.width/4, this.height, -10, 0xaaffffff);
-                //graphics.fill(width/4, 0, this.width/2, this.height, -10, 0xffffffff);
-                //graphics.fill( this.width/2, 0, this.width, this.height, 100, 0xaaffffff);
-
-
-                PoseStack pose = graphics.pose();
-                pose.pushPose();
-                object.render(graphics, mouseX, mouseY, partialTick);
-                pose.popPose();
-
-                graphics.flush();
-
-                FramebufferStack.pop(location);
-
-                if(fbo.isColorTextureAttachment(0)) {
-                    int textureId = fbo.getColorTextureAttachment(0).getId();
-
-                    RenderSystem.enableBlend();
-                    RenderSystem.defaultBlendFunc();
-                    //RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-
-                    this.drawFboTexture(graphics, textureId, 0, 0, graphics.guiWidth(), graphics.guiHeight());
-
-                    graphics.flush();
-                    //RenderSystem.disableBlend();
-                }
-            },
+            Screen::renderWithTooltip,
             BoundingBox2i.box2d(
                 diaX + 228, diaY + 8,
                 (diaX + 243 + 8), (diagramY + 8 + 14 + 8)
@@ -358,16 +309,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         bufferbuilder.addVertex(matrix4f, x2, y1, 0.0f).setUv(1.0f, 1.0f).setColor(0xFFFFFFFF);
         BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
         RenderSystem.disableBlend();
-    }
-
-    private AdvancedFbo fbo;
-
-    private void freeFramebuffers() {
-        if(fbo != null) {
-            fbo.free();
-            fbo = null;
-        }
-
     }
 
     private MyGridClicker makeGrid(BoundingBox3ic bb, int diaX, int diaY, TransformedAxes projectedAxes, ProjectionAccessor projectionAccessor) {
@@ -711,7 +652,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         //this.minecraft.popGuiLayer();
         removed();
         minecraft.screen = diagramScreen;
-        freeFramebuffers();
     }
 
     @Override
