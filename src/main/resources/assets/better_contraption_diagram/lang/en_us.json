@@ -58,9 +58,9 @@
   "better_contraption_diagram.command.too-many-blocks": "Too many blocks has center of mass at 0.5",
 
   "better_contraption_diagram.com-menu.field-tooltip": "Right Click to disable",
-  "better_contraption_diagram.com-menu.invert-mode.normal": "Mode: Normal",
-  "better_contraption_diagram.com-menu.invert-move.inverted": "Mode: Inverted",
-  "better_contraption_diagram.com-menu.invert-move.info": "Use inverted to find block with opposite center of mass offset.",
+  "better_contraption_diagram.com-menu.invert-mode.normal": "Mode: Same",
+  "better_contraption_diagram.com-menu.invert-move.inverted": "Mode: Pair",
+  "better_contraption_diagram.com-menu.invert-move.info": "Use Pair to find block with opposite center of mass offset.",
   "better_contraption_diagram.com-menu.search": "Search Blocks",
 
 
