@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram.extend;
 
+import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
@@ -17,4 +18,7 @@ public interface DiagramStickyNoteAccessors extends ProjectionAccessor{
     int SUBLEVEL_RENDER_Y_OFFSET();
 
     int renderXStart();
+    default int originXWhenActive(){
+        return renderXStart() + DiagramStickyNote.MAX_OFFSET;
+    }
 }
