@@ -10,9 +10,9 @@ import org.joml.Vector2i;
 import java.util.ArrayList;
 
 public class GridClicker extends AbstractSimiWidget {
-    public static final int BLACK_COLOR = (0xff << 24) | ChatFormatting.BLACK.getColor();
-    public static final int GRAY_COLOR = (0xff << 24) | ChatFormatting.GRAY.getColor();
-    public int gridColor = BLACK_COLOR;
+    public static  int ACTIVE_COLOR = (0xff << 24) | ChatFormatting.BLACK.getColor();
+    public static  int INACTIVE_COLOR = 0 ;//((0xff << 24) | ChatFormatting.GRAY.getColor());
+    public int gridColor = ACTIVE_COLOR;
 
     public GridClicker gridColor(int gridColor) {
         this.gridColor = gridColor;

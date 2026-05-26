@@ -5,7 +5,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.foundation.gui.widget.Label;
-import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.Content;
 import com.zelaux.betterdiagram.data.BCDData.OffCenterBlocksShowState;
 import com.zelaux.betterdiagram.extend.*;
@@ -26,8 +25,6 @@ import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
-import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
-import foundry.veil.api.client.render.framebuffer.FramebufferAttachmentDefinition;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,7 +46,6 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
@@ -325,7 +321,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             .betterContraptionDiagram$getScreenCoords(maxVec3d(bb).add(1, 1, 1), null)
             .add(diaX, diaY);
 
-        return new MyGridClicker(minScreen.x, minScreen.y, maxScreen.x, maxScreen.y, sizeInBlocks, projectedAxes, new Vector3d()).gridColor(GridClicker.GRAY_COLOR);
+        return new MyGridClicker(minScreen.x, minScreen.y, maxScreen.x, maxScreen.y, sizeInBlocks, projectedAxes, new Vector3d()).gridColor(GridClicker.INACTIVE_COLOR);
     }
 
     private MyGridClicker addSubGrid(BoundingBox3ic bb, int diaX, int diaY) {
@@ -383,7 +379,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             grid.mouseConsumers.add(mouseConsumer);
             grid.drawMouse = true;
             //partialInterationForScreen.active = false;
-            grid.gridColor = GridClicker.BLACK_COLOR;
+            grid.gridColor = GridClicker.ACTIVE_COLOR;
         }
         gridEnabled = true;
     }
@@ -716,7 +712,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             MyGridClicker grid = pair.first;
             grid.mouseConsumers.clear();
             grid.drawMouse = false;
-            grid.gridColor = GridClicker.GRAY_COLOR;
+            grid.gridColor = GridClicker.INACTIVE_COLOR;
         }
         gridEnabled = false;
         //partialInterationForScreen.active = true;
