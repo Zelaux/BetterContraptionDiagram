@@ -1,5 +1,7 @@
 # Better Contraption Diagram
 
+![better_contraption_diagram.png](src/main/resources/better_contraption_diagram.png)
+
 Welcome to Better Contraption Diagram, a mod offering tools for easier aircraft building with Create: Aeronautics.
 
 
