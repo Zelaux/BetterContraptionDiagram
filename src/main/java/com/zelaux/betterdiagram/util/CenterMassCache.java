@@ -29,7 +29,7 @@ public class CenterMassCache {
     private static long Block2Pairs_nano;
 
     public static @NotNull Map<Vector3dc, Map<Block, List<Pair>>> getCOM2_Block2States(HolderLookup.RegistryLookup<Block> blocks, Level level) {
-        if(COM2_Block2States != null) return COM2_Block2States;
+        if(COM2_Block2States != null && Block2Pairs!=null) return COM2_Block2States;
         long nano=System.nanoTime();
         var collect = new HashMap<Vector3dc, Map<Block, List<Pair>>>();
         for(var blockListEntry : getBlock2Pairs(blocks, level).entrySet()) {
