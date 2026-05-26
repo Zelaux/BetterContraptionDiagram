@@ -4,7 +4,10 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
-import com.zelaux.betterdiagram.util.*;
+import com.zelaux.betterdiagram.util.CenterMassCache;
+import com.zelaux.betterdiagram.util.CenterMassCalculator;
+import com.zelaux.betterdiagram.util.StringUtil;
+import com.zelaux.betterdiagram.util.VecFormat;
 import foundry.veil.impl.ClientEnumArgument;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -27,7 +30,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3dc;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BCDCommand {
@@ -71,7 +77,7 @@ public class BCDCommand {
             )
             .executes(context -> {
                 Minecraft minecraft = Minecraft.getInstance();
-                minecraft.setScreen(new COMScreen(COMScreen.GLOBAL_CONTEXT,minecraft.player));
+                minecraft.setScreen(new COMScreen(COMScreen.GLOBAL_CONTEXT, minecraft.player));
                 return 1;
             })
         ;
@@ -80,11 +86,11 @@ public class BCDCommand {
             dispatcher.register(bcdCommand)
         ));
         dispatcher.register(Commands.literal("bcdresp")
-            .executes(x->{
-                Minecraft.getInstance().player.respawn();
-                x.getSource().sendSuccess(()->Component.literal("Ok."),true);
-                return 1;
-            }));
+                                    .executes(x -> {
+                                        Minecraft.getInstance().player.respawn();
+                                        x.getSource().sendSuccess(() -> Component.literal("Ok."), true);
+                                        return 1;
+                                    }));
 
     }
 
@@ -145,7 +151,7 @@ public class BCDCommand {
             Vector3dc COM = entry.getKey();
             var pairs = entry.getValue().keySet();
             source.sendSuccess(() -> VecFormat.Presets.blockCenterOfMass(COM)
-                                              .withStyle(it -> it.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, buildPairs(pairs))))
+                                                      .withStyle(it -> it.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, buildPairs(pairs))))
                 , true);
             total++;
         }

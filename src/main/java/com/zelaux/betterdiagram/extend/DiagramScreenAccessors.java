@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 
-public interface DiagramScreenAccessors extends ProjectionAccessor{
+public interface DiagramScreenAccessors extends ProjectionAccessor {
     static @NotNull DiagramScreenAccessors of(@NotNull DiagramScreen self) {
         return CenterMassCalculator.accessors(self);
     }
@@ -31,7 +31,8 @@ public interface DiagramScreenAccessors extends ProjectionAccessor{
     @Nullable DiagramDataPacket betterContraptionDiagram$serverData();
 
     DiagramEntity betterContraptionDiagram$diagram();
-    default WithClientData betterContraptionDiagram$clientData(){
+
+    default WithClientData betterContraptionDiagram$clientData() {
         return (WithClientData) betterContraptionDiagram$diagram();
     }
 }

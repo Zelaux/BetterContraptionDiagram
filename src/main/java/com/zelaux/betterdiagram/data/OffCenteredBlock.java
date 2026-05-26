@@ -1,7 +1,6 @@
 package com.zelaux.betterdiagram.data;
 
 import dev.ryanhcode.sable.sublevel.SubLevel;
-import lombok.EqualsAndHashCode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3d;
@@ -29,6 +28,6 @@ public record OffCenteredBlock(
     }
 
     public static OffCenteredBlock create(SubLevel subLevel, BlockPos pos, BlockState state, double mass, Vector3d com) {
-        return new OffCenteredBlock(subLevel,pos,state, com,mass,new double[3]);
+        return new OffCenteredBlock(subLevel, pos, state, com, mass, new double[3]);
     }
 }

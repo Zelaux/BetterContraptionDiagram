@@ -18,7 +18,7 @@ public interface WithClientData {
 
     default boolean axisStates(int i, boolean value) {
         BCDData data = bcdDataOrDefault();
-        bcdiagram$updateData(data.withAxisStateInt(i,value?1:0));
+        bcdiagram$updateData(data.withAxisStateInt(i, value ? 1 : 0));
         return value;
     }
 

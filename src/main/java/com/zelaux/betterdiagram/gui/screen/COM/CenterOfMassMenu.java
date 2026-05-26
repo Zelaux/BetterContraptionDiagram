@@ -1,17 +1,14 @@
 package com.zelaux.betterdiagram.gui.screen.COM;
 
-import com.google.common.collect.Lists;
 import com.zelaux.betterdiagram.util.CenterMassCache;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.NonNullList;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.SlotItemHandler;
@@ -30,7 +27,7 @@ public class CenterOfMassMenu extends AbstractContainerMenu {
     @Getter
     private int rowOffset;
 
-    public record ItemEntry(ItemStack stack, List<CenterMassCache.Pair> cachePairs){
+    public record ItemEntry(ItemStack stack, List<CenterMassCache.Pair> cachePairs) {
 
     }
 
@@ -41,11 +38,11 @@ public class CenterOfMassMenu extends AbstractContainerMenu {
         boolean isInfinite) {
         super(null, 0);
         this.inventoryMenu = player.inventoryMenu;
-        this.container=container;
-        this.filterContainer=filterContainer;
+        this.container = container;
+        this.filterContainer = filterContainer;
         Inventory inventory = player.getInventory();
 
-        addSlot(new SlotItemHandler(filterContainer,0,filterX,filterY){
+        addSlot(new SlotItemHandler(filterContainer, 0, filterX, filterY) {
             @Override
             public void onTake(Player player, ItemStack stack) {
                 stack.setCount(0);
@@ -60,20 +57,20 @@ public class CenterOfMassMenu extends AbstractContainerMenu {
 
             @Override
             public ItemStack safeInsert(ItemStack stack, int increment) {
-                trySetFilterSlot(Minecraft.getInstance().player, stack,this);
+                trySetFilterSlot(Minecraft.getInstance().player, stack, this);
                 return stack;
             }
 
             @Override
-            public void setByPlayer(ItemStack stack,ItemStack oldStack) {
+            public void setByPlayer(ItemStack stack, ItemStack oldStack) {
                 setCarried(stack);
-                trySetFilterSlot(player,stack,this);
+                trySetFilterSlot(player, stack, this);
             }
         });
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 9; j++) {
                 COMMenu$Slot slot = new COMMenu$Slot(container, i * 9 + j, containerX + j * 18, containerY + i * 18);
-                slot.mutable=isInfinite && false;
+                slot.mutable = isInfinite && false;
                 this.addSlot(slot);
             }
         }
@@ -90,7 +87,7 @@ public class CenterOfMassMenu extends AbstractContainerMenu {
      */
     public void scrollTo(float pos) {
         int i = this.getRowIndexForScroll(pos);
-        this.rowOffset=i;
+        this.rowOffset = i;
         for(int j = 0; j < 5; j++) {
             for(int k = 0; k < 9; k++) {
                 int l = k + (j + i) * 9;
@@ -151,7 +148,7 @@ public class CenterOfMassMenu extends AbstractContainerMenu {
     }
 
     private void trySetFilterSlot(Player player, ItemStack item, Slot slot1) {
-        if(item.getItem() instanceof BlockItem blockItem && !CenterMassCache.getBlock2Pairs(player).get(blockItem.getBlock()).isEmpty()){
+        if(item.getItem() instanceof BlockItem blockItem && !CenterMassCache.getBlock2Pairs(player).get(blockItem.getBlock()).isEmpty()) {
             slot1.set(item.copyWithCount(1));
         }
     }

@@ -1,13 +1,8 @@
 package com.zelaux.betterdiagram.mixin;
 
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.gui.RemovedGuiUtils;
 import com.zelaux.betterdiagram.gui.comp.ListenerClientTooltipComponent;
 import net.minecraft.client.gui.Font;
@@ -50,8 +45,8 @@ public class RemovedGuiUtilsMixin {
         @Local(name = "tooltipHeight") LocalIntRef tooltipHeight,
         @Local(name = "tooltipTextWidth") LocalIntRef tooltipTextWidth,
         @Local(name = "list") List<ClientTooltipComponent> list,
-        @Local(name="tooltipX") int tooltipX,
-        @Local(name="tooltipY") int tooltipY
+        @Local(name = "tooltipX") int tooltipX,
+        @Local(name = "tooltipY") int tooltipY
     ) {
         int height = tooltipHeight.get();
         int width = tooltipTextWidth.get();

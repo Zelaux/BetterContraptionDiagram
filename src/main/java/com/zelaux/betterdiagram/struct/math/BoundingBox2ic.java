@@ -235,13 +235,14 @@ public sealed interface BoundingBox2ic permits BoundingBox2i {
         int max = maxY();
         int min = minY();
 
-        return (int) (((long)max + min) / 2);
+        return (int) (((long) max + min) / 2);
     }
+
     default int centerX() {
         int max = maxX();
         int min = minX();
 
-        return (int) (((long)max + min) / 2);
+        return (int) (((long) max + min) / 2);
     }
 }
 

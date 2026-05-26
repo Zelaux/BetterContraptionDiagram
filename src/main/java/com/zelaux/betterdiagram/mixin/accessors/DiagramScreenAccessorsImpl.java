@@ -75,7 +75,7 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
     }
 
     @Override
-    public Vector2d betterContraptionDiagram$getScreenCoords(Vector3d point, Vector3d cameraPos){
+    public Vector2d betterContraptionDiagram$getScreenCoords(Vector3d point, Vector3d cameraPos) {
         return getScreenCoords(point,
             LOCAL_ORIENTATION,
             Objects.requireNonNullElse(cameraPos, LOCAL_CAMERA_POSITION),
@@ -84,10 +84,11 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
             DiagramScreen.DIAGRAM_TEXTURE.height
         );
     }
+
     @Override
     public boolean bcd$canDrawAt(int x, int y) {
         return canDrawArrowAt(
-            x,y,
+            x, y,
             DiagramScreen.DIAGRAM_TEXTURE.width,
             DiagramScreen.DIAGRAM_TEXTURE.height
         );
@@ -95,15 +96,16 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
 
     @Override
     public int bcd$originX() {
-        return ((DiagramScreen)(Object)this).width/2-DIAGRAM_TEXTURE.width/2;
+        return ((DiagramScreen) (Object) this).width / 2 - DIAGRAM_TEXTURE.width / 2;
     }
 
     @Override
     public int bcd$originY() {
-        return ((DiagramScreen)(Object)this).height/2-DIAGRAM_TEXTURE.height/2;
+        return ((DiagramScreen) (Object) this).height / 2 - DIAGRAM_TEXTURE.height / 2;
     }
+
     @Override
-    public Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point, Vector3d cameraPos){
+    public Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point, Vector3d cameraPos) {
         return getPlotCoords(point,
             LOCAL_ORIENTATION,
             Objects.requireNonNullElse(cameraPos, LOCAL_CAMERA_POSITION),

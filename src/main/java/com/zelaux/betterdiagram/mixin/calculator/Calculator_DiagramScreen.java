@@ -11,7 +11,10 @@ import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.MassStack;
-import com.zelaux.betterdiagram.util.*;
+import com.zelaux.betterdiagram.util.CenterMassCalculator;
+import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
+import com.zelaux.betterdiagram.util.StringUtil;
+import com.zelaux.betterdiagram.util.UIUtil;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
@@ -40,7 +43,7 @@ import java.util.List;
 import static com.zelaux.betterdiagram.util.VecUtil.*;
 
 @Mixin(DiagramScreen.class)
-public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implements ProjectionAccessor{
+public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implements ProjectionAccessor {
 
     @Shadow
     @Final
@@ -114,6 +117,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         bcd$isDiagramScreen = true;
 
     }
+
     private void renderOffCentered(GuiGraphics graphics,
                                    int mouseX,
                                    int mouseY,
@@ -123,11 +127,11 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                                    Vector3dc cameraPos,
                                    Matrix4fc projMatrix,
                                    int areaWidth,
-                                   int areaHeight, boolean shouldClipWeights){
+                                   int areaHeight, boolean shouldClipWeights) {
         ProjectionAccessor accessor = shouldClipWeights ? (ProjectionAccessor) note : this;
 
         var newHovered = MixinCalculatorUtil.renderOffCentered((WithClientData) diagram, self(), tooltipList, accessor, graphics, mouseX, mouseY, shouldClipWeights);
-        if(!shouldClipWeights){
+        if(!shouldClipWeights) {
             OffCenteredBlockTooltipHandler.addTooltip(
                 self(),
                 newHovered,
@@ -143,7 +147,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         //var stacks = ((WithClientData) diagram).betterContraptionDiagram$getClientData(DataKeys.MASS_STACKS, null);
         var stacks = CenterMassCalculator.recalculateStacks(self());
         boolean shouldClipWeights = !this.bcd$isDiagramScreen;
-        renderOffCentered(graphics,mouseX,mouseY,areaOriginX,areaOriginY,orientation,cameraPos,projMatrix,areaWidth,areaHeight,shouldClipWeights);
+        renderOffCentered(graphics, mouseX, mouseY, areaOriginX, areaOriginY, orientation, cameraPos, projMatrix, areaWidth, areaHeight, shouldClipWeights);
         this.bcd$isDiagramScreen = false;
         if(stacks == null) return;
         mouseX -= areaOriginX;

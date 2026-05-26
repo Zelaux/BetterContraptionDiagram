@@ -14,6 +14,7 @@ public class VecFormat {
         static MutableComponent gray(Vector3dc vector3dc) {
             return vectorToFormatted(vector3dc, Colors.GRAY).withColor(Colors.DARK_GRAY.getRGB());
         }
+
         static MutableComponent lightGray(Vector3dc vector3dc) {
             return vectorToFormatted(vector3dc, Colors.LIGHT_GRAY).withColor(Colors.GRAY.getRGB());
         }
@@ -23,14 +24,15 @@ public class VecFormat {
             return withOuterColor(v, outerColor);
         }
 
-         static @NotNull MutableComponent withOuterColor(Vector3dc v, int outerColor) {
+        static @NotNull MutableComponent withOuterColor(Vector3dc v, int outerColor) {
             int innerColor = Color.mixColors(outerColor, 0xffffffff, 0.15f);
             return vectorToFormatted(v, new Color(innerColor)).withColor(outerColor);
         }
 
         static MutableComponent centerOfMass(Vector3dc v) {
-            return withOuterColor(v,(0xff << 24) | Config.CENTER_OF_MASS_COLOR.getAsInt());
+            return withOuterColor(v, (0xff << 24) | Config.CENTER_OF_MASS_COLOR.getAsInt());
         }
+
         static MutableComponent blockCenterOfMass(Vector3dc v) {
             return lightGray(v);
         }

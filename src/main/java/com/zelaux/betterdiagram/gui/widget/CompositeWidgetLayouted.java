@@ -52,7 +52,7 @@ public class CompositeWidgetLayouted extends AbstractContainerWidget implements 
         return child;
     }
 
-    public  <T extends AbstractWidget> T addWithoutLayout(T child) {
+    public <T extends AbstractWidget> T addWithoutLayout(T child) {
         this.children.add(child);
 
         if(child instanceof Renderable renderable) {
@@ -102,8 +102,8 @@ public class CompositeWidgetLayouted extends AbstractContainerWidget implements 
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         this.getChildAt(mouseX, mouseY).ifPresent(hovered -> this.hovered = hovered);
-        if(background!=null){
-            background.render(graphics,getX(),getY());
+        if(background != null) {
+            background.render(graphics, getX(), getY());
         }
         for(Renderable renderable : this.renderables) {
             renderable.render(graphics, mouseX, mouseY, partialTicks);
@@ -152,9 +152,10 @@ public class CompositeWidgetLayouted extends AbstractContainerWidget implements 
         invalidateLayout();
     }
 
-    public void invalidateLayout(){
-        dirtyLayout =true;
+    public void invalidateLayout() {
+        dirtyLayout = true;
     }
+
     public int margin;
 
     public CompositeWidgetLayouted margin(int margin) {
@@ -165,11 +166,11 @@ public class CompositeWidgetLayouted extends AbstractContainerWidget implements 
     private void layout() {
         if(!dirtyLayout) return;
 
-        layout.setPosition(getX()+margin,getY()+margin);
+        layout.setPosition(getX() + margin, getY() + margin);
         layout.arrangeElements();
-        width=layout.getWidth()+margin;
-        width=layout.getHeight()+margin;
-        dirtyLayout=false;
+        width = layout.getWidth() + margin;
+        width = layout.getHeight() + margin;
+        dirtyLayout = false;
     }
 
 

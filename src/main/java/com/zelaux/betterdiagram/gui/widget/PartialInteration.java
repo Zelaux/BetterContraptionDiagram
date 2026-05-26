@@ -1,7 +1,6 @@
 package com.zelaux.betterdiagram.gui.widget;
 
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
-import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -19,17 +18,18 @@ public class PartialInteration extends AbstractContainerWidget {
     public final GuiEventListener target;
     private final BoundingBox2i[] include;
     private final BoundingBox2i bounds;
-    private final Vector2i prevMouse=new Vector2i(Integer.MIN_VALUE,Integer.MIN_VALUE);
+    private final Vector2i prevMouse = new Vector2i(Integer.MIN_VALUE, Integer.MIN_VALUE);
     @Nullable
     private final Drawer<?> drawer;
     private final BoundingBox2i[] exclude;
 
 
-    public static PartialInteration partialInteration(GuiEventListener target, BoundingBox2i[] include, BoundingBox2i[] exclude){
-        return new PartialInteration(target,null,include,exclude);
+    public static PartialInteration partialInteration(GuiEventListener target, BoundingBox2i[] include, BoundingBox2i[] exclude) {
+        return new PartialInteration(target, null, include, exclude);
     }
+
     public <T extends GuiEventListener> PartialInteration(T target, @Nullable Drawer<T> drawer, BoundingBox2i first, BoundingBox2i... extra) {
-        this(target,drawer, boxes(first,extra),BoundingBox2i.EMPTY_ARRAY);
+        this(target, drawer, boxes(first, extra), BoundingBox2i.EMPTY_ARRAY);
     }
 
     public static BoundingBox2i @NotNull [] boxes(BoundingBox2i first, BoundingBox2i... extra) {
@@ -41,8 +41,8 @@ public class PartialInteration extends AbstractContainerWidget {
 
     public <T extends GuiEventListener> PartialInteration(T target, @Nullable Drawer<T> drawer, BoundingBox2i[] include, BoundingBox2i[] exclude) {
         super(0, 0, 0, 0, Component.literal(""));
-        this.drawer=drawer;
-        if(include.length==0)throw new IllegalArgumentException("include boxes are empty");
+        this.drawer = drawer;
+        if(include.length == 0) throw new IllegalArgumentException("include boxes are empty");
         this.include = include;
         this.exclude = exclude;
         BoundingBox2i bounds = new BoundingBox2i(include[0]);
@@ -117,21 +117,21 @@ public class PartialInteration extends AbstractContainerWidget {
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if(target instanceof Renderable widget) {
-            Vector2i prevMouse =this.prevMouse;
+            Vector2i prevMouse = this.prevMouse;
             //int mx = mouseX,my = mouseY;
 
-            if(!isMouseOver(mouseX,mouseY)){
+            if(!isMouseOver(mouseX, mouseY)) {
                 //mouseX=prevMouse.x;
                 //mouseY=prevMouse.y;
-                mouseX=Integer.MIN_VALUE;
-                mouseY=Integer.MIN_VALUE;
+                mouseX = Integer.MIN_VALUE;
+                mouseY = Integer.MIN_VALUE;
             }
 
 
-            if(drawer!=null){
+            if(drawer != null) {
                 //noinspection rawtypes,unchecked
-                ((Drawer)drawer).render(widget,guiGraphics, mouseX, mouseY, partialTick);
-            }else{
+                ((Drawer) drawer).render(widget, guiGraphics, mouseX, mouseY, partialTick);
+            } else {
                 widget.render(guiGraphics, mouseX, mouseY, partialTick);
 
             }
@@ -140,8 +140,8 @@ public class PartialInteration extends AbstractContainerWidget {
         }
     }
 
-    public interface Drawer<T>{
-        void render(T object,GuiGraphics graphics,int mouseX,int mouseY,float partialTick);
+    public interface Drawer<T> {
+        void render(T object, GuiGraphics graphics, int mouseX, int mouseY, float partialTick);
     }
 
     @Override

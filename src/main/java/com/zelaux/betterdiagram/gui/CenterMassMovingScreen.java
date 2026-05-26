@@ -81,13 +81,13 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     private PartialInteration partialInterationForScreen;
     private boolean wasDirty;
     private final ArrayList<Pair<MyGridClicker, PartialInteration>> grids = new ArrayList<>();
-    private static final MutableComponent[] tooltipAxisOnOff={
-        Component.translatable("better_contraption_diagram.diagram.disable-axis","X"),
-        Component.translatable("better_contraption_diagram.diagram.enable-axis","X"),
-        Component.translatable("better_contraption_diagram.diagram.disable-axis","Y"),
-        Component.translatable("better_contraption_diagram.diagram.enable-axis","Y"),
-        Component.translatable("better_contraption_diagram.diagram.disable-axis","Z"),
-        Component.translatable("better_contraption_diagram.diagram.enable-axis","Z"),
+    private static final MutableComponent[] tooltipAxisOnOff = {
+        Component.translatable("better_contraption_diagram.diagram.disable-axis", "X"),
+        Component.translatable("better_contraption_diagram.diagram.enable-axis", "X"),
+        Component.translatable("better_contraption_diagram.diagram.disable-axis", "Y"),
+        Component.translatable("better_contraption_diagram.diagram.enable-axis", "Y"),
+        Component.translatable("better_contraption_diagram.diagram.disable-axis", "Z"),
+        Component.translatable("better_contraption_diagram.diagram.enable-axis", "Z"),
     };
 
 

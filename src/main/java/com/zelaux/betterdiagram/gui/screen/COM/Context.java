@@ -26,14 +26,14 @@ public class Context {
     public Entry[] entries;
     public boolean inverted;
     @NotNull
-    private ItemStack filterItem=ItemStack.EMPTY;
+    private ItemStack filterItem = ItemStack.EMPTY;
 
-    public int selectedPair=-1;
+    public int selectedPair = -1;
     @Getter
     @Nullable
     private BlockItem blockItem = null;
 
-    public boolean buildOnInit=false;
+    public boolean buildOnInit = false;
 
     private final Lazy<COMPair[]> pairs = Lazy.of(() -> {
         if(blockItem == null) return COMPair.EMPTY_ARRAY;
@@ -49,7 +49,7 @@ public class Context {
     public static Context newContext() {
         return new Context(new Entry[]{
             Entry.makeEntry(Direction.Axis.X), Entry.makeEntry(Direction.Axis.Y), Entry.makeEntry(Direction.Axis.Z)
-        },ItemStack.EMPTY);
+        }, ItemStack.EMPTY);
     }
 
     public COMPair[] pairs() {return pairs.get();}
@@ -67,8 +67,8 @@ public class Context {
     //TODO replace with BlockState or Block direcly
     public Context filterItem(@Nullable ItemStack filterItem) {
         filterItem = Objects.requireNonNullElse(filterItem, ItemStack.EMPTY);
-        if(filterItem.getItem() != this.filterItem.getItem()){
-            selectedPair=-1;
+        if(filterItem.getItem() != this.filterItem.getItem()) {
+            selectedPair = -1;
             this.filterItem = filterItem;
             pairs.invalidate();
         }

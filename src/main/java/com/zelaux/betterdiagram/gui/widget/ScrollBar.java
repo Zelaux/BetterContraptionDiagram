@@ -16,15 +16,17 @@ public abstract class ScrollBar extends AbstractScrollWidget {
     public ScrollBar(int x, int y, int width, int height, Component message) {
         super(x, y, width, height, message);
     }
-    public void setupScrollBarRegion(BoundingBox2i region){
+
+    public void setupScrollBarRegion(BoundingBox2i region) {
         region.setSized(
             this.getX() + width - scrollbarWidth(),
             getY(),
             scrollbarWidth(),
             height
-            );
+        );
     }
-    protected final BoundingBox2i tmpRegion=new BoundingBox2i();
+
+    protected final BoundingBox2i tmpRegion = new BoundingBox2i();
 
     @Override
     public void setScrollAmount(double scrollAmount) {
@@ -46,7 +48,7 @@ public abstract class ScrollBar extends AbstractScrollWidget {
         int scrollBarOffset = (int) scrollAmount() * (tmpRegion.height() - height) / maxScrollAmount;
         int y = Math.max(tmpRegion.minY, tmpRegion.minY + scrollBarOffset);
         barBox.setSized(
-            tmpRegion.minX, y+1-height,
+            tmpRegion.minX, y + 1 - height,
             tmpRegion.width(), height
         );
     }
@@ -80,7 +82,7 @@ public abstract class ScrollBar extends AbstractScrollWidget {
         } else {
             boolean flag = this.withinContentAreaPoint(mouseX, mouseY);
             setupScrollBarRegion(tmpRegion);
-            boolean flag1 = this.scrollbarVisible() && tmpRegion.contains((int)mouseX,(int)mouseY);
+            boolean flag1 = this.scrollbarVisible() && tmpRegion.contains((int) mouseX, (int) mouseY);
             if(flag1 && button == 0) {
                 this.scrolling(true);
                 return true;
@@ -105,9 +107,9 @@ public abstract class ScrollBar extends AbstractScrollWidget {
         double distance = mouseY - tmpRegion.minY;
         setScrollAmount(distance / tmpRegion.height() * getMaxScrollAmount());
 
-        if (mouseY < tmpRegion.minY) {
+        if(mouseY < tmpRegion.minY) {
             this.setScrollAmount(0.0);
-        } else if (mouseY > tmpRegion.maxY) {
+        } else if(mouseY > tmpRegion.maxY) {
             this.setScrollAmount(this.getMaxScrollAmount());
         } else {
             double d0 = Math.max(1, this.getMaxScrollAmount() / (tmpRegion.height() - barBox.height()));
@@ -118,7 +120,7 @@ public abstract class ScrollBar extends AbstractScrollWidget {
 
     @Override
     protected void renderDecorations(GuiGraphics guiGraphics) {
-        if (this.scrollbarVisible()) {
+        if(this.scrollbarVisible()) {
             this.renderScrollBar(guiGraphics);
         }
     }
@@ -127,13 +129,15 @@ public abstract class ScrollBar extends AbstractScrollWidget {
         int i = this.getScrollBarHeight();
         int j = this.getX() + this.width;
         int k = Math.max(this.getY(), (int) this.scrollAmount() * (this.height - i) / this.getMaxScrollAmount() + this.getY());
-updateBarBox();
+        updateBarBox();
 
         RenderSystem.enableBlend();
         guiGraphics.blitSprite(getScrollerSprite(), barBox.minX, barBox.maxY, barBox.width(), barBox.height());
         RenderSystem.disableBlend();
     }
+
     private static final ResourceLocation SCROLLER_SPRITE = ResourceLocation.withDefaultNamespace("widget/scroller");
+
     protected @NotNull ResourceLocation getScrollerSprite() {
         return SCROLLER_SPRITE;
     }
@@ -145,6 +149,6 @@ updateBarBox();
 
     public boolean isOverBarRegion(double mouseX, double mouseY) {
         setupScrollBarRegion(tmpRegion);
-        return tmpRegion.contains(mouseX,mouseY);
+        return tmpRegion.contains(mouseX, mouseY);
     }
 }

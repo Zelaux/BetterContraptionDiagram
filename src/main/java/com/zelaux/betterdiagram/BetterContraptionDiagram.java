@@ -1,20 +1,18 @@
 package com.zelaux.betterdiagram;
 
-import net.minecraft.resources.ResourceLocation;
-import org.slf4j.Logger;
-
 import com.mojang.logging.LogUtils;
-
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(BetterContraptionDiagram.MODID)
@@ -43,7 +41,7 @@ public class BetterContraptionDiagram {
     }
 
     public static ResourceLocation resource(String location) {
-        return ResourceLocation.fromNamespaceAndPath(MODID,location);
+        return ResourceLocation.fromNamespaceAndPath(MODID, location);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -53,7 +51,7 @@ public class BetterContraptionDiagram {
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
+        if(event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
             //event.accept(EXAMPLE_BLOCK_ITEM);
         }
     }

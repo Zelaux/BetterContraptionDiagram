@@ -12,7 +12,6 @@ import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.gui.comp.InTextBlockRenderer;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
 import com.zelaux.betterdiagram.index.BCDTextures;
-import com.zelaux.betterdiagram.index.Colors;
 import com.zelaux.betterdiagram.struct.MassStack;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
@@ -58,10 +57,12 @@ public class MixinCalculatorUtil {
         if(CenterMassCalculator.equals(centerOfMass, CenterMassCalculator.centerOfMass(self.subLevel))) return null;
         return DiagramScreen.getScreenCoords(new Vector3d(centerOfMass), localOrientation, localCameraPosition, projectionMat, areaWidth, areaHeight);
     }
-/**
- * @see dev.ryanhcode.sable.mixin.debug_render.LevelRendererMixin#renderLevel(DeltaTracker, boolean, Camera, GameRenderer, LightTexture, Matrix4f, Matrix4f, CallbackInfo)
- * @see dev.ryanhcode.sable.neoforge.mixin.block_outline_render.LevelRendererMixin#sable$preRenderHitOutline(LevelRenderer, Camera, HitResult, DeltaTracker, PoseStack, MultiBufferSource, Operation, LocalBooleanRef)
- * */
+
+    /**
+     * @see dev.ryanhcode.sable.mixin.debug_render.LevelRendererMixin#renderLevel(DeltaTracker, boolean, Camera, GameRenderer, LightTexture, Matrix4f, Matrix4f, CallbackInfo)
+     * @see dev.ryanhcode.sable.neoforge.mixin.block_outline_render.LevelRendererMixin#sable$preRenderHitOutline(LevelRenderer, Camera, HitResult, DeltaTracker, PoseStack, MultiBufferSource, Operation, LocalBooleanRef)
+     *
+     */
     public static void renderLevel(DeltaTracker deltaTracker,
                                    boolean bl,
                                    Camera camera,
@@ -73,8 +74,8 @@ public class MixinCalculatorUtil {
                                    ClientLevel level,
                                    SubLevelCamera sable$sublevelCamera, Quaternionf sable$orientationStorage) {
         final Minecraft minecraft = Minecraft.getInstance();
-        if(!GogglesItem.isWearingGoggles(minecraft.player))return;
-        if (!COM_viewType.get().shouldShow(minecraft.player.isShiftKeyDown()) || Minecraft.getInstance().showOnlyReducedInfo()) {
+        if(!GogglesItem.isWearingGoggles(minecraft.player)) return;
+        if(!COM_viewType.get().shouldShow(minecraft.player.isShiftKeyDown()) || Minecraft.getInstance().showOnlyReducedInfo()) {
             return;
         }
         HitResult hitResult = minecraft.hitResult;
@@ -84,9 +85,9 @@ public class MixinCalculatorUtil {
 
         BlockPos blockPos = blockHitResult.getBlockPos();
         BlockState blockstate = level.getBlockState(blockPos);
-        if(blockstate.isAir())return;
+        if(blockstate.isAir()) return;
         final ClientSubLevel subLevel = (ClientSubLevel) Sable.HELPER.getContaining(level, blockPos);
-        renderCenterOfMass(camera, matrix4f, level, blockHitResult, minecraft, ps, blockPos,subLevel);
+        renderCenterOfMass(camera, matrix4f, level, blockHitResult, minecraft, ps, blockPos, subLevel);
 
 
     }
@@ -113,15 +114,17 @@ public class MixinCalculatorUtil {
 
         Vector3dc blockCenterOfMass = MassTracker.BLOCK_CENTER_OF_MASS.apply(level, blockstate);
         if(blockCenterOfMass.equals(JOMLConversion.HALF)) {
-          return;}
+            return;
+        }
         double mass = PhysicsBlockPropertyHelper.getMass(level, blockPos, blockstate);
-        if(CenterMassCalculator.equals(mass,0)) {
-            return;}
+        if(CenterMassCalculator.equals(mass, 0)) {
+            return;
+        }
 
         final Vector3dc offset = new Vector3d(JOMLConversion.toJOML(blockHitResult.getBlockPos())).add(blockCenterOfMass);
 
 
-        if(subLevel!=null){
+        if(subLevel != null) {
             final Pose3dc renderPose = subLevel.renderPose();
 
             Vector3dc center = renderPose.position();
@@ -129,13 +132,13 @@ public class MixinCalculatorUtil {
             ps.translate(center.x() - cx, center.y() - cy, center.z() - cz);
             ps.mulPose(new Quaternionf(renderPose.orientation()));
             ps.translate(offset.x() - locCenter.x(), offset.y() - locCenter.y(), offset.z() - locCenter.z());
-        }else{
+        } else {
             ps.translate(offset.x() - cx, offset.y() - cy, offset.z() - cz);
         }
         float size0 = 2.0f / 16.0f;
-        int[] scales ={1,2,3};
+        int[] scales = {1, 2, 3};
         for(int scale : scales) {
-            float size=size0*scale;
+            float size = size0 * scale;
             LevelRenderer.renderLineBox(
                 ps,
                 consumer,
@@ -166,7 +169,7 @@ public class MixinCalculatorUtil {
 
     public static int getIndents(Font font, int defaultIndents) {
         int spaceWidth = font.width(" ");
-        if (DEFAULT_SPACE_WIDTH == spaceWidth) {
+        if(DEFAULT_SPACE_WIDTH == spaceWidth) {
             return defaultIndents;
         }
         return Mth.ceil(DEFAULT_SPACE_WIDTH * defaultIndents / spaceWidth);

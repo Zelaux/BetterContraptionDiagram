@@ -67,6 +67,7 @@ public abstract class DiagramStickyNoteAccessorsImpl implements DiagramStickyNot
         final int padding = 8;
         return x >= padding && x < width - padding && y >= padding && y < height - padding;
     }
+
     @Override
     public Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point, Vector3d cameraPos) {
         return DiagramScreen.getPlotCoords(point,
@@ -81,7 +82,7 @@ public abstract class DiagramStickyNoteAccessorsImpl implements DiagramStickyNot
     @Override
     public boolean bcd$canDrawAt(int x, int y) {
         return canDrawArrowAt(
-            x,y,
+            x, y,
             SUBLEVEL_RENDER_WIDTH_PIXELS,
             SUBLEVEL_RENDER_HEIGHT_PIXELS
         );
@@ -89,12 +90,12 @@ public abstract class DiagramStickyNoteAccessorsImpl implements DiagramStickyNot
 
     @Override
     public int bcd$originX() {
-        return ((DiagramStickyNote)(Object)this).getX()+SUBLEVEL_RENDER_X_OFFSET;
+        return ((DiagramStickyNote) (Object) this).getX() + SUBLEVEL_RENDER_X_OFFSET;
     }
 
     @Override
     public int bcd$originY() {
-        return ((DiagramStickyNote)(Object)this).getY()+SUBLEVEL_RENDER_Y_OFFSET;
+        return ((DiagramStickyNote) (Object) this).getY() + SUBLEVEL_RENDER_Y_OFFSET;
     }
 
     public Quaternionf NOTE_ORIENTATION() {return NOTE_ORIENTATION;}
@@ -106,10 +107,13 @@ public abstract class DiagramStickyNoteAccessorsImpl implements DiagramStickyNot
     public int SUBLEVEL_RENDER_WIDTH_PIXELS() {return SUBLEVEL_RENDER_WIDTH_PIXELS;}
 
     public int SUBLEVEL_RENDER_HEIGHT_PIXELS() {return SUBLEVEL_RENDER_HEIGHT_PIXELS;}
+
     @Override
     public int SUBLEVEL_RENDER_X_OFFSET() {return SUBLEVEL_RENDER_X_OFFSET;}
+
     @Override
     public int SUBLEVEL_RENDER_Y_OFFSET() {return SUBLEVEL_RENDER_Y_OFFSET;}
+
     @Override
     public int renderXStart() {return renderXStart;}
 }

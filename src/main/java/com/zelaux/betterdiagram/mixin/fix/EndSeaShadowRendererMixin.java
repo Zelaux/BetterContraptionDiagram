@@ -18,8 +18,8 @@ import static com.zelaux.betterdiagram.Content.simulated$bufferLocation;
 
 @Mixin(EndSeaShadowRenderer.class)
 public class EndSeaShadowRendererMixin {
-    @Inject(method = "renderShadowMap",at= @At(value = "INVOKE", target = "Lfoundry/veil/api/client/render/framebuffer/AdvancedFbo;bind(Z)V",shift = At.Shift.BEFORE))
-    private static void x(VeilRenderLevelStageEvent.Stage stage, LevelRenderer levelRenderer, MultiBufferSource.BufferSource bufferSource, MatrixStack matrixStack, Matrix4fc frustumMatrix, Matrix4fc projectionMatrix, int renderTick, DeltaTracker deltaTracker, Camera camera, Frustum frustum, CallbackInfo ci){
+    @Inject(method = "renderShadowMap", at = @At(value = "INVOKE", target = "Lfoundry/veil/api/client/render/framebuffer/AdvancedFbo;bind(Z)V", shift = At.Shift.BEFORE))
+    private static void x(VeilRenderLevelStageEvent.Stage stage, LevelRenderer levelRenderer, MultiBufferSource.BufferSource bufferSource, MatrixStack matrixStack, Matrix4fc frustumMatrix, Matrix4fc projectionMatrix, int renderTick, DeltaTracker deltaTracker, Camera camera, Frustum frustum, CallbackInfo ci) {
         FramebufferStack.push(simulated$bufferLocation);
     }
 }

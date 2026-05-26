@@ -2,7 +2,6 @@ package com.zelaux.betterdiagram.gui.screen.COM;
 
 import com.zelaux.betterdiagram.extend.EditBoxAccessors;
 import com.zelaux.betterdiagram.util.StringUtil;
-import com.zelaux.betterdiagram.util.VecUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +14,6 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
-
-import java.math.BigDecimal;
 
 @FieldDefaults(level = AccessLevel.PUBLIC)
 @Getter
@@ -93,8 +90,8 @@ public class Entry {
 
     public void setValue(double value) {
         boolean was = enabled;
-        enabled=true;
+        enabled = true;
         editBox.setValue(StringUtil.ZERO_WITH_SOME_DIGITS.format(value));
-        enabled=was;
+        enabled = was;
     }
 }

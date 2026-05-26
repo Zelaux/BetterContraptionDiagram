@@ -9,12 +9,11 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 
-public class InTextBlockRenderer implements ClientTooltipComponent ,WrappedTooltipComponent.Wrappable{
-    public final InplaceBlockRenderer.WorldContainer worldContainer=new InplaceBlockRenderer.WorldContainer();
+public class InTextBlockRenderer implements ClientTooltipComponent, WrappedTooltipComponent.Wrappable {
+    public final InplaceBlockRenderer.WorldContainer worldContainer = new InplaceBlockRenderer.WorldContainer();
     public BlockState state;
 
     public InTextBlockRenderer(BlockState state) {
@@ -41,7 +40,7 @@ public class InTextBlockRenderer implements ClientTooltipComponent ,WrappedToolt
         pose.pushPose();
         pose.setIdentity();
         pose.mulPose(matrix);
-        renderBlock(mouseX,mouseY, graphics);
+        renderBlock(mouseX, mouseY, graphics);
         pose.popPose();
         RenderSystem.disableDepthTest();
 
@@ -56,8 +55,8 @@ public class InTextBlockRenderer implements ClientTooltipComponent ,WrappedToolt
         int h = getHeight();
         int w = getWidth(null);
         InplaceBlockRenderer.renderInplace(guiGraphics,
-            state,worldContainer,
-            x+w/2 , y+h/2,
+            state, worldContainer,
+            x + w / 2, y + h / 2,
             AnimationTickHolder.getPartialTicks(),
             Minecraft.getInstance().level, 12
         );

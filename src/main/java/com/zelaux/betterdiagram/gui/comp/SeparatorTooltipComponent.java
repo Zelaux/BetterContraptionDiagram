@@ -8,7 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import org.joml.Matrix4f;
 
-public class SeparatorTooltipComponent implements ListenerClientTooltipComponent,WrappedTooltipComponent.Wrappable {
+public class SeparatorTooltipComponent implements ListenerClientTooltipComponent, WrappedTooltipComponent.Wrappable {
     private int width;
     private int borderColorStart;
     private int height;
@@ -36,7 +36,7 @@ public class SeparatorTooltipComponent implements ListenerClientTooltipComponent
 
     @Override
     public void renderText(Font font, int mouseX, int mouseY, Matrix4f matrix, MultiBufferSource.BufferSource bufferSource) {
-        if(width==0 || height==0)return;
+        if(width == 0 || height == 0) return;
         GuiGraphics guiGraphics = new GuiGraphics(Minecraft.getInstance(), bufferSource);
         PoseStack pose = guiGraphics.pose();
         pose.pushPose();

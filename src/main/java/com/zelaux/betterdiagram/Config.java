@@ -11,36 +11,33 @@ public class Config {
 
     public static final ModConfigSpec.IntValue CENTER_OF_MASS_COLOR = BUILDER
         .comment("color of center of mass")
-        .defineInRange("centerOfMassColor",0x76614D,0,Integer.MAX_VALUE)
-        ;
+        .defineInRange("centerOfMassColor", 0x76614D, 0, Integer.MAX_VALUE);
     public static final ModConfigSpec.IntValue EXPECTED_CENTER_OF_MASS_COLOR = BUILDER
         .comment("color of target center of mass")
-        .defineInRange("expectedCenterOfMassColor",0x764d4d,0,Integer.MAX_VALUE)
-        ;
+        .defineInRange("expectedCenterOfMassColor", 0x764d4d, 0, Integer.MAX_VALUE);
     public static final ModConfigSpec.IntValue FORCE_CORDS_COLOR = BUILDER
         .comment("color of force cords")
-        .defineInRange("forceCordsColor",ChatFormatting.DARK_GRAY.getColor(),0,Integer.MAX_VALUE)
-        ;
+        .defineInRange("forceCordsColor", ChatFormatting.DARK_GRAY.getColor(), 0, Integer.MAX_VALUE);
 
     public static final ModConfigSpec.DoubleValue AXIS_OFFSET = BUILDER
-            .comment("axis offset from (0,0,0)")
-            .defineInRange("axisOffset", 0.2, 0, 1);
+        .comment("axis offset from (0,0,0)")
+        .defineInRange("axisOffset", 0.2, 0, 1);
 
     public static final ModConfigSpec.DoubleValue AXIS_SCALE = BUILDER
-            .comment("axis scale")
-            .defineInRange("axisScale", 0.5, 0.25, 2);
+        .comment("axis scale")
+        .defineInRange("axisScale", 0.5, 0.25, 2);
     public static final ModConfigSpec.IntValue MAX_ITERATION = BUILDER
-            .comment("max mass stack distance")
-            .defineInRange("maxMassStackIteration", 20, 1, 1000);
+        .comment("max mass stack distance")
+        .defineInRange("maxMassStackIteration", 20, 1, 1000);
     public static final ModConfigSpec.IntValue MAX_FIX_DISTANCE = BUILDER
-            .comment("max mass stack distance")
-            .defineInRange("maxFixDistance", 1000, 1, 100_000);
+        .comment("max mass stack distance")
+        .defineInRange("maxFixDistance", 1000, 1, 100_000);
     public static final ModConfigSpec.EnumValue<ComViewType> COM_viewType_Goggles = BUILDER
-            .comment("center of mass tooltip view type with goggles")
-            .defineEnum("comViewTypeGoggle", ComViewType.SHIFT);
+        .comment("center of mass tooltip view type with goggles")
+        .defineEnum("comViewTypeGoggle", ComViewType.SHIFT);
     public static final ModConfigSpec.EnumValue<ComViewType> COM_viewType = BUILDER
-            .comment("center of mass box view type with goggles")
-            .defineEnum("comViewType", ComViewType.F3_OR_HITBOX);
+        .comment("center of mass box view type with goggles")
+        .defineEnum("comViewType", ComViewType.F3_OR_HITBOX);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 

@@ -11,9 +11,7 @@ import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScree
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.gui.NavigatableSimiScreen;
-import net.createmod.ponder.Ponder;
 import net.createmod.ponder.enums.PonderKeybinds;
-import net.createmod.ponder.foundation.PonderTooltipHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -94,7 +92,7 @@ public class OffCenteredBlockTooltipHandler {
                     }
                     context.selectedPair = i;
                     context.buildOnInit = true;
-                    context.inverted=true;
+                    context.inverted = true;
                     Minecraft.getInstance().pushGuiLayer(new COMScreen(
                         context, Minecraft.getInstance().player
                     ));
@@ -111,8 +109,8 @@ public class OffCenteredBlockTooltipHandler {
 
     private static Component makeProgressBar(float progress) {
         MutableComponent holdW = Component.translatable("better_contraption_diagram.diagram.offcenter-blocks-mode.hold-to-browse",
-                                           PonderKeybinds.PONDER.message().copy().withStyle(ChatFormatting.GRAY))
-                                       .withStyle(ChatFormatting.DARK_GRAY);
+                                              PonderKeybinds.PONDER.message().copy().withStyle(ChatFormatting.GRAY))
+                                          .withStyle(ChatFormatting.DARK_GRAY);
 
         Font fontRenderer = Minecraft.getInstance().font;
         float charWidth = fontRenderer.width("|");

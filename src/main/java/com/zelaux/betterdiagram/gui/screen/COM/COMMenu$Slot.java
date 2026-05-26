@@ -21,10 +21,12 @@ class COMMenu$Slot extends BSlotItemHandler {
 
     @Override
     public ItemStack safeTake(int count, int decrement, Player player) {
-        if(!this.mutable)return ItemStack.EMPTY;
+        if(!this.mutable) return ItemStack.EMPTY;
         return super.safeTake(count, decrement, player);
     }
-public final InplaceBlockRenderer.WorldContainer entityWorldContainer =new InplaceBlockRenderer.WorldContainer();
+
+    public final InplaceBlockRenderer.WorldContainer entityWorldContainer = new InplaceBlockRenderer.WorldContainer();
+
     @Override
     public ItemStack getItem() {
         return super.getItem().copy();
@@ -32,7 +34,7 @@ public final InplaceBlockRenderer.WorldContainer entityWorldContainer =new Inpla
 
     @Override
     public ItemStack safeInsert(ItemStack stack, int increment) {
-        if(!this.mutable)return stack;
+        if(!this.mutable) return stack;
         ItemStack item = getItem();
         if(item.getItem() != stack.getItem()) {
             stack.setCount(0);
@@ -52,7 +54,7 @@ public final InplaceBlockRenderer.WorldContainer entityWorldContainer =new Inpla
      */
     @Override
     public boolean mayPickup(Player player) {
-        if(!this.mutable)return false;
+        if(!this.mutable) return false;
         ItemStack itemstack = this.getItem();
         return super.mayPickup(player) && !itemstack.isEmpty()
             ? itemstack.isItemEnabled(player.level().enabledFeatures()) && !itemstack.has(DataComponents.CREATIVE_SLOT_LOCK)

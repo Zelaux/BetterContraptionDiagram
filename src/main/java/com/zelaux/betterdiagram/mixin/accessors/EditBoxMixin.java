@@ -14,6 +14,7 @@ public class EditBoxMixin implements EditBoxAccessors {
 
     @Override
     public int bcd$displayPos() {return displayPos;}
+
     @Override
     public int bcd$highlightPos() {return highlightPos;}
 
@@ -21,8 +22,9 @@ public class EditBoxMixin implements EditBoxAccessors {
     public void bcd$displayPos(int displayPos) {
         this.displayPos = displayPos;
     }
+
     @Override
     public void bcd$highlightPos(int highlightPos) {
-        this.highlightPos =highlightPos;
+        this.highlightPos = highlightPos;
     }
 }

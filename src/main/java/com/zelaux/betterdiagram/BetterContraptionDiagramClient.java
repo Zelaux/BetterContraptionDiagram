@@ -17,7 +17,10 @@ import dev.simulated_team.simulated.mixin.accessor.BlockBehaviourAccessor;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
 import mezz.jei.neoforge.events.PermanentEventSubscriptions;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -59,7 +62,7 @@ public class BetterContraptionDiagramClient {
     private final PermanentEventSubscriptions subscriptions;
 
     public BetterContraptionDiagramClient(ModContainer container) {
-        PermanentEventSubscriptions subscriptions =this.subscriptions= new PermanentEventSubscriptions(NeoForge.EVENT_BUS, container.getEventBus());
+        PermanentEventSubscriptions subscriptions = this.subscriptions = new PermanentEventSubscriptions(NeoForge.EVENT_BUS, container.getEventBus());
         ;
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
@@ -72,7 +75,7 @@ public class BetterContraptionDiagramClient {
 
 
         final IEventBus neoBus = NeoForge.EVENT_BUS;
-        subscriptions.register(RegisterClientTooltipComponentFactoriesEvent.class,this::registerType);
+        subscriptions.register(RegisterClientTooltipComponentFactoriesEvent.class, this::registerType);
         neoBus.addListener(this::registerCommand);
         neoBus.addListener(this::listenForItemDrop);
         neoBus.addListener(this::placeRendarableTooltip);
@@ -86,16 +89,16 @@ public class BetterContraptionDiagramClient {
         var list = event.getTooltipElements();
         for(int i = 0; i < list.size(); i++) {
             var left = list.get(i).left();
-            if(!(left.orElse(null) instanceof WrappedTooltipComponent wrapped))continue;
+            if(!(left.orElse(null) instanceof WrappedTooltipComponent wrapped)) continue;
             list.set(i, Either.right(wrapped));
 
         }
     }
 
-    public void listenForItemDrop(ItemTossEvent event){
+    public void listenForItemDrop(ItemTossEvent event) {
         Player player = event.getPlayer();
         Minecraft instance = Minecraft.getInstance();
-        if(player != instance.player)return;
+        if(player != instance.player) return;
         if(instance.screen instanceof COMScreen comScreen) {
             comScreen.handleItemDrop(event);
         }
@@ -104,6 +107,7 @@ public class BetterContraptionDiagramClient {
     private void registerCommand(final RegisterClientCommandsEvent event) {
         BCDCommand.register(event.getDispatcher(), event.getBuildContext());
     }
+
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void itemTooltip(final ItemTooltipEvent event) {
         if(!AllKeys.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) return;

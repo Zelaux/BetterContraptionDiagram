@@ -71,17 +71,17 @@ public class Calculator_DiagramStickyNote {
         var tex = BCDTextures.Diagram.DIAGRAM_ICON_EXPECTED_COM_TINY;
         final double comOffsetX = (screenCoords.x) - 8;
         final double comOffsetY = (screenCoords.y) - 8;
-        var self =(DiagramStickyNote)(Object) this;
-        final int areaOffsetX= self.getX()+SUBLEVEL_RENDER_X_OFFSET;
-        final int areaOffsetY= self.getY()+SUBLEVEL_RENDER_Y_OFFSET;
+        var self = (DiagramStickyNote) (Object) this;
+        final int areaOffsetX = self.getX() + SUBLEVEL_RENDER_X_OFFSET;
+        final int areaOffsetY = self.getY() + SUBLEVEL_RENDER_Y_OFFSET;
         if(comOffsetY > 0 && comOffsetX > 0 && comOffsetY < SUBLEVEL_RENDER_HEIGHT_PIXELS && comOffsetX < SUBLEVEL_RENDER_WIDTH_PIXELS) {
             stack.translate(comOffsetX, comOffsetY, 0);
             guiGraphics.blit(tex.location, 0, 0, 5, tex.startX, tex.startY, tex.width, tex.height, tex.texWidth, tex.texHeight);
 
             MixinCalculatorUtil.displayECOMTooltip(bcd$mouse.x, bcd$mouse.y,
-                areaOffsetX,areaOffsetY,
+                areaOffsetX, areaOffsetY,
                 screenCoords
-                , parent.tooltipList, VecUtil.subMinVec3d(new Vector3d(centerOfMass),parent.subLevel.getPlot().getBoundingBox()))
+                , parent.tooltipList, VecUtil.subMinVec3d(new Vector3d(centerOfMass), parent.subLevel.getPlot().getBoundingBox()))
             ;
         } else {
             final float centerX = SUBLEVEL_RENDER_WIDTH_PIXELS / 2f;
@@ -90,9 +90,9 @@ public class Calculator_DiagramStickyNote {
             final Vector2d target = new Vector2d(screenCoords.x() - centerX, screenCoords.y - centerY).normalize();
 
             MixinCalculatorUtil.displayECOMTooltip(bcd$mouse.x, bcd$mouse.y,
-                areaOffsetX,areaOffsetY,
+                areaOffsetX, areaOffsetY,
                 target.mul(40, bcd$tmp1).add(centerX, centerY)
-                , parent.tooltipList, VecUtil.subMinVec3d(new Vector3d(centerOfMass),parent.subLevel.getPlot().getBoundingBox()))
+                , parent.tooltipList, VecUtil.subMinVec3d(new Vector3d(centerOfMass), parent.subLevel.getPlot().getBoundingBox()))
             ;
             TransformStack.of(stack)
                           .translate(centerX, centerY, 0)

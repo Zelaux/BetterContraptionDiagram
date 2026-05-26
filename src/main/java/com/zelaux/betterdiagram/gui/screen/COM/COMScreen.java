@@ -8,7 +8,10 @@ import com.zelaux.betterdiagram.gui.widget.PartialInteration;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
-import com.zelaux.betterdiagram.util.*;
+import com.zelaux.betterdiagram.util.CenterMassCache;
+import com.zelaux.betterdiagram.util.CenterMassCalculator;
+import com.zelaux.betterdiagram.util.UIUtil;
+import com.zelaux.betterdiagram.util.VecFormat;
 import com.zelaux.betterdiagram.util.ui.InplaceBlockRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -109,13 +112,13 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if(scrollWidget.isOverBarRegion(mouseX,mouseY))return scrollWidget.mouseClicked(mouseX,mouseY,button);
+        if(scrollWidget.isOverBarRegion(mouseX, mouseY)) return scrollWidget.mouseClicked(mouseX, mouseY, button);
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(scrollWidget.scrolling())return scrollWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        if(scrollWidget.scrolling()) return scrollWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
         Slot clickedSlot = accessors.bcd$clickedSlot();
         if(clickedSlot == null && accessors.bcd$findSlot(mouseX, mouseY) == null) {
             if(this.getFocused() != null && this.isDragging() && button == 0)
@@ -132,7 +135,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         if(minecraft == null || minecraft.gameMode == null) return;
         minecraft.gameMode.handleCreativeModeItemDrop(event.getEntity().getItem());
     }
-//clientSideCloseContainer
+    //clientSideCloseContainer
 
 
     @Override
@@ -221,13 +224,13 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
             }
         });
 
-    if(context.buildOnInit){
-        performSearch();
-    }
+        if(context.buildOnInit) {
+            performSearch();
+        }
     }
 
     private void performSearch() {
-        context.buildOnInit=true;
+        context.buildOnInit = true;
         SearchEntry[] searchEntries = new SearchEntry[3];
         int i = 0;
         for(Entry entry : context.entries) {
@@ -237,7 +240,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         doSearch(Arrays.copyOf(searchEntries, i));
     }
 
-    private  Component invertedTitle() {
+    private Component invertedTitle() {
         return context.inverted ? Component.translatable("better_contraption_diagram.com-menu.invert-move.inverted") : Component.translatable("better_contraption_diagram.com-menu.invert-mode.normal");
     }
 
@@ -251,7 +254,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         var lookup = player.level().registryAccess().lookup(Registries.BLOCK).orElse(null);
         if(lookup == null) return;
         var comStats = CenterMassCache.getCOM2_Block2States(lookup, player.level());
-        long nano=System.nanoTime();
+        long nano = System.nanoTime();
         forLoop:
         for(var comStat : comStats.entrySet()) {
             Vector3dc key = comStat.getKey();
@@ -269,9 +272,9 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
                 ));
             }
         }
-        long endNano=System.nanoTime();
+        long endNano = System.nanoTime();
 
-        BetterContraptionDiagram.LOGGER.debug("Build search result in {}ms",(endNano-nano)/1_000_000.);
+        BetterContraptionDiagram.LOGGER.debug("Build search result in {}ms", (endNano - nano) / 1_000_000.);
         this.menu.scrollTo(0);
         scrollWidget.setScrollAmount(0);
         //this.scrollOffs = this.menu.getScrollForRowIndex(i);
@@ -302,7 +305,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
 
     private boolean try3dRender(GuiGraphics guiGraphics, Slot slot) {
         if(!(slot instanceof COMMenu$Slot mySlot) || slot.getItem().isEmpty()) return false;
-        if(slot!=hoveredSlot)return false;
+        if(slot != hoveredSlot) return false;
         int rowOffset = menu.rowOffset();
         int rawIndex = mySlot.index();
         int rawRow = rawIndex / 9, rawCol = rawIndex % 9;
@@ -323,15 +326,15 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         int perRow = PREVIEW_PANEL_PER_ROW;
         int size = PREVIEW_PANEL_CELL_SIZE;
 
-        int ox = leftPos-perRow*size;
+        int ox = leftPos - perRow * size;
         int oy = topPos;
         for(int i = 0; i < pairs.size(); i++) {
 
             var pair = pairs.get(i);
             int row = i / perRow, col = i % perRow;
             int x = ox + col * size, y = oy + row * size;
-            boolean isSelected =false&&  context.selectedPair == i;
-            boolean isHovered =false;
+            boolean isSelected = false && context.selectedPair == i;
+            boolean isHovered = false;
 
             worldContainer.updateBlockstateIfMatch(pair.state);
             BCDTextures.COMScreen.choosePreviewSlotTexture(isHovered, isSelected).render(
@@ -350,13 +353,13 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if(wasError)return;
+        if(wasError) return;
         Lighting.setupFor3DItems();
         try {
             this.partialTick = partialTick;
             super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-            if(hoveredSlot!=null )try3dRender(guiGraphics, hoveredSlot);
+            if(hoveredSlot != null) try3dRender(guiGraphics, hoveredSlot);
             Slot slot = menu.slots.get(0);
             if(context.blockItem() != null) {
                 int ox = leftPos + PREVIEW_PANEL_OFFSET_X, oy = topPos + PREVIEW_PANEL_OFFSET_Y;
@@ -397,7 +400,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
             this.renderTooltip(guiGraphics, mouseX, mouseY);
         } catch(Exception e) {
             e.printStackTrace(System.err);
-            wasError=true;
+            wasError = true;
         }
 
     }

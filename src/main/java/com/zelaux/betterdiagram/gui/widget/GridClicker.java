@@ -10,8 +10,8 @@ import org.joml.Vector2i;
 import java.util.ArrayList;
 
 public class GridClicker extends AbstractSimiWidget {
-    public static  int ACTIVE_COLOR = (0xff << 24) | ChatFormatting.BLACK.getColor();
-    public static  int INACTIVE_COLOR = 0 ;//((0xff << 24) | ChatFormatting.GRAY.getColor());
+    public static int ACTIVE_COLOR = (0xff << 24) | ChatFormatting.BLACK.getColor();
+    public static int INACTIVE_COLOR = 0;//((0xff << 24) | ChatFormatting.GRAY.getColor());
     public int gridColor = ACTIVE_COLOR;
 
     public GridClicker gridColor(int gridColor) {
@@ -69,14 +69,15 @@ public class GridClicker extends AbstractSimiWidget {
         int dx = 1 - ((sizeInBlocks.x >>> 31) << 1);
         int dy = ((sizeInBlocks.y >>> 31) << 1) - 1;
         if(dx < 0) gridAbs.x = Math.abs(sizeInBlocks.x) - 1 - gridAbs.x;
-        if(dy < 0) gridAbs.y = sizeInBlocks.y-1 - gridAbs.y;
+        if(dy < 0) gridAbs.y = sizeInBlocks.y - 1 - gridAbs.y;
         return gridAbs;
     }
+
     public Vector2d toSimpleGridFromAbs(Vector2d gridAbs) {
         int dx = 1 - ((sizeInBlocks.x >>> 31) << 1);
         int dy = ((sizeInBlocks.y >>> 31) << 1) - 1;
         if(dx < 0) gridAbs.x = Math.abs(sizeInBlocks.x) - 1 - gridAbs.x;
-        if(dy < 0) gridAbs.y = sizeInBlocks.y-1 - gridAbs.y;
+        if(dy < 0) gridAbs.y = sizeInBlocks.y - 1 - gridAbs.y;
         return gridAbs;
     }
 

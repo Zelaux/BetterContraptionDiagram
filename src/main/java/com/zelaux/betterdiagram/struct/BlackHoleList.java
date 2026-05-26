@@ -6,9 +6,9 @@ import java.util.function.Predicate;
 
 public class BlackHoleList<T> extends ArrayList<T> {
     @SuppressWarnings("rawtypes")
-    public static final BlackHoleList instance=new BlackHoleList();
+    public static final BlackHoleList instance = new BlackHoleList();
 
-    public static <T> BlackHoleList<T> typed(){
+    public static <T> BlackHoleList<T> typed() {
         //noinspection unchecked
         return instance;
     }
@@ -16,7 +16,6 @@ public class BlackHoleList<T> extends ArrayList<T> {
     public BlackHoleList() {
         super(0);
     }
-
 
 
     @Override

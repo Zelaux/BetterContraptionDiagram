@@ -47,7 +47,6 @@ public abstract class DiagramScreenMixin {
     protected abstract void renderForceArrow(GuiGraphics graphics, ForceGroup forceGroup, ForceClusterFinder.Cluster pointForce, double maxArrowLength, int mouseX, int mouseY, List<FormattedText> tooltipLines, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight);
 
 
-
     @Shadow
     protected DiagramConfig config;
 
@@ -60,7 +59,7 @@ public abstract class DiagramScreenMixin {
         final Vector2d screenCoords = DiagramScreen.getScreenCoords(plotSpacePoint, orientation, cameraPos, projMatrix, areaWidth, areaHeight);
 
 
-        if(screenCoords.distanceSquared(mouseX-areaOriginX,mouseY-areaOriginY) >= 8.0 * 8.0) return;
+        if(screenCoords.distanceSquared(mouseX - areaOriginX, mouseY - areaOriginY) >= 8.0 * 8.0) return;
 
         BoundingBox3ic box = subLevel.getPlot().getBoundingBox();
         centerOfMass.sub(box.minX(), box.minY(), box.minZ());
@@ -112,7 +111,7 @@ public abstract class DiagramScreenMixin {
             if(counterBlackHoleList.counter > 0) {
                 counterBlackHoleList.counter = 0;
                 final var nameText = SimLang.builder().add(group.name()).color((255 << 24) | group.color()).component();
-            final     var axisValue = Component.translatable("better_contraption_diagram.axis_value", String.format("%,d", (int) forces[off + 3])).withColor(0xffffffff);
+                final var axisValue = Component.translatable("better_contraption_diagram.axis_value", String.format("%,d", (int) forces[off + 3])).withColor(0xffffffff);
 
                 tooltipList.add(
                     Component.translatable("better_contraption_diagram.axis_arrow", nameText, axisValue).withColor(TOOLTIP_LABEL_COLOR)
@@ -120,7 +119,6 @@ public abstract class DiagramScreenMixin {
             }
         }
     }
-
 
 
     @Inject(at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;addForceArrowTooltip(Ldev/ryanhcode/sable/api/physics/force/ForceGroup;IDILjava/util/List;)V"), method = "renderForceArrow")

@@ -1,13 +1,10 @@
 package com.zelaux.betterdiagram.struct.math;
 
 
-
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Contract;
-import org.joml.*;
-
-import java.lang.Math;
+import org.joml.Vector2d;
+import org.joml.Vector2dc;
 
 /**
  * A bounding box with JOML interaction.
@@ -35,7 +32,7 @@ public sealed interface BoundingBox2dc permits BoundingBox2d {
      * @return if this box intersects with the given other box
      */
     default boolean intersects(final double minX, final double minY, final double maxX, final double maxY) {
-        return this.maxX() >= minX && this.maxY() >= minY && this.minX() <= maxX && this.minY() <= maxY ;
+        return this.maxX() >= minX && this.maxY() >= minY && this.minX() <= maxX && this.minY() <= maxY;
     }
 
     /**
@@ -81,7 +78,7 @@ public sealed interface BoundingBox2dc permits BoundingBox2d {
      * @return the result stored in dest
      */
     default BoundingBox2d expandTo(final Vector2dc point, final BoundingBox2d dest) {
-        return this.expandTo(point.x(), point.y(),  dest);
+        return this.expandTo(point.x(), point.y(), dest);
     }
 
     /**
@@ -177,9 +174,6 @@ public sealed interface BoundingBox2dc permits BoundingBox2d {
             Math.min(this.maxY(), box.maxY())
         );
     }
-
-
-
 
 
     /**

@@ -29,8 +29,8 @@ public class CenterMassCache {
     private static long Block2Pairs_nano;
 
     public static @NotNull Map<Vector3dc, Map<Block, List<Pair>>> getCOM2_Block2States(HolderLookup.RegistryLookup<Block> blocks, Level level) {
-        if(COM2_Block2States != null && Block2Pairs!=null) return COM2_Block2States;
-        long nano=System.nanoTime();
+        if(COM2_Block2States != null && Block2Pairs != null) return COM2_Block2States;
+        long nano = System.nanoTime();
         var collect = new HashMap<Vector3dc, Map<Block, List<Pair>>>();
         for(var blockListEntry : getBlock2Pairs(blocks, level).entrySet()) {
             Block block = blockListEntry.getKey();
@@ -44,8 +44,8 @@ public class CenterMassCache {
             }
 
         }
-        long endNano=System.nanoTime();
-        COM2_Block2States_time=endNano-nano;
+        long endNano = System.nanoTime();
+        COM2_Block2States_time = endNano - nano;
         BetterContraptionDiagram.LOGGER.debug("Time to build com2_block2states cache {}ms", (endNano - nano) / 1_000_000.);
         return COM2_Block2States = collect;
     }
@@ -53,7 +53,7 @@ public class CenterMassCache {
     public static @NotNull HashMap<Block, HashMap<Vector3dc, ArrayList<Pair>>> getBlock2Pairs(HolderLookup.RegistryLookup<Block> blocks, Level level) {
         if(CenterMassCache.Block2Pairs != null) return CenterMassCache.Block2Pairs;
 
-        long nano=System.nanoTime();
+        long nano = System.nanoTime();
         var map = new HashMap<Block, HashMap<Vector3dc, ArrayList<Pair>>>();
         blocks.listElements()
               .sequential()
@@ -69,8 +69,8 @@ public class CenterMassCache {
 
               });
 
-        long endNano=System.nanoTime();
-        Block2Pairs_nano=endNano-nano;
+        long endNano = System.nanoTime();
+        Block2Pairs_nano = endNano - nano;
         BetterContraptionDiagram.LOGGER.debug("Time to build block2pairs cache {}ms", (endNano - nano) / 1_000_000.);
         return CenterMassCache.Block2Pairs = map;
     }

@@ -37,6 +37,6 @@ public abstract class AbstractContainerScreenMixin implements AbstractContainerS
     @Unique
     @Nullable
     @Override
-    public Slot bcd$findSlot(double mouseX, double mouseY){return findSlot(mouseX,mouseY);}
+    public Slot bcd$findSlot(double mouseX, double mouseY) {return findSlot(mouseX, mouseY);}
 
 }

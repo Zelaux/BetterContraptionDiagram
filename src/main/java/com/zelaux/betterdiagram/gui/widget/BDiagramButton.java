@@ -39,7 +39,7 @@ public class BDiagramButton extends AbstractWidget {
     private IndexSelector iconSwitch;
     private ColorSelector colorSwitch;
     public Color[] colors = DEFAULT_COLORS;
-    public ButtonKind[] supportedButtons={ButtonKind.LEFT};
+    public ButtonKind[] supportedButtons = {ButtonKind.LEFT};
 
     public BDiagramButton supportedButtons(ButtonKind... supportedButtons) {
         this.supportedButtons = supportedButtons;
@@ -89,13 +89,15 @@ public class BDiagramButton extends AbstractWidget {
     public BDiagramButton(final BCDTexture textures, final int x, final int y, final Component message, final ClickHandler onClick) {
         this(new BCDTexture[]{textures, textures}, x, y, message, onClick);
     }
+
     public BDiagramButton(final BCDTexture textures, final int x, final int y, final Component message, final Runnable onClick) {
         this(new BCDTexture[]{textures, textures}, x, y, message, ClickHandler.run(onClick));
     }
 
     public BDiagramButton(final BCDTexture[] textures, final int x, final int y, final Component message, final Runnable onClick) {
-        this(textures,x,y,message,ClickHandler.run(onClick));
+        this(textures, x, y, message, ClickHandler.run(onClick));
     }
+
     public BDiagramButton(final BCDTexture[] textures, final int x, final int y, final Component message, final ClickHandler onClick) {
         super(x, y, textures[0].width, textures[0].height, message);
         this.textures = textures;
@@ -106,7 +108,7 @@ public class BDiagramButton extends AbstractWidget {
     @Override
     public void onClick(double mouseX, double mouseY, int button) {
         super.onClick(mouseX, mouseY, button);
-        this.onClick.handle(this,mouseX,mouseY,button);
+        this.onClick.handle(this, mouseX, mouseY, button);
     }
 
     public void setTextures(final BCDTexture textures, boolean active) {

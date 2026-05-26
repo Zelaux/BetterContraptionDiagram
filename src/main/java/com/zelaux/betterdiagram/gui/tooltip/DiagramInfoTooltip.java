@@ -28,7 +28,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
     public DiagramInfoTooltip(@NotNull DiagramScreen self, ClientSubLevel subLevel, DiagramDataPacket serverData) {
         this.diagramScreeen = self;
         diagramScreeenAcc = DiagramScreenAccessors.of(self);
-        tooltipColor=diagramScreeenAcc.TOOLTIP_LABEL_COLOR();
+        tooltipColor = diagramScreeenAcc.TOOLTIP_LABEL_COLOR();
         this.subLevel = subLevel;
         this.serverData = serverData;
     }
@@ -36,7 +36,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
     @Override
     public List<Component> get() {
         DiagramDataPacket serverData = diagramScreeenAcc.betterContraptionDiagram$serverData();
-        if(serverData==null)return List.of();
+        if(serverData == null) return List.of();
         final var gravityDirection = CenterMassCalculator.calculateGravityDirection(subLevel, serverData, tmp);
         final var gravityComponent = VecFormat.Presets.lightGray(gravityDirection);
         tmp.zero();

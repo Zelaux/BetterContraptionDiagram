@@ -25,7 +25,6 @@ public class MyScrollBar extends ScrollBar {
     }
 
 
-
     @Override
     protected int getInnerHeight() {
         return Mth.positiveCeilDiv(menu.items.size(), 9) * 16;
@@ -58,7 +57,7 @@ public class MyScrollBar extends ScrollBar {
 
     @Override
     protected @NotNull ResourceLocation getScrollerSprite() {
-        return active?SCROLLER_SPRITE:SCROLLER_DISABLED_SPRITE;
+        return active ? SCROLLER_SPRITE : SCROLLER_DISABLED_SPRITE;
     }
 
     @Override
@@ -69,8 +68,8 @@ public class MyScrollBar extends ScrollBar {
     @Override
     public void setupScrollBarRegion(BoundingBox2i region) {
         region.setSized(
-            getX()+175,getY()+18,
-            12,110
+            getX() + 175, getY() + 18,
+            12, 110
         );
     }
 

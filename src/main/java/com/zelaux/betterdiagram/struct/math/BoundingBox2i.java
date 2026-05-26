@@ -288,7 +288,7 @@ public final class BoundingBox2i implements BoundingBox2ic {
         return this.maxY;
     }
 
-    public BoundingBox2i setSized(int x,int y,int width,int height) {
-        return set(x,y,x+width-1,y+height-1);
+    public BoundingBox2i setSized(int x, int y, int width, int height) {
+        return set(x, y, x + width - 1, y + height - 1);
     }
 }

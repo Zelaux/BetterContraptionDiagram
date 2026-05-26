@@ -43,6 +43,7 @@ public class ClientData implements WithClientData {
             data.withOffCenterBlocksShowState(data.offCenterBlocksShowState.next())
         );
     }
+
     public void prevOffCenteredView() {
         BCDData data = dataOrDefault();
         bcdiagram$updateData(

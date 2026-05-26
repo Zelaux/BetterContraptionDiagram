@@ -9,7 +9,6 @@ import com.zelaux.betterdiagram.extend.DiagramStickyNoteAccessors;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.struct.Weights;
-import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
@@ -47,7 +46,7 @@ public class CenterMassCalculator {
     public static Weights[] recalculateStacks(DiagramScreen screen) {
         var accessors = accessors(screen);
         DiagramDataPacket diagramDataPacket = accessors.betterContraptionDiagram$serverData();
-        if(diagramDataPacket==null)return null;
+        if(diagramDataPacket == null) return null;
         return recalculateStacks((accessors.betterContraptionDiagram$clientData()), screen.subLevel, diagramDataPacket.mass());
     }
 
@@ -171,7 +170,7 @@ public class CenterMassCalculator {
     public static Vector3d calculateGravityDirection(ClientSubLevel subLevel, DiagramDataPacket serverData, @Nullable Vector3d output) {
         //DimensionPhysicsData.getGravity(level)
         var gravity = serverData.forces().get(ForceGroups.GRAVITY.get());
-        if(gravity==null)return new Vector3d(0,0,0);
+        if(gravity == null) return new Vector3d(0, 0, 0);
         QueuedForceGroup.PointForce first = gravity.getFirst();
         Vector3d force = output == null ? new Vector3d(first.force()) : output.set(first.force());
 
@@ -235,7 +234,7 @@ public class CenterMassCalculator {
         var data = clientData.bcdDataOrDefault();
 
         DiagramDataPacket serverData = accessors(self).betterContraptionDiagram$serverData();
-        if(serverData==null)return null;
+        if(serverData == null) return null;
         if(data.offCenterBlocksShowState == BCDData.OffCenterBlocksShowState.none) {
             clientData.bcdiagram$updateData(data.withOffCenteredBlocks(null));
             return null;
@@ -286,7 +285,7 @@ public class CenterMassCalculator {
 
         @Override
         public boolean equals(Object obj) {
-            if(!(obj instanceof Cache cache))return false;
+            if(!(obj instanceof Cache cache)) return false;
             return isApproxEquals(cache.expectedCOM, cache.actualCOM, cache.mass);
         }
     }

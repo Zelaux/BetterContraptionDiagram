@@ -40,6 +40,7 @@ public class UIUtil {
     public static @NotNull Label label(String text) {
         return label(Component.literal(text));
     }
+
     public static @NotNull Label label(MutableComponent text) {
         var label = new Label(0, 0, text);
         label.text = text;

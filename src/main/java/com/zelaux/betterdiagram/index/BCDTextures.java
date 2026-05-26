@@ -13,8 +13,8 @@ public interface BCDTextures {
         AtlasTexture atlas = atlas("gui/com_screen", 256, 256, 161, 16);
         BCDTexture inventory = texture(atlas, 0, 0, 226, 136);
         BCDTexture previewSlot = texture(atlas, 0, 136, 7 * 4, 7 * 4);
-        BCDTexture previewSlotHovered = texture(atlas, 7*4, 136 , 7 * 4, 7 * 4);
-        BCDTexture previewSlotSelected = texture(atlas, 2*7*4, 136, 7 * 4, 7 * 4);
+        BCDTexture previewSlotHovered = texture(atlas, 7 * 4, 136, 7 * 4, 7 * 4);
+        BCDTexture previewSlotSelected = texture(atlas, 2 * 7 * 4, 136, 7 * 4, 7 * 4);
 
         static BCDTexture choosePreviewSlotTexture(boolean isHovered, boolean isSelected) {
             return isSelected ? previewSlotSelected : (isHovered ? previewSlotHovered : previewSlot);
@@ -47,7 +47,7 @@ public interface BCDTextures {
         BCDTexture ICON_OFF_CENTERED_BLOCK_PLUS = gridCell(atlas, 1, 10);
         BCDTexture ICON_OFF_CENTERED_BLOCK_CROSS = gridCell(atlas, 2, 10);
         BCDTexture ICON_OFF_CENTERED_BLOCK_SHADOW = gridCell(atlas, 3, 10);
-        BCDTexture[] ICONS_OFF_CENTERED_BLOCK = {ICON_OFF_CENTERED_BLOCK_CROSS, ICON_OFF_CENTERED_BLOCK,ICON_OFF_CENTERED_BLOCK_PLUS};
+        BCDTexture[] ICONS_OFF_CENTERED_BLOCK = {ICON_OFF_CENTERED_BLOCK_CROSS, ICON_OFF_CENTERED_BLOCK, ICON_OFF_CENTERED_BLOCK_PLUS};
 
 
         BCDTexture DIAGRAM_ICON_CALCULATOR = gridCell(atlas, 0, 3);
