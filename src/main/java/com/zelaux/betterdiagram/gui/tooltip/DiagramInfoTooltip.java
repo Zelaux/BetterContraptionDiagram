@@ -42,17 +42,19 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
         tmp.zero();
         sumOfForces.zero();
         sumOfMoments.zero();
-        Vector3d COM = CenterMassCalculator.centerOfMass(subLevel);
+        Vector3d COM = new Vector3d(CenterMassCalculator.centerOfMass(subLevel));
+        VecUtil.minVec3d(subLevel.getPlot().getBoundingBox(),tmp);
+        //COM.add(tmp);
         serverData.forces().forEach((_i, pointForces) -> {
             for(var force : pointForces) {
 
                 sumOfForces.add(force.force());
-                Vector3d momentOfForce = tmp.set(force.point()).sub(COM).cross(force.point());
+                Vector3d momentOfForce = tmp.set(force.point()).sub(COM).cross(force.force());
                 sumOfMoments.add(momentOfForce);
                 tmp.add(force.force());
             }
         });
-        Vector3d mergedDisplacement = tmp.set(sumOfForces).cross(sumOfMoments).div(sumOfForces.lengthSquared()).add(COM);
+        Vector3d mergedDisplacement = tmp.set(sumOfForces).cross(sumOfMoments).div(sumOfForces.lengthSquared());
         //VecUtil.subMinVec3d(mergedDisplacement, subLevel.getPlot().getBoundingBox());
 
 
