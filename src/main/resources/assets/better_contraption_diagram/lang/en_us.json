@@ -19,6 +19,9 @@
 
   "better_contraption_diagram.item.tooltip": "Possible center of mass %s",
   "better_contraption_diagram.google-overlay.com-offset": "Center of mass offset %s",
+
+  "better_contraption_diagram.diagram.offenter-blocks.blockpos": "Local Block Position %s",
+
   "better_contraption_diagram.item-open.tooltip": "Press <<Shift>> to view possible centers of mass",
 
 
@@ -28,6 +31,16 @@
 
   "better_contraption_diagram.diagram.disable-axis": "Disable axis %s",
   "better_contraption_diagram.diagram.enable-axis": "Enable axis %s",
+
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.switch.lmb": "Press LMB to select next",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.switch.rmb": "Press RMB to select previous",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.none.name": "Mode None",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.none.desc": "Do not show blocks with shifted Center Of Mass",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.name": "Mode Show",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.desc": "Show blocks with shifted Center Of Mass only when Axis has Undistributable weight",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.name": "Mode Show All",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.desc": "Show all blocks with shifted Center Of Mass",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.hold-to-browse":  "Hold [%1$s] to Find Pair",
 
   "better_contraption_diagram.gui.scrollInput.ctrlScrollsSlower": "Ctrl to Scroll Slower",
   "better_contraption_diagram.common.shift-scale": "Press <<Shift>> to step by 0.5",

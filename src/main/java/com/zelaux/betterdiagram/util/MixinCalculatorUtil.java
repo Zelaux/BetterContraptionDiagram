@@ -6,6 +6,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.zelaux.betterdiagram.Config;
+import com.zelaux.betterdiagram.data.OffCenteredBlock;
+import com.zelaux.betterdiagram.extend.ProjectionAccessor;
+import com.zelaux.betterdiagram.extend.WithClientData;
+import com.zelaux.betterdiagram.gui.comp.InTextBlockRenderer;
+import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
+import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.Colors;
 import com.zelaux.betterdiagram.struct.MassStack;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
@@ -16,10 +23,12 @@ import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyH
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import joptsimple.internal.Strings;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.core.BlockPos;
@@ -35,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.zelaux.betterdiagram.Config.COM_viewType;
@@ -173,6 +183,61 @@ public class MixinCalculatorUtil {
             .literal(Strings.repeat(' ', getIndents(Minecraft.getInstance().font, 4 + indent)))
             .append(component);
     }
+
+    /**
+     * For HotSwap purpose
+     *
+     */
+    public static HoveredOffCenteredBlock renderOffCentered(WithClientData withClientData,
+                                                            @NotNull DiagramScreen self, List<FormattedText> tooltipList,
+                                                            ProjectionAccessor accessor,
+                                                            GuiGraphics graphics,
+                                                            int mouseX,
+                                                            int mouseY, boolean shouldClipWeights) {
+        ArrayList<OffCenteredBlock> blocks = CenterMassCalculator.getOrCreateOffCenteredBlocks(withClientData, self);
+        if(blocks == null || blocks.isEmpty()) return null;
+        final int shadowColor = 0xfff9f2de;
+        Vector3d tmp = new Vector3d();
+        boolean wasAnyOne = false;
+        double hoveredDistance2 = Double.MAX_VALUE;
+        int hoveredIndex = -1;
+        OffCenteredBlock hovered = null;
+        for(OffCenteredBlock block : blocks) {
+            MutableComponent localBlockPos = vectorToFormatted(tmp,Colors.GRAY).withColor(Colors.DARK_GRAY.getRGB());
+
+            Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(JOMLConversion.toJOML(block.pos().getCenter(), tmp));
+            if(shouldClipWeights && !accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.y)) continue;
+            double dst2 = originCoords.distanceSquared(mouseX - accessor.bcd$originX(), mouseY - accessor.bcd$originY());
+            if(dst2 < 8 * 8) {
+
+                if(wasAnyOne) {
+                    tooltipList.add(new SeparatorTooltipComponent().wrap());
+                }
+                if(dst2 < hoveredDistance2) {
+                    hovered = block;
+                    hoveredDistance2 = dst2;
+                    hoveredIndex = tooltipList.size();
+                }
+                tooltipList.add(localBlockPos);
+
+                tooltipList.add(Component.translatable(
+                    "better_contraption_diagram.google-overlay.com-offset",
+                    vectorToFormatted(block.COM(),Colors.GRAY).withColor(Colors.DARK_GRAY.getRGB())
+                ));
+                tooltipList.add(Component.translatable(
+                    "better_contraption_diagram.diagram.offenter-blocks.blockpos",
+                    localBlockPos
+                ));
+                tooltipList.add(new InTextBlockRenderer(block.state()).wrap());
+                wasAnyOne = true;
+            }
+            BCDTextures.Diagram.ICON_OFF_CENTERED_BLOCK_SHADOW.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
+            BCDTextures.Diagram.ICON_OFF_CENTERED_BLOCK.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
+        }
+        return hovered == null ? null : new HoveredOffCenteredBlock(hoveredDistance2, hoveredIndex, hovered);
+    }
+
+    public record HoveredOffCenteredBlock(double distanceSquared, int tooltipStartIndex, OffCenteredBlock block) {}
 
     public interface TooltipAdder {
         void apply(List<FormattedText> tooltips, MassStack stack, Component v);

@@ -1,24 +1,24 @@
 package com.zelaux.betterdiagram.extend;
 
 import com.zelaux.betterdiagram.data.BCDData;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public interface WithClientData {
     default int axisStatesInt(int i) {
-        return axisStates(i)?1:0;
+        return axisStates(i) ? 1 : 0;
     }
+
     default boolean axisStates(int i) {
-        BCDData data = bcdiagram$dataOrNull();
-        if(data == null || data.axisStates == null) return true;
-        return data.axisStates[i];
+        return bcdDataOrDefault().axisStateBool(i);
     }
 
     default boolean axisStates(int i, boolean value) {
-        BCDData data = bcdiagram$dataOrCreate();
-        if(data.axisStates == null)data=data.withAxisStates(new boolean[]{true,true,true});
-        data.axisStates[i] = value;
-        bcdiagram$updateData(data.withAxisStates(data.axisStates));
+        BCDData data = bcdDataOrDefault();
+        bcdiagram$updateData(data.withAxisStateInt(i,value?1:0));
         return value;
     }
 
@@ -37,10 +37,12 @@ public interface WithClientData {
     }
 
     @Nullable
+    @Contract(pure = true)
     BCDData bcdiagram$dataOrNull();
 
     @NotNull
-    BCDData bcdiagram$dataOrCreate();
+    @Contract(pure = true)
+    default BCDData bcdDataOrDefault() {return Objects.requireNonNullElse(bcdiagram$dataOrNull(), BCDData.DEFAULT_VALUE);}
 
     @NotNull
     BCDData bcdiagram$updateData(BCDData data);

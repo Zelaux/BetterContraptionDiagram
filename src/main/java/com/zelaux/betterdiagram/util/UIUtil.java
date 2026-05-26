@@ -48,7 +48,6 @@ public class UIUtil {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static List<FormattedText> formattedText(List<Component> components) {
-        return (List) components;
-    }
+    public static <T extends FormattedText> List<FormattedText> formattedText(List<T> components) {return (List) components;}
+
 }

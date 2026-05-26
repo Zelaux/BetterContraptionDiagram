@@ -19,13 +19,6 @@ public class ClientDataForDiagramEntity implements WithClientData {
     }
 
     @Override
-    public @NotNull BCDData bcdiagram$dataOrCreate() {
-        BCDData data = bcd$data;
-        if(data == null) data = bcd$data = BCDData.NULL();
-        return data;
-    }
-
-    @Override
     public @NotNull BCDData bcdiagram$updateData(BCDData data) {
         bcd$data = data;
         return data;

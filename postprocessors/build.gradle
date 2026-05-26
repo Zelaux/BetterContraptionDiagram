@@ -1,0 +1,36 @@
+plugins {
+    id("java")
+}
+
+repositories {
+    mavenCentral()
+}
+
+static String asmExt(String module) {
+    if (module.startsWith(':')) module = module.substring(1);
+    return "com.github.Zelaux.asm-ext:${module.replace(':', '-')}:v1.0.2"
+}
+
+dependencies {
+    def asmVersion='9.9'
+//    implementation "org.ow2.asm:asm:$asmVersion"
+    implementation "org.ow2.asm:asm-util:$asmVersion"
+    implementation "org.ow2.asm:asm-tree:$asmVersion"
+    implementation "org.ow2.asm:asm-analysis:$asmVersion"
+    implementation "org.ow2.asm:asm-commons:$asmVersion"
+
+    def jetbrainsAnno = "24.0.1"
+    compileOnly "org.jetbrains:annotations:$jetbrainsAnno"
+    testCompileOnly "org.jetbrains:annotations:$jetbrainsAnno"
+
+    def lombokVersion = "1.18.42"
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+
+    implementation(asmExt(":util:classfile-metadata"))
+    implementation(asmExt(":util:node"))
+    compileOnly(asmExt(":transformation:core"))
+}

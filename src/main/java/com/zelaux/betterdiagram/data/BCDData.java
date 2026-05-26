@@ -5,58 +5,65 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.zelaux.betterdiagram.struct.Weights;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import dev.ryanhcode.sable.companion.impl.SableCompanionUtil;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.With;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.FieldsAreNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Better Contraption Diagram Data
  *
  */
 @AllArgsConstructor
-@With
+@With()
 @Getter
 @FieldDefaults(level = AccessLevel.PUBLIC, makeFinal = true)
+@Builder(toBuilder = true)
+@FieldsAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+@EqualsAndHashCode
 public class BCDData {
+    public static final BCDData DEFAULT_VALUE = new BCDData(null, null, null, null, (byte) 7, OffCenterBlocksShowState.none);
     public static final Codec<BCDData> FULL_CODEC = RecordCodecBuilder.create(i -> i.group(
-            SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", null).forGetter(k1 -> k1.eCOM_m()),
+            SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", null).forGetter(BCDData::eCOM_m),
             Weights.CODEC.listOf().optionalFieldOf("axisWeightStacks", null)
-                         .forGetter(k -> arrToList(k.axisWeightStacks)),
+                         .forGetter(k -> arrToList(k.weightStacksByAxis)),
             Codec.<CenterMassCalculator.Cache>unit(null).fieldOf("cache").forGetter(x -> x.cache),
-        Codec.BOOL.listOf().optionalFieldOf("axisStates", null).forGetter(k1 -> arrToList(k1.axisStates))
+            Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask)
         ).apply(i, BCDData::make)
     );
 
-    private static <T> @Nullable List<T> arrToList(@Nullable T[] axisWeightStacks1) {
+    private static <T> @Nullable List<T> arrToList(T @Nullable [] axisWeightStacks1) {
         return axisWeightStacks1 == null ? null : List.of(axisWeightStacks1);
     }
 
-    private static @Nullable List<Boolean> arrToList(@Nullable boolean[] values) {
+    private static @Nullable List<Boolean> arrToList(boolean @Nullable [] values) {
         return values == null ? null : List.of(values[0], values[1], values[2]);
     }
 
     public static final Codec<BCDData> SHORT_CODEC = RecordCodecBuilder.create(i -> i.group(
             SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", null).forGetter(BCDData::eCOM_m),
-            Codec.BOOL.listOf().optionalFieldOf("axisStates", null).forGetter(k1 -> arrToList(k1.axisStates))
+            Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask)
         ).apply(i, (ecom, axisStates) -> make(ecom, null, null, axisStates))
 
     );
 
 
-    private static BCDData make(Vector3d x, List<Weights> y, CenterMassCalculator.Cache z, List<Boolean> axisStates) {
-        return new BCDData(x,
-            y == null ? null : y.toArray(new Weights[3]),
-            z,
-            axisStates == null ? null : new boolean[]{axisStates.get(0), axisStates.get(1), axisStates.get(2)}
-        );
+    private static BCDData make(Vector3d x, List<Weights> y, CenterMassCalculator.Cache z, int axisStates) {
+        return BCDData.DEFAULT().toBuilder()
+                      .eCOM(x)
+                      .weightStacksByAxis(y == null ? null : y.toArray(new Weights[3]))
+                      .cache(z)
+                      .axisStatesMask(axisStates)
+                      .build();
     }
 
     private Vector3d eCOM_m() {return ((Vector3d) eCOM);}
@@ -64,19 +71,96 @@ public class BCDData {
     @Nullable
     protected Vector3dc eCOM;
 
-    public Weights @Nullable [] axisWeightStacks;
+    public BCDData withECOM(Vector3dc ecom) {
+        return ecom == eCOM ? this : new BCDData(
+            ecom, weightStacksByAxis, offCenteredBlocks, cache, axisStatesMask, offCenterBlocksShowState
+        );
+    }
+
+    public Weights @Nullable [] weightStacksByAxis;
+    @Nullable
+    public ArrayList<OffCenteredBlock> offCenteredBlocks;
     @Nullable
     public CenterMassCalculator.Cache cache;
 
-    public boolean @Nullable [] axisStates;
+    public int axisStatesMask;
 
-    @NotNull
-    public static BCDData NULL() {
-        return new BCDData(null, null, null,null);
+    @NonNull
+    public BCDData.OffCenterBlocksShowState offCenterBlocksShowState;
+
+
+    public int axisStateInt(int i) {return (axisStatesMask >> i) & 1;}
+
+    public boolean axisStateBool(int i) {return axisStateInt(i) != 0;}
+
+    public BCDData withAxisStateInt(int i, int value) {
+        value = (-value) >>> 31;
+        return axisStateInt(i) == value ? this : withAxisStatesMask(axisStatesMask ^ 1 << i);
     }
 
-    public BCDData withNoAxisData() {
-        return withAxisWeightStacks(null)
-            .withCache(null);
+    public static BCDData DEFAULT() {return DEFAULT_VALUE;}
+
+    public BCDData withResetedECOMRelatedData() {
+        return toBuilder()
+            .weightStacksByAxis(null)
+            .cache(null)
+            .offCenteredBlocks(null)
+            .build();
+    }
+
+    @Contract(value = "!null->param1", mutates = "param1")
+    public boolean[] axisStatesAsArray(boolean[] def) {
+        if(def == null) def = new boolean[3];
+        for(int i = 0; i < def.length; i++) def[i] = axisStateBool(i);
+        return def;
+    }
+
+    /**
+     * Inserts after compilation in every mether generated by <code>@With</code> .
+     * See <b>postprocessors</b> subproject
+     *
+     */
+    @SuppressWarnings("unused")
+    public BCDData onWithReturn(BCDData newValue) {return compareReset(this, newValue);}
+
+
+    public static BCDData compareReset(BCDData oldValue, BCDData newValue) {
+        if(newValue == oldValue || oldValue == null) return newValue;
+        BCDDataBuilder builder = null;
+
+
+        boolean cacheChanged = (newValue.cache == null) != (oldValue.cache == null) || newValue.cache != null && !newValue.cache.equals(oldValue.cache);
+        if(newValue.eCOM == null && oldValue.eCOM != null) {
+            builder = newValue.toBuilder();
+            builder.cache(null);
+            cacheChanged = true;
+        }
+        if(cacheChanged) {
+            builder = Objects.requireNonNullElseGet(builder, newValue::toBuilder);
+            builder
+                .offCenteredBlocks(null)
+                .weightStacksByAxis(null)
+            ;
+        }
+        if(newValue.axisStatesMask != oldValue.axisStatesMask || newValue.offCenterBlocksShowState != oldValue.offCenterBlocksShowState) {
+            builder = Objects.requireNonNullElseGet(builder, newValue::toBuilder);
+            builder.offCenteredBlocks(null);
+        }
+        return builder == null ? newValue : builder.build();
+    }
+
+    public enum OffCenterBlocksShowState {
+        none,
+        show,
+        showAll;
+        public final static OffCenterBlocksShowState[] all = values();
+
+        public OffCenterBlocksShowState next() {
+            return all[(ordinal() + 1) % all.length];
+        }
+
+        public OffCenterBlocksShowState prev() {
+            return all[(ordinal() + all.length - 1) % all.length];
+        }
     }
 }

@@ -1,8 +1,10 @@
 package com.zelaux.betterdiagram;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllKeys;
 import com.zelaux.betterdiagram.command.BCDCommand;
+import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
 import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
@@ -13,11 +15,10 @@ import dev.simulated_team.simulated.Simulated;
 import dev.simulated_team.simulated.client.BlockPropertiesTooltip;
 import dev.simulated_team.simulated.mixin.accessor.BlockBehaviourAccessor;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
+import mezz.jei.neoforge.events.PermanentEventSubscriptions;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -34,6 +36,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
@@ -47,6 +51,7 @@ import org.slf4j.Logger;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Function;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = BetterContraptionDiagram.MODID, dist = Dist.CLIENT)
@@ -54,13 +59,15 @@ import java.util.List;
 @EventBusSubscriber(modid = BetterContraptionDiagram.MODID, value = Dist.CLIENT)
 public class BetterContraptionDiagramClient {
     public static final Logger LOGGER = LogUtils.getLogger();
+    private final PermanentEventSubscriptions subscriptions;
 
     public BetterContraptionDiagramClient(ModContainer container) {
+        PermanentEventSubscriptions subscriptions =this.subscriptions= new PermanentEventSubscriptions(NeoForge.EVENT_BUS, container.getEventBus());
+        ;
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
         // Do not forget to add translations for your config options to the en_us.json file.
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-
         final SimulatedRegistrate registrate = Simulated.getRegistrate();
         int priority = 7;
 
@@ -68,9 +75,26 @@ public class BetterContraptionDiagramClient {
 
 
         final IEventBus neoBus = NeoForge.EVENT_BUS;
+        subscriptions.register(RegisterClientTooltipComponentFactoriesEvent.class,this::registerType);
         neoBus.addListener(this::registerCommand);
         neoBus.addListener(this::listenForItemDrop);
+        neoBus.addListener(this::placeRendarableTooltip);
     }
+
+    private void registerType(RegisterClientTooltipComponentFactoriesEvent event) {
+        event.register(WrappedTooltipComponent.class, it -> it.component);
+    }
+
+    private void placeRendarableTooltip(RenderTooltipEvent.GatherComponents event) {
+        var list = event.getTooltipElements();
+        for(int i = 0; i < list.size(); i++) {
+            var left = list.get(i).left();
+            if(!(left.orElse(null) instanceof WrappedTooltipComponent wrapped))continue;
+            list.set(i, Either.right(wrapped));
+
+        }
+    }
+
     public void listenForItemDrop(ItemTossEvent event){
         Player player = event.getPlayer();
         Minecraft instance = Minecraft.getInstance();

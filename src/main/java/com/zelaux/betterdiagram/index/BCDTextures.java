@@ -40,6 +40,14 @@ public interface BCDTextures {
         BCDTexture DIAGRAM_ICON_WEIGHT = gridCell(atlas, 0, 2);
         BCDTexture DIAGRAM_ICON_WEIGHT_SHADOW = gridCell(atlas, 1, 2);
         BCDTexture DIAGRAM_ICON_SMALL_WEIGHT = gridCell(atlas, 2, 2);
+        BCDTexture DIAGRAM_ICON_SMALL_WEIGHT_SHADOW = gridCell(atlas, 3, 2);
+
+
+        BCDTexture ICON_OFF_CENTERED_BLOCK = gridCell(atlas, 0, 10);
+        BCDTexture ICON_OFF_CENTERED_BLOCK_PLUS = gridCell(atlas, 1, 10);
+        BCDTexture ICON_OFF_CENTERED_BLOCK_CROSS = gridCell(atlas, 2, 10);
+        BCDTexture ICON_OFF_CENTERED_BLOCK_SHADOW = gridCell(atlas, 3, 10);
+        BCDTexture[] ICONS_OFF_CENTERED_BLOCK = {ICON_OFF_CENTERED_BLOCK_CROSS, ICON_OFF_CENTERED_BLOCK,ICON_OFF_CENTERED_BLOCK_PLUS};
 
 
         BCDTexture DIAGRAM_ICON_CALCULATOR = gridCell(atlas, 0, 3);
@@ -55,9 +63,8 @@ public interface BCDTextures {
         BCDTexture ICON_Z_CROSS = gridCell(atlas, 1, 7);
         BCDTexture[] ICONS_Z = {ICON_Z_CROSS, ICON_Z};
 
-        BCDTexture BACKGROUND_XYZ = texture(atlas, 0, 128, 56, 24);
+        BCDTexture BACKGROUND_XYZ = texture(atlas, 0, 128, 72, 24);
 
         BCDTexture DIAGRAM_ICON_BTN_BACKGROUND = gridCell(atlas, 1, 3);
-        BCDTexture DIAGRAM_ICON_SMALL_WEIGHT_SHADOW = gridCell(atlas, 3, 2);
     }
 }

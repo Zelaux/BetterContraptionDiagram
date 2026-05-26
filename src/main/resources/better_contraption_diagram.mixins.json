@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ClientDataForDiagramEntity",
+    "RemovedGuiUtilsMixin",
     "COM_view.com_view_GoggleOverlayRenderer"
   ],
   "client": [

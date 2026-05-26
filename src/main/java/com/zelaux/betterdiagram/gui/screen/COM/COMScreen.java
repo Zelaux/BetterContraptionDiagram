@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram.gui.screen.COM;
 
+import com.mojang.blaze3d.platform.Lighting;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.command.BCDCommand;
 import com.zelaux.betterdiagram.extend.AbstractContainerScreenAccessors;
@@ -26,6 +27,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
@@ -133,8 +135,16 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         if(minecraft == null || minecraft.gameMode == null) return;
         minecraft.gameMode.handleCreativeModeItemDrop(event.getEntity().getItem());
     }
+//clientSideCloseContainer
 
-    static boolean inverted;
+
+    @Override
+    public void onClose() {
+        LocalPlayer player = this.getMinecraft().player;
+        player.connection.send(new ServerboundContainerClosePacket(player.containerMenu.containerId));
+        player.containerMenu = player.inventoryMenu;
+        this.minecraft.popGuiLayer();
+    }
 
     @Override
     protected void init() {
@@ -154,7 +164,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         layout.addChild(new SpacerElement(10, 0));
         layout.addChild(vertical(0,
             Button.builder(invertedTitle(), button -> {
-                      inverted = !inverted;
+                      this.context.inverted = !context.inverted;
                       button.setMessage(invertedTitle());
                   })
                   .tooltip(Tooltip.create(Component.translatable("better_contraption_diagram.com-menu.invert-move.info")))
@@ -208,9 +218,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
                 }
                 context.selectedPair = i;
                 Context.COMPair pair = context.pairs()[i];
-                context.entries[0].setValue(pair.center().x());
-                context.entries[1].setValue(pair.center().y());
-                context.entries[2].setValue(pair.center().z());
+                context.setEntries(pair.center());
                 performSearch();
 
             }
@@ -227,13 +235,13 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         int i = 0;
         for(Entry entry : context.entries) {
             if(!entry.enabled) continue;
-            searchEntries[i++] = new SearchEntry(entry.axis, inverted ? 1 - entry.value : entry.value);
+            searchEntries[i++] = new SearchEntry(entry.axis, context.inverted ? 1 - entry.value : entry.value);
         }
         doSearch(Arrays.copyOf(searchEntries, i));
     }
 
-    private static Component invertedTitle() {
-        return inverted ? Component.translatable("better_contraption_diagram.com-menu.invert-move.inverted") : Component.translatable("better_contraption_diagram.com-menu.invert-mode.normal");
+    private  Component invertedTitle() {
+        return context.inverted ? Component.translatable("better_contraption_diagram.com-menu.invert-move.inverted") : Component.translatable("better_contraption_diagram.com-menu.invert-mode.normal");
     }
 
     record SearchEntry(Direction.Axis axis, float value) {}
@@ -290,6 +298,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
 
     @Override
     protected void renderSlotContents(GuiGraphics guiGraphics, ItemStack itemstack, Slot slot, @org.jetbrains.annotations.Nullable String countString) {
+        Lighting.setupFor3DItems();
         super.renderSlotContents(guiGraphics, itemstack, slot, countString);
 
     }
@@ -345,6 +354,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if(wasError)return;
+        Lighting.setupFor3DItems();
         try {
             this.partialTick = partialTick;
             super.render(guiGraphics, mouseX, mouseY, partialTick);

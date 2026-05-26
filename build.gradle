@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.141'
     id 'idea'
+    id "com.github.Zelaux.asm-ext.postprocessors" version "1.0.2"
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -207,6 +208,9 @@ configurations {
 }
 
 dependencies {
+//    compileOnly(project.childProjects["postprocessors"])
+    postprocessor(childProjects["postprocessors"])
+
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
@@ -235,6 +239,7 @@ dependencies {
 //    api files("libs/dev.simulated_team.simulated.simulated-neoforge-${minecraft_version}-${aeronautics_version}.jar")
     api ("dev.simulated_team.simulated:simulated-neoforge-1.21.1:1.2.1"){
         exclude group: "cc.tweaked"
+        exclude group: "net.createmod.ponder"
     }
     api("dev.engine-room.flywheel:flywheel-neoforge-1.21.1:1.0.6")
     api("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") {
@@ -246,7 +251,7 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:$lombokVersion"
     testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
-//    api("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
+    compileOnly("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
 //    api ("maven.modrinth:create:${create_version}+mc${minecraft_version}") { transitive = false }
 //    api("com.simibubi.create:create-")

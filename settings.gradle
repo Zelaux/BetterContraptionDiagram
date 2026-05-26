@@ -4,9 +4,48 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         maven { url = 'https://maven.neoforged.net/releases' }
+
+        if (file("local.properties").exists()) {
+            Properties properties = new Properties()
+            file("local.properties").withInputStream { properties.load(it) }
+            for (final def path in (properties["libpath"] as String).split("\\s*,\\s*")) {
+
+                def f=file(path);
+                println("f: "+f.absolutePath)
+                if(!f.exists())continue;
+                apply from: new File(f,"includeBuildThing.gradle")
+                includeSelf(this,f)
+            }
+        }
     }
 }
 
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
+
+
+include("postprocessors")
+
+println(file("local.properties").absolutePath)
+if (file("local.properties").exists()) {
+    Properties properties = new Properties()
+    file("local.properties").withInputStream { properties.load(it) }
+    for (final def path in (properties["libpath"] as String).split("\\s*,\\s*")) {
+
+        def f=file(path);
+
+        if(!f.exists()) {
+            println("Library is not exists: '$path' ($f.absolutePath)")
+            continue;
+        }
+        def loadFile=new File(f,"includeBuildThing.gradle")
+        if(!loadFile.exists()){
+            println("Cannot find library include build file: '$path' ($loadFile.absolutePath)")
+        }
+        apply from: loadFile
+        includeSelf(this,f)
+    }
+}
+
+

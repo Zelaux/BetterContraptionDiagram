@@ -7,9 +7,15 @@ import com.simibubi.create.AllKeys;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.Content;
+import com.zelaux.betterdiagram.data.BCDData.OffCenterBlocksShowState;
 import com.zelaux.betterdiagram.extend.*;
+import com.zelaux.betterdiagram.func.DoubleSetter;
+import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
+import com.zelaux.betterdiagram.gui.user.ButtonKind;
+import com.zelaux.betterdiagram.gui.user.ClickHandler;
 import com.zelaux.betterdiagram.gui.widget.*;
 import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.Colors;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
@@ -22,7 +28,6 @@ import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScree
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
 import foundry.veil.api.client.render.framebuffer.FramebufferAttachmentDefinition;
-import foundry.veil.api.client.render.framebuffer.FramebufferStack;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,7 +61,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.ObjDoubleConsumer;
 import java.util.function.Supplier;
 
 import static com.zelaux.betterdiagram.gui.widget.PartialInteration.boxes;
@@ -162,28 +166,53 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             expectedCenterOfMass(null);
             positionUpdatedNotFromEditBox(tmp.set(currentCenterOfMass()).sub(bb.minX(), bb.minY(), bb.minZ()));
         }, () -> Component.translatable("better_contraption_diagram.calculator.reset_block"));
+        int[] axisTextureMap = {0, 0, 0, 0, 1, 1, 1, 1};
         mainLayout.addChild(
             horizontal(5, centerButton, selectBlock, resetBlock,
                 new CompositeWidgetLayouted(horizontal(0, i -> {},
+
                     new BDiagramButton(BCDTextures.Diagram.ICONS_X, 0, 0, Component.literal("X"), () -> clientData.flipAxisStates(0))
                         .setIconSwitch(() -> clientData.axisStates(0))
-                        .withTooltip(() -> tooltipAxisOnOff[1-clientData.axisStatesInt(0)])
-                    ,
+                        .withTooltip(() -> tooltipAxisOnOff[1 - clientData.axisStatesInt(0)])
+                        .textureIndexMap(axisTextureMap),
 
                     new BDiagramButton(BCDTextures.Diagram.ICONS_Y, 0, 0, Component.literal("Y"), () -> clientData.flipAxisStates(1))
-                        .withTooltip(() -> tooltipAxisOnOff[3-clientData.axisStatesInt(1)])
-                        .setIconSwitch(() -> clientData.axisStates(1)),
+                        .withTooltip(() -> tooltipAxisOnOff[3 - clientData.axisStatesInt(1)])
+                        .setIconSwitch(() -> clientData.axisStates(1))
+                        .textureIndexMap(axisTextureMap),
 
                     new BDiagramButton(BCDTextures.Diagram.ICONS_Z, 0, 0, Component.literal("Z"), () -> clientData.flipAxisStates(2))
-                        .withTooltip(() -> tooltipAxisOnOff[5-clientData.axisStatesInt(2)])
-                        .setIconSwitch(() -> clientData.axisStates(2)
-                        )
+                        .withTooltip(() -> tooltipAxisOnOff[5 - clientData.axisStatesInt(2)])
+                        .setIconSwitch(() -> clientData.axisStates(2))
+                        .textureIndexMap(axisTextureMap),
+
+                    new BDiagramButton(BCDTextures.Diagram.ICONS_OFF_CENTERED_BLOCK, 0, 0,
+                        Component.literal("offcentered-blocks-view"),
+                        ClickHandler.click(btn -> {
+                            switch(btn) {
+                                case LEFT -> clientData.nextOffCenteredView();
+                                case RIGHT -> clientData.prevOffCenteredView();
+                            }
+                        })).supportedButtons(ButtonKind.LEFT, ButtonKind.RIGHT)
+                           .withTooltip(() -> {
+                               var list = new ArrayList<FormattedText>(10);
+                               list.add(Component.translatable("better_contraption_diagram.diagram.offcenter-blocks-mode.switch.lmb"));
+                               list.add(Component.translatable("better_contraption_diagram.diagram.offcenter-blocks-mode.switch.rmb"));
+                               list.add(new SeparatorTooltipComponent().wrap());
+                               list.addAll(displayOCBMode(OffCenterBlocksShowState.none));
+                               list.add(new SeparatorTooltipComponent().wrap());
+                               list.addAll(displayOCBMode(OffCenterBlocksShowState.show));
+                               list.add(new SeparatorTooltipComponent().wrap());
+                               list.addAll(displayOCBMode(OffCenterBlocksShowState.showAll));
+                               return list;
+                           })
+                           .colors(Color.WHITE, new Color(0xaa, 0xaa, 0xaa))
+                           .setIconSwitch((active, hovered) -> clientData.offCenteredView().ordinal())
                 ))
                     .margin(4)
                     .background(BCDTextures.Diagram.BACKGROUND_XYZ)
 
-            )
-        );
+            ));
 
         final int diagramX = this.width / 2;
         final int diagramY = this.height / 2;
@@ -281,6 +310,21 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         }
     }
 
+    private @NotNull List<FormattedText> displayOCBMode(OffCenterBlocksShowState none) {
+        boolean selected = clientData.offCenteredView() == none;
+        MutableComponent nameComp = Component
+            .translatable("better_contraption_diagram.diagram.offcenter-blocks-mode." + none.name() + ".name")
+            .withStyle(s -> s.withColor(Colors.TOOLTIP_COLOR.getRGB()).withUnderlined(selected));
+
+        MutableComponent descComp = Component.translatable("better_contraption_diagram.diagram.offcenter-blocks-mode." + none.name() + ".desc");
+        ArrayList<FormattedText> texts = new ArrayList<>();
+        texts.add(nameComp);
+        texts.addAll(font.getSplitter().splitLines(
+            descComp, 128, descComp.getStyle()));
+        return texts;
+
+    }
+
     private Vector3d expectedCenterOfMassOffset() {
         return minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox()).negate().add(expectedCenterOfMass());
     }
@@ -366,13 +410,13 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         var offset = grid instanceof MyGridClicker my ? my.offset : ZERO_V;
         int xi = projectedAxes.xyzIndex[0];
         int yi = projectedAxes.xyzIndex[1];
-        SETTERS_3d[xi].accept(out, gridPos.x + 0.5 + GETTERS_3d[xi].applyAsDouble(offset));
-        SETTERS_3d[yi].accept(out, gridPos.y + 0.5 + GETTERS_3d[yi].applyAsDouble(offset));
+        SETTERS_3d[xi].set(out, gridPos.x + 0.5 + GETTERS_3d[xi].get(offset));
+        SETTERS_3d[yi].set(out, gridPos.y + 0.5 + GETTERS_3d[yi].get(offset));
     }
 
     private Vector2d normalToGridVector(Vector3d in, Vector2d gridPos) {
-        gridPos.x = VecUtil.GETTERS_3d[mainProjectedAxes.xyzIndex[0]].applyAsDouble(in) - 0.5;
-        gridPos.y = VecUtil.GETTERS_3d[mainProjectedAxes.xyzIndex[1]].applyAsDouble(in) - 0.5;
+        gridPos.x = VecUtil.GETTERS_3d[mainProjectedAxes.xyzIndex[0]].get(in) - 0.5;
+        gridPos.y = VecUtil.GETTERS_3d[mainProjectedAxes.xyzIndex[1]].get(in) - 0.5;
         return gridPos;
     }
 
@@ -501,18 +545,18 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         final var bb = diagramScreen.subLevel.getPlot().getBoundingBox();
         final var incBtn = makeButton0(Component.literal("+"), 12, 10, BCDTextures.Diagram.DIAGRAM_BACKGROUND_12_10, () -> {
             tmp.set(expectedCenterOfMass()).sub(minVec3d(bb, tmp2));
-            setter.accept(tmp, getter.applyAsDouble(tmp) + getOffset());
+            setter.set(tmp, getter.get(tmp) + getOffset());
             expectedCenterOfMass(tmp.add(tmp2));
             positionUpdatedNotFromEditBox(tmp.sub(tmp2));
         }, () -> shiftCtrlScale);
         final var decBtn = makeButton0(Component.literal("-"), 12, 10, BCDTextures.Diagram.DIAGRAM_BACKGROUND_12_10, () -> {
             tmp.set(expectedCenterOfMass()).sub(minVec3d(bb, tmp2));
-            setter.accept(tmp, getter.applyAsDouble(tmp) - getOffset());
+            setter.set(tmp, getter.get(tmp) - getOffset());
             expectedCenterOfMass(tmp.add(tmp2));
             positionUpdatedNotFromEditBox(tmp.sub(tmp2));
         }, () -> shiftCtrlScale);
         final var center = makeButton(Component.literal("C"), 16, 20, BCDTextures.Diagram.DIAGRAM_BACKGROUND_16_20, () -> {
-            setter.accept(tmp.set(expectedCenterOfMass()), getter.applyAsDouble(centerOfSubLevel()));
+            setter.set(tmp.set(expectedCenterOfMass()), getter.get(centerOfSubLevel()));
             expectedCenterOfMass(tmp);
             positionUpdatedNotFromEditBox(tmp.sub(minVec3d(bb, tmp2)));
         }, () -> Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"));
@@ -520,13 +564,13 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
                 gridToNormalVector(grid, gridPos, tmp);
                 tmp.add(minVec3d(bb, tmp2));
-                setter.accept(tmp.set(expectedCenterOfMass()), getter.applyAsDouble(tmp));
+                setter.set(tmp.set(expectedCenterOfMass()), getter.get(tmp));
                 expectedCenterOfMass(tmp);
                 positionUpdatedNotFromEditBox(tmp.sub(tmp2));
             });
         }, () -> Component.translatable("better_contraption_diagram.calculator.select_block"));
         final var reset = makeButton(Component.literal("R"), 16, 20, BCDTextures.Diagram.DIAGRAM_BACKGROUND_16_20, () -> {
-            setter.accept(tmp.set(expectedCenterOfMass()), getter.applyAsDouble(currentCenterOfMass()));
+            setter.set(tmp.set(expectedCenterOfMass()), getter.get(currentCenterOfMass()));
             expectedCenterOfMass(tmp);
             positionUpdatedNotFromEditBox(tmp.sub(minVec3d(bb, tmp2)));
         }, () -> Component.translatable("better_contraption_diagram.calculator.reset_block"));
@@ -556,7 +600,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         positionUpdated();
     }
 
-    private @NotNull LayoutElement initEditBox(MutableComponent boxName, ObjDoubleConsumer<Vector3d> setter, Consumer<EditBox> boxConsumer) {
+    private @NotNull LayoutElement initEditBox(MutableComponent boxName, DoubleSetter<Vector3d> setter, Consumer<EditBox> boxConsumer) {
 
         final Vector3d tmpCOM = new Vector3d(), tmpOffset = new Vector3d();
         FloatScrollInput scrollInput = new FloatScrollInput(0, 0, 44, 20) {
@@ -586,7 +630,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             .calling(v -> {
                 if(programatic) return;
                 Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox(), tmpOffset);
-                setter.accept(tmpCOM.set(expectedCenterOfMass()).sub(offset), v);
+                setter.set(tmpCOM.set(expectedCenterOfMass()).sub(offset), v);
                 expectedCenterOfMass(tmpCOM.add(offset));
                 positionUpdatedNotFromEditBox(tmpCOM.sub(offset));
                 //positionUpdated();
@@ -626,7 +670,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
 
                 Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox(), tmpOffset);
 
-                setter.accept(tmpCOM.set(expectedCenterOfMass()).sub(offset), v);
+                setter.set(tmpCOM.set(expectedCenterOfMass()).sub(offset), v);
                 expectedCenterOfMass(tmpCOM.add(offset));
                 //positionUpdatedNotFromEditBox(offset.negate().add(COM));
                 positionUpdated();

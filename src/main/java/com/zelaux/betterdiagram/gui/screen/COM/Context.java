@@ -2,10 +2,8 @@ package com.zelaux.betterdiagram.gui.screen.COM;
 
 import com.zelaux.betterdiagram.util.CenterMassCache;
 import com.zelaux.betterdiagram.util.VecUtil;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
@@ -26,6 +24,7 @@ import java.util.Objects;
 @ParametersAreNonnullByDefault
 public class Context {
     public Entry[] entries;
+    public boolean inverted;
     @NotNull
     private ItemStack filterItem=ItemStack.EMPTY;
 
@@ -65,6 +64,7 @@ public class Context {
         return filterItem;
     }
 
+    //TODO replace with BlockState or Block direcly
     public Context filterItem(@Nullable ItemStack filterItem) {
         filterItem = Objects.requireNonNullElse(filterItem, ItemStack.EMPTY);
         if(filterItem.getItem() != this.filterItem.getItem()){
@@ -82,6 +82,11 @@ public class Context {
         return this;
     }
 
+    public void setEntries(Vector3dc center) {
+        entries[0].setValue(center.x());
+        entries[1].setValue(center.y());
+        entries[2].setValue(center.z());
+    }
 
 
     public record COMPair(Vector3dc center, ArrayList<CenterMassCache.Pair> pairs) {
