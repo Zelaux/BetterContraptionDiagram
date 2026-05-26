@@ -234,7 +234,7 @@ public class MixinCalculatorUtil {
                 wasAnyOne = true;
             }
             BCDTextures.Diagram.ICON_OFF_CENTERED_BLOCK_SHADOW.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
-            BCDTextures.Diagram.ICON_OFF_CENTERED_BLOCK.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
+            BCDTextures.Diagram.ICON_COLORED_OFF_CENTERED_BLOCK.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
         }
         return hovered == null ? null : new HoveredOffCenteredBlock(hoveredDistance2, hoveredIndex, hovered);
     }
