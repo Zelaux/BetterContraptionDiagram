@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.141'
     id 'idea'
-    id "com.github.Zelaux.asm-ext.postprocessors" version "1.0.2"
+    id "com.github.Zelaux.asm-ext.postprocessors" version "$asm_ext_version"
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -30,6 +30,7 @@ sourceSets.main.resources {
 repositories {
     mavenCentral()
 
+    maven{ url 'https://raw.githubusercontent.com/Zelaux/Repo/master/repository' }
     exclusiveContent {
         forRepository {
             mavenCentral()

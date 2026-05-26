@@ -1,5 +1,6 @@
 ### Gradle ###
 .gradle
+local.properties
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/**/build/

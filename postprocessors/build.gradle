@@ -4,11 +4,12 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven{ url 'https://raw.githubusercontent.com/Zelaux/Repo/master/repository' }
 }
 
 static String asmExt(String module) {
     if (module.startsWith(':')) module = module.substring(1);
-    return "com.github.Zelaux.asm-ext:${module.replace(':', '-')}:v1.0.2"
+    return "com.github.Zelaux.asm-ext:${module.replace(':', '-')}:1.0.3"
 }
 
 dependencies {

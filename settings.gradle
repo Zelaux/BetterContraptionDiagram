@@ -3,6 +3,7 @@ pluginManagement {
         mavenLocal()
         mavenCentral()
         gradlePluginPortal()
+        maven{ url 'https://raw.githubusercontent.com/Zelaux/Repo/master/repository' }
         maven { url = 'https://maven.neoforged.net/releases' }
 
         if (file("local.properties").exists()) {
