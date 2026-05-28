@@ -8,10 +8,7 @@ import com.zelaux.betterdiagram.gui.widget.PartialInteration;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
-import com.zelaux.betterdiagram.util.CenterMassCache;
-import com.zelaux.betterdiagram.util.CenterMassCalculator;
-import com.zelaux.betterdiagram.util.UIUtil;
-import com.zelaux.betterdiagram.util.VecFormat;
+import com.zelaux.betterdiagram.util.*;
 import com.zelaux.betterdiagram.util.ui.InplaceBlockRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -259,7 +256,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         for(var comStat : comStats.entrySet()) {
             Vector3dc key = comStat.getKey();
             for(var entry : entries) {
-                if(!CenterMassCalculator.equals(BCDCommand.choose(entry.axis, key), entry.value)) continue forLoop;
+                if(!CenterMassCalculator.equals(VecUtil.GETTERS_3d[entry.axis.ordinal()].get(key), entry.value)) continue forLoop;
             }
 
             for(var entry : comStat.getValue().entrySet()) {
