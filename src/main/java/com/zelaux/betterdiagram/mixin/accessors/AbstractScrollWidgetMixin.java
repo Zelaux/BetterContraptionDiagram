@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.mixin.accessors;
 
-import com.zelaux.betterdiagram.extend.AbstractScrollWidgetAccessors;
+import com.zelaux.betterdiagram.extend.accessors.AbstractScrollWidgetAccessors;
 import net.minecraft.client.gui.components.AbstractScrollWidget;
 import org.spongepowered.asm.mixin.*;
 

@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.mixin.accessors;
 
-import com.zelaux.betterdiagram.extend.DiagramStickyNoteAccessors;
+import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import org.joml.Matrix4f;

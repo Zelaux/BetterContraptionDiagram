@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.gui.screen.COM;
 
-import com.zelaux.betterdiagram.extend.EditBoxAccessors;
+import com.zelaux.betterdiagram.extend.accessors.EditBoxAccessors;
 import com.zelaux.betterdiagram.util.StringUtil;
 import lombok.AccessLevel;
 import lombok.Getter;

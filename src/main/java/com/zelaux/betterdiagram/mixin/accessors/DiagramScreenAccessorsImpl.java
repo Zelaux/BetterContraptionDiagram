@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.mixin.accessors;
 
-import com.zelaux.betterdiagram.extend.DiagramScreenAccessors;
+import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;

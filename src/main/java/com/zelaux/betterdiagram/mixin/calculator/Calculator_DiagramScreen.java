@@ -1,8 +1,8 @@
 package com.zelaux.betterdiagram.mixin.calculator;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.zelaux.betterdiagram.Content;
-import com.zelaux.betterdiagram.extend.ProjectionAccessor;
+import com.zelaux.betterdiagram.index.ForceGroups;
+import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.gui.CenterMassMovingScreen;
 import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
@@ -163,7 +163,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         for(int i = 0; i < stacks.length; i++) {
             var weights = stacks[i];
             if(weights.isEmpty() || !clientData.axisStates(i)) continue;
-            var group = Content.AXIS_GROUPS[i];
+            var group = ForceGroups.AXIS_GROUPS[i];
             int color = group.color() | (0xff << 24);
             Vector3d AXIS = DIRECTIONS[i];
             projectedAxis.set(orientation.transformInverse(tmp.set(AXIS)));

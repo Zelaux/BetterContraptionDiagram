@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.Collection;
 
-import static com.zelaux.betterdiagram.Content.simulated$bufferLocation;
+import static com.zelaux.betterdiagram.index.ForceGroups.simulated$bufferLocation;
 
 @Mixin(SimpleSubLevelGroupRenderer.class)
 public class SimpleSubLevelGroupRendererMixin {

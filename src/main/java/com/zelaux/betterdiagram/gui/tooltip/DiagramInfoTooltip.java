@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.gui.tooltip;
 
-import com.zelaux.betterdiagram.extend.DiagramScreenAccessors;
+import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.VecFormat;

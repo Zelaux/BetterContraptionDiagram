@@ -1,7 +1,7 @@
 package com.zelaux.betterdiagram.mixin;
 
 import com.zelaux.betterdiagram.Config;
-import com.zelaux.betterdiagram.Content;
+import com.zelaux.betterdiagram.index.ForceGroups;
 import com.zelaux.betterdiagram.struct.BlackHoleList;
 import com.zelaux.betterdiagram.struct.CounterBlackHoleList;
 import com.zelaux.betterdiagram.util.VecFormat;
@@ -90,7 +90,7 @@ public abstract class DiagramScreenMixin {
             0, 1, 0, boundingBox.height(),
             0, 0, 1, boundingBox.length()
         };
-        var groups = Content.AXIS_GROUPS;
+        var groups = ForceGroups.AXIS_GROUPS;
         Vector3d force = tmpCluster.force();
 
         var counterBlackHoleList = new CounterBlackHoleList<FormattedText>();

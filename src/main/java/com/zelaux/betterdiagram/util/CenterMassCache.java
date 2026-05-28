@@ -90,7 +90,7 @@ public class CenterMassCache {
         return getBlock2Pairs(player.level());
     }
 
-    public static @NotNull HashMap<Block, HashMap<Vector3dc, ArrayList<Pair>>> getBlock2Pairs(Level level) {
+    public static @NotNull HashMap<Block, HashMap<Vector3dc, ArrayList<Pair>>> getBlock2Pairs(@NotNull Level level) {
         return getBlock2Pairs(
             level.registryAccess().lookup(Registries.BLOCK).orElse(null),
             level

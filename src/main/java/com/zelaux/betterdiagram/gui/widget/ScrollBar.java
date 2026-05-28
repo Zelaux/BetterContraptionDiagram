@@ -1,7 +1,7 @@
 package com.zelaux.betterdiagram.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.zelaux.betterdiagram.extend.AbstractScrollWidgetAccessors;
+import com.zelaux.betterdiagram.extend.accessors.AbstractScrollWidgetAccessors;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2ic;
 import net.minecraft.client.gui.GuiGraphics;

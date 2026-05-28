@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.extend;
+package com.zelaux.betterdiagram.extend.accessors;
 
 import net.minecraft.client.gui.components.EditBox;
 

@@ -1,5 +1,6 @@
-package com.zelaux.betterdiagram.extend;
+package com.zelaux.betterdiagram.extend.accessors;
 
+import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;

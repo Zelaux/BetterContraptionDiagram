@@ -3,7 +3,7 @@ package com.zelaux.betterdiagram.gui.screen.COM;
 import com.mojang.blaze3d.platform.Lighting;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.command.BCDCommand;
-import com.zelaux.betterdiagram.extend.AbstractContainerScreenAccessors;
+import com.zelaux.betterdiagram.extend.accessors.AbstractContainerScreenAccessors;
 import com.zelaux.betterdiagram.gui.widget.PartialInteration;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.BCDTexture;

@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.extend;
+package com.zelaux.betterdiagram.extend.accessors;
 
 public interface AbstractScrollWidgetAccessors {
     boolean bcd$scrolling();

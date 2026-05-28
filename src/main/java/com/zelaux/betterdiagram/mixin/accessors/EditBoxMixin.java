@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.mixin.accessors;
 
-import com.zelaux.betterdiagram.extend.EditBoxAccessors;
+import com.zelaux.betterdiagram.extend.accessors.EditBoxAccessors;
 import net.minecraft.client.gui.components.EditBox;
 import org.spongepowered.asm.mixin.*;
 

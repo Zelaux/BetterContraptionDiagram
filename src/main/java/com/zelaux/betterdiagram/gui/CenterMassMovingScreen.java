@@ -5,7 +5,11 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.foundation.gui.widget.Label;
-import com.zelaux.betterdiagram.Content;
+import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
+import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
+import com.zelaux.betterdiagram.extend.accessors.EditBoxAccessors;
+import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
+import com.zelaux.betterdiagram.index.ForceGroups;
 import com.zelaux.betterdiagram.data.BCDData.OffCenterBlocksShowState;
 import com.zelaux.betterdiagram.extend.*;
 import com.zelaux.betterdiagram.func.DoubleSetter;
@@ -465,7 +469,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
     }
 
     private @NotNull LayoutElement editBox(int axisIndex, Consumer<EditBox> boxConsumer) {
-        Content.BCDForceGroup axisGroup = Content.AXIS_GROUPS[axisIndex];
+        ForceGroups.BCDForceGroup axisGroup = ForceGroups.AXIS_GROUPS[axisIndex];
         final var boxName = axisGroup.axisName.copy();
         final var setter = SETTERS_3d[axisIndex];
         final var getter = GETTERS_3d[axisIndex];

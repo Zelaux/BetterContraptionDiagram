@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.mixin.accessors;
 
-import com.zelaux.betterdiagram.extend.AbstractContainerScreenAccessors;
+import com.zelaux.betterdiagram.extend.accessors.AbstractContainerScreenAccessors;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
 import org.spongepowered.asm.mixin.*;

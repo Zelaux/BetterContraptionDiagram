@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.data.OffCenteredBlock;
-import com.zelaux.betterdiagram.extend.ProjectionAccessor;
+import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.gui.comp.InTextBlockRenderer;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;

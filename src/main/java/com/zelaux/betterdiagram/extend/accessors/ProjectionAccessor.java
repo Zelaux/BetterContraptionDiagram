@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.extend;
+package com.zelaux.betterdiagram.extend.accessors;
 
 import org.joml.Vector2d;
 import org.joml.Vector3d;

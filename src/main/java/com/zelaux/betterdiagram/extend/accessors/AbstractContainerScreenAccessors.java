@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.extend;
+package com.zelaux.betterdiagram.extend.accessors;
 
 import net.minecraft.world.inventory.Slot;
 import org.spongepowered.asm.mixin.*;

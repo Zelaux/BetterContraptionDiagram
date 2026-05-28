@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.extend;
+package com.zelaux.betterdiagram.extend.accessors;
 
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import org.joml.Matrix4f;
