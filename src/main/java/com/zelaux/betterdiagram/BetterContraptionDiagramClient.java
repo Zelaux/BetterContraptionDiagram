@@ -9,9 +9,11 @@ import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
 import mezz.jei.neoforge.events.PermanentEventSubscriptions;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -29,6 +31,7 @@ public class BetterContraptionDiagramClient {
     public BetterContraptionDiagramClient(ModContainer container) {
         PermanentEventSubscriptions subscriptions = this.subscriptions = new PermanentEventSubscriptions(NeoForge.EVENT_BUS, container.getEventBus());
         ;
+        container.registerConfig(ModConfig.Type.CLIENT, Config.SPEC);
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
         // Do not forget to add translations for your config options to the en_us.json file.

@@ -23,56 +23,89 @@ import java.util.List;
 import java.util.Map;
 
 public class CenterMassCache {
-    static Map<Vector3dc, Map<Block, List<Pair>>> COM2_Block2States = null;
-    static HashMap<Block, HashMap<Vector3dc, ArrayList<Pair>>> Block2Pairs = null;
+    private static final Object LOCK = new Object();
+    static Map<Vector3dc, Map<Block, List<BlockState>>> COM2_Block2States = null;
+    static HashMap<Block, HashMap<Vector3dc, ArrayList<BlockState>>> Block2Pairs = null;
     private static long COM2_Block2States_time;
     private static long Block2Pairs_nano;
 
-    public static @NotNull Map<Vector3dc, Map<Block, List<Pair>>> getCOM2_Block2States(HolderLookup.RegistryLookup<Block> blocks, Level level) {
+    public static @NotNull Map<Vector3dc, Map<Block, List<BlockState>>> getCOM2_Block2States(HolderLookup.RegistryLookup<Block> blocks, Level level) {
         if(COM2_Block2States != null && Block2Pairs != null) return COM2_Block2States;
+        synchronized(LOCK) {
+            if(COM2_Block2States != null && Block2Pairs != null) return COM2_Block2States;
+            var resultMap = calc_COM2_Block2States(blocks, level);
+            return COM2_Block2States = resultMap;
+        }
+    }
+
+    private static @NotNull HashMap<Vector3dc, Map<Block, List<BlockState>>> calc_COM2_Block2States(HolderLookup.RegistryLookup<Block> blocks, Level level) {
         long nano = System.nanoTime();
-        var collect = new HashMap<Vector3dc, Map<Block, List<Pair>>>();
+        var resultMap = new HashMap<Vector3dc, Map<Block, List<BlockState>>>();
+        var lists = new ArrayList<ArrayList<BlockState>>();
+
         for(var blockListEntry : getBlock2Pairs(blocks, level).entrySet()) {
             Block block = blockListEntry.getKey();
-            for(ArrayList<Pair> pairs : blockListEntry.getValue().values()) {
-                for(Pair pair : pairs) {
-                    collect
-                        .computeIfAbsent(pair.COM, it -> new HashMap<>())
-                        .computeIfAbsent(block, it -> new ArrayList<>())
-                        .add(pair);
-                }
+
+            for(var COMAndBlockStates : blockListEntry.getValue().entrySet()) {
+                var COM = COMAndBlockStates.getKey();
+                var blockStates = COMAndBlockStates.getValue();
+                resultMap
+                    .computeIfAbsent(COM, it -> new HashMap<>())
+                    .computeIfAbsent(block, it -> getSaved(lists))
+                    .addAll(blockStates);
             }
+            for(ArrayList<BlockState> list : lists) {
+                list.trimToSize();
+            }
+            lists.clear();
 
         }
         long endNano = System.nanoTime();
         COM2_Block2States_time = endNano - nano;
         BetterContraptionDiagram.LOGGER.debug("Time to build com2_block2states cache {}ms", (endNano - nano) / 1_000_000.);
-        return COM2_Block2States = collect;
+        return resultMap;
     }
 
-    public static @NotNull HashMap<Block, HashMap<Vector3dc, ArrayList<Pair>>> getBlock2Pairs(HolderLookup.RegistryLookup<Block> blocks, Level level) {
+    public static @NotNull HashMap<Block, HashMap<Vector3dc, ArrayList<BlockState>>> getBlock2Pairs(HolderLookup.RegistryLookup<Block> blocks, Level level) {
         if(CenterMassCache.Block2Pairs != null) return CenterMassCache.Block2Pairs;
+        synchronized(LOCK) {
+            if(Block2Pairs != null) return Block2Pairs;
+            var map = cacl_Block2Pairs(blocks, level);
+            return CenterMassCache.Block2Pairs = map;
+        }
+    }
 
+    private static @NotNull ArrayList<BlockState> getSaved(ArrayList<ArrayList<BlockState>> allocatedLists) {
+        ArrayList<BlockState> e = new ArrayList<>();
+        allocatedLists.add(e);
+        return e;
+    }
+
+    private static @NotNull HashMap<Block, HashMap<Vector3dc, ArrayList<BlockState>>> cacl_Block2Pairs(HolderLookup.RegistryLookup<Block> blocks, Level level) {
         long nano = System.nanoTime();
-        var map = new HashMap<Block, HashMap<Vector3dc, ArrayList<Pair>>>();
-        blocks.listElements()
-              .sequential()
-              .forEach(ref -> {
-                  Block value = ref.value();
-                  var pairs1 = new HashMap<Vector3dc, ArrayList<Pair>>();
-                  forEachCOM(level, value, false, (state, centerOfMass) -> {
+        var map = new HashMap<Block, HashMap<Vector3dc, ArrayList<BlockState>>>();
+        var allocatedLists = new ArrayList<ArrayList<BlockState>>();
+        blocks
+            .listElements()
+            .sequential()
+            .forEach(ref -> {
+                Block block = ref.value();
+                var pairs = new HashMap<Vector3dc, ArrayList<BlockState>>();
+                forEachCOM(level, block, false, (state, centerOfMass) -> {
+                    pairs.computeIfAbsent(centerOfMass, it -> getSaved(allocatedLists)).add(state);
+                });
+                for(ArrayList<BlockState> list : allocatedLists) {
+                    list.trimToSize();
+                }
+                allocatedLists.clear();
+                map.put(block, pairs);
 
-                      pairs1.computeIfAbsent(centerOfMass, it -> new ArrayList<>()).add(new Pair(state, centerOfMass));
-                  });
-                  var pairs = pairs1;
-                  map.put(value, pairs);
-
-              });
+            });
 
         long endNano = System.nanoTime();
         Block2Pairs_nano = endNano - nano;
         BetterContraptionDiagram.LOGGER.debug("Time to build block2pairs cache {}ms", (endNano - nano) / 1_000_000.);
-        return CenterMassCache.Block2Pairs = map;
+        return map;
     }
 
     public static void forEachCOM(Level level, Block block, boolean ignoreHalf, RawPairConsumer consumer) {
@@ -86,15 +119,20 @@ public class CenterMassCache {
         }
     }
 
-    public static @NotNull HashMap<Block, HashMap<Vector3dc, ArrayList<Pair>>> getBlock2Pairs(Player player) {
+    public static @NotNull HashMap<Block, HashMap<Vector3dc, ArrayList<BlockState>>> getBlock2Pairs(Player player) {
         return getBlock2Pairs(player.level());
     }
 
-    public static @NotNull HashMap<Block, HashMap<Vector3dc, ArrayList<Pair>>> getBlock2Pairs(@NotNull Level level) {
+    public static @NotNull HashMap<Block, HashMap<Vector3dc, ArrayList<BlockState>>> getBlock2Pairs(@NotNull Level level) {
         return getBlock2Pairs(
             level.registryAccess().lookup(Registries.BLOCK).orElse(null),
             level
         );
+    }
+
+    public static void resetCache() {
+        Block2Pairs = null;
+        COM2_Block2States = null;
     }
 
     public interface RawPairConsumer {

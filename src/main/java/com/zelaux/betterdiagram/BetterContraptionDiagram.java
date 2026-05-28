@@ -15,7 +15,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
-@Mod(BetterContraptionDiagram.MODID)
+//@Mod(BetterContraptionDiagram.MODID)
 public class BetterContraptionDiagram {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "better_contraption_diagram";

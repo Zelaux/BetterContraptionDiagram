@@ -10,8 +10,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.SlotItemHandler;
+import org.joml.Vector3dc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,7 @@ public class CenterOfMassMenu extends AbstractContainerMenu {
     @Getter
     private int rowOffset;
 
-    public record ItemEntry(ItemStack stack, List<CenterMassCache.Pair> cachePairs) {
+    public record ItemEntry(ItemStack stack, Vector3dc COM, List<BlockState> cachePairs) {
 
     }
 

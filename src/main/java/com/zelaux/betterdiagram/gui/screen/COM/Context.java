@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,10 +90,10 @@ public class Context {
     }
 
 
-    public record COMPair(Vector3dc center, ArrayList<CenterMassCache.Pair> pairs) {
+    public record COMPair(Vector3dc center, ArrayList<BlockState> states) {
         public static final COMPair[] EMPTY_ARRAY = new COMPair[0];
 
-        public static COMPair make(Map.Entry<Vector3dc, ArrayList<CenterMassCache.Pair>> pair) {
+        public static COMPair make(Map.Entry<Vector3dc, ArrayList<BlockState>> pair) {
             return new COMPair(pair.getKey(), pair.getValue());
         }
     }

@@ -5,7 +5,9 @@ import com.zelaux.betterdiagram.command.BCDCommand;
 import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
 import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
 import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
+import com.zelaux.betterdiagram.util.CenterMassCache;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -15,6 +17,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 
 @EventBusSubscriber(modid = BetterContraptionDiagram.MODID, value = Dist.CLIENT)
 public class ClientEvents {
@@ -47,6 +50,18 @@ public class ClientEvents {
     @SubscribeEvent
     private static void registerCommand(final RegisterClientCommandsEvent event) {
         BCDCommand.register(event.getDispatcher(), event.getBuildContext());
+    }
+    @SubscribeEvent
+    static void onLevelLoad(LevelEvent.Load load){
+        if(load.getLevel() instanceof  ClientLevel) {
+            CenterMassCache.resetCache();
+        }
+    }
+    @SubscribeEvent
+    static void onLevelUnload(LevelEvent.Unload load){
+        if(load.getLevel() instanceof  ClientLevel) {
+            CenterMassCache.resetCache();
+        }
     }
 
     @SubscribeEvent

@@ -265,6 +265,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
                 if(item == null) continue;
                 items.add(new CenterOfMassMenu.ItemEntry(
                     new ItemStack(item),
+                    key,
                     entry.getValue()
                 ));
             }
@@ -314,12 +315,12 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
 
         var pairs = entry.cachePairs();
 
-        renderLeftSide(guiGraphics, pairs, mySlot.entityWorldContainer);
+        renderLeftSide(guiGraphics,entry.COM(), pairs, mySlot.entityWorldContainer);
 
         return false;
     }
 
-    private void renderLeftSide(GuiGraphics guiGraphics, List<CenterMassCache.Pair> pairs, InplaceBlockRenderer.WorldContainer worldContainer) {
+    private void renderLeftSide(GuiGraphics guiGraphics, Vector3dc com, List<BlockState> pairs, InplaceBlockRenderer.WorldContainer worldContainer) {
         int perRow = PREVIEW_PANEL_PER_ROW;
         int size = PREVIEW_PANEL_CELL_SIZE;
 
@@ -327,22 +328,22 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         int oy = topPos;
         for(int i = 0; i < pairs.size(); i++) {
 
-            var pair = pairs.get(i);
+            var blockState = pairs.get(i);
             int row = i / perRow, col = i % perRow;
             int x = ox + col * size, y = oy + row * size;
             boolean isSelected = false && context.selectedPair == i;
             boolean isHovered = false;
 
-            worldContainer.updateBlockstateIfMatch(pair.state);
+            worldContainer.updateBlockstateIfMatch(blockState);
             BCDTextures.COMScreen.choosePreviewSlotTexture(isHovered, isSelected).render(
                 guiGraphics, x, y
             );
-            renderBlockState(guiGraphics, pair.state, x, y, partialTick, PREVIEW_PANEL_CELL_HALF_SIZE, 12, worldContainer);
+            renderBlockState(guiGraphics, blockState, x, y, partialTick, PREVIEW_PANEL_CELL_HALF_SIZE, 12, worldContainer);
             if(isHovered) {
 
                 guiGraphics.renderTooltip(this.font, List.of(
-                    Component.literal(BlockStateParser.serialize(pair.state)),
-                    VecFormat.Presets.blockCenterOfMass(pair.COM)
+                    Component.literal(BlockStateParser.serialize(blockState)),
+                    VecFormat.Presets.blockCenterOfMass(com)
                 ), Optional.empty(), 0, 0);
             }
         }
@@ -377,13 +378,13 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
                         BCDTextures.COMScreen.choosePreviewSlotTexture(isHovered, isSelected).render(
                             guiGraphics, x, y
                         );
-                        CenterMassCache.Pair first = pair.pairs().getFirst();
-                        renderBlockState(guiGraphics, first.state, x, y, partialTick, PREVIEW_PANEL_CELL_HALF_SIZE, 12, blockEntityWorldContainer);
+                        BlockState state = pair.states().getFirst();
+                        renderBlockState(guiGraphics, state, x, y, partialTick, PREVIEW_PANEL_CELL_HALF_SIZE, 12, blockEntityWorldContainer);
                         if(isHovered) {
 
                             guiGraphics.renderTooltip(this.font, List.of(
-                                Component.literal(BlockStateParser.serialize(first.state)),
-                                VecFormat.Presets.blockCenterOfMass(first.COM)
+                                Component.literal(BlockStateParser.serialize(state)),
+                                VecFormat.Presets.blockCenterOfMass(pair.center())
                             ), Optional.empty(), mouseX, mouseY);
                         }
                     }
