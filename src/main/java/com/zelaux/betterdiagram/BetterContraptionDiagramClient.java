@@ -43,10 +43,10 @@ public class BetterContraptionDiagramClient {
 
 
         final IEventBus neoBus = NeoForge.EVENT_BUS;
-        subscriptions.register(RegisterClientTooltipComponentFactoriesEvent.class, this::registerType);
+        //subscriptions.register(RegisterClientTooltipComponentFactoriesEvent.class, this::registerType);
     }
-
-    private void registerType(RegisterClientTooltipComponentFactoriesEvent event) {
+@SubscribeEvent
+    private static void registerType(RegisterClientTooltipComponentFactoriesEvent event) {
         event.register(WrappedTooltipComponent.class, it -> it.component);
     }
 

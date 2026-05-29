@@ -5,6 +5,8 @@
   "mixins": [
     "ClientDataForDiagramEntity",
     "RemovedGuiUtilsMixin",
+    "accessors.server_helpers.SubLevelStorageFileAccessors",
+    "accessors.server_helpers.SubLevelStorageMixin",
     "COM_view.com_view_GoggleOverlayRenderer"
   ],
   "client": [
