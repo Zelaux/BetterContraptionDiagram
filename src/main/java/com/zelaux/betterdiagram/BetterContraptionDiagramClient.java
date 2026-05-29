@@ -35,6 +35,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
@@ -59,10 +60,8 @@ import java.util.List;
 @EventBusSubscriber(modid = BetterContraptionDiagram.MODID, value = Dist.CLIENT)
 public class BetterContraptionDiagramClient {
     public static final Logger LOGGER = LogUtils.getLogger();
-    private final PermanentEventSubscriptions subscriptions;
 
     public BetterContraptionDiagramClient(ModContainer container) {
-        PermanentEventSubscriptions subscriptions = this.subscriptions = new PermanentEventSubscriptions(NeoForge.EVENT_BUS, container.getEventBus());
         ;
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
@@ -75,13 +74,15 @@ public class BetterContraptionDiagramClient {
 
 
         final IEventBus neoBus = NeoForge.EVENT_BUS;
-        subscriptions.register(RegisterClientTooltipComponentFactoriesEvent.class, this::registerType);
+        //container.getEventBus().register(RegisterClientTooltipComponentFactoriesEvent.class, this::registerType);
         neoBus.addListener(this::registerCommand);
         neoBus.addListener(this::listenForItemDrop);
         neoBus.addListener(this::placeRendarableTooltip);
+        container.registerConfig(ModConfig.Type.CLIENT, Config.SPEC);
     }
 
-    private void registerType(RegisterClientTooltipComponentFactoriesEvent event) {
+    @SubscribeEvent
+    private static void registerType(RegisterClientTooltipComponentFactoriesEvent event) {
         event.register(WrappedTooltipComponent.class, it -> it.component);
     }
 
