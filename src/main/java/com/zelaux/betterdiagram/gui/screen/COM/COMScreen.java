@@ -2,7 +2,6 @@ package com.zelaux.betterdiagram.gui.screen.COM;
 
 import com.mojang.blaze3d.platform.Lighting;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
-import com.zelaux.betterdiagram.command.BCDCommand;
 import com.zelaux.betterdiagram.extend.accessors.AbstractContainerScreenAccessors;
 import com.zelaux.betterdiagram.gui.widget.PartialInteration;
 import com.zelaux.betterdiagram.index.BCDTextures;
@@ -36,9 +35,11 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import org.joml.Vector3dc;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.zelaux.betterdiagram.util.UIUtil.horizontal;
 import static com.zelaux.betterdiagram.util.UIUtil.vertical;
@@ -71,6 +72,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
     public final AbstractContainerScreenAccessors accessors = (AbstractContainerScreenAccessors) this;
     public BCDTexture inventoryBG = BCDTextures.COMScreen.inventory;
     private float partialTick;
+    private final AtomicReference<SearchEntry[]> savedSearchEntries=new AtomicReference<>();
 
     public COMScreen(Context context, LocalPlayer player) {
         super(new CenterOfMassMenu(
@@ -200,21 +202,23 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
 
             @Override
             public void onClick(double mouseX, double mouseY, int button) {
-                Context.COMPair[] pairs = context.pairs();
+                Context.COMPairs pairsObj = context.pairs();
                 //context.selectedPair= context.selectedPair;
-                if(pairs == null) return;
+                if(pairsObj.isNotLoaded()) return;
                 if(button != 0) return;
+                ArrayList<Context.COMPair> pairs = pairsObj.pairs();
+                if(pairs.size()==0)return;
                 int col = (int) ((mouseX - getX()) / PREVIEW_PANEL_CELL_SIZE);
                 int row = (int) ((mouseY - getY()) / PREVIEW_PANEL_CELL_SIZE);
 
                 int i = row * PREVIEW_PANEL_PER_ROW + col;
-                if(i >= pairs.length) return;
+                if(i >= pairs.size()) return;
                 if(context.selectedPair == i) {
                     context.selectedPair = -1;
                     return;
                 }
                 context.selectedPair = i;
-                Context.COMPair pair = context.pairs()[i];
+                Context.COMPair pair = pairs.get(i);
                 context.setEntries(pair.center());
                 performSearch();
 
@@ -250,7 +254,27 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
 
         var lookup = player.level().registryAccess().lookup(Registries.BLOCK).orElse(null);
         if(lookup == null) return;
-        var comStats = CenterMassCache.getCOM2_Block2States(lookup, player.level());
+        CenterMassCache.getCOM2_Block2States(player.level())
+            .ifLeft(comStats->{
+                this.savedSearchEntries.set(null);
+                loadSearchResults(entries, comStats, items);
+            })
+            .ifRight(future->{
+                this.savedSearchEntries.set(entries);
+                future.thenAccept(comStats-> {
+                    Minecraft.getInstance().execute(()->{
+                        SearchEntry[] searchEntries = savedSearchEntries.getAndSet(null);
+                        if(searchEntries==null)return;
+                        doSearch(searchEntries);
+                    });
+                });
+            })
+        ;
+        //this.scrollOffs = this.menu.getScrollForRowIndex(i);
+        //this.menu.scrollTo(this.scrollOffs);
+    }
+
+    private void loadSearchResults(SearchEntry[] entries, CenterMassCache.CenterMassTo_Block2States comStats, ArrayList<CenterOfMassMenu.ItemEntry> items) {
         long nano = System.nanoTime();
         forLoop:
         for(var comStat : comStats.entrySet()) {
@@ -275,8 +299,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         BetterContraptionDiagram.LOGGER.debug("Build search result in {}ms", (endNano - nano) / 1_000_000.);
         this.menu.scrollTo(0);
         scrollWidget.setScrollAmount(0);
-        //this.scrollOffs = this.menu.getScrollForRowIndex(i);
-        //this.menu.scrollTo(this.scrollOffs);
+
     }
 
     @Override
@@ -349,6 +372,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         }
     }
 
+
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if(wasError) return;
@@ -366,9 +390,10 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
                 try {
                     int perRow = PREVIEW_PANEL_PER_ROW;
                     int size = PREVIEW_PANEL_CELL_SIZE;
-                    Context.COMPair[] pairs = context.pairs();
-                    for(int i = 0; i < pairs.length; i++) {
-                        Context.COMPair pair = pairs[i];
+                    var pairs = context.pairs().pairs();
+                    for(int i = 0; i < pairs.size(); i++) {
+                        Context.COMPair pair =pairs.get(i);
+                            ;
                         int row = i / perRow, col = i % perRow;
                         int x = ox + col * size, y = oy + row * size;
                         boolean isSelected = context.selectedPair == i;

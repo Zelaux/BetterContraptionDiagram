@@ -54,13 +54,13 @@ public class ClientEvents {
     @SubscribeEvent
     static void onLevelLoad(LevelEvent.Load load){
         if(load.getLevel() instanceof  ClientLevel) {
-            CenterMassCache.resetCache();
+            CenterMassCache.resetCache(true);
         }
     }
     @SubscribeEvent
     static void onLevelUnload(LevelEvent.Unload load){
         if(load.getLevel() instanceof  ClientLevel) {
-            CenterMassCache.resetCache();
+            CenterMassCache.resetCache(false);
         }
     }
 

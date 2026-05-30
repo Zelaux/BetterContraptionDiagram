@@ -4,7 +4,6 @@ import com.zelaux.betterdiagram.util.CenterMassCache;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.VecFormat;
 import com.zelaux.betterdiagram.util.VecUtil;
-import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.mixinterface.block_properties.BlockStateExtension;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyTypes;
@@ -18,10 +17,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -31,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3dc;
 
-import java.util.HashSet;
 import java.util.List;
 
 @EventBusSubscriber(Dist.CLIENT)
@@ -63,7 +58,7 @@ public class COM_Tooltip {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void itemTooltip(final ItemTooltipEvent event) {
-        if(!Screen.hasShiftDown()) return;
+
         List<Component> toolTips = event.getToolTip();
         int indexOf = toolTips.indexOf(HAS_CENTER_MASS);
         if(indexOf == -1) return;
@@ -75,8 +70,17 @@ public class COM_Tooltip {
             toolTips.remove(indexOf);
             return;
         }
+
+        CenterMassCache.BlockTo_CenterMass2State map = CenterMassCache.getBlock2Pairs(level).left().orElse(null);
+        if(map == null) {
+            if(!Screen.hasShiftDown()) return;
+            toolTips.set(indexOf, Component.translatable("better_contraption_diagram.item-open.tooltip.loading"));
+            return;
+        }
         toolTips.remove(indexOf);
-        for(Vector3dc blockCenterOfMass : CenterMassCache.getBlock2Pairs(level).get(block).keySet().stream().sorted(VecUtil.CMP_AS_ARR).toList()) {
+        List<Vector3dc> list = map.get(block).keySet().stream().sorted(VecUtil.CMP_AS_ARR).toList();
+        if(list.size() == 1 && CenterMassCalculator.equals(list.get(0), JOMLConversion.HALF)) return;
+        for(Vector3dc blockCenterOfMass : list) {
             toolTips.add(indexOf++, comTooltip(blockCenterOfMass));
         }
     }
@@ -95,9 +99,6 @@ public class COM_Tooltip {
         if(mass == 0) return null;
         ClientLevel level = Minecraft.getInstance().level;
         if(level == null) return null;
-        var pairs = CenterMassCache.getBlock2Pairs(level).get(block);
-        return pairs.isEmpty() || pairs.size() == 1 && CenterMassCalculator.equals(pairs.keySet().iterator().next(), JOMLConversion.HALF) ?
-            null :
-            HAS_CENTER_MASS;
+        return HAS_CENTER_MASS;
     }
 }

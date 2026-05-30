@@ -23,6 +23,7 @@
   "better_contraption_diagram.diagram.offenter-blocks.blockpos": "Local Block Position: %s",
 
   "better_contraption_diagram.item-open.tooltip": "Hold [Shift] to view possible centers of mass",
+  "better_contraption_diagram.item-open.tooltip.loading": "Loading mass data",
 
 
   "better_contraption_diagram.calculator.move_to_struct_center": "Move to Center",

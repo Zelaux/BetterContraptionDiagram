@@ -28,11 +28,8 @@ import java.util.List;
 
 public class OffCenteredBlockTooltipHandler {
 
-    private static MixinCalculatorUtil.HoveredOffCenteredBlock hoveredOCBlock;
-
-
     private static final LerpedFloat progress = LerpedFloat.linear().startWithValue(0);
-
+    private static MixinCalculatorUtil.HoveredOffCenteredBlock hoveredOCBlock;
     private static boolean shouldTick = false;
 
     public static void tick() {
@@ -79,18 +76,20 @@ public class OffCenteredBlockTooltipHandler {
                 openDialog:
                 if(item != null) {
                     context.filterItem(new ItemStack(item));
-                    Context.COMPair[] pairs = context.pairs();
-                    int i;
-                    findPair:
-                    {
-                        for(i = 0; i < pairs.length; i++) {
-                            if(CenterMassCalculator.equals(pairs[i].center(), block.COM())) {
-                                break findPair;
+                    var pairs = context.pairs();
+                    context.searching = true;
+
+                    pairs.afterLoad(pairsL -> {
+                        for(int i = 0; i < pairsL.size(); i++) {
+                            if(CenterMassCalculator.equals(pairsL.get(i).center(), block.COM())) {
+                                context.selectedPair = i;
+                                context.searching = false;
                             }
                         }
-                        break openDialog;
-                    }
-                    context.selectedPair = i;
+
+                    });
+
+
                     context.buildOnInit = true;
                     context.inverted = true;
                     Minecraft.getInstance().pushGuiLayer(new COMScreen(

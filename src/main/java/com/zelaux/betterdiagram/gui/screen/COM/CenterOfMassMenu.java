@@ -150,7 +150,7 @@ public class CenterOfMassMenu extends AbstractContainerMenu {
     }
 
     private void trySetFilterSlot(Player player, ItemStack item, Slot slot1) {
-        if(item.getItem() instanceof BlockItem blockItem && !CenterMassCache.getBlock2Pairs(player).get(blockItem.getBlock()).isEmpty()) {
+        if(item.getItem() instanceof BlockItem blockItem && CenterMassCache.getBlock2Pairs(player.level()).left().map(x -> !x.get(blockItem.getBlock()).isEmpty()).orElse(false)) {
             slot1.set(item.copyWithCount(1));
         }
     }
