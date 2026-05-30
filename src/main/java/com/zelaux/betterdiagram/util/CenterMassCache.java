@@ -2,7 +2,7 @@ package com.zelaux.betterdiagram.util;
 
 import com.mojang.datafixers.util.Either;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
-import com.zelaux.betterdiagram.extend.accessors.MassTracker$1Accessors;
+import com.zelaux.betterdiagram.extend.accessors.BlockPropertiesComputers;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
 import lombok.AccessLevel;
@@ -124,13 +124,13 @@ public class CenterMassCache {
     }
 
     public static void forEachCOM(Level level, Block block, boolean ignoreHalf, RawPairConsumer consumer) {
-        MassTracker$1Accessors accessors = MassTracker$1Accessors.get();
+
         for(BlockState state : block.getStateDefinition().getPossibleStates()) {
-            double mass = PhysicsBlockPropertyHelper.getMass(level, BlockPos.ZERO, state);
+            double mass = BlockPropertiesComputers.getMass(level, BlockPos.ZERO, state);
             if(CenterMassCalculator.equals(mass, 0)) continue;
 
             //Vector3dc blockCenterOfMass = MassTracker.BLOCK_CENTER_OF_MASS.apply(level, state);
-            Vector3dc blockCenterOfMass = accessors.bcd$lambda$apply$0(state, level, 0);
+            Vector3dc blockCenterOfMass = BlockPropertiesComputers.centerOfMass(level, state);
             if(ignoreHalf && blockCenterOfMass.equals(JOMLConversion.HALF)) continue;
             consumer.consume(state, blockCenterOfMass);
         }

@@ -5,7 +5,9 @@
   "mixins": [
     "ClientDataForDiagramEntity",
     "RemovedGuiUtilsMixin",
-    "accessors.MassTracker$1Mixin",
+    "accessors.blockpropcalc.MassTrackerLambdas",
+    "accessors.blockpropcalc.VoxelNeighborhoodLambdas",
+    "accessors.blockpropcalc.VoxelNeighborhoodLambdas2",
     "accessors.server_helpers.SubLevelStorageFileAccessors",
     "accessors.server_helpers.SubLevelStorageMixin",
     "COM_view.com_view_GoggleOverlayRenderer"
