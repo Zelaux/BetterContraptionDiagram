@@ -5,13 +5,13 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.foundation.gui.widget.Label;
+import com.zelaux.betterdiagram.ClientEvents;
+import com.zelaux.betterdiagram.data.BCDData.OffCenterBlocksShowState;
+import com.zelaux.betterdiagram.extend.ClientData;
+import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
-import com.zelaux.betterdiagram.extend.accessors.EditBoxAccessors;
 import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
-import com.zelaux.betterdiagram.index.ForceGroups;
-import com.zelaux.betterdiagram.data.BCDData.OffCenterBlocksShowState;
-import com.zelaux.betterdiagram.extend.*;
 import com.zelaux.betterdiagram.func.DoubleSetter;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
 import com.zelaux.betterdiagram.gui.user.ButtonKind;
@@ -19,6 +19,8 @@ import com.zelaux.betterdiagram.gui.user.ClickHandler;
 import com.zelaux.betterdiagram.gui.widget.*;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.index.Colors;
+import com.zelaux.betterdiagram.index.ForceGroups;
+import com.zelaux.betterdiagram.mixin.accessors.EditBoxAccessors;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
@@ -71,7 +73,7 @@ import static com.zelaux.betterdiagram.util.UIUtil.*;
 import static com.zelaux.betterdiagram.util.VecUtil.*;
 
 public class CenterMassMovingScreen extends AbstractSimiScreen {
-    public static final DecimalFormat DECIMAL_FORMAT = StringUtil.makeFormat("#.###",true);
+    public static final DecimalFormat DECIMAL_FORMAT = StringUtil.makeFormat("#.###", true);
     public DiagramScreen diagramScreen;
     DiagramStickyNote diagramStickyNote;
     DiagramScreenAccessors diagramScreenAccessors;
@@ -581,12 +583,44 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             .format(x -> Component.literal(DECIMAL_FORMAT.format(x)))
             .withStepFunction(ctx -> ctx.control ? 0.5f : (ctx.shift ? 10 : 1));
         final var editBox = new EditBox(minecraft.font, scrollInput.getWidth(), scrollInput.getHeight(), boxName) {
+            public final EditBoxAccessors accessors = ((EditBoxAccessors) (EditBox) this);
+
+            @Override
+            public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+                boolean was = accessors.bcd$isEditable();
+                int wasColor=accessors.bcd$textColor(),wasColor2= accessors.bcd$textColorUneditable();
+                if(clientData.dataOrDefault().eCOM()==null){
+                    accessors.bcd$textColor(0);
+                    accessors.bcd$textColorUneditable(0);
+                }else if (!isActive()){
+                    setEditable(false);
+                }
+                super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+                setEditable(was);
+                accessors.bcd$textColor(wasColor);
+                accessors.bcd$textColorUneditable(wasColor2);
+                if(true) return;
+
+                if(clientData.dataOrDefault().eCOM() != null || !active) return;
+
+
+                ;
+                int color = Colors.mixMany((ClientEvents.clientTime() / 60f / 4) % 1, Colors.BLUE_GRADIENT).getRGB();
+                int expand = 0;
+                int x = getX() - expand, y = getY() - expand, x2 = getX() + getWidth() - 1 + expand, y2 = getY() + getHeight() - 1 + expand;
+                guiGraphics.hLine(x, x2, y, color);
+                guiGraphics.hLine(x, x2, y2, color);
+                guiGraphics.vLine(x, y, y2, color);
+                guiGraphics.vLine(x2, y, y2, color);
+                //guiGraphics.fill(x, y, width, height, 0xaa_ff_ff_ff);
+            }
+
             @Override
             public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
                 return scrollInput.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
             }
         };
-        EditBoxAccessors boxAccessors = EditBoxAccessors.of(editBox);
+        EditBoxAccessors boxAccessors = editBox.accessors;
         editBox.setFilter(s -> {
             if(s.isEmpty() || s.equals("-"))
                 return true;

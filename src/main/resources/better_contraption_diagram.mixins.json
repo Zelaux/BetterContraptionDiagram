@@ -20,7 +20,7 @@
     "accessors.AbstractScrollWidgetMixin",
     "accessors.DiagramScreenAccessorsImpl",
     "accessors.DiagramStickyNoteAccessorsImpl",
-    "accessors.EditBoxMixin",
+    "accessors.EditBoxAccessors",
     "calculator.Calculator_DiagramScreen",
     "calculator.Calculator_DiagramStickyNote",
     "calculator.UpdateData_DiagramScreen",

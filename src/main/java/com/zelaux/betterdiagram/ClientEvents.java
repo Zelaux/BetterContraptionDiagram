@@ -6,6 +6,7 @@ import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
 import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
 import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
 import com.zelaux.betterdiagram.util.CenterMassCache;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.player.Player;
@@ -21,8 +22,12 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 
 @EventBusSubscriber(modid = BetterContraptionDiagram.MODID, value = Dist.CLIENT)
 public class ClientEvents {
+    public static float clientTime(){
+        return AnimationTickHolder.getTicks(true) + AnimationTickHolder.getPartialTicks();
+    }
     @SubscribeEvent
     public static void onTickPre(ClientTickEvent.Pre event) {
+
         OffCenteredBlockTooltipHandler.tick();
     }
 
