@@ -4,9 +4,9 @@ import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.data.OffCenteredBlock;
 import com.zelaux.betterdiagram.extend.ClientData;
+import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
-import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.struct.Weights;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
@@ -18,6 +18,8 @@ import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -30,7 +32,6 @@ import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class CenterMassCalculator {
     public static final float DELTA = 0.00001f;
@@ -59,21 +60,15 @@ public class CenterMassCalculator {
         if(expectedCOM.equals(currentCOM, DELTA) || mass == 0) {
 
             clientData.bcdiagram$updateData(data
-                .withCache(null)
                 .withWeightStacksByAxis(null)
             );
             return null;
         }
-        Cache cache = data.cache;
         var stacks = data.weightStacksByAxis;
-
-        if(cache != null && cache.isApproxEquals(expectedCOM, currentCOM, mass)) {
-            return stacks;
-        }
+        boolean[] shouldUpdate = {false};
+        data = checkCache(mass, data, currentCOM, shouldUpdate);
+        if(!shouldUpdate[0]) return stacks;
         if(stacks == null) stacks = makeMassStacks();
-
-        data = data.withCache(Cache.update(null, expectedCOM, currentCOM, mass));
-
 
         stacks[0].clear();
         stacks[1].clear();
@@ -93,6 +88,18 @@ public class CenterMassCalculator {
         );
         return stacks;
     }
+
+    private static @NotNull BCDData checkCache(double mass, BCDData data, Vector3d currentCOM, boolean[] shouldUpdate) {
+        Cache cache = data.cache;
+        if(cache == null || !cache.isApproxEquals(data.eCOM(), currentCOM, mass)) {
+            data = data.withCache(Cache.create(data.eCOM(), currentCOM, mass));
+            shouldUpdate[0] = true;
+        } else {
+            shouldUpdate[0] = false;
+        }
+        return data;
+    }
+
 
     private static void addStacks(Weights weights, Vector3d uni, Vector3dc expectedCOM, double value0) {
         if(equals(value0, 0)) value0 = 0;
@@ -239,7 +246,9 @@ public class CenterMassCalculator {
             clientData.bcdiagram$updateData(data.withOffCenteredBlocks(null));
             return null;
         }
-        if(data.offCenteredBlocks != null) return data.offCenteredBlocks;
+        boolean[] shouldUpdate = {false};
+        data = checkCache(serverData.mass(), data, centerOfMass(self.subLevel), shouldUpdate);
+        if(data.offCenteredBlocks != null && !shouldUpdate[0]) return data.offCenteredBlocks;
         ArrayList<OffCenteredBlock> offCenteredBlocks = findOffCenteredBlocks(
             clientData,
             self.subLevel,
@@ -251,35 +260,29 @@ public class CenterMassCalculator {
         );
         if(offCenteredBlocks.isEmpty()) return null;
         clientData.bcdiagram$updateData(
-            data = clientData.bcdDataOrDefault().withOffCenteredBlocks(offCenteredBlocks)
+            clientData.bcdDataOrDefault().withOffCenteredBlocks(offCenteredBlocks)
         );
 
 
-        return data.offCenteredBlocks;
+        return offCenteredBlocks;
     }
 
     @Getter
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Cache {
-        public final Vector3d expectedCOM = new Vector3d();
-        public final Vector3d actualCOM = new Vector3d();
+        @Nullable
+        public final Vector3dc expectedCOM;
+        @NotNull
+        public final Vector3dc actualCOM;
         public double mass;
 
-        public Cache() {}
 
-
-        public Cache set(Vector3dc expectedCOM, Vector3d actualCOM, double mass) {
-            this.expectedCOM.set(expectedCOM);
-            this.actualCOM.set(actualCOM);
-            this.mass = mass;
-            return this;
+        @Contract(value = "_,_,_->new")
+        public static Cache create(Vector3dc expectedCOM, Vector3dc currentCOM, double mass) {
+            return new Cache(expectedCOM, new Vector3d(currentCOM), mass);
         }
 
-        @Contract(value = "!null,_,_,_->param1;null,_,_,_->new")
-        public static Cache update(Cache cache, Vector3dc expectedCOM, Vector3d currentCOM, double mass) {
-            return Objects.requireNonNullElseGet(cache, Cache::new).set(expectedCOM, currentCOM, mass);
-        }
-
-        private boolean isApproxEquals(Vector3dc expectedCOM, Vector3d currentCOM, double mass) {
+        private boolean isApproxEquals(Vector3dc expectedCOM, Vector3dc currentCOM, double mass) {
             return this.expectedCOM.equals(expectedCOM, DELTA) && actualCOM.equals(currentCOM, DELTA) && Runtime.equals(mass, this.mass, DELTA);
         }
 

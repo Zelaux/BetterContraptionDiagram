@@ -10,6 +10,7 @@
     "accessors.blockpropcalc.VoxelNeighborhoodLambdas2",
     "accessors.server_helpers.SubLevelStorageFileAccessors",
     "accessors.server_helpers.SubLevelStorageMixin",
+    "calculator.Calculator_DiagramDataPacket",
     "COM_view.com_view_GoggleOverlayRenderer"
   ],
   "client": [
@@ -22,6 +23,7 @@
     "accessors.EditBoxMixin",
     "calculator.Calculator_DiagramScreen",
     "calculator.Calculator_DiagramStickyNote",
+    "calculator.UpdateData_DiagramScreen",
     "COM_view.LevelRendererMixin"
   ],
   "injectors": {
