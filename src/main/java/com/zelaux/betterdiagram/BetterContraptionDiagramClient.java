@@ -6,7 +6,6 @@ import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
 import dev.simulated_team.simulated.Simulated;
 import dev.simulated_team.simulated.client.BlockPropertiesTooltip;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
-import mezz.jei.neoforge.events.PermanentEventSubscriptions;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -14,6 +13,8 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -26,10 +27,8 @@ import org.slf4j.Logger;
 @EventBusSubscriber(modid = BetterContraptionDiagram.MODID, value = Dist.CLIENT)
 public class BetterContraptionDiagramClient {
     public static final Logger LOGGER = LogUtils.getLogger();
-    private final PermanentEventSubscriptions subscriptions;
 
     public BetterContraptionDiagramClient(ModContainer container) {
-        PermanentEventSubscriptions subscriptions = this.subscriptions = new PermanentEventSubscriptions(NeoForge.EVENT_BUS, container.getEventBus());
         ;
         container.registerConfig(ModConfig.Type.CLIENT, Config.SPEC);
         // Allows NeoForge to create a config screen for this mod's configs.
