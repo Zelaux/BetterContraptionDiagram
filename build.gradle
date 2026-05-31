@@ -328,3 +328,19 @@ idea {
         downloadJavadoc = true
     }
 }
+def isReleaseRequested = gradle.startParameter.taskNames.any { it.toLowerCase().contains("build") }
+
+def file = new File("$buildDir/releaseMarker")
+tasks.named("runPostprocessors") {
+    doFirst {
+        // Проверяем, релиз ли это
+        println file.absolutePath
+        if(isReleaseRequested){
+            file.write("")
+        }else{
+            file.delete();
+        }
+        // Устанавливаем переменную окружения ПРЯМО В ТАСК
+        // Почти все плагины прокидывают окружение дальше
+    }
+}
