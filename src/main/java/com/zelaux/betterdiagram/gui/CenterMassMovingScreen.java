@@ -23,6 +23,7 @@ import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
+import com.zelaux.betterdiagram.util.StringUtil;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
@@ -70,7 +71,7 @@ import static com.zelaux.betterdiagram.util.UIUtil.*;
 import static com.zelaux.betterdiagram.util.VecUtil.*;
 
 public class CenterMassMovingScreen extends AbstractSimiScreen {
-    public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.###");
+    public static final DecimalFormat DECIMAL_FORMAT = StringUtil.makeFormat("#.###",true);
     public DiagramScreen diagramScreen;
     DiagramStickyNote diagramStickyNote;
     DiagramScreenAccessors diagramScreenAccessors;

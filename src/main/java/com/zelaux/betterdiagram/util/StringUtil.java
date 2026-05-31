@@ -1,11 +1,15 @@
 package com.zelaux.betterdiagram.util;
 
+import com.zelaux.betterdiagram.annotations.DebugOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class StringUtil {
     public static final DecimalFormat ZERO_WITH_SOME_DIGITS = makeFormat("#.#####");
+    public static final DecimalFormat PARSABLE_FORMAT_5 = makeFormat("#.#####", true);
     private static final DecimalFormat ZERO_WITH_ZERO = makeFormat("#.#");
     private static final DecimalFormat[] formats = {
         null,
@@ -15,8 +19,20 @@ public class StringUtil {
         ZERO_WITH_ZERO,
     };
 
-    private static @NotNull DecimalFormat makeFormat(String pattern) {
-        return new DecimalFormat(pattern);
+    public static @NotNull DecimalFormat makeFormat(String pattern) {
+        return makeFormat(pattern, false);
+    }
+    public static @NotNull DecimalFormat makeFormat(String pattern, boolean parsable) {
+
+        DecimalFormat decimalFormat = new DecimalFormat();
+        decimalFormat.applyPattern(pattern);
+        if(!parsable){
+            decimalFormat.setGroupingSize(3);
+            decimalFormat.setGroupingUsed(true);
+        }else{
+            decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
+        }
+        return decimalFormat;
     }
 
     public static @NotNull String plainDouble(double value) {

@@ -91,7 +91,7 @@ public class Entry {
     public void setValue(double value) {
         boolean was = enabled;
         enabled = true;
-        editBox.setValue(StringUtil.ZERO_WITH_SOME_DIGITS.format(value));
+        editBox.setValue(StringUtil.PARSABLE_FORMAT_5.format(value));
         enabled = was;
     }
 }
