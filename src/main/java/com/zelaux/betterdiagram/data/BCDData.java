@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
@@ -32,14 +33,18 @@ import java.util.Objects;
 @EqualsAndHashCode
 public class BCDData {
     public static final BCDData DEFAULT_VALUE = new BCDData(null, null, null, null, (byte) 7, OffCenterBlocksShowState.none);
-    public static final Codec<BCDData> FULL_CODEC = RecordCodecBuilder.create(i -> i.group(
-            SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", null).forGetter(BCDData::eCOM_m),
-            Weights.CODEC.listOf().optionalFieldOf("axisWeightStacks", null)
-                         .forGetter(k -> arrToList(k.weightStacksByAxis)),
-            Codec.<CenterMassCalculator.Cache>unit(null).fieldOf("cache").forGetter(x -> x.cache),
-            Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask)
-        ).apply(i, BCDData::make)
+    private static final Vector3d NULL_ECOM = new Vector3d();
+    public static final Codec<BCDData> SHORT_CODEC = RecordCodecBuilder.create(i -> i.group(
+            SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", NULL_ECOM).forGetter(BCDData::eCOM_m),
+            Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask),
+            OffCenterBlocksShowState.CODEC.optionalFieldOf("offcenterShowState", OffCenterBlocksShowState.none).forGetter(BCDData::offCenterBlocksShowState)
+        ).apply(i, (ecom, axisStates, offCenterBlocksShowState) ->
+            make(ecom == NULL_ECOM ? null : ecom,
+                axisStates,
+                offCenterBlocksShowState
+            ))
     );
+
 
     private static <T> @Nullable List<T> arrToList(T @Nullable [] axisWeightStacks1) {
         return axisWeightStacks1 == null ? null : List.of(axisWeightStacks1);
@@ -49,20 +54,14 @@ public class BCDData {
         return values == null ? null : List.of(values[0], values[1], values[2]);
     }
 
-    public static final Codec<BCDData> SHORT_CODEC = RecordCodecBuilder.create(i -> i.group(
-            SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", null).forGetter(BCDData::eCOM_m),
-            Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask)
-        ).apply(i, (ecom, axisStates) -> make(ecom, null, null, axisStates))
 
-    );
-
-
-    private static BCDData make(Vector3d x, List<Weights> y, CenterMassCalculator.Cache z, int axisStates) {
+    private static BCDData make(Vector3d x, int axisStates, OffCenterBlocksShowState offCenterBlocksShowState) {
         return BCDData.DEFAULT().toBuilder()
                       .eCOM(x)
-                      .weightStacksByAxis(y == null ? null : y.toArray(new Weights[3]))
-                      .cache(z)
+                      .weightStacksByAxis(null)
+                      .cache(null)
                       .axisStatesMask(axisStates)
+                      .offCenterBlocksShowState(offCenterBlocksShowState)
                       .build();
     }
 
@@ -126,6 +125,7 @@ public class BCDData {
 
     public static BCDData compareReset(BCDData oldValue, BCDData newValue) {
         if(newValue == oldValue || oldValue == null) return newValue;
+        if(newValue.equals(BCDData.DEFAULT_VALUE)) return BCDData.DEFAULT_VALUE;
         BCDDataBuilder builder = null;
 
 
@@ -149,11 +149,12 @@ public class BCDData {
         return builder == null ? newValue : builder.build();
     }
 
-    public enum OffCenterBlocksShowState {
+    public enum OffCenterBlocksShowState implements StringRepresentable {
         none,
         show,
         showAll;
         public final static OffCenterBlocksShowState[] all = values();
+        public static final Codec<OffCenterBlocksShowState> CODEC = StringRepresentable.fromEnum(OffCenterBlocksShowState::values);
 
         public OffCenterBlocksShowState next() {
             return all[(ordinal() + 1) % all.length];
@@ -161,6 +162,11 @@ public class BCDData {
 
         public OffCenterBlocksShowState prev() {
             return all[(ordinal() + all.length - 1) % all.length];
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name();
         }
     }
 }

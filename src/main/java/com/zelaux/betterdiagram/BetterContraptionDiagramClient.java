@@ -1,11 +1,18 @@
 package com.zelaux.betterdiagram;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.DataResult;
+import com.zelaux.betterdiagram.annotations.DebugOnly;
+import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.event.client.COM_Tooltip;
 import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
 import dev.simulated_team.simulated.Simulated;
 import dev.simulated_team.simulated.client.BlockPropertiesTooltip;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;

@@ -3,7 +3,6 @@
   "package": "com.zelaux.betterdiagram.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ClientDataForDiagramEntity",
     "RemovedGuiUtilsMixin",
     "accessors.blockpropcalc.MassTrackerLambdas",
     "accessors.blockpropcalc.VoxelNeighborhoodLambdas",
@@ -11,7 +10,8 @@
     "accessors.server_helpers.SubLevelStorageFileAccessors",
     "accessors.server_helpers.SubLevelStorageMixin",
     "calculator.Calculator_DiagramDataPacket",
-    "COM_view.com_view_GoggleOverlayRenderer"
+    "COM_view.com_view_GoggleOverlayRenderer",
+    "leveldata.DiagramEntityMixin"
   ],
   "client": [
     "BufferSourceMixin",
@@ -24,7 +24,10 @@
     "calculator.Calculator_DiagramScreen",
     "calculator.Calculator_DiagramStickyNote",
     "calculator.UpdateData_DiagramScreen",
-    "COM_view.LevelRendererMixin"
+    "COM_view.LevelRendererMixin",
+    "leveldata.ClientPacketListenerMixin",
+    "leveldata.IntegratedServerMixin",
+    "leveldata.PauseScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

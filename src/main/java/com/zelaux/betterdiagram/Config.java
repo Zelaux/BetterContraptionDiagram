@@ -38,6 +38,9 @@ public class Config {
     public static final ModConfigSpec.EnumValue<ComViewType> COM_viewType = BUILDER
         .comment("center of mass box view type with goggles")
         .defineEnum("comViewType", ComViewType.F3_OR_HITBOX);
+    public static final ModConfigSpec.IntValue MAX_DIAGRAM_STORED_PER_LEVEL = BUILDER
+        .comment("max amount of locally stored diagrams")
+        .defineInRange("maxDiagramDataStoredPreLevel", 1000, 1, 100_000);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 
