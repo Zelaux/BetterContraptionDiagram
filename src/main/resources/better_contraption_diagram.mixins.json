@@ -11,7 +11,7 @@
     "accessors.server_helpers.SubLevelStorageMixin",
     "calculator.Calculator_DiagramDataPacket",
     "COM_view.com_view_GoggleOverlayRenderer",
-    "leveldata.DiagramEntityMixin"
+    "server.DiagramEntityMixin"
   ],
   "client": [
     "BufferSourceMixin",
@@ -26,8 +26,10 @@
     "calculator.UpdateData_DiagramScreen",
     "COM_view.LevelRendererMixin",
     "leveldata.ClientPacketListenerMixin",
+    "leveldata.DiagramEntityMixin",
     "leveldata.IntegratedServerMixin",
-    "leveldata.PauseScreenMixin"
+    "leveldata.PauseScreenMixin",
+    "server.DiagramScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

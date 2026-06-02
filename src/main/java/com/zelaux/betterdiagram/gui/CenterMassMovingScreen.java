@@ -6,8 +6,10 @@ import com.mojang.blaze3d.vertex.*;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.zelaux.betterdiagram.ClientEvents;
+import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.data.BCDData.OffCenterBlocksShowState;
 import com.zelaux.betterdiagram.extend.ClientData;
+import com.zelaux.betterdiagram.extend.IDiagramScreen;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
@@ -72,7 +74,7 @@ import static com.zelaux.betterdiagram.gui.widget.PartialInteration.partialInter
 import static com.zelaux.betterdiagram.util.UIUtil.*;
 import static com.zelaux.betterdiagram.util.VecUtil.*;
 
-public class CenterMassMovingScreen extends AbstractSimiScreen {
+public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagramScreen {
     public static final DecimalFormat DECIMAL_FORMAT = StringUtil.makeFormat("#.###", true);
     public DiagramScreen diagramScreen;
     DiagramStickyNote diagramStickyNote;
@@ -589,7 +591,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
             public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
                 boolean was = accessors.bcd$isEditable();
                 int wasColor=accessors.bcd$textColor(),wasColor2= accessors.bcd$textColorUneditable();
-                if(clientData.dataOrDefault().eCOM()==null){
+                if(clientData.bcdDataNotNull_readOnly().eCOM()==null){
                     accessors.bcd$textColor(0);
                     accessors.bcd$textColorUneditable(0);
                 }else if (!isActive()){
@@ -601,7 +603,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
                 accessors.bcd$textColorUneditable(wasColor2);
                 if(true) return;
 
-                if(clientData.dataOrDefault().eCOM() != null || !active) return;
+                if(clientData.bcdDataNotNull_readOnly().eCOM() != null || !active) return;
 
 
                 ;
@@ -754,6 +756,11 @@ public class CenterMassMovingScreen extends AbstractSimiScreen {
         }
         gridEnabled = false;
         //partialInterationForScreen.active = true;
+    }
+
+    @Override
+    public void bcd$applyBCDDATA(BCDData data) {
+        ((IDiagramScreen)this.diagramScreen).bcd$applyBCDDATA(data);
     }
 
     public static class MyGridClicker extends GridClicker {

@@ -2,15 +2,17 @@ package com.zelaux.betterdiagram;
 
 import com.mojang.logging.LogUtils;
 import com.zelaux.betterdiagram.command.ServerHelpers;
+import com.zelaux.betterdiagram.network.BCDPacketManager;
+import com.zelaux.betterdiagram.network.HelloMessage;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
@@ -33,17 +35,23 @@ public class BetterContraptionDiagram {
         // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
-
+        BCDPacketManager.init();
         // Register the item to a creative tab
         //modEventBus.addListener(this::addCreative);
 
-        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
+        // Register our mod's ModConfigSpec so that FML can create and load the data file for us
         //modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
     public static ResourceLocation resource(String location) {
         return ResourceLocation.fromNamespaceAndPath(MODID, location);
     }
+    @SubscribeEvent
+    void syncHello(OnDatapackSyncEvent event){
+        if(event.getPlayer() == null) return;
+        HelloMessage.INSTANCE.trySend(event.getPlayer());
+    }
+
 
     @SubscribeEvent
     private void registerResqueCommand(RegisterCommandsEvent event) {

@@ -8,7 +8,6 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.world.level.storage.LevelResource;
 import org.jetbrains.annotations.Nullable;
-import xaero.map.platform.Services;
 
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -30,7 +29,9 @@ public class LevelDatas {
     );
 
     static {
-        Path gameDir = Services.PLATFORM.getGameDir();
+
+        Minecraft instance = Minecraft.getInstance();
+        Path gameDir = instance.gameDirectory.toPath();
         SERVER_LOCAL_DATA_PATH = gameDir.resolve(".bcdiagram");
         LEVEL_DATA_PATH = SERVER_LOCAL_DATA_PATH.resolve("leveldata");
     }

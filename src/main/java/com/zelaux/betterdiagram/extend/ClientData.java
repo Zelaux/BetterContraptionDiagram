@@ -12,13 +12,14 @@ public class ClientData implements WithClientData {
     }
 
     @Override
-    @NotNull
-    public BCDData bcdDataOrDefault() {
-        return data.bcdDataOrDefault();
+    public BCDData bcdDataOrTryDefault() {
+        return data.bcdDataOrTryDefault();
     }
 
-    @NotNull
-    public BCDData dataOrDefault() {return data.bcdDataOrDefault();}
+    @Override
+    public BCDData bcdiagram$setDataSilent(BCDData data) {
+        return this.data.bcdiagram$setDataSilent(data);
+    }
 
     @Override
     @Nullable
@@ -27,25 +28,26 @@ public class ClientData implements WithClientData {
     }
 
     @Override
-    @NotNull
     public BCDData bcdiagram$updateData(BCDData data) {
         return this.data.bcdiagram$updateData(data);
     }
 
     @NotNull
     public BCDData.OffCenterBlocksShowState offCenteredView() {
-        return bcdDataOrDefault().offCenterBlocksShowState;
+        return bcdDataNotNull_readOnly().offCenterBlocksShowState;
     }
 
     public void nextOffCenteredView() {
-        BCDData data = dataOrDefault();
+        BCDData data = this.data.bcdDataOrTryDefault();
+        if(data == null) return;
         bcdiagram$updateData(
             data.withOffCenterBlocksShowState(data.offCenterBlocksShowState.next())
         );
     }
 
     public void prevOffCenteredView() {
-        BCDData data = dataOrDefault();
+        BCDData data = this.data.bcdDataOrTryDefault();
+        if(data == null) return;
         bcdiagram$updateData(
             data.withOffCenterBlocksShowState(data.offCenterBlocksShowState.prev())
         );

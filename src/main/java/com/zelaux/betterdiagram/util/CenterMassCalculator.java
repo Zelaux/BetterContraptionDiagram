@@ -52,8 +52,8 @@ public class CenterMassCalculator {
     }
 
     public static Weights[] recalculateStacks(WithClientData clientData, ClientSubLevel subLevel, double mass) {
-        BCDData data = clientData.bcdDataOrDefault();
-        if(data.eCOM() == null) return null;
+        BCDData data = clientData.bcdDataOrTryDefault();
+        if(data == null || data.eCOM() == null) return null;
 
         var expectedCOM = expectedCenterOfMass(clientData, subLevel);
         Vector3d currentCOM = centerOfMass(subLevel);
@@ -153,13 +153,14 @@ public class CenterMassCalculator {
 
     @NotNull
     public static Vector3dc expectedCenterOfMass(WithClientData clientData, ClientSubLevel subLevel) {
-        BCDData data = clientData.bcdDataOrDefault();
-        if(data.eCOM() == null) return centerOfMass(subLevel);
+        BCDData data = clientData.bcdDataOrTryDefault();
+        if(data == null || data.eCOM() == null) return centerOfMass(subLevel);
         return data.eCOM();
     }
 
     public static void expectedCenterOfMass(ClientData clientData, Vector3d newValue) {
-        BCDData data = clientData.bcdDataOrDefault();
+        BCDData data = clientData.bcdDataOrTryDefault();
+        if(data == null) return;
         clientData.bcdiagram$updateData(
             newValue == null ? data.withECOM(null) : data.withECOM(new Vector3d(newValue))
         );
@@ -238,10 +239,10 @@ public class CenterMassCalculator {
     }
 
     public static @Nullable ArrayList<OffCenteredBlock> getOrCreateOffCenteredBlocks(WithClientData clientData, @NotNull DiagramScreen self) {
-        var data = clientData.bcdDataOrDefault();
+        var data = clientData.bcdDataOrTryDefault();
 
         DiagramDataPacket serverData = accessors(self).betterContraptionDiagram$serverData();
-        if(serverData == null) return null;
+        if(serverData == null || data == null) return null;
         if(data.offCenterBlocksShowState == BCDData.OffCenterBlocksShowState.none) {
             clientData.bcdiagram$updateData(data.withOffCenteredBlocks(null));
             return null;
@@ -260,7 +261,7 @@ public class CenterMassCalculator {
         );
         if(offCenteredBlocks.isEmpty()) return null;
         clientData.bcdiagram$updateData(
-            clientData.bcdDataOrDefault().withOffCenteredBlocks(offCenteredBlocks)
+            data.withOffCenteredBlocks(offCenteredBlocks)
         );
 
 
@@ -283,7 +284,7 @@ public class CenterMassCalculator {
         }
 
         private boolean isApproxEquals(Vector3dc expectedCOM, Vector3dc currentCOM, double mass) {
-            return this.expectedCOM.equals(expectedCOM, DELTA) && actualCOM.equals(currentCOM, DELTA) && Runtime.equals(mass, this.mass, DELTA);
+            return (expectedCOM == this.expectedCOM || this.expectedCOM != null && this.expectedCOM.equals(expectedCOM, DELTA)) && actualCOM.equals(currentCOM, DELTA) && Runtime.equals(mass, this.mass, DELTA);
         }
 
         @Override

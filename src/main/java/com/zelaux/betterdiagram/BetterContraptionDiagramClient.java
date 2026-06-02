@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 @EventBusSubscriber(modid = BetterContraptionDiagram.MODID, value = Dist.CLIENT)
 public class BetterContraptionDiagramClient {
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static boolean isServerSideInstalled;
 
     public BetterContraptionDiagramClient(ModContainer container) {
         ;

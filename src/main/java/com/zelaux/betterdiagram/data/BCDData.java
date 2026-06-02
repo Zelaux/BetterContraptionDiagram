@@ -9,6 +9,10 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +22,7 @@ import org.joml.Vector3dc;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Better Contraption Diagram Data
@@ -33,17 +38,23 @@ import java.util.Objects;
 @EqualsAndHashCode
 public class BCDData {
     public static final BCDData DEFAULT_VALUE = new BCDData(null, null, null, null, (byte) 7, OffCenterBlocksShowState.none);
+    public static final StreamCodec<? super RegistryFriendlyByteBuf, Optional<BCDData>> STREAM_CODEC =
+        ByteBufCodecs.TAG.map(
+            x -> BCDData.SHORT_CODEC.parse(NbtOps.INSTANCE, x).result().orElse(null),
+            x -> BCDData.SHORT_CODEC.encodeStart(NbtOps.INSTANCE, x).result().orElse(null)
+        );
     private static final Vector3d NULL_ECOM = new Vector3d();
-    public static final Codec<BCDData> SHORT_CODEC = RecordCodecBuilder.create(i -> i.group(
-            SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", NULL_ECOM).forGetter(BCDData::eCOM_m),
-            Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask),
-            OffCenterBlocksShowState.CODEC.optionalFieldOf("offcenterShowState", OffCenterBlocksShowState.none).forGetter(BCDData::offCenterBlocksShowState)
-        ).apply(i, (ecom, axisStates, offCenterBlocksShowState) ->
-            make(ecom == NULL_ECOM ? null : ecom,
-                axisStates,
-                offCenterBlocksShowState
-            ))
+    public static final Codec<BCDData> NON_NULL_CODEC = RecordCodecBuilder.create(i -> i.group(
+        SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", NULL_ECOM).xmap(x -> x, x -> x == null ? NULL_ECOM : x).forGetter(BCDData::eCOM_m),
+        Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask),
+        OffCenterBlocksShowState.CODEC.optionalFieldOf("offcenterShowState", OffCenterBlocksShowState.none).forGetter(BCDData::offCenterBlocksShowState)
+    ).apply(i, (ecom, axisStates, offCenterBlocksShowState) ->
+        make(ecom == NULL_ECOM ? null : ecom,
+            axisStates,
+            offCenterBlocksShowState
+        ))
     );
+    public static final Codec<Optional<BCDData>> SHORT_CODEC = NON_NULL_CODEC.optionalFieldOf("data").codec();
 
 
     private static <T> @Nullable List<T> arrToList(T @Nullable [] axisWeightStacks1) {

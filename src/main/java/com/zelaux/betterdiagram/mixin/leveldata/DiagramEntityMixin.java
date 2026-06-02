@@ -1,5 +1,7 @@
 package com.zelaux.betterdiagram.mixin.leveldata;
 
+import com.zelaux.betterdiagram.BetterContraptionDiagram;
+import com.zelaux.betterdiagram.BetterContraptionDiagramClient;
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.leveldata.DiagramEntityData;
@@ -30,14 +32,18 @@ public class DiagramEntityMixin implements WithClientData {
     @Override
     public @Nullable BCDData bcdiagram$dataOrNull() {
         DiagramEntity self = (DiagramEntity) ((Object) this);
-        if(bcd$data == null) {
+        if(bcd$data == null && !BetterContraptionDiagramClient.isServerSideInstalled) {
             bcd$data = DiagramEntityData.get(self.level()).locateDataOrNull(self.getUUID());
         }
         return bcd$data;
     }
 
     @Override
-    public @NotNull BCDData bcdiagram$updateData(BCDData data) {
+    public BCDData bcdiagram$setDataSilent(BCDData data) {
+        return bcd$data=data;
+    }
+    @Override
+    public BCDData bcdiagram$updateData(BCDData data) {
         bcd$data = data;
         DiagramEntity self = (DiagramEntity) ((Object) this);
          DiagramEntityData.get(self.level()).saveData(self.getUUID(),data);

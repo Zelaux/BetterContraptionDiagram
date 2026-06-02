@@ -97,6 +97,7 @@ public class ClientEvents {
     @SubscribeEvent
     static void onWorldLeave(ClientPlayerNetworkEvent.LoggingOut event){
         LevelDatas.disconnect();
+        BetterContraptionDiagramClient.isServerSideInstalled = false;
     }
 
     @SubscribeEvent
