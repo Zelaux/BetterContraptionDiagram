@@ -2,11 +2,12 @@ package com.zelaux.betterdiagram.util;
 
 import com.mojang.datafixers.util.Either;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
+import com.zelaux.betterdiagram.BetterContraptionDiagramClient;
 import com.zelaux.betterdiagram.extend.accessors.BlockPropertiesComputers;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
-import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -16,12 +17,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3dc;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
@@ -42,33 +41,44 @@ public class CenterMassCache {
         ).mapRight(AsyncComputeHolder.Pair::future);
     }
 
+    @SneakyThrows
     private static @NotNull CenterMassTo_Block2States calc_COM2_Block2States(HolderLookup.RegistryLookup<Block> blocks, Level level, ConcurrentLinkedQueue<CenterMassTo_Block2States.Part> x) {
         long nano = System.nanoTime();
         var resultMap = new CenterMassTo_Block2States();
         var lists = new ArrayList<ArrayList<BlockState>>();
 
-        for(var blockListEntry : getBlock2Pairs(blocks, level).left().get().entrySet()) {
-            Block block = blockListEntry.getKey();
-            Map<Vector3dc, ArrayList<BlockState>> value = blockListEntry.getValue();
-
-            for(var COMAndBlockStates : value.entrySet()) {
-                var COM = COMAndBlockStates.getKey();
-                var blockStates = COMAndBlockStates.getValue();
-                resultMap
-                    .computeIfAbsent(COM, it -> new HashMap<>())
-                    .computeIfAbsent(block, it -> getSaved(lists))
-                    .addAll(blockStates);
-
-                x.add(new CenterMassTo_Block2States.Part(
-                    COM, block, blockStates, false
-                ));
-            }
-            for(ArrayList<BlockState> list : lists) {
-                list.trimToSize();
-            }
-            lists.clear();
+        Either<BlockTo_CenterMass2State, CompletableFuture<BlockTo_CenterMass2State>> block2Pairs = getBlock2Pairs(blocks, level);
+        Optional<BlockTo_CenterMass2State> left = block2Pairs.left();
+        BlockTo_CenterMass2State blockToCenterMass2State = left.orElse(null);
+        if(left.isEmpty()) {
+            var empty = block2Pairs.right().orElse(null);
+            if(empty == null) return new CenterMassTo_Block2States();
+            blockToCenterMass2State = empty.get();
 
         }
+        if(blockToCenterMass2State != null)
+            for(var blockListEntry : blockToCenterMass2State.entrySet()) {
+                Block block = blockListEntry.getKey();
+                Map<Vector3dc, ArrayList<BlockState>> value = blockListEntry.getValue();
+
+                for(var COMAndBlockStates : value.entrySet()) {
+                    var COM = COMAndBlockStates.getKey();
+                    var blockStates = COMAndBlockStates.getValue();
+                    resultMap
+                        .computeIfAbsent(COM, it -> new HashMap<>())
+                        .computeIfAbsent(block, it -> getSaved(lists))
+                        .addAll(blockStates);
+
+                    x.add(new CenterMassTo_Block2States.Part(
+                        COM, block, blockStates, false
+                    ));
+                }
+                for(ArrayList<BlockState> list : lists) {
+                    list.trimToSize();
+                }
+                lists.clear();
+
+            }
 
         x.add(new CenterMassTo_Block2States.Part(
             null, null, null, true
@@ -162,16 +172,42 @@ public class CenterMassCache {
         void consume(BlockState state, Vector3dc centerOfMass);
     }
 
-    public static class CenterMassTo_Block2States extends HashMap<Vector3dc, Map<Block, List<BlockState>>> {
+    public static class CenterMassTo_Block2States extends HashMap<@NotNull Vector3dc, Map<@NotNull Block, List<BlockState>>> {
         public record Part(Vector3dc COM, Block block, List<BlockState> map, boolean finish) {}
+        @Nullable
+        public Map<@NotNull Block, List<BlockState>> get(Vector3dc key) {
+            return super.get(key);
+        }
+        @Override
+        @Nullable
+        public Map<@NotNull Block, List<BlockState>> get(Object key) {
+            return super.get(key);
+        }
     }
 
-    public static class BlockTo_CenterMass2State extends HashMap<Block, Map<Vector3dc, ArrayList<BlockState>>> {
+    public static class BlockTo_CenterMass2State extends HashMap<@NotNull Block, Map<@NotNull Vector3dc, ArrayList<BlockState>>> {
         /**
          * @param block unique per queue
          *
          */
-        public record Part(Block block, Map<Vector3dc, ArrayList<BlockState>> COM2BLockState, boolean finish) {}
+        public record Part(Block block, Map<@NotNull Vector3dc, ArrayList<BlockState>> COM2BLockState,
+                           boolean finish) {}
+
+
+        public Map<@NotNull Vector3dc, ArrayList<BlockState>> get(Block key) {
+            return get((Object)key);
+        }
+        @Override
+        public Map<@NotNull Vector3dc, ArrayList<BlockState>> get(Object key) {
+            Map<@NotNull Vector3dc, ArrayList<BlockState>> map = super.get(key);
+
+            //Somehow? Idk
+            if(map == null) {
+                BetterContraptionDiagramClient.LOGGER.error("{} has no CoM cache",key);
+                return Map.of();
+            }
+            return map;
+        }
     }
 
     @AllArgsConstructor
