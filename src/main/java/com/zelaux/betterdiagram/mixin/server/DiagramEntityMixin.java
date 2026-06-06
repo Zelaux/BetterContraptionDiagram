@@ -4,6 +4,7 @@ import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.extend.ServerSideData;
 import com.zelaux.betterdiagram.network.BCDDataTransfer;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
+import lombok.NonNull;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -25,12 +26,12 @@ public abstract class DiagramEntityMixin implements ServerSideData {
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     public void addAdditionalSaveData(CompoundTag tag, CallbackInfo ci) {
         if(bcd$storredData == null) return;
-        tag.put("bcd$data", BCDData.SHORT_CODEC.encodeStart(NbtOps.INSTANCE, Optional.ofNullable(bcd$storredData)).getOrThrow());
+        tag.put("bcd$data", BCDData.SHORT_CODEC.encodeStart(NbtOps.INSTANCE, Optional.of(bcd$storredData)).getOrThrow());
     }
 
     @Unique
-    @Nullable
-    BCDData bcd$storredData = null;
+    @NonNull
+    BCDData bcd$storredData = BCDData.DEFAULT_VALUE;
 
     @Override
     public BCDData bcd$storredData() {
@@ -48,9 +49,9 @@ public abstract class DiagramEntityMixin implements ServerSideData {
 
         if(tag.contains("bcd$data", Tag.TAG_COMPOUND)) {
             final CompoundTag configTag = tag.getCompound("bcd$data");
-            bcd$storredData = BCDData.SHORT_CODEC.parse(NbtOps.INSTANCE, configTag).getOrThrow().orElse(null);
+            bcd$storredData = BCDData.SHORT_CODEC.parse(NbtOps.INSTANCE, configTag).getOrThrow().orElse(BCDData.DEFAULT_VALUE);
         } else {
-            bcd$storredData = null;
+            bcd$storredData = BCDData.DEFAULT_VALUE;
         }
 
     }

@@ -38,10 +38,15 @@ import java.util.Optional;
 @EqualsAndHashCode
 public class BCDData {
     public static final BCDData DEFAULT_VALUE = new BCDData(null, null, null, null, (byte) 7, OffCenterBlocksShowState.none);
-    public static final StreamCodec<? super RegistryFriendlyByteBuf, Optional<BCDData>> STREAM_CODEC =
+    public static final StreamCodec<? super RegistryFriendlyByteBuf, Optional<BCDData>> STREAM_OPTIONAL_CODEC =
         ByteBufCodecs.TAG.map(
             x -> BCDData.SHORT_CODEC.parse(NbtOps.INSTANCE, x).result().orElse(null),
             x -> BCDData.SHORT_CODEC.encodeStart(NbtOps.INSTANCE, x).result().orElse(null)
+        );
+    public static final StreamCodec<? super RegistryFriendlyByteBuf, BCDData> STREAM_CODEC =
+        ByteBufCodecs.TAG.map(
+            x -> BCDData.NON_NULL_CODEC.parse(NbtOps.INSTANCE, x).result().orElse(null),
+            x -> BCDData.NON_NULL_CODEC.encodeStart(NbtOps.INSTANCE, x).result().orElse(null)
         );
     private static final Vector3d NULL_ECOM = new Vector3d();
     public static final Codec<BCDData> NON_NULL_CODEC = RecordCodecBuilder.create(i -> i.group(

@@ -6,7 +6,6 @@ import com.zelaux.betterdiagram.extend.ServerSideData;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
-import foundry.veil.api.network.handler.ClientPacketContext;
 import foundry.veil.api.network.handler.ServerPacketContext;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -23,7 +22,7 @@ public record DiagramSaveBCDDataPacket(int entityID, Optional<BCDData> config) i
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DiagramSaveBCDDataPacket> CODEC = StreamCodec.composite(
         ByteBufCodecs.INT, DiagramSaveBCDDataPacket::entityID,
-        BCDData.STREAM_CODEC, DiagramSaveBCDDataPacket::config,
+        BCDData.STREAM_OPTIONAL_CODEC, DiagramSaveBCDDataPacket::config,
         DiagramSaveBCDDataPacket::new
     );
 

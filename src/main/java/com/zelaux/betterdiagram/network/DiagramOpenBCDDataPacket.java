@@ -4,15 +4,14 @@ import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.extend.IDiagramScreen;
 import foundry.veil.api.network.handler.ClientPacketContext;
+import lombok.NonNull;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-import java.util.Optional;
 
-
-public record DiagramOpenBCDDataPacket(Optional<BCDData> data) implements CustomPacketPayload, OptionalPacketPayload {
+public record DiagramOpenBCDDataPacket(@NonNull BCDData data) implements CustomPacketPayload, OptionalPacketPayload {
     public static final Type<DiagramOpenBCDDataPacket> TYPE = new Type<>(BetterContraptionDiagram.resource("transfer_bcddata"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DiagramOpenBCDDataPacket> CODEC = StreamCodec.composite(
@@ -23,7 +22,7 @@ public record DiagramOpenBCDDataPacket(Optional<BCDData> data) implements Custom
 
     public void handleClient(final ClientPacketContext context) {
         if(Minecraft.getInstance().screen instanceof IDiagramScreen screen) {
-            screen.bcd$applyBCDDATA(data.orElse(null));
+            screen.bcd$applyBCDDATA(data);
         }
     }
 
