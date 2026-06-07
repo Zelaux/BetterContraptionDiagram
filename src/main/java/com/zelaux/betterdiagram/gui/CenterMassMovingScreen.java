@@ -269,6 +269,12 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
             }
 
             @Override
+            public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+                if(hasEnhanced && validClick[button%10])return target.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+                return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+            }
+
+            @Override
             public boolean mouseReleased(double mouseX, double mouseY, int button) {
                 if(validClick[button % 10]) {
                     validClick[button % 10] = false;
