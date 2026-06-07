@@ -197,7 +197,7 @@ public class MixinCalculatorUtil {
                                           GuiGraphics graphics,
                                           int mouseX,
                                           int mouseY, boolean shouldClipWeights) {
-        if(serverData == null) return;
+        if(serverData == null || true) return;
         Vector3d mergedDisplacement = new Vector3d();
         Vector3d sumOfForces = new Vector3d();
         Vector3d tmp = new Vector3d();
