@@ -1,18 +1,15 @@
 package com.zelaux.betterdiagram;
 
-import com.mojang.datafixers.util.Pair;
+import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.DataResult;
-import com.zelaux.betterdiagram.annotations.DebugOnly;
-import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.event.client.COM_Tooltip;
+import com.zelaux.betterdiagram.gui.comp.FormattedTextAsComponent;
 import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
 import dev.simulated_team.simulated.Simulated;
 import dev.simulated_team.simulated.client.BlockPropertiesTooltip;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -20,13 +17,15 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
+
+import java.util.List;
+import java.util.Optional;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = BetterContraptionDiagram.MODID, dist = Dist.CLIENT)
@@ -52,9 +51,28 @@ public class BetterContraptionDiagramClient {
         final IEventBus neoBus = NeoForge.EVENT_BUS;
         //subscriptions.register(RegisterClientTooltipComponentFactoriesEvent.class, this::registerType);
     }
-@SubscribeEvent
+
+    @SubscribeEvent
     private static void registerType(RegisterClientTooltipComponentFactoriesEvent event) {
         event.register(WrappedTooltipComponent.class, it -> it.component);
+        //event.register(WrappedTooltipComponent.MockComponent.class, it -> it.component);
+    }
+
+    @SubscribeEvent
+    private static void registerType(RenderTooltipEvent.GatherComponents event) {
+        List<Either<FormattedText, TooltipComponent>> tooltipElements = event.getTooltipElements();
+        for(int i = 0; i < tooltipElements.size(); i++) {
+            var left = tooltipElements.get(i).left();
+            if(left.isEmpty()) {
+                continue;
+            }
+            FormattedText text = left.get();
+            if(text instanceof WrappedTooltipComponent.MockComponent mock) {
+                tooltipElements.set(i, Either.right(mock.component));
+            }else if (text instanceof FormattedTextAsComponent formattedTextAsComponent){
+                tooltipElements.set(i, Either.left(formattedTextAsComponent.text));
+            }
+        }
     }
 
 }

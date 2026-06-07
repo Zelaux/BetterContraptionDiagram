@@ -15,6 +15,7 @@ import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
 import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.func.DoubleSetter;
+import com.zelaux.betterdiagram.gui.comp.FormattedTextAsComponent;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
 import com.zelaux.betterdiagram.gui.user.ButtonKind;
 import com.zelaux.betterdiagram.gui.user.ClickHandler;
@@ -37,10 +38,12 @@ import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStick
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
@@ -55,8 +58,10 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 import org.joml.*;
@@ -586,17 +591,29 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
 
         final Vector3d tmpCOM = new Vector3d(), tmpOffset = new Vector3d();
         FloatScrollInput scrollInput = new FloatScrollInput(0, 0, 44, 20) {
+            @SuppressWarnings("unchecked")
             @Override
             protected void updateTooltip() {
                 toolTip.clear();
-                toolTip.add(scrollToModify.plainCopy().withStyle(ChatFormatting.WHITE));
-                toolTip.add(shiftScrollsFaster.plainCopy().withStyle(ChatFormatting.ITALIC, ChatFormatting.WHITE));
-                toolTip.add(shiftScrollsSlower.plainCopy().withStyle(ChatFormatting.ITALIC, ChatFormatting.WHITE));
+                //var tooltip=(List<FormattedText>)(List)toolTip;
+                BCDData data = clientData.bcdDataNotNull_readOnly();
+                if(data.eCOM() == null) {
+                    font.getSplitter().splitLines(CLICK_TO_SET, 256, CLICK_TO_SET.getStyle(), (text, isNewLine) -> {
+                        toolTip.add(FormattedTextAsComponent.create(text));
+                    });
+                    //toolTip.add(CLICK_TO_SET);
+                    //toolTip.add(new SeparatorTooltipComponent().wrapComponent());
+                } else {
+                    toolTip.add(scrollToModify.plainCopy().withStyle(ChatFormatting.WHITE));
+                    toolTip.add(shiftScrollsFaster.plainCopy().withStyle(ChatFormatting.ITALIC, ChatFormatting.WHITE));
+                    toolTip.add(shiftScrollsSlower.plainCopy().withStyle(ChatFormatting.ITALIC, ChatFormatting.WHITE));
+                }
             }
 
             @Override
             protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
                 if(this.isHovered()) {
+                    updateTooltip();
                     List<Component> tooltip = this.getToolTip();
                     if(tooltip.isEmpty())
                         return;
@@ -623,21 +640,37 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
             .withStepFunction(ctx -> ctx.control ? 0.5f : (ctx.shift ? 10 : 1));
         final var editBox = new EditBox(minecraft.font, scrollInput.getWidth(), scrollInput.getHeight(), boxName) {
             public final EditBoxAccessors accessors = ((EditBoxAccessors) (EditBox) this);
+            final LerpedFloat progress = LerpedFloat.linear()
+                                                    .startWithValue(1f)
+                                                    .chaseTimed(0, 5);
 
             @Override
             public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
                 boolean was = accessors.bcd$isEditable();
                 int wasColor = accessors.bcd$textColor(), wasColor2 = accessors.bcd$textColorUneditable();
                 if(clientData.bcdDataNotNull_readOnly().eCOM() == null) {
-                    accessors.bcd$textColor(0);
-                    accessors.bcd$textColorUneditable(0);
-                } else if(!isActive()) {
-                    setEditable(false);
+                    //accessors.bcd$textColor(0);
+                    //accessors.bcd$textColorUneditable(0);
+                    progress.updateChaseTarget(1);
+                } else {
+                    progress.updateChaseTarget(0);
+                    if(!isActive()) {
+                        setEditable(false);
+                    }
                 }
+                progress.tickChaser();
                 super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
                 setEditable(was);
                 accessors.bcd$textColor(wasColor);
                 accessors.bcd$textColorUneditable(wasColor2);
+                int expand = -1;
+                guiGraphics.flush();
+                int x = getX() - expand, y = getY() - expand, x2 = getX() + getWidth()  + expand, y2 = getY() + getHeight() + expand;
+                PoseStack pose = guiGraphics.pose();
+                pose.pushPose();
+                pose.translate(0, 0, 1);
+                guiGraphics.fill(x, y, x2, (int) Mth.lerp(progress.getValue(partialTick), y, y2), 0x7a7a7a | 0xff_000000);
+                pose.popPose();
                 if(true) return;
 
                 if(clientData.bcdDataNotNull_readOnly().eCOM() != null || !active) return;
@@ -645,8 +678,8 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
 
                 ;
                 int color = Colors.mixMany((ClientEvents.clientTime() / 60f / 4) % 1, Colors.BLUE_GRADIENT).getRGB();
-                int expand = 0;
-                int x = getX() - expand, y = getY() - expand, x2 = getX() + getWidth() - 1 + expand, y2 = getY() + getHeight() - 1 + expand;
+                //int expand = 0;
+                //int x = getX() - expand, y = getY() - expand, x2 = getX() + getWidth() - 1 + expand, y2 = getY() + getHeight() - 1 + expand;
                 guiGraphics.hLine(x, x2, y, color);
                 guiGraphics.hLine(x, x2, y2, color);
                 guiGraphics.vLine(x, y, y2, color);
@@ -659,6 +692,9 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
                 return scrollInput.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
             }
         };
+        if(clientData.bcdDataNotNull_readOnly().eCOM() != null){
+            editBox.progress.startWithValue(0f);
+        }
         EditBoxAccessors boxAccessors = editBox.accessors;
         editBox.setFilter(s -> {
             if(s.isEmpty() || s.equals("-"))

@@ -28,7 +28,8 @@
 
   "better_contraption_diagram.calculator.move_to_struct_center": "Move to Center",
   "better_contraption_diagram.calculator.select_block": "Choose in Diagram",
-  "better_contraption_diagram.calculator.reset_block": "Reset",
+  "better_contraption_diagram.calculator.reset_block": "Remove",
+  "better_contraption_diagram.calculator.click-to-select": "Click to use the §lCurrent Center of Mass§r as the §lTarget§r.",
 
   "better_contraption_diagram.calculator.grid-warning.title": "WARNING",
   "better_contraption_diagram.calculator.grid-warning.content": "'Choose in Diagram' may be inaccurate §lwithout an axis-aligned view§r.",

@@ -19,6 +19,7 @@ public class FloatScrollInput extends AbstractSimiWidget {
     protected FloatConsumer onScroll;
     protected float state;
     protected Component title = CreateLang.translateDirect("gui.scrollInput.defaultTitle");
+    protected final Component CLICK_TO_SET = Component.translatable("better_contraption_diagram.calculator.click-to-select");
     protected final Component scrollToModify = CreateLang.translateDirect("gui.scrollInput.scrollToModify");
     protected final Component shiftScrollsFaster = CreateLang.translateDirect("gui.scrollInput.shiftScrollsFaster");
     protected final Component shiftScrollsSlower = Component.translatable("better_contraption_diagram.gui.scrollInput.ctrlScrollsSlower");
