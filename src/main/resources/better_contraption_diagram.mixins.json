@@ -18,6 +18,7 @@
     "DiagramScreenMixin",
     "accessors.AbstractContainerScreenMixin",
     "accessors.AbstractScrollWidgetMixin",
+    "accessors.AbstractWidgetMixin",
     "accessors.DiagramScreenAccessorsImpl",
     "accessors.DiagramStickyNoteAccessorsImpl",
     "accessors.EditBoxAccessors",

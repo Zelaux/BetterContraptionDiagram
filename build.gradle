@@ -211,29 +211,7 @@ configurations {
 dependencies {
 //    compileOnly(project.childProjects["postprocessors"])
     postprocessor(childProjects["postprocessors"])
-
-    // Example optional mod dependency with JEI
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-    // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
-    // compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
-    // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
-    // localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
-
-    // Example mod dependency using a mod jar from ./libs with a flat dir repository
-    // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
-    // The group id is ignored when searching -- in this case, it is "blank"
-    // implementation "blank:coolmod-${mc_version}:${coolmod_version}"
-
-    // Example mod dependency using a file as dependency
-    // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
-
-    // Example project dependency using a sister or child project:
-    // implementation project(":myproject")
-
-    // For more info:
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    implementation ("maven.modrinth:enhanced-diagrams:1.0.0")
 //    implementation ("maven.modrinth:create-aeronautics:1.2.1+mc1.21.1")
 //    api files("libs/dev.eriksonn.aeronautics.aeronautics-neoforge-${minecraft_version}-${aeronautics_version}.jar")
 //    api files("libs/dev.ryanhcode.offroad.offroad-neoforge-${minecraft_version}-${aeronautics_version}.jar")

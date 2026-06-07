@@ -243,7 +243,35 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
             ),
             BoundingBox2i.box2d(diagramScreen),
             BoundingBox2i.box2d(diagramStickyNote)
-        ));
+        ) {
+            static boolean hasEnhanced;
+
+            static {
+                try {
+                    //noinspection JavaReflectionMemberAccess
+                    DiagramScreen.class.getDeclaredField("diagrams$freeLooking");
+                    hasEnhanced = true;
+                } catch(NoSuchFieldException e) {
+                    hasEnhanced = false;
+                }
+            }
+
+            final boolean[] validClick = new boolean[10];
+
+            @Override
+            public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                return validClick[button % 10] = super.mouseClicked(mouseX, mouseY, button);
+            }
+
+            @Override
+            public boolean mouseReleased(double mouseX, double mouseY, int button) {
+                if(validClick[button % 10]) {
+                    validClick[button % 10] = false;
+                    return target.mouseReleased(mouseX, mouseY, button);
+                }
+                return super.mouseReleased(mouseX, mouseY, button);
+            }
+        });
 
 
         grids.clear();
@@ -377,19 +405,28 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
      *
      */
     private void enableGrid(GridClicker.MouseConsumer mouseConsumer) {
-        for(GuiEventListener child : children()) {
-            if(!(child instanceof AbstractWidget widget)) continue;
-            widget.active = false;
+        Runnable action = () -> {
+
+            for(GuiEventListener child : children()) {
+                if(!(child instanceof AbstractWidget widget)) continue;
+                widget.active = false;
+            }
+            for(Pair<MyGridClicker, PartialInteration> pair : grids) {
+                pair.second.active = true;
+                MyGridClicker grid = pair.first;
+                grid.mouseConsumers.add(mouseConsumer);
+                grid.drawMouse = true;
+                //partialInterationForScreen.active = false;
+                grid.gridColor = GridClicker.ACTIVE_COLOR;
+            }
+            gridEnabled = true;
+        };
+        if(mainProjectedAxes.notAligned || subProjectedAxes.notAligned) {
+            GridModeWarningScreen.tryOpen(action);
+        } else {
+            action.run();
         }
-        for(Pair<MyGridClicker, PartialInteration> pair : grids) {
-            pair.second.active = true;
-            MyGridClicker grid = pair.first;
-            grid.mouseConsumers.add(mouseConsumer);
-            grid.drawMouse = true;
-            //partialInterationForScreen.active = false;
-            grid.gridColor = GridClicker.ACTIVE_COLOR;
-        }
-        gridEnabled = true;
+
     }
 
     private Vector3d centerOfSubLevel() {
@@ -590,11 +627,11 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
             @Override
             public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
                 boolean was = accessors.bcd$isEditable();
-                int wasColor=accessors.bcd$textColor(),wasColor2= accessors.bcd$textColorUneditable();
-                if(clientData.bcdDataNotNull_readOnly().eCOM()==null){
+                int wasColor = accessors.bcd$textColor(), wasColor2 = accessors.bcd$textColorUneditable();
+                if(clientData.bcdDataNotNull_readOnly().eCOM() == null) {
                     accessors.bcd$textColor(0);
                     accessors.bcd$textColorUneditable(0);
-                }else if (!isActive()){
+                } else if(!isActive()) {
                     setEditable(false);
                 }
                 super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
@@ -760,7 +797,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
 
     @Override
     public void bcd$applyBCDDATA(BCDData data) {
-        ((IDiagramScreen)this.diagramScreen).bcd$applyBCDDATA(data);
+        ((IDiagramScreen) this.diagramScreen).bcd$applyBCDDATA(data);
     }
 
     public static class MyGridClicker extends GridClicker {

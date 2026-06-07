@@ -30,6 +30,11 @@
   "better_contraption_diagram.calculator.select_block": "Choose in Diagram",
   "better_contraption_diagram.calculator.reset_block": "Reset",
 
+  "better_contraption_diagram.calculator.grid-warning.title": "WARNING",
+  "better_contraption_diagram.calculator.grid-warning.content": "'Choose in Diagram' may be inaccurate §lwithout an axis-aligned view§r.",
+  "better_contraption_diagram.calculator.grid-warning.check": "Do not show this screen again",
+
+
   "better_contraption_diagram.diagram.disable-axis": "Disable axis %s",
   "better_contraption_diagram.diagram.enable-axis": "Enable axis %s",
 

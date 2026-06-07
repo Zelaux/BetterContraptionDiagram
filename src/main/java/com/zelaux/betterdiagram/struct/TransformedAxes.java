@@ -15,13 +15,15 @@ public final class TransformedAxes {
     int[] xyzIndex;
     Vector2d xDouble, yDouble, zDouble;
     Vector2i xInt, yInt, zInt;
+    boolean notAligned;
 
-    public TransformedAxes(Vector2d[] transformed, int[] xyzIndex) {
+    public TransformedAxes(Vector2d[] transformed, int[] xyzIndex, boolean notAligned) {
         this.transformed = transformed;
         this.xyzIndex = xyzIndex;
         xDouble = transformed[0];
         yDouble = transformed[1];
         zDouble = transformed[2];
+        this.notAligned = notAligned;
         xInt = makeInt(xDouble);
         yInt = makeInt(yDouble);
         zInt = makeInt(zDouble);

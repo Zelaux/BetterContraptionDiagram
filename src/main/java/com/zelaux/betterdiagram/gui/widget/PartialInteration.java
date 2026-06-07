@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram.gui.widget;
 
+import com.zelaux.betterdiagram.extend.accessors.AbstractWidgetAccessors;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
@@ -7,6 +8,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -70,6 +72,17 @@ public class PartialInteration extends AbstractContainerWidget {
         return false;
     }
 
+    @Override
+    public void setFocused(boolean focused) {target.setFocused(focused);}
+
+    @Override
+    public boolean isFocused() {return target.isFocused();}
+
+    @Override
+    protected boolean isValidClickButton(int button) {
+        return target instanceof AbstractWidgetAccessors w ? w.bcd$isValidClickButton(button) :
+            target instanceof Screen || super.isValidClickButton(button);
+    }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {

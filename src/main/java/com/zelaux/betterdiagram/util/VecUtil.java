@@ -4,6 +4,8 @@ import com.zelaux.betterdiagram.func.DoubleGetter;
 import com.zelaux.betterdiagram.func.DoubleSetter;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
+import dev.ryanhcode.sable.companion.math.JOMLConversion;
+import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 import org.joml.*;
 
@@ -61,7 +63,9 @@ public class VecUtil {
 
     public static TransformedAxes projectAxises(Quaternionf orientation) {
         var coords = new Vector2d[3];
+        var coords0 = new Vector2d[3];
         int[] xyz = new int[3];
+        xyz[2]=-1;
         Vector3d tmp = new Vector3d();
         for(int i = 0; i < coords.length; i++) {
             orientation.transformInverse(tmp.set(DIRECTIONS[i]));
@@ -72,12 +76,30 @@ public class VecUtil {
                 tmp.zero();
             }
             //screenCoords.div(scalar);
+            coords0[i]=new Vector2d(tmp.x,tmp.y);
             var v = coords[i] = new Vector2d(tmp.x / scalar, tmp.y / scalar).round();
             if(v.x != 0) xyz[0] = i;
             else if(v.y != 0) xyz[1] = i;
             else xyz[2] = i;
         }
-        return new TransformedAxes(coords, xyz);
+        boolean succeedOnlyOnSecondTry=xyz[2]==-1;
+        // Enhanced Diagram moment
+        if (xyz[2]==-1){
+
+            for(int i = 0; i < coords.length; i++) {
+                Vector2d cur = coords0[i];
+                if(Math.abs(coords0[xyz[0]].x) < Math.abs(cur.x) &&  Math.abs(cur.x)>=Math.abs(cur.y)) xyz[0] = i;
+                if(Math.abs(coords0[xyz[1]].y) < Math.abs(cur.y) && Math.abs(cur.x)<Math.abs(cur.y) && xyz[0] != i) xyz[1] = i;
+            }
+            for(int i = 0; i < 3; i++) {
+                if(xyz[0] != i && xyz[1] != i) {
+                    xyz[2]=i;
+                    coords[i].zero();
+                    break;
+                }
+            }
+        }
+        return new TransformedAxes(coords, xyz,succeedOnlyOnSecondTry);
     }
 
     public static double maxAbsXY(Vector3d tmp) {
