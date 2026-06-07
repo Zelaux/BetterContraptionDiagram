@@ -265,7 +265,12 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
 
             @Override
             public boolean mouseClicked(double mouseX, double mouseY, int button) {
-                return validClick[button % 10] = super.mouseClicked(mouseX, mouseY, button);
+                boolean v=validClick[button % 10] =super.mouseClicked(mouseX, mouseY, button);
+                if (!v && button==2){
+                    v=validClick[button % 10] =true;
+                    setDragging(true);
+                }
+                return v;
             }
 
             @Override
@@ -278,6 +283,9 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
             public boolean mouseReleased(double mouseX, double mouseY, int button) {
                 if(validClick[button % 10]) {
                     validClick[button % 10] = false;
+                    if(button==2){
+                        setDragging(false);
+                    }
                     return target.mouseReleased(mouseX, mouseY, button);
                 }
                 return super.mouseReleased(mouseX, mouseY, button);
@@ -317,6 +325,12 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
             descComp, 128, descComp.getStyle()));
         return texts;
 
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if(button==2 && getFocused() == partialInterationForScreen)return partialInterationForScreen.mouseDragged(mouseX,mouseY,button,dragX,dragY);
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
     private Vector3d expectedCenterOfMassOffset() {
