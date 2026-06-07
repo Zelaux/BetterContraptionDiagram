@@ -4,8 +4,10 @@ import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.index.Colors;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.spongepowered.asm.mixin.*;
 
@@ -35,6 +37,10 @@ public class VecFormat {
 
         static MutableComponent blockCenterOfMass(Vector3dc v) {
             return lightGray(v);
+        }
+
+        static MutableComponent displacement(Vector3dc v) {
+            return vectorToFormatted(v, Colors.DISPLACEMENT_GREEN_COLORS[2]).withColor(Colors.DISPLACEMENT_GREEN_COLORS[4].getRGB());
         }
     }
 

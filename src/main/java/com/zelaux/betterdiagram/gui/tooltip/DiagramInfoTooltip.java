@@ -4,7 +4,6 @@ import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.VecFormat;
-import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
@@ -39,22 +38,8 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
         if(serverData == null) return List.of();
         final var gravityDirection = CenterMassCalculator.calculateGravityDirection(subLevel, serverData, tmp);
         final var gravityComponent = VecFormat.Presets.lightGray(gravityDirection);
-        tmp.zero();
-        sumOfForces.zero();
-        sumOfMoments.zero();
-        Vector3d COM = new Vector3d(CenterMassCalculator.centerOfMass(subLevel));
-        VecUtil.minVec3d(subLevel.getPlot().getBoundingBox(),tmp);
-        //COM.add(tmp);
-        serverData.forces().forEach((_i, pointForces) -> {
-            for(var force : pointForces) {
-
-                sumOfForces.add(force.force());
-                Vector3d momentOfForce = tmp.set(force.point()).sub(COM).cross(force.force());
-                sumOfMoments.add(momentOfForce);
-                tmp.add(force.force());
-            }
-        });
-        Vector3d mergedDisplacement = tmp.set(sumOfForces).cross(sumOfMoments).div(sumOfForces.lengthSquared());
+        Vector3d mergedDisplacement = tmp;
+        CenterMassCalculator.calculateSumOfForcesMomentum(mergedDisplacement, sumOfForces, sumOfMoments, serverData, subLevel);
         //VecUtil.subMinVec3d(mergedDisplacement, subLevel.getPlot().getBoundingBox());
 
 
@@ -68,4 +53,5 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
             Component.literal("  ").append(Component.translatable("better_contraption_diagram.extra-info.sum-of-forces.direction", directionComponent))
         );
     }
+
 }

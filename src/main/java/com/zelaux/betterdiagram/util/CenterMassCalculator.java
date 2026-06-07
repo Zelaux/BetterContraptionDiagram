@@ -268,6 +268,29 @@ public class CenterMassCalculator {
         return offCenteredBlocks;
     }
 
+    public static void calculateSumOfForcesMomentum(Vector3d mergedDisplacement, Vector3d sumOfForces, Vector3d tmp1, DiagramDataPacket serverData, ClientSubLevel subLevel1) {
+        mergedDisplacement.zero();
+        sumOfForces.zero();
+        tmp1.zero();
+        Vector3d sumOfMoments = tmp1;
+        Vector3d tmp2 = mergedDisplacement;
+        sumOfMoments.zero();
+        Vector3d COM = new Vector3d(centerOfMass(subLevel1));
+        serverData.forces().forEach((_i, pointForces) -> {
+            if(_i == ForceGroups.GRAVITY.get()) {
+                return;
+            }
+            for(var force : pointForces) {
+
+                sumOfForces.add(force.force());
+                Vector3d momentOfForce = tmp2.set(force.point()).sub(COM).cross(force.force());
+                sumOfMoments.add(momentOfForce);
+                tmp2.add(force.force());
+            }
+        });
+        mergedDisplacement.set(sumOfForces).cross(sumOfMoments).div(sumOfForces.lengthSquared());
+    }
+
     @Getter
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Cache {

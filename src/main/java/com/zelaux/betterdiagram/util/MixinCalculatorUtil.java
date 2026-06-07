@@ -7,8 +7,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.data.OffCenteredBlock;
-import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.extend.WithClientData;
+import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.gui.comp.InTextBlockRenderer;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
 import com.zelaux.betterdiagram.index.BCDTextures;
@@ -21,6 +21,7 @@ import dev.ryanhcode.sable.mixinhelpers.block_outline_render.SubLevelCamera;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
+import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import joptsimple.internal.Strings;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Camera;
@@ -184,6 +185,31 @@ public class MixinCalculatorUtil {
         return Component
             .literal(Strings.repeat(' ', getIndents(Minecraft.getInstance().font, 4 + indent)))
             .append(component);
+    }
+
+    /**
+     * For HotSwap purpose
+     *
+     */
+    public static void renderDisplacement(WithClientData withClientData,
+                                          @Nullable DiagramDataPacket serverData, @NotNull DiagramScreen self, List<FormattedText> tooltipList,
+                                          ProjectionAccessor accessor,
+                                          GuiGraphics graphics,
+                                          int mouseX,
+                                          int mouseY, boolean shouldClipWeights) {
+        if(serverData == null) return;
+        Vector3d mergedDisplacement = new Vector3d();
+        Vector3d sumOfForces = new Vector3d();
+        Vector3d tmp = new Vector3d();
+        ClientSubLevel subLevel = self.subLevel;
+        CenterMassCalculator.calculateSumOfForcesMomentum(mergedDisplacement, sumOfForces, tmp, serverData, subLevel);
+        Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(tmp.set(CenterMassCalculator.centerOfMass(subLevel)).add(mergedDisplacement));
+        if(!accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.y)) return;
+        BCDTextures.Diagram.ICON_TOTAL_DISPLACEMENT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
+        double dst2 = originCoords.distanceSquared(mouseX - accessor.bcd$originX(), mouseY - accessor.bcd$originY());
+        if(dst2 < 8 * 8) {
+            tooltipList.add(VecFormat.Presets.displacement(mergedDisplacement));
+        }
     }
 
     /**

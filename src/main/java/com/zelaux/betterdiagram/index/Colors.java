@@ -33,6 +33,14 @@ public interface Colors {
     Color LIGHT_PURPLE = new Color(ChatFormatting.LIGHT_PURPLE.getColor() | (0xff_00_00_00));
     Color YELLOW = new Color(ChatFormatting.YELLOW.getColor() | (0xff_00_00_00));
     Color WHITE = new Color(ChatFormatting.WHITE.getColor() | (0xff_00_00_00));
+    Color[] DISPLACEMENT_GREEN_COLORS = {
+        new Color(0xdef9e3 | (0xff_00_00_00)),
+        new Color(0x79ac82 | (0xff_00_00_00)),
+        new Color(0x487554 | (0xff_00_00_00)),
+        new Color(0x4d7651 | (0xff_00_00_00)),
+        new Color(0x3a5d3e | (0xff_00_00_00)),
+        new Color(0x2a3d2a | (0xff_00_00_00)),
+    };
 
     /**
      * @param progress value [0;1] 0<=x<=1

@@ -121,14 +121,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
     private void renderOffCentered(GuiGraphics graphics,
                                    int mouseX,
                                    int mouseY,
-                                   int areaOriginX,
-                                   int areaOriginY,
-                                   Quaternionfc orientation,
-                                   Vector3dc cameraPos,
-                                   Matrix4fc projMatrix,
-                                   int areaWidth,
-                                   int areaHeight, boolean shouldClipWeights) {
-        ProjectionAccessor accessor = shouldClipWeights ? (ProjectionAccessor) note : this;
+                                   boolean shouldClipWeights, ProjectionAccessor accessor) {
 
         var newHovered = MixinCalculatorUtil.renderOffCentered((WithClientData) diagram, self(), tooltipList, accessor, graphics, mouseX, mouseY, shouldClipWeights);
         if(!shouldClipWeights) {
@@ -147,12 +140,14 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         //var stacks = ((WithClientData) diagram).betterContraptionDiagram$getClientData(DataKeys.MASS_STACKS, null);
         var stacks = CenterMassCalculator.recalculateStacks(self());
         boolean shouldClipWeights = !this.bcd$isDiagramScreen;
-        renderOffCentered(graphics, mouseX, mouseY, areaOriginX, areaOriginY, orientation, cameraPos, projMatrix, areaWidth, areaHeight, shouldClipWeights);
+
+        ProjectionAccessor accessor = shouldClipWeights ? (ProjectionAccessor) note : this;
+        renderOffCentered(graphics, mouseX, mouseY, shouldClipWeights,accessor);
+        renderDisplacement(graphics, mouseX, mouseY,shouldClipWeights,accessor);
         this.bcd$isDiagramScreen = false;
         if(stacks == null) return;
         mouseX -= areaOriginX;
         mouseY -= areaOriginY;
-        ProjectionAccessor accessor = shouldClipWeights ? (ProjectionAccessor) note : this;
 
         //final int color = (255 << 24) | 0x9D293A;
         final int shadowColor = 0xfff9f2de;
@@ -208,6 +203,19 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 ),
                 shouldClipWeights, accessor);
         }
+
+    }
+
+    private void renderDisplacement(GuiGraphics graphics, int mouseX, int mouseY, boolean shouldClipWeights, ProjectionAccessor accessor) {
+        MixinCalculatorUtil.renderDisplacement(
+            ((WithClientData) diagram),
+            serverData,
+            self(),
+            tooltipList,
+            accessor,
+            graphics,
+            mouseX,mouseY,shouldClipWeights
+        );
 
     }
 
