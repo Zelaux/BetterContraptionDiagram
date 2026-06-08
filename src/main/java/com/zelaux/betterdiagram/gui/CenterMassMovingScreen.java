@@ -43,7 +43,6 @@ import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
@@ -58,7 +57,6 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
@@ -122,8 +120,12 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         return offset;
     }
 
-    public static void open(@NotNull final DiagramScreen owner) {
+    public static void toggle(@NotNull final DiagramScreen owner) {
         final Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft.screen instanceof CenterMassMovingScreen it){
+            it.onClose();
+            return;
+        }
         final CenterMassMovingScreen screen = new CenterMassMovingScreen(owner);
 
 

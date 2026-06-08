@@ -1,33 +1,40 @@
 package com.zelaux.betterdiagram.mixin.calculator;
 
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalDoubleRef;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.zelaux.betterdiagram.index.ForceGroups;
-import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
+import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.extend.WithClientData;
+import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.gui.CenterMassMovingScreen;
 import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
 import com.zelaux.betterdiagram.gui.tooltip.DiagramInfoTooltip;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.ForceGroups;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
 import com.zelaux.betterdiagram.util.StringUtil;
 import com.zelaux.betterdiagram.util.UIUtil;
+import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
+import dev.simulated_team.simulated.content.entities.diagram.screen.ForceClusterFinder;
 import dev.simulated_team.simulated.index.SimGUITextures;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
@@ -90,6 +97,9 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
     @Shadow
     private DiagramStickyNote note;
 
+    @Shadow
+    protected abstract void renderForceArrow(GuiGraphics graphics, ForceGroup forceGroup, ForceClusterFinder.Cluster pointForce, double maxArrowLength, int mouseX, int mouseY, List<FormattedText> tooltipLines, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight);
+
     @Inject(at = @At(value = "TAIL"), method = "init")
     private void inject(CallbackInfo ci) {
 
@@ -97,10 +107,17 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
         var layout = UIUtil.vertical(4,
             new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_CALCULATOR, 0, 0, Component.translatable("better_contraption_diagram.diagram-button"), () -> {
-                CenterMassMovingScreen.open(self());
-            }),
+                CenterMassMovingScreen.toggle(self());
+            })
+                .setColorSelector((active, hover, texture) -> hover | Minecraft.getInstance().screen instanceof CenterMassMovingScreen ? 1 : 0),
             new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_INFO, 0, 0,
-                Component.translatable("better_contraption_diagram.extra-info.diagram-button"), () -> {})
+                Component.translatable("better_contraption_diagram.extra-info.diagram-button"), () -> {
+                WithClientData clientData = (WithClientData) diagram;
+                BCDData data = clientData.bcdDataOrTryDefault();
+                if(data == null) return;
+                clientData.bcdiagram$updateData(data.withShouldRenderMergedForces(!data.shouldRenderMergedForces()));
+            })
+                .setColorSelector((active, hovered, textureIndex) -> ((WithClientData) diagram).bcdDataNotNull_readOnly().shouldRenderMergedForces() ? 1 : 0)
                 .withTooltip(new DiagramInfoTooltip(self(), this.subLevel, this.serverData))
 
         );
@@ -135,6 +152,44 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
 
     }
 
+    @Inject(
+        at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Ldev/simulated_team/simulated/content/entities/diagram/DiagramConfig;enabledForceGroups()Ljava/util/List;", ordinal = 1),
+        method = "renderArrows"
+    )
+    void drawMergedForce(GuiGraphics graphics,
+                         int mouseX,
+                         int mouseY,
+                         int areaOriginX,
+                         int areaOriginY,
+                         Quaternionfc orientation,
+                         Vector3dc cameraPos,
+                         Matrix4fc projMatrix,
+                         int areaWidth,
+                         int areaHeight,
+                         CallbackInfo ci,
+                         @Local(index = 11) LocalDoubleRef maxArrowLengthSquared
+                         ) {
+        if(!((WithClientData) diagram).bcdDataNotNull_readOnly().shouldRenderMergedForces) return;
+
+        Vector3d mergedDisplacement = new Vector3d();
+        Vector3d sumOfForces = new Vector3d();
+        Vector3d tmp = new Vector3d();
+        CenterMassCalculator.calculateSumOfForcesMomentum(mergedDisplacement, sumOfForces, tmp, serverData, subLevel);
+        maxArrowLengthSquared.set(Math.max(maxArrowLengthSquared.get(),sumOfForces.lengthSquared()));
+
+        mergedDisplacement.add(CenterMassCalculator.centerOfMass(subLevel));
+        renderForceArrow(
+            graphics,
+            ForceGroups.MERGED_FORCE_GROUP.group,
+            new ForceClusterFinder.Cluster(mergedDisplacement,sumOfForces,new MutableInt(1)),
+            Math.sqrt(maxArrowLengthSquared.get()),
+            mouseX - areaOriginX,
+            mouseY - areaOriginY,
+            tooltipList,orientation,cameraPos,projMatrix,areaWidth,areaHeight
+
+        );
+    }
+
     @Inject(method = "renderArrows", at = @At(value = "TAIL"))
     private void renderWeightAfterArrows(GuiGraphics graphics, int mouseX, int mouseY, int areaOriginX, int areaOriginY, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight, CallbackInfo ci) {
         //var stacks = ((WithClientData) diagram).betterContraptionDiagram$getClientData(DataKeys.MASS_STACKS, null);
@@ -142,8 +197,8 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         boolean shouldClipWeights = !this.bcd$isDiagramScreen;
 
         ProjectionAccessor accessor = shouldClipWeights ? (ProjectionAccessor) note : this;
-        renderOffCentered(graphics, mouseX, mouseY, shouldClipWeights,accessor);
-        renderDisplacement(graphics, mouseX, mouseY,shouldClipWeights,accessor);
+        renderOffCentered(graphics, mouseX, mouseY, shouldClipWeights, accessor);
+        renderDisplacement(graphics, mouseX, mouseY, shouldClipWeights, accessor);
         this.bcd$isDiagramScreen = false;
         if(stacks == null) return;
         mouseX -= areaOriginX;
@@ -214,7 +269,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
             tooltipList,
             accessor,
             graphics,
-            mouseX,mouseY,shouldClipWeights
+            mouseX, mouseY, shouldClipWeights
         );
 
     }

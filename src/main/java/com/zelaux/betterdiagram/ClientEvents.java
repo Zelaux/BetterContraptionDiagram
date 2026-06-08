@@ -27,6 +27,10 @@ import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
+import org.spongepowered.asm.mixin.transformer.*;
+
+import java.lang.reflect.Field;
+import java.util.Map;
 
 @EventBusSubscriber(modid = BetterContraptionDiagram.MODID, value = Dist.CLIENT)
 public class ClientEvents {

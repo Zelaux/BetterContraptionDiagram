@@ -6,6 +6,8 @@
   "better_contraption_diagram.axis_group.x": "Width",
   "better_contraption_diagram.axis_group.y": "Height",
   "better_contraption_diagram.axis_group.z": "Length",
+  "force-group.merged-force": "Merged Force",
+  "force-group.merged-force.displacement": "Merged Force Displacement: %s",
 
   "better_contraption_diagram.center_of_mass": "Center of Mass",
   "better_contraption_diagram.eCOM": "Target Center of Mass",

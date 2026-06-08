@@ -37,7 +37,7 @@ import java.util.Optional;
 @MethodsReturnNonnullByDefault
 @EqualsAndHashCode
 public class BCDData {
-    public static final BCDData DEFAULT_VALUE = new BCDData(null, null, null, null, (byte) 7, OffCenterBlocksShowState.none);
+    public static final BCDData DEFAULT_VALUE = new BCDData(null, null, null, null, (byte) 7, OffCenterBlocksShowState.none,false);
     public static final StreamCodec<? super RegistryFriendlyByteBuf, Optional<BCDData>> STREAM_OPTIONAL_CODEC =
         ByteBufCodecs.TAG.map(
             x -> BCDData.SHORT_CODEC.parse(NbtOps.INSTANCE, x).result().orElse(null),
@@ -52,12 +52,13 @@ public class BCDData {
     public static final Codec<BCDData> NON_NULL_CODEC = RecordCodecBuilder.create(i -> i.group(
         SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", NULL_ECOM).xmap(x -> x, x -> x == null ? NULL_ECOM : x).forGetter(BCDData::eCOM_m),
         Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask),
-        OffCenterBlocksShowState.CODEC.optionalFieldOf("offcenterShowState", OffCenterBlocksShowState.none).forGetter(BCDData::offCenterBlocksShowState)
-    ).apply(i, (ecom, axisStates, offCenterBlocksShowState) ->
+        OffCenterBlocksShowState.CODEC.optionalFieldOf("offcenterShowState", OffCenterBlocksShowState.none).forGetter(BCDData::offCenterBlocksShowState),
+        Codec.BOOL.optionalFieldOf("shouldRenderMergedForces", false).forGetter(BCDData::shouldRenderMergedForces)
+    ).apply(i, (ecom, axisStates, offCenterBlocksShowState,shouldRenderMergedForces) ->
         make(ecom == NULL_ECOM ? null : ecom,
             axisStates,
             offCenterBlocksShowState
-        ))
+        ).withShouldRenderMergedForces(shouldRenderMergedForces))
     );
     public static final Codec<Optional<BCDData>> SHORT_CODEC = NON_NULL_CODEC.optionalFieldOf("data").codec();
 
@@ -86,12 +87,6 @@ public class BCDData {
     @Nullable
     protected Vector3dc eCOM;
 
-    public BCDData withECOM(Vector3dc ecom) {
-        return ecom == eCOM ? this : new BCDData(
-            ecom, weightStacksByAxis, offCenteredBlocks, cache, axisStatesMask, offCenterBlocksShowState
-        );
-    }
-
     public Weights @Nullable [] weightStacksByAxis;
     @Nullable
     public ArrayList<OffCenteredBlock> offCenteredBlocks;
@@ -102,6 +97,8 @@ public class BCDData {
 
     @NonNull
     public BCDData.OffCenterBlocksShowState offCenterBlocksShowState;
+
+    public boolean shouldRenderMergedForces;
 
 
     public int axisStateInt(int i) {return (axisStatesMask >> i) & 1;}

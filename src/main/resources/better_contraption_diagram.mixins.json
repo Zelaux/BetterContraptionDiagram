@@ -11,6 +11,7 @@
     "accessors.server_helpers.SubLevelStorageMixin",
     "calculator.Calculator_DiagramDataPacket",
     "COM_view.com_view_GoggleOverlayRenderer",
+    "fix.DiagramOpenPacketMixin",
     "server.DiagramEntityMixin"
   ],
   "client": [

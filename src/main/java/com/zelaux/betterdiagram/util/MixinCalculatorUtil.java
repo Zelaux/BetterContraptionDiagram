@@ -197,7 +197,7 @@ public class MixinCalculatorUtil {
                                           GuiGraphics graphics,
                                           int mouseX,
                                           int mouseY, boolean shouldClipWeights) {
-        if(serverData == null || true) return;
+        if(serverData == null || !withClientData.bcdDataNotNull_readOnly().shouldRenderMergedForces) return;
         Vector3d mergedDisplacement = new Vector3d();
         Vector3d sumOfForces = new Vector3d();
         Vector3d tmp = new Vector3d();
@@ -207,8 +207,9 @@ public class MixinCalculatorUtil {
         if(!accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.y)) return;
         BCDTextures.Diagram.ICON_TOTAL_DISPLACEMENT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
         double dst2 = originCoords.distanceSquared(mouseX - accessor.bcd$originX(), mouseY - accessor.bcd$originY());
+
         if(dst2 < 8 * 8) {
-            tooltipList.add(VecFormat.Presets.displacement(mergedDisplacement));
+            tooltipList.add(Component.translatable("force-group.merged-force.displacement",VecFormat.Presets.displacement(mergedDisplacement)));
         }
     }
 
