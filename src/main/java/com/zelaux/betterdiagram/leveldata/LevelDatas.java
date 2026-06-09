@@ -74,7 +74,7 @@ public class LevelDatas {
 
         if(!InetAddresses.isInetAddress(ipOrHost)) return ipOrHost;
         InetAddress address = InetAddresses.forString(ipOrHost);
-        Inet6Address inet6Address = convertToIpv6(address);
+        var inet6Address = convertToIpv6(address);
         if(address.isLoopbackAddress()) return "localhost:" + port;
 
         if(address.isSiteLocalAddress() || address.isLinkLocalAddress())
@@ -127,7 +127,7 @@ public class LevelDatas {
     }
 
     @SneakyThrows
-    public static Inet6Address convertToIpv6(InetAddress input) {
+    public static InetAddress convertToIpv6(InetAddress input) {
         if(input instanceof Inet4Address) {
             byte[] ipv4Bytes = input.getAddress();
             byte[] ipv6Bytes = new byte[16];
@@ -137,7 +137,7 @@ public class LevelDatas {
 
             System.arraycopy(ipv4Bytes, 0, ipv6Bytes, 12, 4);
 
-            return ((Inet6Address) InetAddress.getByAddress(ipv6Bytes));
+            return (InetAddress.getByAddress(ipv6Bytes));
         } else if(input instanceof Inet6Address x) {
             return x;
         }
