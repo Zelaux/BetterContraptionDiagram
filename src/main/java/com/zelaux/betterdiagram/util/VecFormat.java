@@ -38,6 +38,9 @@ public class VecFormat {
         static MutableComponent blockCenterOfMass(Vector3dc v) {
             return lightGray(v);
         }
+        static MutableComponent trivialCenterOfMass(Vector3dc v) {
+            return gray(v);
+        }
 
         static MutableComponent displacement(Vector3dc v) {
             return vectorToFormatted(v, Colors.DISPLACEMENT_GREEN_COLORS[2]).withColor(Colors.DISPLACEMENT_GREEN_COLORS[4].getRGB());

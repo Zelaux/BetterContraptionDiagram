@@ -32,7 +32,7 @@ public class Config {
     public static final ModConfigSpec.IntValue MAX_FIX_DISTANCE = BUILDER
         .comment("max mass stack distance")
         .defineInRange("maxFixDistance", 1000, 1, 100_000);
-    public static final ModConfigSpec.EnumValue<ComViewType> COM_viewType_Goggles = BUILDER
+    public static final ModConfigSpec.EnumValue<ComViewType> COM_Goggles_tooltip = BUILDER
         .comment("center of mass tooltip view type with goggles")
         .defineEnum("comViewTypeGoggle", ComViewType.SHIFT);
     public static final ModConfigSpec.EnumValue<ComViewType> COM_viewType = BUILDER

@@ -45,7 +45,7 @@ public class com_view_GoggleOverlayRenderer {
                           @Local(ordinal = 4) LocalBooleanRef goggleAddedInformation,
                           @Local(ordinal = 5) LocalBooleanRef hoverAddedInformation) {
         if(!wearingGoggles) return;
-        if(!Config.COM_viewType_Goggles.get().shouldShow(isShifting)) return;
+        if(!Config.COM_Goggles_tooltip.get().shouldShow(isShifting)) return;
         ClientLevel level = Minecraft.getInstance().level;
         if(level == null) return;
         BlockPos blockPos = result.getBlockPos();

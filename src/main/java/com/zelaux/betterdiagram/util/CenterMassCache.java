@@ -1,10 +1,12 @@
 package com.zelaux.betterdiagram.util;
 
+import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Either;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.BetterContraptionDiagramClient;
 import com.zelaux.betterdiagram.extend.accessors.BlockPropertiesComputers;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
+import it.unimi.dsi.fastutil.doubles.Double2DoubleRBTreeMap;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -18,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
 import java.util.*;
@@ -107,30 +110,46 @@ public class CenterMassCache {
         var map = new BlockTo_CenterMass2State();
         var allocatedLists = new ArrayList<ArrayList<BlockState>>();
 
+        var cordsMap = new Double2DoubleRBTreeMap((f1, f2) -> CenterMassCalculator.equals(f1, f2) ? 0 : Double.compare(f1, f2));
+        for(int i = 0; i < 8; i++) {
+            cordsMap.put(i / 8.0, i / 8.0);
+        }
         blocks
             .listElements()
             .sequential()
             .forEach(ref -> {
                 Block block = ref.value();
-
-                var pairs = new HashMap<Vector3dc, ArrayList<BlockState>>();
+                var collectorTree = new HashMap<Vector3dc, ArrayList<BlockState>>();
                 forEachCOM(level, block, false, (state, centerOfMass) -> {
-                    pairs.computeIfAbsent(centerOfMass, it -> getSaved(allocatedLists)).add(state);
+                    collectorTree.computeIfAbsent(internVec3(centerOfMass, cordsMap), it -> getSaved(allocatedLists)).add(state);
                 });
                 for(ArrayList<BlockState> list : allocatedLists) {
                     list.trimToSize();
                 }
                 allocatedLists.clear();
-                x.add(new BlockTo_CenterMass2State.Part(block, pairs, false));
-                map.put(block, pairs);
+                //x.add(new BlockTo_CenterMass2State.Part(block, pairs, false));
+                map.put(block, ImmutableMap.copyOf(collectorTree));
 
             });
 
-        x.add(new BlockTo_CenterMass2State.Part(null, null, true));
+        //x.add(new BlockTo_CenterMass2State.Part(null, null, true));
         long endNano = System.nanoTime();
         //Block2Pairs_nano = endNano - nano;
         BetterContraptionDiagram.LOGGER.debug("Time to build block2pairs cache {}ms", (endNano - nano) / 1_000_000.);
         return map;
+    }
+
+    private static @NotNull Vector3dc internVec3(Vector3dc centerOfMass, Double2DoubleRBTreeMap cordsMap) {
+        double x = cordsMap.putIfAbsent(centerOfMass.x(), centerOfMass.x());
+        double y = cordsMap.putIfAbsent(centerOfMass.y(), centerOfMass.y());
+        double z = cordsMap.putIfAbsent(centerOfMass.z(), centerOfMass.z());
+        if(x == centerOfMass.x() && y == centerOfMass.y() && z == centerOfMass.z())
+            return centerOfMass;
+        return new Vector3d(
+            x,
+            y,
+            z
+        );
     }
 
     public static void forEachCOM(Level level, Block block, boolean ignoreHalf, RawPairConsumer consumer) {
@@ -174,10 +193,12 @@ public class CenterMassCache {
 
     public static class CenterMassTo_Block2States extends HashMap<@NotNull Vector3dc, Map<@NotNull Block, List<BlockState>>> {
         public record Part(Vector3dc COM, Block block, List<BlockState> map, boolean finish) {}
+
         @Nullable
         public Map<@NotNull Block, List<BlockState>> get(Vector3dc key) {
             return super.get(key);
         }
+
         @Override
         @Nullable
         public Map<@NotNull Block, List<BlockState>> get(Object key) {
@@ -195,15 +216,16 @@ public class CenterMassCache {
 
 
         public Map<@NotNull Vector3dc, ArrayList<BlockState>> get(Block key) {
-            return get((Object)key);
+            return get((Object) key);
         }
+
         @Override
         public Map<@NotNull Vector3dc, ArrayList<BlockState>> get(Object key) {
-            Map<@NotNull Vector3dc, ArrayList<BlockState>> map = super.get(key);
+            var map = super.get(key);
 
             //Somehow? Idk
             if(map == null) {
-                BetterContraptionDiagramClient.LOGGER.error("{} has no CoM cache",key);
+                BetterContraptionDiagramClient.LOGGER.error("{} has no CoM cache", key);
                 return Map.of();
             }
             return map;

@@ -4,8 +4,8 @@ import com.zelaux.betterdiagram.func.DoubleGetter;
 import com.zelaux.betterdiagram.func.DoubleSetter;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
-import dev.ryanhcode.sable.companion.math.JOMLConversion;
-import net.minecraft.client.Minecraft;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import org.jetbrains.annotations.NotNull;
 import org.joml.*;
 
@@ -123,4 +123,17 @@ public class VecUtil {
         return "(" + String.join(",", strings) + ")";
     }
 
+    public static void applyTransforms(Vector3d tmp, Mirror mirror, Rotation rotation) {
+        switch(mirror) {
+            case NONE -> {}
+            case LEFT_RIGHT -> tmp.z=-tmp.z;
+            case FRONT_BACK -> tmp.x=-tmp.x;
+        }
+        switch(rotation) {
+            case NONE -> {}
+            case CLOCKWISE_90 -> tmp.rotateY(Math.toRadians(90));
+            case CLOCKWISE_180 ->  tmp.rotateY(Math.toRadians(180));
+            case COUNTERCLOCKWISE_90 ->  tmp.rotateY(Math.toRadians(270));
+        }
+    }
 }
