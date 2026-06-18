@@ -12,6 +12,7 @@ import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.companion.math.BoundingBox3dc;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import dev.ryanhcode.sable.sublevel.storage.holding.GlobalSavedSubLevelPointer;
 import dev.ryanhcode.sable.sublevel.storage.holding.SavedSubLevelPointer;
 import dev.ryanhcode.sable.sublevel.storage.holding.SubLevelHoldingChunk;
 import dev.ryanhcode.sable.sublevel.storage.holding.SubLevelHoldingChunkMap;
@@ -44,7 +45,7 @@ public class ServerHelpers {
 
         dispatcher.register(Commands
             .literal("sublevel")
-                      .requires(x->x.hasPermission(2))
+            .requires(x -> x.hasPermission(2))
             .then(Commands
                 .literal("resque")
                 .executes(context -> {
@@ -76,20 +77,20 @@ public class ServerHelpers {
             if(!(position.y < level.getMinBuildHeight() - 64 - 40)) continue;
             position.y = y;
 
-            pipeline.teleport(subLevel,new Vector3d(position),subLevel.logicalPose().orientation());
+            pipeline.teleport(subLevel, new Vector3d(position), subLevel.logicalPose().orientation());
             pipeline.resetVelocity(subLevel);
             counter++;
         }
         if(counter > 0) {
             int counter0 = counter;
-            source.sendSuccess(() -> Component.literal(counter0+" of loaded sublevels are above world"), true);
+            source.sendSuccess(() -> Component.literal(counter0 + " of loaded sublevels are above world"), true);
             source.sendSuccess(() -> Component.literal("Simulation paused").append(
                 Component.literal("Click to get command to resume simulation")
-                    .withStyle(s->s.withUnderlined(true)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
-                            "/sable paused false"
-                        ))
-                    )
+                         .withStyle(s -> s.withUnderlined(true)
+                                          .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
+                                              "/sable paused false"
+                                          ))
+                         )
             ), true);
             container.getHoldingChunkMap().saveAll();
         } else {
@@ -119,10 +120,11 @@ public class ServerHelpers {
             .map(entry -> {
                 BitSet bitSet = entry.accessors.usedIndices();
                 ArrayList<ChunkPos> newChunk = new ArrayList<>();
-                for(int i = bitSet.nextSetBit(0); i < entry.file.getTotalIndexCapacity(); i = bitSet.nextSetBit(i)) {
+                for(int i = bitSet.nextSetBit(0); i >= 0; i = bitSet.nextSetBit(i+1)) {
                     // return localX | (localZ << LOG_SIDE_LENGTH);
-                    int z = i >> SubLevelRegionFile.LOG_SIDE_LENGTH;
-                    int x = i & (-1 << SubLevelRegionFile.LOG_SIDE_LENGTH);
+                    int mask = ~(-1 << SubLevelRegionFile.LOG_SIDE_LENGTH);
+                    int z = (i >> SubLevelRegionFile.LOG_SIDE_LENGTH)&mask;
+                    int x = i & mask;
                     newChunk.add(new ChunkPos(
                         entry.chunkPos.x + x,
                         entry.chunkPos.z + z
@@ -130,11 +132,13 @@ public class ServerHelpers {
                 }
                 return new NestedChunkEntry(entry, newChunk);
             }).toList();
-        Map<ChunkPos, SubLevelHoldingChunk> collected = list.stream()
-                                                            .flatMap(x -> x.subchunks.stream())
-                                                            .collect(Collectors.toMap(x -> x, storage::attemptLoadHoldingChunk));
-        collected.forEach((chunkPos, holdingChunk) -> {
-
+        Map<ChunkPos, Optional<SubLevelHoldingChunk>> collected = list.stream()
+                                                                      .flatMap(x -> x.subchunks.stream())
+            .distinct()
+                                                                      .collect(Collectors.toMap(x -> x, x -> getSubLevelHoldingChunk(x, storage)));
+        collected.forEach((chunkPos, holdingChunk0) -> {
+            if(holdingChunk0.isEmpty()) return;
+            SubLevelHoldingChunk holdingChunk = holdingChunk0.get();
             Vector3d tmp = new Vector3d();
             for(final SavedSubLevelPointer pointer : holdingChunk.getSubLevelPointers()) {
                 final SubLevelData data = storage.attemptLoadSubLevel(chunkPos, pointer);
@@ -172,7 +176,8 @@ public class ServerHelpers {
 
                 if(shouldSave) {
                     context.getSource().sendSuccess(() -> Component.literal("Try to resque sublevel"), true);
-                    storage.attemptSaveSubLevel(chunkPos, data);
+                    //TODO also try load if located in loaded chunks
+                    storage.attemptSaveSubLevel(new GlobalSavedSubLevelPointer(chunkPos,pointer.storageIndex(),pointer.subLevelIndex()), data);
                 }
                 //logFoundSubLevel(pointer, data, chunkPos, source, level);
             }
@@ -180,6 +185,10 @@ public class ServerHelpers {
 
 
         return 1;
+    }
+
+    private static @NotNull Optional<SubLevelHoldingChunk> getSubLevelHoldingChunk(ChunkPos x, SubLevelStorage storage) {
+        return Optional.ofNullable(storage.attemptLoadHoldingChunk(x));
     }
 
     private static @Nullable Stream<ChunkPos> collectChunkPos(SubLevelStorage storage) {
@@ -191,7 +200,7 @@ public class ServerHelpers {
             .map(File::getName)
             //return "r." + entry.getRegionX() + "." + entry.getRegionZ();
             .map(x -> x.substring("r.".length()).split("\\."))
-            .filter(x -> x.length == 2)
+            .filter(x -> x.length == 3)
             .map(x -> new ChunkPos(Integer.parseInt(x[0]) << 5, Integer.parseInt(x[1]) << 5));
     }
 
