@@ -216,10 +216,19 @@ dependencies {
 //    api files("libs/dev.eriksonn.aeronautics.aeronautics-neoforge-${minecraft_version}-${aeronautics_version}.jar")
 //    api files("libs/dev.ryanhcode.offroad.offroad-neoforge-${minecraft_version}-${aeronautics_version}.jar")
 //    api files("libs/dev.simulated_team.simulated.simulated-neoforge-${minecraft_version}-${aeronautics_version}.jar")
+    api ("dev.eriksonn.aeronautics:aeronautics-neoforge-1.21.1:1.2.1"){
+        exclude group: "cc.tweaked"
+        exclude group: "net.createmod.ponder"
+        exclude group: "mezz.jei"
+        exclude group: "maven.modrinth"
+    }
     api ("dev.simulated_team.simulated:simulated-neoforge-1.21.1:1.2.1"){
         exclude group: "cc.tweaked"
         exclude group: "net.createmod.ponder"
+        exclude group: "mezz.jei"
+//        exclude group: "maven.modrinth"
     }
+//    compileOnly "dev.ryanhcode.sable:sable-sable_rapier-1.21.1:$sable_rapier_version"
     api("dev.engine-room.flywheel:flywheel-neoforge-1.21.1:1.0.6")
     api("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") {
 //        exclude group: "foundry.veil"
@@ -269,6 +278,9 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_name               : mod_name,
             mod_license            : mod_license,
             mod_version            : mod_version,
+            create_version_range            : create_version_range,
+            sable_version_range            : sable_version_range,
+            aeronautics_version_range            : aeronautics_version_range,
     ]
     inputs.properties replaceProperties
     expand replaceProperties
