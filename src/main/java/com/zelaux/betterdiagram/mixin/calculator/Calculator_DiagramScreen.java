@@ -109,7 +109,9 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
             new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_CALCULATOR, 0, 0, Component.translatable("better_contraption_diagram.diagram-button"), () -> {
                 CenterMassMovingScreen.toggle(self());
             })
-                .setColorSelector((active, hover, texture) -> hover | Minecraft.getInstance().screen instanceof CenterMassMovingScreen ? 1 : 0),
+                .setColorSelector((active, hover, texture) -> hover | Minecraft.getInstance().screen instanceof CenterMassMovingScreen ? 1 : 0)
+                .withTooltip(()->Component.translatable("better_contraption_diagram.diagram-button"))
+            ,
             new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_INFO, 0, 0,
                 Component.translatable("better_contraption_diagram.extra-info.diagram-button"), () -> {
                 WithClientData clientData = (WithClientData) diagram;
