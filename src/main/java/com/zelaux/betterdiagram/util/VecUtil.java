@@ -3,7 +3,9 @@ package com.zelaux.betterdiagram.util;
 import com.zelaux.betterdiagram.func.DoubleGetter;
 import com.zelaux.betterdiagram.func.DoubleSetter;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
+import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
+import dev.ryanhcode.sable.companion.math.Pose3dc;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import org.jetbrains.annotations.NotNull;
@@ -135,5 +137,32 @@ public class VecUtil {
             case CLOCKWISE_180 ->  tmp.rotateY(Math.toRadians(180));
             case COUNTERCLOCKWISE_90 ->  tmp.rotateY(Math.toRadians(270));
         }
+    }
+    public static QueuedForceGroup.PointForce projectForce(Pose3dc poseB, Pose3dc poseA, QueuedForceGroup.PointForce forceInA) {
+        //force to world
+        Quaterniondc orientationA = poseA.orientation();
+        Vector3d worldPoint = new Vector3d(forceInA.point())
+            .sub(poseA.rotationPoint())
+            .mul(poseA.scale())
+            .rotate(orientationA)
+            .add(poseA.position());
+
+        Vector3d worldForce = new Vector3d(forceInA.force())
+            .rotate(orientationA);
+
+
+        //world to poseB
+        Quaterniond invOrientB = new Quaterniond(poseB.orientation()).conjugate();
+
+        Vector3d localPointB = worldPoint
+            .sub(poseB.position())
+            .rotate(invOrientB)
+            .div((Vector3d) poseB.scale())
+            .add(poseB.rotationPoint());
+
+        Vector3d localForceB = worldForce
+            .rotate(invOrientB);
+
+        return new QueuedForceGroup.PointForce(localPointB, localForceB);
     }
 }

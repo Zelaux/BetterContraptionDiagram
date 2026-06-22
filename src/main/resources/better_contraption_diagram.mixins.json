@@ -4,6 +4,10 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "RemovedGuiUtilsMixin",
+    "accessors.IDockingConnectorBlockEntity",
+    "accessors.IDockingConnectorPair",
+    "accessors.ISwivelBearingBlockEntity",
+    "accessors.ISwivelBearingPlateBlockEntity",
     "accessors.blockpropcalc.MassTrackerLambdas",
     "accessors.blockpropcalc.VoxelNeighborhoodLambdas",
     "accessors.blockpropcalc.VoxelNeighborhoodLambdas2",
@@ -12,6 +16,9 @@
     "calculator.Calculator_DiagramDataPacket",
     "COM_view.com_view_GoggleOverlayRenderer",
     "fix.DiagramOpenPacketMixin",
+    "include_subsublevel.DiagramDataPacketMixin",
+    "include_subsublevel.RapierConstraintHandleMixin",
+    "include_subsublevel.actor.SwivelBearingBlockEntityMixin",
     "server.DiagramEntityMixin"
   ],
   "client": [
@@ -27,6 +34,7 @@
     "calculator.Calculator_DiagramStickyNote",
     "calculator.UpdateData_DiagramScreen",
     "COM_view.LevelRendererMixin",
+    "include_subsublevel.DiagramScreenMixin",
     "leveldata.ClientPacketListenerMixin",
     "leveldata.DiagramEntityMixin",
     "leveldata.IntegratedServerMixin",

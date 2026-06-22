@@ -9,12 +9,14 @@ import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.struct.Weights;
+import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
+import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
@@ -32,6 +34,9 @@ import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class CenterMassCalculator {
     public static final float DELTA = 0.00001f;
@@ -40,7 +45,7 @@ public class CenterMassCalculator {
         return new Weights[]{new Weights(), new Weights(), new Weights()};
     }
 
-    public static @NotNull Vector3d centerOfMass(ClientSubLevel subLevel) {
+    public static @NotNull Vector3d centerOfMass(SubLevel subLevel) {
         return subLevel.logicalPose().rotationPoint();
     }
 
@@ -269,24 +274,32 @@ public class CenterMassCalculator {
     }
 
     public static void calculateSumOfForcesMomentum(Vector3d mergedDisplacement, Vector3d sumOfForces, Vector3d tmp1, DiagramDataPacket serverData, ClientSubLevel subLevel1) {
+        Consumer<Consumer<QueuedForceGroup.PointForce>> forEachForce=forceConsumer->{
+            Map<ForceGroup, List<QueuedForceGroup.PointForce>> forces = serverData.forces();
+            forces.forEach((_i, pointForces) -> {
+                if(_i == ForceGroups.GRAVITY.get()) {
+                    return;
+                }
+                for(QueuedForceGroup.PointForce force : pointForces) {
+                    forceConsumer.accept(force);
+                }
+            });
+        };
+        calculateSumOfForcesMomentum(mergedDisplacement, sumOfForces, tmp1, new Vector3d(centerOfMass(subLevel1)), forEachForce);
+    }
+
+    public static void calculateSumOfForcesMomentum(Vector3d mergedDisplacement, Vector3d sumOfForces, Vector3d tmp1, Vector3dc COM, Consumer<Consumer<QueuedForceGroup.PointForce>> forEachForce) {
         mergedDisplacement.zero();
         sumOfForces.zero();
         tmp1.zero();
         Vector3d sumOfMoments = tmp1;
         Vector3d tmp2 = mergedDisplacement;
         sumOfMoments.zero();
-        Vector3d COM = new Vector3d(centerOfMass(subLevel1));
-        serverData.forces().forEach((_i, pointForces) -> {
-            if(_i == ForceGroups.GRAVITY.get()) {
-                return;
-            }
-            for(var force : pointForces) {
-
-                sumOfForces.add(force.force());
-                Vector3d momentOfForce = tmp2.set(force.point()).sub(COM).cross(force.force());
-                sumOfMoments.add(momentOfForce);
-                tmp2.add(force.force());
-            }
+        forEachForce.accept(force->{
+            sumOfForces.add(force.force());
+            Vector3d momentOfForce = tmp2.set(force.point()).sub(COM).cross(force.force());
+            sumOfMoments.add(momentOfForce);
+            tmp2.add(force.force());
         });
         mergedDisplacement.set(sumOfForces).cross(sumOfMoments).div(sumOfForces.lengthSquared());
     }

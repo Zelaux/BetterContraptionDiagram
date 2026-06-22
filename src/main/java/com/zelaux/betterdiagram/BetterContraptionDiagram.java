@@ -2,8 +2,15 @@ package com.zelaux.betterdiagram;
 
 import com.mojang.logging.LogUtils;
 import com.zelaux.betterdiagram.command.ServerHelpers;
+import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorMapper;
+import com.zelaux.betterdiagram.feature.include_subsublevel.connector.actors.DockingConnectorActor;
+import com.zelaux.betterdiagram.feature.include_subsublevel.connector.actors.SwivelBearingActor;
+import com.zelaux.betterdiagram.feature.include_subsublevel.connector.actors.SwivelBearingPlateActor;
 import com.zelaux.betterdiagram.network.BCDPacketManager;
 import com.zelaux.betterdiagram.network.HelloMessage;
+import dev.simulated_team.simulated.content.blocks.docking_connector.DockingConnectorBlockEntity;
+import dev.simulated_team.simulated.content.blocks.swivel_bearing.SwivelBearingBlockEntity;
+import dev.simulated_team.simulated.content.blocks.swivel_bearing.link_block.SwivelBearingPlateBlockEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
@@ -36,6 +43,12 @@ public class BetterContraptionDiagram {
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
         BCDPacketManager.init();
+
+
+        ActorMapper.register(SwivelBearingBlockEntity.class, SwivelBearingActor::new);
+        ActorMapper.register(SwivelBearingPlateBlockEntity.class, SwivelBearingPlateActor::new);
+        ActorMapper.register(DockingConnectorBlockEntity.class, DockingConnectorActor::new);
+
         // Register the item to a creative tab
         //modEventBus.addListener(this::addCreative);
 
