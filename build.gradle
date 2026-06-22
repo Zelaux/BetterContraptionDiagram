@@ -138,7 +138,7 @@ neoForge {
     }
 
     // This line is optional. Access Transformers are automatically detected
-    // accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+     accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
@@ -216,19 +216,19 @@ dependencies {
 //    api files("libs/dev.eriksonn.aeronautics.aeronautics-neoforge-${minecraft_version}-${aeronautics_version}.jar")
 //    api files("libs/dev.ryanhcode.offroad.offroad-neoforge-${minecraft_version}-${aeronautics_version}.jar")
 //    api files("libs/dev.simulated_team.simulated.simulated-neoforge-${minecraft_version}-${aeronautics_version}.jar")
-    api ("dev.eriksonn.aeronautics:aeronautics-neoforge-1.21.1:1.2.1"){
+    api ("dev.eriksonn.aeronautics:aeronautics-neoforge-1.21.1:$aeronautics_version"){
         exclude group: "cc.tweaked"
         exclude group: "net.createmod.ponder"
         exclude group: "mezz.jei"
         exclude group: "maven.modrinth"
     }
-    api ("dev.simulated_team.simulated:simulated-neoforge-1.21.1:1.2.1"){
+    api ("dev.simulated_team.simulated:simulated-neoforge-1.21.1:$aeronautics_version"){
         exclude group: "cc.tweaked"
         exclude group: "net.createmod.ponder"
         exclude group: "mezz.jei"
 //        exclude group: "maven.modrinth"
     }
-//    compileOnly "dev.ryanhcode.sable:sable-sable_rapier-1.21.1:$sable_rapier_version"
+    compileOnly "dev.ryanhcode.sable:sable-sable_rapier-1.21.1:$sable_rapier_version"
     api("dev.engine-room.flywheel:flywheel-neoforge-1.21.1:1.0.6")
     api("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") {
 //        exclude group: "foundry.veil"
@@ -241,6 +241,7 @@ dependencies {
 
     compileOnly("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
+    compileOnly("com.tterrag.registrate:Registrate:${registrate_version}")
 //    api ("maven.modrinth:create:${create_version}+mc${minecraft_version}") { transitive = false }
 //    api("com.simibubi.create:create-")
 /*    implementation("foundry.veil:veil-neoforge-${minecraft_version}:${project.veil_version}") {
@@ -251,7 +252,7 @@ dependencies {
 //        exclude group: "foundry.veil"
         exclude group: "com.tterrag.registrate"
     }
-    compileOnly("com.tterrag.registrate:Registrate:${registrate_version}")
+
 
     api("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
 
