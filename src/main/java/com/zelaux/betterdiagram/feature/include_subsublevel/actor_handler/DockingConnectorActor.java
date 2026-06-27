@@ -1,7 +1,8 @@
-package com.zelaux.betterdiagram.feature.include_subsublevel.connector.actors;
+package com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler;
 
-import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorMapper;
+import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.LocalConstraint;
+import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.mixin.accessors.IDockingConnectorBlockEntity;
 import com.zelaux.betterdiagram.mixin.accessors.IDockingConnectorPair;
 import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration;
@@ -16,9 +17,10 @@ import org.joml.Quaterniond;
 import org.joml.Vector3d;
 
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
-public class DockingConnectorActor implements ActorMapper {
+public class DockingConnectorActor implements ActorHandler {
     public static final Vector3d staticTmp1 = new Vector3d();
     DockingConnectorBlockEntity entity;
     private static final DockingConnectorPair DUMMY_PAIR = new DockingConnectorPair(null, null, null);
@@ -27,7 +29,7 @@ public class DockingConnectorActor implements ActorMapper {
     private final Quaterniond orientation2 = new Quaterniond();
 
     @Override
-    public @Nullable Iterable<LocalConstraint> mapToConstraint(SubLevel a) {
+    public @Nullable Iterable<LocalConstraint<?>> mapToConstraint(SubLevel a, Map<SubLevel, SubLevelGroup> subLevel2Group) {
         Iterable<@NotNull SubLevel> levels = entity.sable$getConnectionDependencies();
         if(levels == null) return null;
         SubLevel b = levels.iterator().next();
@@ -51,6 +53,6 @@ public class DockingConnectorActor implements ActorMapper {
             JOMLConversion.toJOML(entity.getTipPosition()),
             JOMLConversion.toJOML(dock2.getTipPosition()),
             orientation
-        ), a, b));
+        ), a, b, subLevel2Group));
     }
 }

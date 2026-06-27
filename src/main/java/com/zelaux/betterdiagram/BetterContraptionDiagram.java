@@ -2,13 +2,16 @@ package com.zelaux.betterdiagram;
 
 import com.mojang.logging.LogUtils;
 import com.zelaux.betterdiagram.command.ServerHelpers;
-import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorMapper;
-import com.zelaux.betterdiagram.feature.include_subsublevel.connector.actors.DockingConnectorActor;
-import com.zelaux.betterdiagram.feature.include_subsublevel.connector.actors.SwivelBearingActor;
-import com.zelaux.betterdiagram.feature.include_subsublevel.connector.actors.SwivelBearingPlateActor;
+import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.RopeActor;
+import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
+import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.DockingConnectorActor;
+import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.SwivelBearingActor;
+import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.SwivelBearingPlateActor;
 import com.zelaux.betterdiagram.network.BCDPacketManager;
 import com.zelaux.betterdiagram.network.HelloMessage;
 import dev.simulated_team.simulated.content.blocks.docking_connector.DockingConnectorBlockEntity;
+import dev.simulated_team.simulated.content.blocks.rope.rope_connector.RopeConnectorBlockEntity;
+import dev.simulated_team.simulated.content.blocks.rope.rope_winch.RopeWinchBlockEntity;
 import dev.simulated_team.simulated.content.blocks.swivel_bearing.SwivelBearingBlockEntity;
 import dev.simulated_team.simulated.content.blocks.swivel_bearing.link_block.SwivelBearingPlateBlockEntity;
 import net.minecraft.resources.ResourceLocation;
@@ -45,9 +48,11 @@ public class BetterContraptionDiagram {
         BCDPacketManager.init();
 
 
-        ActorMapper.register(SwivelBearingBlockEntity.class, SwivelBearingActor::new);
-        ActorMapper.register(SwivelBearingPlateBlockEntity.class, SwivelBearingPlateActor::new);
-        ActorMapper.register(DockingConnectorBlockEntity.class, DockingConnectorActor::new);
+        ActorHandler.register(SwivelBearingBlockEntity.class, SwivelBearingActor::new);
+        ActorHandler.register(SwivelBearingPlateBlockEntity.class, SwivelBearingPlateActor::new);
+        ActorHandler.register(DockingConnectorBlockEntity.class, DockingConnectorActor::new);
+        ActorHandler.register(RopeWinchBlockEntity.class, RopeActor::new);
+        ActorHandler.register(RopeConnectorBlockEntity.class, RopeActor::new);
 
         // Register the item to a creative tab
         //modEventBus.addListener(this::addCreative);

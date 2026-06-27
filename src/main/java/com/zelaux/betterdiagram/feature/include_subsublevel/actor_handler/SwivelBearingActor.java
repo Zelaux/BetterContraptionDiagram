@@ -1,7 +1,8 @@
-package com.zelaux.betterdiagram.feature.include_subsublevel.connector.actors;
+package com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler;
 
-import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorMapper;
+import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.LocalConstraint;
+import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.math.Vector3dWith;
 import com.zelaux.betterdiagram.mixin.accessors.ISwivelBearingBlockEntity;
 import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration;
@@ -23,14 +24,15 @@ import org.joml.Quaterniondc;
 import org.joml.Vector3d;
 
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
-public class SwivelBearingActor implements ActorMapper {
+public class SwivelBearingActor implements ActorHandler {
     public static final RotaryConstraintConfiguration ROTARY_DUMMY = new RotaryConstraintConfiguration(new Vector3d(), new Vector3d(), new Vector3d(), new Vector3d());
     SwivelBearingBlockEntity entity;
 
     @Override
-    public @Nullable List<LocalConstraint> mapToConstraint(SubLevel a) {
+    public @Nullable List<LocalConstraint<?>> mapToConstraint(SubLevel a, Map<SubLevel, SubLevelGroup> subLevel2Group) {
         ISwivelBearingBlockEntity blockEntity = (ISwivelBearingBlockEntity) entity;
         SubLevel b = blockEntity.bcd$getAttachedSubLevel();
         SwivelBearingBlockEntity.LockingSetting setting = blockEntity.bcd$lockedDefaultOption().get();
@@ -58,7 +60,7 @@ public class SwivelBearingActor implements ActorMapper {
                 relativeQuat
             );
         }
-        return List.of(LocalConstraint.from(configuration, a, b));
+        return List.of(LocalConstraint.from(configuration, a, b, subLevel2Group));
     }
 
     private @Nullable RotaryConstraintConfiguration getRotary(Level level, ISwivelBearingBlockEntity blockEntity) {

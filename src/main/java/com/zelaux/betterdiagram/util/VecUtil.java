@@ -67,7 +67,7 @@ public class VecUtil {
         var coords = new Vector2d[3];
         var coords0 = new Vector2d[3];
         int[] xyz = new int[3];
-        xyz[2]=-1;
+        xyz[2] = -1;
         Vector3d tmp = new Vector3d();
         for(int i = 0; i < coords.length; i++) {
             orientation.transformInverse(tmp.set(DIRECTIONS[i]));
@@ -78,30 +78,31 @@ public class VecUtil {
                 tmp.zero();
             }
             //screenCoords.div(scalar);
-            coords0[i]=new Vector2d(tmp.x,tmp.y);
+            coords0[i] = new Vector2d(tmp.x, tmp.y);
             var v = coords[i] = new Vector2d(tmp.x / scalar, tmp.y / scalar).round();
             if(v.x != 0) xyz[0] = i;
             else if(v.y != 0) xyz[1] = i;
             else xyz[2] = i;
         }
-        boolean succeedOnlyOnSecondTry=xyz[2]==-1;
+        boolean succeedOnlyOnSecondTry = xyz[2] == -1;
         // Enhanced Diagram moment
-        if (xyz[2]==-1){
+        if(xyz[2] == -1) {
 
             for(int i = 0; i < coords.length; i++) {
                 Vector2d cur = coords0[i];
-                if(Math.abs(coords0[xyz[0]].x) < Math.abs(cur.x) &&  Math.abs(cur.x)>=Math.abs(cur.y)) xyz[0] = i;
-                if(Math.abs(coords0[xyz[1]].y) < Math.abs(cur.y) && Math.abs(cur.x)<Math.abs(cur.y) && xyz[0] != i) xyz[1] = i;
+                if(Math.abs(coords0[xyz[0]].x) < Math.abs(cur.x) && Math.abs(cur.x) >= Math.abs(cur.y)) xyz[0] = i;
+                if(Math.abs(coords0[xyz[1]].y) < Math.abs(cur.y) && Math.abs(cur.x) < Math.abs(cur.y) && xyz[0] != i)
+                    xyz[1] = i;
             }
             for(int i = 0; i < 3; i++) {
                 if(xyz[0] != i && xyz[1] != i) {
-                    xyz[2]=i;
+                    xyz[2] = i;
                     coords[i].zero();
                     break;
                 }
             }
         }
-        return new TransformedAxes(coords, xyz,succeedOnlyOnSecondTry);
+        return new TransformedAxes(coords, xyz, succeedOnlyOnSecondTry);
     }
 
     public static double maxAbsXY(Vector3d tmp) {
@@ -128,16 +129,17 @@ public class VecUtil {
     public static void applyTransforms(Vector3d tmp, Mirror mirror, Rotation rotation) {
         switch(mirror) {
             case NONE -> {}
-            case LEFT_RIGHT -> tmp.z=-tmp.z;
-            case FRONT_BACK -> tmp.x=-tmp.x;
+            case LEFT_RIGHT -> tmp.z = -tmp.z;
+            case FRONT_BACK -> tmp.x = -tmp.x;
         }
         switch(rotation) {
             case NONE -> {}
             case CLOCKWISE_90 -> tmp.rotateY(Math.toRadians(90));
-            case CLOCKWISE_180 ->  tmp.rotateY(Math.toRadians(180));
-            case COUNTERCLOCKWISE_90 ->  tmp.rotateY(Math.toRadians(270));
+            case CLOCKWISE_180 -> tmp.rotateY(Math.toRadians(180));
+            case COUNTERCLOCKWISE_90 -> tmp.rotateY(Math.toRadians(270));
         }
     }
+
     public static QueuedForceGroup.PointForce projectForce(Pose3dc poseB, Pose3dc poseA, QueuedForceGroup.PointForce forceInA) {
         //force to world
         Quaterniondc orientationA = poseA.orientation();
@@ -164,5 +166,63 @@ public class VecUtil {
             .rotate(invOrientB);
 
         return new QueuedForceGroup.PointForce(localPointB, localForceB);
+    }
+    public static Vector3d projectPos(Pose3dc poseB, Pose3dc poseA, Vector3dc posInA) {
+        //force to world
+        Vector3d worldPoint = projectToWorld(poseA, posInA);
+
+
+        //world to poseB
+        Vector3d localPointB = unprojectPosToLocal(poseB, worldPoint);
+
+
+        return localPointB;
+    }
+
+    public static Vector3d unprojectPosToLocal(Pose3dc pose, Vector3d worldPoint) {
+        Quaterniond invOrientB = new Quaterniond(pose.orientation()).conjugate();
+
+        Vector3d localPointB = worldPoint
+            .sub(pose.position())
+            .rotate(invOrientB)
+            .div((Vector3d) pose.scale())
+            .add(pose.rotationPoint());
+        return localPointB;
+    }
+
+    public static Vector3d projectToWorld(Pose3dc poseA, Vector3dc posInA) {
+        Quaterniondc orientationA = poseA.orientation();
+        Vector3d worldPoint = new Vector3d(posInA)
+            .sub(poseA.rotationPoint())
+            .mul(poseA.scale())
+            .rotate(orientationA)
+            .add(poseA.position());
+        return worldPoint;
+    }
+
+    public static Vector3d projectDirection(Pose3dc poseB, Pose3dc poseA, Vector3dc forceInA) {
+        //force to world
+        Vector3d worldForce = projectForceToWorld(poseA, forceInA);
+
+
+        //world to poseB
+        Vector3d localForceB = unprojectDirectionToLocal(poseB, worldForce);
+
+        return localForceB;
+    }
+
+    public static Vector3d unprojectDirectionToLocal(Pose3dc poseB, Vector3d worldForce) {
+        Quaterniond invOrientB = new Quaterniond(poseB.orientation()).conjugate();
+        Vector3d localForceB = worldForce
+            .rotate(invOrientB);
+        return localForceB;
+    }
+
+    public static Vector3d projectForceToWorld(Pose3dc poseA, Vector3dc forceInA) {
+        Quaterniondc orientationA = poseA.orientation();
+
+        Vector3d worldForce = new Vector3d(forceInA)
+            .rotate(orientationA);
+        return worldForce;
     }
 }

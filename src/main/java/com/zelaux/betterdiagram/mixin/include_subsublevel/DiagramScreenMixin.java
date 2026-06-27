@@ -47,10 +47,8 @@ public abstract class DiagramScreenMixin implements IDiagramScreenWithDependenci
     ) {
         IDiagramScreenWithDependencies dependencies = (IDiagramScreenWithDependencies) screen;
 
-        ConstraintTree tree = ConstraintTree.build(subLevel, 3);
-        if(!tree.children.isEmpty() || !tree.mergedSubLevel.single()) {
-
-            SubLevelDependenciesData data = new SubLevelDependenciesData(tree);
+        var data = SubLevelDependenciesData.tryConstruct(subLevel,3);
+        if(data!=null) {
             dependencies.bcd$subLevelDependencies(data);
         }
 

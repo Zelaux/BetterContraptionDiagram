@@ -1,6 +1,7 @@
 package com.zelaux.betterdiagram.feature.include_subsublevel.connector;
 
 import com.google.common.collect.ImmutableList;
+import dev.ryanhcode.sable.companion.SubLevelAccess;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -8,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract sealed class MergedSubLevel implements Iterable<SubLevel> {
+public abstract sealed class SubLevelGroup implements Iterable<SubLevel> {
 
-    public static MergedSubLevel single(SubLevel level) {
+    public static SubLevelGroup single(SubLevel level) {
         return new Single(level);
     }
 
@@ -21,7 +22,7 @@ public abstract sealed class MergedSubLevel implements Iterable<SubLevel> {
 
     public abstract List<SubLevel> all();
 
-    public MergedSubLevel with(SubLevel b) {
+    public SubLevelGroup with(SubLevel b) {
         if(all().contains(b))return this;
         return new Many(
             ImmutableList.<SubLevel>builder()
@@ -30,13 +31,29 @@ public abstract sealed class MergedSubLevel implements Iterable<SubLevel> {
                          .build()
         );
     }
+    public SubLevelGroup with(Iterable<SubLevel> b) {
+        ImmutableList.Builder<SubLevel> builder = null;
+        List<SubLevel> all = all();
+        for(SubLevel subLevel : b) {
+            if(all.contains(subLevel))continue;
+            if(builder==null)builder=ImmutableList.<SubLevel>builder().addAll(all);
+            builder.add(subLevel);
+        }
+        if(builder==null)return this;
+
+        return new Many(builder.build());
+    }
 
     public boolean single() {
         return this instanceof Single;
     }
 
+    public SubLevel first() {
+        return all().getFirst();
+    }
+
     @AllArgsConstructor
-    public static non-sealed class Single extends MergedSubLevel {
+    public static non-sealed class Single extends SubLevelGroup {
         public SubLevel subLevel;
 
         @Override
@@ -47,7 +64,7 @@ public abstract sealed class MergedSubLevel implements Iterable<SubLevel> {
     }
 
     @AllArgsConstructor
-    public static non-sealed class Many extends MergedSubLevel {
+    public static non-sealed class Many extends SubLevelGroup {
         public List<SubLevel> subLevels;
 
         @Override

@@ -2,21 +2,28 @@ package com.zelaux.betterdiagram.index;
 
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.simulated_team.simulated.Simulated;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public interface ForceGroups {
     BCDForceGroup AXIS_X_GROUP = new BCDForceGroup(Component.translatable("better_contraption_diagram.axis_group.x"), null, 0xE65751, false, Component.literal("X"));
     BCDForceGroup AXIS_Y_GROUP = new BCDForceGroup(Component.translatable("better_contraption_diagram.axis_group.y"), null, 0x88E661, false, Component.literal("Y"));
     BCDForceGroup AXIS_Z_GROUP = new BCDForceGroup(Component.translatable("better_contraption_diagram.axis_group.z"), null, 0x8E88E6, false, Component.literal("Z"));
+    BCDForceGroup ROPE_FORCE = new BCDForceGroup(Component.translatable("force-group.rope"), null, 0xe6ab56, false);
     BCDForceGroup MERGED_FORCE_GROUP = new BCDForceGroup(Component.translatable("force-group.merged-force"),
         null, Colors.DISPLACEMENT_GREEN_COLORS[3].getRGB(),
         false, Component.literal("Z"));
     BCDForceGroup[] AXIS_GROUPS = {AXIS_X_GROUP, AXIS_Y_GROUP, AXIS_Z_GROUP};
     ResourceLocation simulated$bufferLocation = Simulated.path("diagram_buffer");
+    ObjectArrayList<BCDForceGroup> CUSTOM_FORCES = new ObjectArrayList<>(List.of(
+        ROPE_FORCE, MERGED_FORCE_GROUP
+    ));
 
     @Getter
     class BCDForceGroup {
@@ -25,6 +32,10 @@ public interface ForceGroups {
         public final int color;
         public final @NotNull Component name;
         public final @Nullable Component description;
+
+        public BCDForceGroup(@NotNull Component name, @Nullable Component description, int color, boolean defaultDisplayed) {
+            this(name, description, color, defaultDisplayed, null);
+        }
 
         public BCDForceGroup(@NotNull Component name, @Nullable Component description, int color, boolean defaultDisplayed, Component axisName) {
             this.axisName = axisName;
