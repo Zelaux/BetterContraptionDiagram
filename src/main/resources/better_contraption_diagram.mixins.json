@@ -17,6 +17,7 @@
     "calculator.Calculator_DiagramDataPacket",
     "COM_view.com_view_GoggleOverlayRenderer",
     "feature.clientside_forces.DiagramScreenMixin",
+    "feature.force_to_mass.DiagramScreenMixin",
     "fix.DiagramOpenPacketMixin",
     "include_subsublevel.DiagramDataPacketMixin",
     "include_subsublevel.RapierConstraintHandleMixin",
