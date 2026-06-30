@@ -1,15 +1,22 @@
 package com.zelaux.betterdiagram.index;
 
+import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysics;
+import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysicsData;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.level.Level;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
 public interface SomeConstants {
     float ropePointMass=0.35f;
-
-    static double gravityScalar() {
-        return 11;
+    static int MAX_MATRIX_CACHE(){
+        return 16;
     }
 
-    static Vector3dc gravityVector() {return new Vector3d(0,-11,0);
+    static double gravityScalar(ClientLevel level) {
+        return gravityVector(level).length();
+    }
+
+    static Vector3dc gravityVector(Level level) {return DimensionPhysicsData.getGravity(level);
     }
 }

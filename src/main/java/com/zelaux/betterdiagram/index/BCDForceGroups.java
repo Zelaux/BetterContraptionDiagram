@@ -11,18 +11,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface ForceGroups {
+public interface BCDForceGroups {
     BCDForceGroup AXIS_X_GROUP = new BCDForceGroup(Component.translatable("better_contraption_diagram.axis_group.x"), null, 0xE65751, false, Component.literal("X"));
     BCDForceGroup AXIS_Y_GROUP = new BCDForceGroup(Component.translatable("better_contraption_diagram.axis_group.y"), null, 0x88E661, false, Component.literal("Y"));
     BCDForceGroup AXIS_Z_GROUP = new BCDForceGroup(Component.translatable("better_contraption_diagram.axis_group.z"), null, 0x8E88E6, false, Component.literal("Z"));
     BCDForceGroup ROPE_FORCE = new BCDForceGroup(Component.translatable("force-group.rope"), null, 0xe6ab56, false);
+    BCDForceGroup ROPE_MASS_FORCE = new BCDForceGroup(Component.translatable("force-group.rope-mass"), null, 0x946F3A, false);
     BCDForceGroup MERGED_FORCE_GROUP = new BCDForceGroup(Component.translatable("force-group.merged-force"),
         null, Colors.DISPLACEMENT_GREEN_COLORS[3].getRGB(),
         false, Component.literal("Z"));
     BCDForceGroup[] AXIS_GROUPS = {AXIS_X_GROUP, AXIS_Y_GROUP, AXIS_Z_GROUP};
     ResourceLocation simulated$bufferLocation = Simulated.path("diagram_buffer");
     ObjectArrayList<BCDForceGroup> CUSTOM_FORCES = new ObjectArrayList<>(List.of(
-        ROPE_FORCE, MERGED_FORCE_GROUP
+        ROPE_FORCE, MERGED_FORCE_GROUP,ROPE_MASS_FORCE
     ));
 
     @Getter

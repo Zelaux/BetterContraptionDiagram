@@ -36,10 +36,12 @@ import org.joml.Vector3dc;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class CenterMassCalculator {
     public static final float DELTA = 0.00001f;
+    public static Set<ForceGroup> FORCE_GROUP_BLACKLIST = Set.of(ForceGroups.GRAVITY.get());
 
     public static Weights @NotNull [] makeMassStacks() {
         return new Weights[]{new Weights(), new Weights(), new Weights()};
@@ -274,12 +276,14 @@ public class CenterMassCalculator {
     }
 
     public static void calculateSumOfForcesMomentum(Vector3d mergedDisplacement, Vector3d sumOfForces, Vector3d tmp1, DiagramDataPacket serverData, ClientSubLevel subLevel1) {
+        calculateSumOfMomentum(mergedDisplacement, sumOfForces, tmp1, serverData, subLevel1, FORCE_GROUP_BLACKLIST);
+    }
+
+    public static void calculateSumOfMomentum(Vector3d mergedDisplacement, Vector3d sumOfForces, Vector3d tmp1, DiagramDataPacket serverData, ClientSubLevel subLevel1, Set<ForceGroup> blackList) {
         Consumer<Consumer<QueuedForceGroup.PointForce>> forEachForce=forceConsumer->{
             Map<ForceGroup, List<QueuedForceGroup.PointForce>> forces = serverData.forces();
             forces.forEach((_i, pointForces) -> {
-                if(_i == ForceGroups.GRAVITY.get()) {
-                    return;
-                }
+                if(blackList.contains(_i)) return;
                 for(QueuedForceGroup.PointForce force : pointForces) {
                     forceConsumer.accept(force);
                 }
@@ -299,7 +303,6 @@ public class CenterMassCalculator {
             sumOfForces.add(force.force());
             Vector3d momentOfForce = tmp2.set(force.point()).sub(COM).cross(force.force());
             sumOfMoments.add(momentOfForce);
-            tmp2.add(force.force());
         });
         mergedDisplacement.set(sumOfForces).cross(sumOfMoments).div(sumOfForces.lengthSquared());
     }

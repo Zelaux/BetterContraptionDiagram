@@ -34,7 +34,7 @@ public abstract class DiagramScreenMixin implements IDiagramScreenWithDependenci
     public void tick1(CallbackInfo ci) {
 
         if(bcd$subLevelDependencies != null) {
-            for(UUID uuid : bcd$subLevelDependencies.keySet()) {
+            for(UUID uuid : bcd$subLevelDependencies.sublevelDataMap.keySet()) {
                 VeilPacketManager.server().sendPacket(new RequestDiagramDataPacket(uuid));
             }
         }

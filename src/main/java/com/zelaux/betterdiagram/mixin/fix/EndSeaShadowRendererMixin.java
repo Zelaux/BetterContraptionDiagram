@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
-import static com.zelaux.betterdiagram.index.ForceGroups.simulated$bufferLocation;
+import static com.zelaux.betterdiagram.index.BCDForceGroups.simulated$bufferLocation;
 
 @Mixin(EndSeaShadowRenderer.class)
 public class EndSeaShadowRendererMixin {

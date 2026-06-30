@@ -9,6 +9,7 @@
   "better_contraption_diagram.axis_group.y": "Height",
   "better_contraption_diagram.axis_group.z": "Length",
   "force-group.rope": "Rope",
+  "force-group.rope-mass": "Rope Mass",
   "force-group.merged-force": "Merged Force",
   "force-group.merged-force.displacement": "Merged Force Displacement: %s",
 

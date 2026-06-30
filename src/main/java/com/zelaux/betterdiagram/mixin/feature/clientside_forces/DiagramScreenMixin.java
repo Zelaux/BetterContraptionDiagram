@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalDoubleRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import com.zelaux.betterdiagram.index.ForceGroups;
+import com.zelaux.betterdiagram.index.BCDForceGroups;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
@@ -59,7 +59,7 @@ public abstract class DiagramScreenMixin {
         if(serverData == null) return;
         var clusters = new Object2ObjectOpenHashMap<ForceGroup, List<ForceClusterFinder.Cluster>>();
         clustersRef.set(clusters);
-        for(ForceGroups.BCDForceGroup forceGroup : ForceGroups.CUSTOM_FORCES) {
+        for(BCDForceGroups.BCDForceGroup forceGroup : BCDForceGroups.CUSTOM_FORCES) {
 
             ForceGroup group = forceGroup.group();
             var forces = serverData.forces().get(group);
@@ -102,7 +102,7 @@ public abstract class DiagramScreenMixin {
         var clusters = clustersRef.get();
 
         double sqrt = Math.sqrt(maxArrowLengthSquared);
-        for(ForceGroups.BCDForceGroup forceGroup : ForceGroups.CUSTOM_FORCES) {
+        for(BCDForceGroups.BCDForceGroup forceGroup : BCDForceGroups.CUSTOM_FORCES) {
 
             ForceGroup group = forceGroup.group();
             List<ForceClusterFinder.Cluster> cluster = clusters.get(group);

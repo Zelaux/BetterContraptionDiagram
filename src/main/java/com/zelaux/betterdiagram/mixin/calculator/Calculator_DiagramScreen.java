@@ -11,7 +11,7 @@ import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
 import com.zelaux.betterdiagram.gui.tooltip.DiagramInfoTooltip;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDTextures;
-import com.zelaux.betterdiagram.index.ForceGroups;
+import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
@@ -182,7 +182,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         mergedDisplacement.add(CenterMassCalculator.centerOfMass(subLevel));
         renderForceArrow(
             graphics,
-            ForceGroups.MERGED_FORCE_GROUP.group,
+            BCDForceGroups.MERGED_FORCE_GROUP.group,
             new ForceClusterFinder.Cluster(mergedDisplacement,sumOfForces,new MutableInt(1)),
             Math.sqrt(maxArrowLengthSquared.get()),
             mouseX - areaOriginX,
@@ -215,7 +215,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         for(int i = 0; i < stacks.length; i++) {
             var weights = stacks[i];
             if(weights.isEmpty() || !clientData.axisStates(i)) continue;
-            var group = ForceGroups.AXIS_GROUPS[i];
+            var group = BCDForceGroups.AXIS_GROUPS[i];
             int color = group.color() | (0xff << 24);
             Vector3d AXIS = DIRECTIONS[i];
             projectedAxis.set(orientation.transformInverse(tmp.set(AXIS)));

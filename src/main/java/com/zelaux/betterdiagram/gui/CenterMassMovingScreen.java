@@ -22,7 +22,7 @@ import com.zelaux.betterdiagram.gui.user.ClickHandler;
 import com.zelaux.betterdiagram.gui.widget.*;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.index.Colors;
-import com.zelaux.betterdiagram.index.ForceGroups;
+import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.mixin.accessors.EditBoxAccessors;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
@@ -538,7 +538,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
     }
 
     private @NotNull LayoutElement editBox(int axisIndex, Consumer<EditBox> boxConsumer) {
-        ForceGroups.BCDForceGroup axisGroup = ForceGroups.AXIS_GROUPS[axisIndex];
+        BCDForceGroups.BCDForceGroup axisGroup = BCDForceGroups.AXIS_GROUPS[axisIndex];
         final var boxName = axisGroup.axisName.copy();
         final var setter = SETTERS_3d[axisIndex];
         final var getter = GETTERS_3d[axisIndex];

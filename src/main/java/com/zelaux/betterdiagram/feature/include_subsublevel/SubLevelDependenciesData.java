@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 
@@ -23,9 +24,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public class SubLevelDependenciesData extends Object2ObjectOpenHashMap<UUID, SubLevelDependenciesData.Entry> {
+public class SubLevelDependenciesData {
 
-
+    public final Object2ObjectOpenHashMap<UUID, SubLevelDependenciesData.Entry> sublevelDataMap = new Object2ObjectOpenHashMap<>();
     public static final Vector3d TMP1 = new Vector3d();
     public final ConstraintTree constraintTree;
     public boolean updated;
@@ -58,13 +59,24 @@ public class SubLevelDependenciesData extends Object2ObjectOpenHashMap<UUID, Sub
         }
 
         for(SubLevel subLevel : visited) {
-            put(subLevel.getUniqueId(), new Entry(subLevel));
+            sublevelDataMap.put(subLevel.getUniqueId(), new Entry(subLevel));
         }
     }
 
+    int updateTick = Integer.MIN_VALUE;
+
     public DiagramDataPacket mergedForces() {
-        if(mergedForces != null && !updated && false) return mergedForces;
+        if(mergedForces != null && !updated) {
+            int ticks = AnimationTickHolder.getTicks(true);
+            if(ticks > updateTick) {
+                updateTick = ticks + 20;
+                mergedForces = null;
+            } else {
+                return mergedForces;
+            }
+        }
         mergedForces = null;
+
         updated = false;
 
         ConstraintTree constraintTree1 = constraintTree;
@@ -93,16 +105,15 @@ public class SubLevelDependenciesData extends Object2ObjectOpenHashMap<UUID, Sub
         Vector3d sumOfForces = new Vector3d();
         CenterMassCalculator.calculateSumOfForcesMomentum(mergedDisplacement, sumOfForces, TMP1, CenterMassCalculator.centerOfMass(mainSubLevel), consumer -> {
             for(SubLevel subLevel : subLevelGroup) {
-                Entry entry = get0(subLevel);
-                if(entry.data != null) {
-                    List<QueuedForceGroup.PointForce> pointForces = entry.data.forces().get(ForceGroups.GRAVITY.get());
-                    if(pointForces == null) {
-                        updated = true;
-                        continue;
-                    }
-                    QueuedForceGroup.PointForce first = pointForces.getFirst();
-                    consumer.accept(VecUtil.projectForce(subLevelGroup.all().getFirst().logicalPose(), subLevel.logicalPose(), first));
+                Entry entry = get(subLevel);
+                if(entry.data == null) continue;
+                List<QueuedForceGroup.PointForce> pointForces = entry.data.forces().get(ForceGroups.GRAVITY.get());
+                if(pointForces == null) {
+                    updated = true;
+                    continue;
                 }
+                QueuedForceGroup.PointForce first = pointForces.getFirst();
+                consumer.accept(VecUtil.projectForce(mainSubLevel.logicalPose(), subLevel.logicalPose(), first));
             }
         });
         mergedDisplacement.add(CenterMassCalculator.centerOfMass(mainSubLevel));
@@ -110,7 +121,7 @@ public class SubLevelDependenciesData extends Object2ObjectOpenHashMap<UUID, Sub
         var forces = new Forces(0);
         boolean wasAny = false;
         for(SubLevel subLevel : subLevelGroup) {
-            Entry entry = get0(subLevel);
+            Entry entry = get(subLevel);
             if(entry.data == null) continue;
             wasAny = true;
             forces.mass += entry.data.mass();
@@ -133,15 +144,15 @@ public class SubLevelDependenciesData extends Object2ObjectOpenHashMap<UUID, Sub
         return forces;
     }
 
-    private Entry get0(SubLevel subLevel) {
-        return get(subLevel.getUniqueId());
+    public Entry get(SubLevel subLevel) {
+        return sublevelDataMap.get(subLevel.getUniqueId());
     }
 
 
     public boolean updateData(SubLevel subLevel, DiagramDataPacket packet) {
-        Entry entry = get(subLevel.getUniqueId());
+        Entry entry = get(subLevel);
         if(entry == null) return false;
-        if(entry.data != packet && (packet == null || entry.data == null || packet.forces().equals(entry.data.forces()))) {
+        if(entry.data != packet) {
             entry.data = packet;
             updated = true;
         }
@@ -150,7 +161,7 @@ public class SubLevelDependenciesData extends Object2ObjectOpenHashMap<UUID, Sub
     }
 
     public Stream<SubLevel> allSublevels() {
-        return values().stream().map(Entry::subLevel);
+        return sublevelDataMap.values().stream().map(Entry::subLevel);
     }
 
     @ToString

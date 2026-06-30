@@ -5,8 +5,10 @@ import com.zelaux.betterdiagram.index.Colors;
 import com.zelaux.betterdiagram.index.SomeConstants;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
+import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import net.createmod.catnip.lang.LangBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -19,6 +21,10 @@ import java.util.List;
 
 @Mixin(DiagramScreen.class)
 public abstract class DiagramScreenMixin {
+    @Shadow
+    @Final
+    public ClientSubLevel subLevel;
+
     @Inject(method = "addForceArrowTooltip", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/createmod/catnip/lang/LangBuilder;color(I)Lnet/createmod/catnip/lang/LangBuilder;", ordinal = 1))
     private static void addForceArrowTooltip(
         ForceGroup forceGroup,
@@ -30,7 +36,7 @@ public abstract class DiagramScreenMixin {
         @Local(name = "forceMagnitudeText") LangBuilder forceMagnitudeText
     ) {
         if(!Screen.hasShiftDown()) return;
-        double mass = forceMagnitude / SomeConstants.gravityScalar();
+        double mass = forceMagnitude / SomeConstants.gravityScalar(Minecraft.getInstance().level);
         String formatted = String.format("%,.2f", mass);
         boolean isEqual = CenterMassCalculator.equals(mass, (int) (mass * 100) / 100.0);
         if(isEqual) formatted = "~" + formatted;
