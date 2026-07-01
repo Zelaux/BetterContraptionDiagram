@@ -47,7 +47,7 @@ public class CenterMassCalculator {
         return new Weights[]{new Weights(), new Weights(), new Weights()};
     }
 
-    public static @NotNull Vector3d centerOfMass(SubLevel subLevel) {
+    public static @NotNull Vector3dc centerOfMass(SubLevel subLevel) {
         return subLevel.logicalPose().rotationPoint();
     }
 
@@ -96,7 +96,7 @@ public class CenterMassCalculator {
         return stacks;
     }
 
-    private static @NotNull BCDData checkCache(double mass, BCDData data, Vector3d currentCOM, boolean[] shouldUpdate) {
+    private static @NotNull BCDData checkCache(double mass, BCDData data, Vector3dc currentCOM, boolean[] shouldUpdate) {
         Cache cache = data.cache;
         if(cache == null || !cache.isApproxEquals(data.eCOM(), currentCOM, mass)) {
             data = data.withCache(Cache.create(data.eCOM(), currentCOM, mass));

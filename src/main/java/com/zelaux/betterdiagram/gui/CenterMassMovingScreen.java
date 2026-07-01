@@ -461,7 +461,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         return maxVec3d(box).add(1, 1, 1).add(minVec3d(box)).div(2);
     }
 
-    private Vector3d currentCenterOfMass() {
+    private Vector3dc currentCenterOfMass() {
         return CenterMassCalculator
             .centerOfMass(diagramScreen.subLevel);
     }
