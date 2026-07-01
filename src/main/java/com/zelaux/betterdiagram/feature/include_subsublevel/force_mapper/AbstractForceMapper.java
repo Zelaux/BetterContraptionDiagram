@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper;
 
+import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
 import dev.ryanhcode.sable.sublevel.SubLevel;
@@ -43,7 +44,7 @@ public abstract class AbstractForceMapper {
         this.toAttachGroup = info.targetGroup;
     }
 
-    public abstract void mergeForces(Forces origin, Forces toAttach);
+    public abstract void mergeForces(Forces origin, Forces toAttach, SubLevelDependenciesData subLevelDependenciesData);
 
     public boolean fixed() {
         return false;

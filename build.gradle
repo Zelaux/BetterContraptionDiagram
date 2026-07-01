@@ -138,6 +138,10 @@ neoForge {
     }
 
     // This line is optional. Access Transformers are automatically detected
+    for (final def file in project.files('src/main/resources/META-INF/accesstransformer.cfg')) {
+        println file.getAbsolutePath() +"   "+ file.exists()
+
+    }
      accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.

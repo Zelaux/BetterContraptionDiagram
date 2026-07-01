@@ -7,7 +7,7 @@ import com.simibubi.create.AllKeys;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.zelaux.betterdiagram.ClientEvents;
 import com.zelaux.betterdiagram.data.BCDData;
-import com.zelaux.betterdiagram.data.BCDData.OffCenterBlocksShowState;
+import com.zelaux.betterdiagram.data.OffCenterBlocksShowState;
 import com.zelaux.betterdiagram.extend.ClientData;
 import com.zelaux.betterdiagram.extend.IDiagramScreen;
 import com.zelaux.betterdiagram.extend.WithClientData;
@@ -20,6 +20,7 @@ import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
 import com.zelaux.betterdiagram.gui.user.ButtonKind;
 import com.zelaux.betterdiagram.gui.user.ClickHandler;
 import com.zelaux.betterdiagram.gui.widget.*;
+import com.zelaux.betterdiagram.struct.BCDForceGroup;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.index.Colors;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
@@ -538,7 +539,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
     }
 
     private @NotNull LayoutElement editBox(int axisIndex, Consumer<EditBox> boxConsumer) {
-        BCDForceGroups.BCDForceGroup axisGroup = BCDForceGroups.AXIS_GROUPS[axisIndex];
+        BCDForceGroup axisGroup = BCDForceGroups.AXIS_GROUPS[axisIndex];
         final var boxName = axisGroup.axisName.copy();
         final var setter = SETTERS_3d[axisIndex];
         final var getter = GETTERS_3d[axisIndex];

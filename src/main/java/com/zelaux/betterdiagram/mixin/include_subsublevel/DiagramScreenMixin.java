@@ -3,7 +3,7 @@ package com.zelaux.betterdiagram.mixin.include_subsublevel;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDependencies;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
-import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ConstraintTree;
+import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
@@ -12,6 +12,7 @@ import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramD
 import dev.simulated_team.simulated.network.packets.contraption_diagram.RequestDiagramDataPacket;
 import foundry.veil.api.network.VeilPacketManager;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
@@ -23,6 +24,12 @@ public abstract class DiagramScreenMixin implements IDiagramScreenWithDependenci
 
     @Shadow
     private @Nullable DiagramDataPacket serverData;
+
+    @ModifyVariable(method = "renderCenterOfMass",at=@At(value = "STORE",ordinal = 0))
+    protected Vector3d renderCenterOfMass(Vector3d COM){
+        SubLevelDependenciesData dependenciesData = bcd$subLevelDependencies();
+        return CenterMassCalculator.locateMergedCenterOfMass(COM, dependenciesData);
+    }
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {

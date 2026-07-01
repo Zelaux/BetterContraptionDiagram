@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper;
 
+import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
@@ -41,7 +42,7 @@ public class RopeForceMapper extends AbstractForceMapper {
     }
 
     @Override
-    public void mergeForces(Forces origin, Forces toAttach) {
+    public void mergeForces(Forces origin, Forces toAttach, SubLevelDependenciesData subLevelDependenciesData) {
         //double sizeWithoutFirst = (clientRopeStrand.getPoints().size() - 2) * ServerRopeStrand.SEGMENT_LENGTH;
 
         var ropeStat = calcRopeStat(clientRopeStrand);

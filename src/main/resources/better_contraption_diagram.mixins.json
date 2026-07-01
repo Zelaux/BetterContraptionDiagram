@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "RemovedGuiUtilsMixin",
+    "accessors.FloatingBlockDataAccessors",
     "accessors.IDockingConnectorBlockEntity",
     "accessors.IDockingConnectorPair",
     "accessors.ISwivelBearingBlockEntity",
@@ -17,12 +18,16 @@
     "calculator.Calculator_DiagramDataPacket",
     "COM_view.com_view_GoggleOverlayRenderer",
     "feature.clientside_forces.DiagramScreenMixin",
+    "feature.create_contraption_mass.AbstractContraptionEntityMixin",
+    "feature.create_contraption_mass.ClientLevelPlotMixin",
+    "feature.extra_info_deliver.DiagramEntityMixin",
+    "feature.extra_info_deliver.FloatingBlockControllerExt",
     "feature.force_to_mass.DiagramScreenMixin",
     "fix.DiagramOpenPacketMixin",
     "include_subsublevel.DiagramDataPacketMixin",
     "include_subsublevel.RapierConstraintHandleMixin",
     "include_subsublevel.actor.SwivelBearingBlockEntityMixin",
-    "server.DiagramEntityMixin"
+    "server.DiagramEntityMixin",
   ],
   "client": [
     "BufferSourceMixin",
@@ -37,6 +42,7 @@
     "calculator.Calculator_DiagramStickyNote",
     "calculator.UpdateData_DiagramScreen",
     "COM_view.LevelRendererMixin",
+    "feature.clientside_forces.DiagramForceGroupToggleMixin",
     "include_subsublevel.DiagramScreenMixin",
     "leveldata.ClientPacketListenerMixin",
     "leveldata.DiagramEntityMixin",

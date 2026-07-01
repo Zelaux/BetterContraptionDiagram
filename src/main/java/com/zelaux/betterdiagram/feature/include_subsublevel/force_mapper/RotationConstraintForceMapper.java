@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper;
 
+import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ConstaintKind;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.LocalConstraint;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
@@ -81,7 +82,7 @@ public class RotationConstraintForceMapper extends LocalConstraint<RotaryConstra
     }
 
     @Override
-    public void mergeForces(Forces origin, Forces toAttach) {
+    public void mergeForces(Forces origin, Forces toAttach, SubLevelDependenciesData subLevelDependenciesData) {
         RotaryConstraintConfiguration configuration1 = projectedConfiguration.get();
 
         mergeForces(

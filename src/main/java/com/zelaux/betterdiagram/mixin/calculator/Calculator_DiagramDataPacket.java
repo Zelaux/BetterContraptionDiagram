@@ -14,9 +14,9 @@ public class Calculator_DiagramDataPacket {
     private static void mixin_handle(DiagramDataPacket packet, CallbackInfo ci) {
         final Minecraft minecraft = Minecraft.getInstance();
         final Screen screen = minecraft.screen;
-
+/*
         if(screen instanceof final CenterMassMovingScreen diagramScreen) {
             diagramScreen.diagramScreen.updateData(packet);
-        }
+        }*/
     }
 }

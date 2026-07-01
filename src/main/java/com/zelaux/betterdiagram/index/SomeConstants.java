@@ -9,9 +9,8 @@ import org.joml.Vector3dc;
 
 public interface SomeConstants {
     float ropePointMass=0.35f;
-    static int MAX_MATRIX_CACHE(){
-        return 16;
-    }
+    int DIAGRAM_TOGGLE_SIZE = 11;
+
 
     static double gravityScalar(ClientLevel level) {
         return gravityVector(level).length();

@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.feature.include_subsublevel.struct;
 
-import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.struct.BCDForceGroup;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
@@ -29,8 +29,11 @@ public class Forces extends Object2ObjectOpenHashMap<ForceGroup, List<QueuedForc
     public void putSingle(ForceGroup forceGroup, QueuedForceGroup.PointForce pointForce) {
         put(forceGroup, List.of(pointForce));
     }
+    public void putSingle(BCDForceGroup forceGroup, QueuedForceGroup.PointForce pointForce) {
+        put(forceGroup.group(), List.of(pointForce));
+    }
 
-    public void addForce(BCDForceGroups.BCDForceGroup forceGroup, QueuedForceGroup.PointForce pointForce) {
+    public void addForce(BCDForceGroup forceGroup, QueuedForceGroup.PointForce pointForce) {
         addForce(forceGroup.group(), pointForce);
     }
 

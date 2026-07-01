@@ -1,9 +1,11 @@
 package com.zelaux.betterdiagram.mixin;
 
 import com.zelaux.betterdiagram.Config;
+import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.struct.BlackHoleList;
 import com.zelaux.betterdiagram.struct.CounterBlackHoleList;
+import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.VecFormat;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
@@ -54,7 +56,10 @@ public abstract class DiagramScreenMixin {
     void addCenterOfMassTooltip(GuiGraphics graphics, int mouseX, int mouseY, int areaOriginX, int areaOriginY, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight, CallbackInfo ci) {
         if(!config.displayCenterOfMass()) return;
 
-        final Vector3d centerOfMass = new Vector3d(this.subLevel.logicalPose().rotationPoint());
+        final Vector3d centerOfMass = CenterMassCalculator.locateMergedCenterOfMass(
+            new Vector3d(this.subLevel.logicalPose().rotationPoint()),
+            ((DiagramScreenAccessors) this).bcd$subLevelDependencies()
+            );
         Vector3d plotSpacePoint = new Vector3d(centerOfMass);
         final Vector2d screenCoords = DiagramScreen.getScreenCoords(plotSpacePoint, orientation, cameraPos, projMatrix, areaWidth, areaHeight);
 

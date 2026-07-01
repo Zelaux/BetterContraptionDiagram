@@ -13,14 +13,12 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -37,7 +35,16 @@ import java.util.Optional;
 @MethodsReturnNonnullByDefault
 @EqualsAndHashCode
 public class BCDData {
-    public static final BCDData DEFAULT_VALUE = new BCDData(null, null, null, null, (byte) 7, OffCenterBlocksShowState.none,false);
+    public static final BCDData DEFAULT_VALUE = new BCDData(
+        null,
+        null,
+        null,
+        null,
+        (byte) 7,
+        OffCenterBlocksShowState.none,
+        false,
+        EnabledForces.empty()
+    );
     public static final StreamCodec<? super RegistryFriendlyByteBuf, Optional<BCDData>> STREAM_OPTIONAL_CODEC =
         ByteBufCodecs.TAG.map(
             x -> BCDData.SHORT_CODEC.parse(NbtOps.INSTANCE, x).result().orElse(null),
@@ -50,26 +57,17 @@ public class BCDData {
         );
     private static final Vector3d NULL_ECOM = new Vector3d();
     public static final Codec<BCDData> NON_NULL_CODEC = RecordCodecBuilder.create(i -> i.group(
-        SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", NULL_ECOM).xmap(x -> x, x -> x == null ? NULL_ECOM : x).forGetter(BCDData::eCOM_m),
-        Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask),
-        OffCenterBlocksShowState.CODEC.optionalFieldOf("offcenterShowState", OffCenterBlocksShowState.none).forGetter(BCDData::offCenterBlocksShowState),
-        Codec.BOOL.optionalFieldOf("shouldRenderMergedForces", false).forGetter(BCDData::shouldRenderMergedForces)
-    ).apply(i, (ecom, axisStates, offCenterBlocksShowState,shouldRenderMergedForces) ->
-        make(ecom == NULL_ECOM ? null : ecom,
-            axisStates,
-            offCenterBlocksShowState
-        ).withShouldRenderMergedForces(shouldRenderMergedForces))
+            SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", NULL_ECOM).xmap(x -> x, x -> x == null ? NULL_ECOM : x).forGetter(BCDData::eCOM_m),
+            Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask),
+            OffCenterBlocksShowState.CODEC.optionalFieldOf("offcenterShowState", OffCenterBlocksShowState.none).forGetter(BCDData::offCenterBlocksShowState),
+            Codec.BOOL.optionalFieldOf("shouldRenderMergedForces", false).forGetter(BCDData::shouldRenderMergedForces)
+        ).apply(i, (ecom, axisStates, offCenterBlocksShowState, shouldRenderMergedForces) ->
+            make(ecom == NULL_ECOM ? null : ecom,
+                axisStates,
+                offCenterBlocksShowState
+            ).withShouldRenderMergedForces(shouldRenderMergedForces))
     );
     public static final Codec<Optional<BCDData>> SHORT_CODEC = NON_NULL_CODEC.optionalFieldOf("data").codec();
-
-
-    private static <T> @Nullable List<T> arrToList(T @Nullable [] axisWeightStacks1) {
-        return axisWeightStacks1 == null ? null : List.of(axisWeightStacks1);
-    }
-
-    private static @Nullable List<Boolean> arrToList(boolean @Nullable [] values) {
-        return values == null ? null : List.of(values[0], values[1], values[2]);
-    }
 
 
     private static BCDData make(Vector3d x, int axisStates, OffCenterBlocksShowState offCenterBlocksShowState) {
@@ -96,9 +94,10 @@ public class BCDData {
     public int axisStatesMask;
 
     @NonNull
-    public BCDData.OffCenterBlocksShowState offCenterBlocksShowState;
+    public OffCenterBlocksShowState offCenterBlocksShowState;
 
     public boolean shouldRenderMergedForces;
+    public EnabledForces enabledForces;
 
 
     public int axisStateInt(int i) {return (axisStatesMask >> i) & 1;}
@@ -162,24 +161,4 @@ public class BCDData {
         return builder == null ? newValue : builder.build();
     }
 
-    public enum OffCenterBlocksShowState implements StringRepresentable {
-        none,
-        show,
-        showAll;
-        public final static OffCenterBlocksShowState[] all = values();
-        public static final Codec<OffCenterBlocksShowState> CODEC = StringRepresentable.fromEnum(OffCenterBlocksShowState::values);
-
-        public OffCenterBlocksShowState next() {
-            return all[(ordinal() + 1) % all.length];
-        }
-
-        public OffCenterBlocksShowState prev() {
-            return all[(ordinal() + all.length - 1) % all.length];
-        }
-
-        @Override
-        public String getSerializedName() {
-            return name();
-        }
-    }
 }

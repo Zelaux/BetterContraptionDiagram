@@ -1,6 +1,7 @@
 package com.zelaux.betterdiagram.extend.accessors;
 
 import com.zelaux.betterdiagram.extend.WithClientData;
+import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDependencies;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 
-public interface DiagramScreenAccessors extends ProjectionAccessor {
+public interface DiagramScreenAccessors extends ProjectionAccessor, IDiagramScreenWithDependencies {
     static @NotNull DiagramScreenAccessors of(@NotNull DiagramScreen self) {
         return CenterMassCalculator.accessors(self);
     }

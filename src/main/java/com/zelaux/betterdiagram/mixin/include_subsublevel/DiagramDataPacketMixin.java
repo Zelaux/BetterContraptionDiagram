@@ -2,20 +2,20 @@ package com.zelaux.betterdiagram.mixin.include_subsublevel;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.zelaux.betterdiagram.BetterContraptionDiagramClient;
 import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDependencies;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
+import com.zelaux.betterdiagram.struct.SubLevelWithDistance;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
-import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Mixin(DiagramDataPacket.class)
@@ -41,20 +41,19 @@ public abstract class DiagramDataPacketMixin {
             original.call(instance, data);
             return;
         }
-        List<SubLevel> list = dependenciesData.allSublevels()
-                                              .filter(x -> CenterMassCalculator.equals(CenterMassCalculator.centerOfMass(x), packetCOM))
-                                              .toList();
-        if(list.isEmpty()){
+        var found = dependenciesData.allSublevels()
+                                              .map(x -> new SubLevelWithDistance(x, CenterMassCalculator.centerOfMass(x).distance(packetCOM)))
+                                              .filter(x -> x.distance() < 0.0625f)
+                                              .sorted(Comparator.comparingDouble(SubLevelWithDistance::distance))
+                                              .findFirst();
+        if(found.isEmpty()) {
             return;
         }
-        if(list.size() > 1) {
-            BetterContraptionDiagramClient.LOGGER.warn("Something strange");
-        }
-        SubLevel subLevel = list.get(0);
-        if(subLevel==instance.subLevel){
+        SubLevel subLevel = found.get().subLevel();
+        if(subLevel == instance.subLevel) {
             //original.call(instance, data);
         }
-        dependenciesData.updateData(subLevel,data);
+        dependenciesData.updateData(subLevel, data);
 
     }
 

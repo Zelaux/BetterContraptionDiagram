@@ -2,11 +2,16 @@ package com.zelaux.betterdiagram.util;
 
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.data.BCDData;
+import com.zelaux.betterdiagram.data.EnabledForces;
+import com.zelaux.betterdiagram.data.OffCenterBlocksShowState;
 import com.zelaux.betterdiagram.data.OffCenteredBlock;
 import com.zelaux.betterdiagram.extend.ClientData;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
+import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
+import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
+import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.struct.Weights;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
@@ -68,7 +73,6 @@ public class CenterMassCalculator {
         if(data == null || data.eCOM() == null) return null;
 
         var expectedCOM = expectedCenterOfMass(clientData, subLevel);
-        Vector3d currentCOM = centerOfMass(subLevel);
         if(expectedCOM.equals(currentCOM, DELTA) || mass == 0) {
 
             clientData.bcdiagram$updateData(data
@@ -256,7 +260,7 @@ public class CenterMassCalculator {
 
         DiagramDataPacket serverData = accessors(self).betterContraptionDiagram$serverData();
         if(serverData == null || data == null) return null;
-        if(data.offCenterBlocksShowState == BCDData.OffCenterBlocksShowState.none) {
+        if(data.offCenterBlocksShowState == OffCenterBlocksShowState.none) {
             clientData.bcdiagram$updateData(data.withOffCenteredBlocks(null));
             return null;
         }
@@ -268,8 +272,8 @@ public class CenterMassCalculator {
             self.subLevel,
             data.axisStatesAsArray(null),
             new ArrayList<>(),
-            data.offCenterBlocksShowState == BCDData.OffCenterBlocksShowState.show ?
-                recalculateStacks(clientData, self.subLevel, serverData.mass()) :
+            data.offCenterBlocksShowState == OffCenterBlocksShowState.show ?
+                recalculateStacks(self) :
                 null
         );
         if(offCenteredBlocks.isEmpty()) return null;
@@ -298,6 +302,7 @@ public class CenterMassCalculator {
         calculateSumOfForcesMomentum(mergedDisplacement, sumOfForces, tmp1, new Vector3d(centerOfMass(subLevel1)), forEachForce);
     }
 
+    @Deprecated
     public static void calculateSumOfForcesMomentum(Vector3d mergedDisplacement, Vector3d sumOfForces, Vector3d tmp1, Vector3dc COM, Consumer<Consumer<QueuedForceGroup.PointForce>> forEachForce) {
         mergedDisplacement.zero();
         sumOfForces.zero();
@@ -312,6 +317,39 @@ public class CenterMassCalculator {
         });
         mergedDisplacement.set(sumOfForces).cross(sumOfMoments).div(sumOfForces.lengthSquared());
     }
+
+    public static Vector3d calculateMergedBalancePoint(SubLevelDependenciesData dependenciesData, BCDData data) {
+        if(dependenciesData == null) return null;
+        SubLevelGroup levelGroup = dependenciesData.constraintTree.subLevelGroup;
+        SubLevel mainSublevel = levelGroup.first();
+        Forces forces = dependenciesData.collectFixedForces(levelGroup);
+
+        var calculator = new MergedPointForceCalculator();
+        calculator.begin(centerOfMass(mainSublevel));
+        EnabledForces enabledForces = data.enabledForces.addBalance(ForceGroups.GRAVITY.get());
+        for(ForceGroup group : enabledForces.balance) {
+            var list = forces.get(group);
+            if(list == null) continue;
+            for(QueuedForceGroup.PointForce point : list) {
+                calculator.add(point);
+            }
+        }
+        calculator.endPlusCOM();
+        return calculator.displacement;
+    }
+
+    public static Vector3d locateMergedCenterOfMass(Vector3d COM, SubLevelDependenciesData dependenciesData) {
+        if(dependenciesData == null) return COM;
+        SubLevelGroup levelGroup = dependenciesData.constraintTree.subLevelGroup;
+        Forces forces = dependenciesData.collectFixedForces(levelGroup);
+        if(forces==null) return COM;
+        List<QueuedForceGroup.PointForce> pointForces = forces.get(ForceGroups.GRAVITY.get());
+        if(pointForces==null) return COM;
+
+        return COM.set(pointForces.getFirst().point());
+    }
+
+    public record SumOfForcesMomentumCache(Vector3d displacement, Vector3d force, Vector3d tmp) {}
 
     @Getter
     @AllArgsConstructor(access = AccessLevel.PRIVATE)

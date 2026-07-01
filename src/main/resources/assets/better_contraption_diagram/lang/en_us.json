@@ -10,8 +10,11 @@
   "better_contraption_diagram.axis_group.z": "Length",
   "force-group.rope": "Rope",
   "force-group.rope-mass": "Rope Mass",
+  "force-group.contraption-gravity": "Contraption Gravity",
   "force-group.merged-force": "Merged Force",
   "force-group.merged-force.displacement": "Merged Force Displacement: %s",
+
+  "bcd.balance-point": "Balance Point",
 
   "__COMMENT__": "--- DIAGRAM SECTION ---",
   "better_contraption_diagram.center_of_mass": "Center of Mass",

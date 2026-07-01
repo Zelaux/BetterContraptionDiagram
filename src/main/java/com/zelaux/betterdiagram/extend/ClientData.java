@@ -1,6 +1,7 @@
 package com.zelaux.betterdiagram.extend;
 
 import com.zelaux.betterdiagram.data.BCDData;
+import com.zelaux.betterdiagram.data.OffCenterBlocksShowState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +34,7 @@ public class ClientData implements WithClientData {
     }
 
     @NotNull
-    public BCDData.OffCenterBlocksShowState offCenteredView() {
+    public OffCenterBlocksShowState offCenteredView() {
         return bcdDataNotNull_readOnly().offCenterBlocksShowState;
     }
 

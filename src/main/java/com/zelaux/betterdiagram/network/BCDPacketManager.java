@@ -11,6 +11,7 @@ public class BCDPacketManager {
 
         INSTANCE.registerClientbound(DiagramOpenBCDDataPacket.TYPE, DiagramOpenBCDDataPacket.CODEC, DiagramOpenBCDDataPacket::handleClient, true);
         INSTANCE.registerServerbound(DiagramSaveBCDDataPacket.TYPE, DiagramSaveBCDDataPacket.CODEC, DiagramSaveBCDDataPacket::handleServer, true);
+        INSTANCE.registerClientbound(DiagramExtraDataPacket.TYPE, DiagramExtraDataPacket.STREAM_CODEC, DiagramExtraDataPacket::handleClient, true);
 
         INSTANCE.registerClientbound(ModAPIVersionPacket.TYPE_S2C, ModAPIVersionPacket.STREAM_CODEC, ModAPIVersionPacket::handleClient, true);
         INSTANCE.registerServerbound(ModAPIVersionPacket.TYPE_C2S, ModAPIVersionPacket.STREAM_CODEC, ModAPIVersionPacket::handleServer, true);

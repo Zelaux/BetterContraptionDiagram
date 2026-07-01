@@ -1,13 +1,22 @@
 package com.zelaux.betterdiagram.feature.include_subsublevel;
 
+import com.zelaux.betterdiagram.feature.create_contraption_mass.ClientLevelPlotExt;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ConstraintTree;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
+import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.index.SomeConstants;
+import com.zelaux.betterdiagram.network.DiagramExtraDataPacket;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
+import com.zelaux.betterdiagram.util.MergedPointForceCalculator;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
+import dev.ryanhcode.sable.api.physics.mass.MassTracker;
+import dev.ryanhcode.sable.api.sublevel.KinematicContraption;
 import dev.ryanhcode.sable.sublevel.SubLevel;
+import dev.ryanhcode.sable.sublevel.plot.LevelPlot;
+import dev.ryanhcode.sable.sublevel.plot.ServerLevelPlot;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -20,6 +29,7 @@ import net.createmod.catnip.animation.AnimationTickHolder;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -35,7 +45,7 @@ public class SubLevelDependenciesData {
     @Nullable
     public static SubLevelDependenciesData tryConstruct(SubLevel origin, int depth) {
         ConstraintTree tree = ConstraintTree.build(origin, depth);
-        if(tree.children.isEmpty() && tree.subLevelGroup.single()) return null;
+        //if(tree.children.isEmpty() && tree.subLevelGroup.single()) return null;
         return new SubLevelDependenciesData(tree);
     }
 
@@ -88,37 +98,58 @@ public class SubLevelDependenciesData {
 
     private @Nullable Forces collectAllForces(ConstraintTree tree) {
         SubLevelGroup subLevelGroup = tree.subLevelGroup;
-        var forces = collectForces(subLevelGroup);
+        var forces = collectFixedForces(subLevelGroup);
         if(forces == null) return null;
         for(ConstraintTree child : tree.children) {
             Forces childForces = collectAllForces(child);
             if(childForces == null) continue;
-            child.transitionConstraint.mergeForces(forces, childForces);
+            child.transitionConstraint.mergeForces(forces, childForces, this);
         }
         return forces;
     }
 
-    private @Nullable Forces collectForces(SubLevelGroup subLevelGroup) {
+    public @Nullable Forces collectFixedForces(SubLevelGroup subLevelGroup) {
         SubLevel mainSubLevel = subLevelGroup.all().getFirst();
 
-        Vector3d mergedDisplacement = new Vector3d();
-        Vector3d sumOfForces = new Vector3d();
-        CenterMassCalculator.calculateSumOfForcesMomentum(mergedDisplacement, sumOfForces, TMP1, CenterMassCalculator.centerOfMass(mainSubLevel), consumer -> {
-            for(SubLevel subLevel : subLevelGroup) {
-                Entry entry = get(subLevel);
-                if(entry.data == null) continue;
-                List<QueuedForceGroup.PointForce> pointForces = entry.data.forces().get(ForceGroups.GRAVITY.get());
-                if(pointForces == null) {
-                    updated = true;
-                    continue;
-                }
-                QueuedForceGroup.PointForce first = pointForces.getFirst();
-                consumer.accept(VecUtil.projectForce(mainSubLevel.logicalPose(), subLevel.logicalPose(), first));
-            }
-        });
-        mergedDisplacement.add(CenterMassCalculator.centerOfMass(mainSubLevel));
+        var mergedGravity = new MergedPointForceCalculator();
+        var gravityVector = SomeConstants.gravityVector(mainSubLevel.getLevel());
+        var contraptionGravityForce = new Vector3d();
+        var contraptionGravityDisplacement = new Vector3d();
+
+
+        mergedGravity.begin(CenterMassCalculator.centerOfMass(mainSubLevel));
 
         var forces = new Forces(0);
+
+        for(SubLevel subLevel : subLevelGroup) {
+            Entry entry = get(subLevel);
+            if(entry.data == null) continue;
+            List<QueuedForceGroup.PointForce> pointForces = entry.data.forces().get(ForceGroups.GRAVITY.get());
+            if(pointForces == null) {
+                updated = true;
+                continue;
+            }
+            QueuedForceGroup.PointForce first = pointForces.getFirst();
+            LevelPlot plot = subLevel.getPlot();
+            Collection<KinematicContraption> contraptions = plot instanceof ServerLevelPlot serverLevelPlot ? serverLevelPlot.getContraptions() : plot instanceof ClientLevelPlotExt levelPlot ? levelPlot.bcd$getContraptions() : null;
+            mergedGravity.add(VecUtil.projectForce(mainSubLevel.logicalPose(), subLevel.logicalPose(), first));
+            if(contraptions != null) {
+                for(KinematicContraption contraption : contraptions) {
+                    MassTracker massTracker = contraption.sable$getMassTracker();
+                    contraptionGravityDisplacement.set(contraption.sable$getPosition());
+
+                    gravityVector.mul(massTracker.getMass(), contraptionGravityForce);
+                    /*mergedGravity.add(
+                        VecUtil.projectPos(mainSubLevel.logicalPose(), subLevel.logicalPose(), contraptionGravityDisplacement),
+                        VecUtil.projectDirection(mainSubLevel.logicalPose(), subLevel.logicalPose(), contraptionGravityForce)
+                    );*/
+                    forces.putSingle(BCDForceGroups.CONTRAPTION_GRAVITY, new QueuedForceGroup.PointForce(new Vector3d(contraptionGravityDisplacement),new Vector3d(contraptionGravityForce)));
+                }
+            }
+        }
+
+        mergedGravity.endPlusCOM();
+
         boolean wasAny = false;
         for(SubLevel subLevel : subLevelGroup) {
             Entry entry = get(subLevel);
@@ -140,12 +171,16 @@ public class SubLevelDependenciesData {
             return null;
         }
 
-        forces.putSingle(ForceGroups.GRAVITY.get(), new QueuedForceGroup.PointForce(mergedDisplacement, sumOfForces));
+        forces.putSingle(ForceGroups.GRAVITY.get(), new QueuedForceGroup.PointForce(mergedGravity.displacement, mergedGravity.totalForce));
         return forces;
     }
 
     public Entry get(SubLevel subLevel) {
         return sublevelDataMap.get(subLevel.getUniqueId());
+    }
+
+    public Entry get(UUID subLevel) {
+        return sublevelDataMap.get(subLevel);
     }
 
 
@@ -164,6 +199,14 @@ public class SubLevelDependenciesData {
         return sublevelDataMap.values().stream().map(Entry::subLevel);
     }
 
+    public boolean updateData(UUID sublevel, DiagramExtraDataPacket extraDataPacket) {
+        Entry entry = get(sublevel);
+        if(entry == null) return false;
+        entry.extraData = extraDataPacket;
+        updated = true;
+        return true;
+    }
+
     @ToString
     @FieldDefaults(level = AccessLevel.PUBLIC)
     @Getter
@@ -171,6 +214,8 @@ public class SubLevelDependenciesData {
         SubLevel subLevel;
         @Nullable
         DiagramDataPacket data;
+        @Nullable
+        DiagramExtraDataPacket extraData;
 
         public Entry(SubLevel subLevel) {
             this.subLevel = subLevel;

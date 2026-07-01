@@ -43,6 +43,8 @@ public interface BCDTextures {
 
         BCDTexture DIAGRAM_ICON_WEIGHT = gridCell(atlas, 0, 2);
         BCDTexture DIAGRAM_ICON_WEIGHT_SHADOW = gridCell(atlas, 1, 2);
+        BCDTexture DIAGRAM_ICON_WEIGHT_CROSS = gridCell(atlas, 2, 4);
+
         BCDTexture DIAGRAM_ICON_SMALL_WEIGHT = gridCell(atlas, 2, 2);
         BCDTexture DIAGRAM_ICON_SMALL_WEIGHT_SHADOW = gridCell(atlas, 3, 2);
 
