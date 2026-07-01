@@ -33,10 +33,7 @@ import org.joml.Runtime;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class CenterMassCalculator {
@@ -55,10 +52,18 @@ public class CenterMassCalculator {
         var accessors = accessors(screen);
         DiagramDataPacket diagramDataPacket = accessors.betterContraptionDiagram$serverData();
         if(diagramDataPacket == null) return null;
-        return recalculateStacks((accessors.betterContraptionDiagram$clientData()), screen.subLevel, diagramDataPacket.mass());
+        SubLevelDependenciesData dependenciesData = accessors.bcd$subLevelDependencies();
+        WithClientData clientData = accessors.betterContraptionDiagram$clientData();
+        Vector3d COM = calculateMergedBalancePoint(dependenciesData, clientData.bcdDataNotNull_readOnly());
+        return recalculateStacks(clientData, screen.subLevel, diagramDataPacket.mass(), Objects.requireNonNullElse(COM, centerOfMass(screen.subLevel)));
     }
 
-    public static Weights[] recalculateStacks(WithClientData clientData, ClientSubLevel subLevel, double mass) {
+    public static Weights[] recalculateStacks0(WithClientData clientData, ClientSubLevel subLevel, double mass) {
+        Vector3dc currentCOM = centerOfMass(subLevel);
+        return recalculateStacks(clientData, subLevel, mass, currentCOM);
+    }
+
+    public static Weights @Nullable [] recalculateStacks(WithClientData clientData, ClientSubLevel subLevel, double mass, Vector3dc currentCOM) {
         BCDData data = clientData.bcdDataOrTryDefault();
         if(data == null || data.eCOM() == null) return null;
 
@@ -245,7 +250,8 @@ public class CenterMassCalculator {
         return list;
     }
 
-    public static @Nullable ArrayList<OffCenteredBlock> getOrCreateOffCenteredBlocks(WithClientData clientData, @NotNull DiagramScreen self) {
+    public static @Nullable ArrayList<OffCenteredBlock> getOrCreateOffCenteredBlocks(@NotNull DiagramScreen self) {
+        WithClientData clientData = accessors(self).betterContraptionDiagram$clientData();
         var data = clientData.bcdDataOrTryDefault();
 
         DiagramDataPacket serverData = accessors(self).betterContraptionDiagram$serverData();

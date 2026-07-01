@@ -217,13 +217,12 @@ public class MixinCalculatorUtil {
      * For HotSwap purpose
      *
      */
-    public static HoveredOffCenteredBlock renderOffCentered(WithClientData withClientData,
-                                                            @NotNull DiagramScreen self, List<FormattedText> tooltipList,
+    public static HoveredOffCenteredBlock renderOffCentered(@NotNull DiagramScreen self, List<FormattedText> tooltipList,
                                                             ProjectionAccessor accessor,
                                                             GuiGraphics graphics,
                                                             int mouseX,
                                                             int mouseY, boolean shouldClipWeights) {
-        ArrayList<OffCenteredBlock> blocks = CenterMassCalculator.getOrCreateOffCenteredBlocks(withClientData, self);
+        ArrayList<OffCenteredBlock> blocks = CenterMassCalculator.getOrCreateOffCenteredBlocks( self);
         if(blocks == null || blocks.isEmpty()) return null;
         final int shadowColor = 0xfff9f2de;
         Vector3d tmp = new Vector3d();

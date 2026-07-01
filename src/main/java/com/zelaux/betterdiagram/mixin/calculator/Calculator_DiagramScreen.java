@@ -142,7 +142,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                                    int mouseY,
                                    boolean shouldClipWeights, ProjectionAccessor accessor) {
 
-        var newHovered = MixinCalculatorUtil.renderOffCentered((WithClientData) diagram, self(), tooltipList, accessor, graphics, mouseX, mouseY, shouldClipWeights);
+        var newHovered = MixinCalculatorUtil.renderOffCentered(self(), tooltipList, accessor, graphics, mouseX, mouseY, shouldClipWeights);
         if(!shouldClipWeights) {
             OffCenteredBlockTooltipHandler.addTooltip(
                 self(),
