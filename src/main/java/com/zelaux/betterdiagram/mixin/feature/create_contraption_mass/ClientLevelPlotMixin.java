@@ -11,7 +11,7 @@ import java.util.List;
 @Mixin(ClientLevelPlot.class)
 public class ClientLevelPlotMixin implements ClientLevelPlotExt {
 
-    private final List<KinematicContraption> bcd$contraptions =new ObjectArrayList<>();
+    private final List<KinematicContraption> bcd$contraptions = new ObjectArrayList<>();
 
     @Override
     @Unique

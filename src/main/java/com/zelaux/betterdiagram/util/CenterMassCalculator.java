@@ -38,7 +38,10 @@ import org.joml.Runtime;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class CenterMassCalculator {
     public static final float DELTA = 0.00001f;
@@ -306,9 +309,9 @@ public class CenterMassCalculator {
         if(dependenciesData == null) return COM;
         SubLevelGroup levelGroup = dependenciesData.constraintTree.subLevelGroup;
         Forces forces = dependenciesData.collectFixedForces(levelGroup);
-        if(forces==null) return COM;
+        if(forces == null) return COM;
         List<QueuedForceGroup.PointForce> pointForces = forces.get(ForceGroups.GRAVITY.get());
-        if(pointForces==null) return COM;
+        if(pointForces == null) return COM;
 
         return COM.set(pointForces.getFirst().point());
     }

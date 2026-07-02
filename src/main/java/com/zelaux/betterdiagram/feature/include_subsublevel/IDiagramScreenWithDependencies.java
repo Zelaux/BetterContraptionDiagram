@@ -6,5 +6,6 @@ import org.jetbrains.annotations.Nullable;
 public interface IDiagramScreenWithDependencies {
     @Nullable
     SubLevelDependenciesData bcd$subLevelDependencies();
-    void bcd$subLevelDependencies( SubLevelDependenciesData data);
+
+    void bcd$subLevelDependencies(SubLevelDependenciesData data);
 }

@@ -60,22 +60,26 @@ public class EnabledForces {
         if(!display.contains(group)) return this;
         return new EnabledForces(removeFromSet(display, group), balance);
     }
+
     public EnabledForces removeBalance(ForceGroup group) {
         if(!balance.contains(group)) return this;
-        return new EnabledForces(display,removeFromSet(balance, group));
+        return new EnabledForces(display, removeFromSet(balance, group));
     }
+
     public EnabledForces addDisplay(BCDForceGroup group) {
         if(display.contains(group)) return this;
         return new EnabledForces(addToSet(display, group), balance);
     }
+
     public EnabledForces addBalance(ForceGroup group) {
         if(balance.contains(group)) return this;
-        return new EnabledForces(display,addToSet(balance, group));
+        return new EnabledForces(display, addToSet(balance, group));
     }
 
     private <T> @NotNull ImmutableSet<T> addToSet(ImmutableSet<T> oldSet, T newValue) {
         return ImmutableSet.<T>builder().addAll(oldSet).add(newValue).build();
     }
+
     private <T> @NotNull ImmutableSet<T> removeFromSet(ImmutableSet<T> oldSet, T removeValue) {
         var builder = ImmutableSet.<T>builder();
         for(T value : oldSet) {

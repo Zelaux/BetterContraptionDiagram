@@ -75,8 +75,8 @@ public class ConstraintBuilder {
                     if(mappers == null) continue;
                     for(final var mapper : mappers) {
                         if(mapper.originSubLevel() != current) continue;
-                        SubLevel b= mapper.toAttachSubLevel();
-                        if (mapper.fixed()){
+                        SubLevel b = mapper.toAttachSubLevel();
+                        if(mapper.fixed()) {
                             Ref<SubLevelGroup> bMergedRef = subLevel2Merged.computeIfAbsent(b, DEFAULT_REF);
                             var cMerged = currentMergedRef.value;
                             var bMerged = bMergedRef.value;
@@ -101,11 +101,11 @@ public class ConstraintBuilder {
             SubLevelGroup value = ref.value();
             List<SubLevel> all = value.all();
             int index = all.indexOf(origin);
-            if(index>=0){
+            if(index >= 0) {
                 if(all.getFirst() != origin) {
                     ArrayList<SubLevel> subLevels = new ArrayList<>(all);
-                    subLevels.set(index,subLevels.get(0));
-                    subLevels.set(0,origin);
+                    subLevels.set(index, subLevels.get(0));
+                    subLevels.set(0, origin);
 
                     ref.setValue(new SubLevelGroup.Many(subLevels));
                 }

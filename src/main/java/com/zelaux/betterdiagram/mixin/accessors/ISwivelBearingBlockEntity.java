@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.gen.*;
 @Mixin(SwivelBearingBlockEntity.class)
 public interface ISwivelBearingBlockEntity {
     @Invoker("attachConstraints")
-     void bcd$attachConstraints(final @Nullable ServerSubLevel plateSubLevel, final Vector3d attachPos);
+    void bcd$attachConstraints(final @Nullable ServerSubLevel plateSubLevel, final Vector3d attachPos);
 
     @Nullable
     @Invoker("getAttachedSubLevel")
@@ -23,6 +23,6 @@ public interface ISwivelBearingBlockEntity {
     SubLevel bcd$getContainingSubLevel();
 
     @Accessor("lockedDefaultOption")
-     ScrollOptionBehaviour<SwivelBearingBlockEntity.LockingSetting> bcd$lockedDefaultOption();
+    ScrollOptionBehaviour<SwivelBearingBlockEntity.LockingSetting> bcd$lockedDefaultOption();
 
 }

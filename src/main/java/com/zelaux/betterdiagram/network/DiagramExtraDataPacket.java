@@ -53,17 +53,17 @@ public record DiagramExtraDataPacket(UUID sublevel, Matrix3dc inertiaTensor,
 
     private static @NotNull ObjectArrayList<ClusterInfo> collectClustersInfo(List<FloatingClusterContainer> floatingClusterContainers) {
         var clusters = new ObjectArrayList<ClusterInfo>();
-        var rawCluster=new Object2DoubleOpenHashMap<FloatingBlockMaterial>();
+        var rawCluster = new Object2DoubleOpenHashMap<FloatingBlockMaterial>();
         for(FloatingClusterContainer container : floatingClusterContainers) {
             for(FloatingBlockCluster cluster : container.clusters) {
                 FloatingBlockDataAccessors accessors = (FloatingBlockDataAccessors) cluster.getBlockData();
 
                 double scale = accessors.bcd$totalScale();
                 FloatingBlockMaterial material = cluster.getMaterial();
-                if (material.scaleWithPressure()) {
+                if(material.scaleWithPressure()) {
                     scale *= accessors.bcd$latestPressureScale();
                 }
-                rawCluster.addTo(material,scale);
+                rawCluster.addTo(material, scale);
 
             }
         }
@@ -79,8 +79,8 @@ public record DiagramExtraDataPacket(UUID sublevel, Matrix3dc inertiaTensor,
     public void handleClient(final ClientPacketContext context) {
         if(Minecraft.getInstance().screen instanceof IDiagramScreenWithDependencies screenWithDependencies) {
             SubLevelDependenciesData dependenciesData = screenWithDependencies.bcd$subLevelDependencies();
-            if(dependenciesData!=null){
-                dependenciesData.updateData(sublevel,this);
+            if(dependenciesData != null) {
+                dependenciesData.updateData(sublevel, this);
             }
         }
     }

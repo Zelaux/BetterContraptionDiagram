@@ -10,7 +10,8 @@ import java.util.UUID;
 @Mixin(SwivelBearingPlateBlockEntity.class)
 public interface ISwivelBearingPlateBlockEntity {
     @Accessor("parent")
-     BlockPos bcd$parent();
+    BlockPos bcd$parent();
+
     @Accessor("parentSubLevelId")
     UUID bcd$parentSubLevelId();
 

@@ -47,12 +47,12 @@ public interface Colors {
      * @param gradient colors
      *
      */
-    static Color mixMany(@Range(from = 0,to = 1) float progress, Color... gradient) {
+    static Color mixMany(@Range(from = 0, to = 1) float progress, Color... gradient) {
         float beforeOne = Math.nextDown(1f);
-        progress*= beforeOne;//transforming into [0;1)
-        float v = progress * (gradient.length-1);
-        int i= (int) v;
-        float p=(v-i);
-        return Color.mixColors(gradient[i],gradient[i+1],p);
+        progress *= beforeOne;//transforming into [0;1)
+        float v = progress * (gradient.length - 1);
+        int i = (int) v;
+        float p = (v - i);
+        return Color.mixColors(gradient[i], gradient[i + 1], p);
     }
 }

@@ -44,14 +44,16 @@ public class WrappedTooltipComponent implements MockFormattedText, TooltipCompon
 
     }
 
-    public MockComponent wrapComponent(){
+    public MockComponent wrapComponent() {
         return new MockComponent(this);
     }
+
     public interface Wrappable extends ClientTooltipComponent {
         default WrappedTooltipComponent wrap() {
             return new WrappedTooltipComponent(this);
         }
-        default MockComponent wrapComponent(){
+
+        default MockComponent wrapComponent() {
             return new MockComponent(wrap());
         }
     }

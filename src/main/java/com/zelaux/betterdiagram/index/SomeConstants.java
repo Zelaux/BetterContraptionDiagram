@@ -6,7 +6,7 @@ import net.minecraft.world.level.Level;
 import org.joml.Vector3dc;
 
 public interface SomeConstants {
-    float ropePointMass=0.35f;
+    float ropePointMass = 0.35f;
     int DIAGRAM_TOGGLE_SIZE = 11;
 
 
@@ -14,6 +14,7 @@ public interface SomeConstants {
         return gravityVector(level).length();
     }
 
-    static Vector3dc gravityVector(Level level) {return DimensionPhysicsData.getGravity(level);
+    static Vector3dc gravityVector(Level level) {
+        return DimensionPhysicsData.getGravity(level);
     }
 }

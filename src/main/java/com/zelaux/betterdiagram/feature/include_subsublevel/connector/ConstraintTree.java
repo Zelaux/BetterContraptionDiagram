@@ -19,10 +19,10 @@ public class ConstraintTree {
     public final Object2IntOpenHashMap<AbstractForceMapper> childrenSet = new Object2IntOpenHashMap<>();
 
     public static ConstraintTree build(SubLevel subLevel, int maxDepth) {
-        return ConstraintBuilder.buildTree(subLevel,maxDepth+10);
+        return ConstraintBuilder.buildTree(subLevel, maxDepth + 10);
     }
 
-    public boolean hasChild(AbstractForceMapper constraint){
+    public boolean hasChild(AbstractForceMapper constraint) {
         return childrenSet.containsKey(constraint);
     }
 
@@ -36,9 +36,9 @@ public class ConstraintTree {
             subLevelGroup,
             transitionConstraint
         );
-        if(index==children.size()){
+        if(index == children.size()) {
             children.add(tree);
-        }else children.set(index, tree);
+        } else children.set(index, tree);
         return tree;
     }
 
@@ -52,6 +52,6 @@ public class ConstraintTree {
     }
 
     public boolean isValid() {
-        return parent==null || parent.hasChild(this.transitionConstraint);
+        return parent == null || parent.hasChild(this.transitionConstraint);
     }
 }

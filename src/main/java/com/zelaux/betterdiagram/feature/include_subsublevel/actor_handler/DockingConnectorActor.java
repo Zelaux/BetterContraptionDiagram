@@ -32,7 +32,7 @@ public class DockingConnectorActor implements ActorHandler {
         if(levels == null) return null;
         SubLevel b = levels.iterator().next();
         IDockingConnectorBlockEntity blockEntity = (IDockingConnectorBlockEntity) entity;
-        int x=0;
+        int x = 0;
         //if(blockEntity.bcd$state() != DockingConnectorBlockEntity.DockingConnectorState.LOCKING) return null;
         DockingConnectorBlockEntity dock1 = entity, dock2 = entity.getOtherConnector();
         if(dock2 == null) return null;

@@ -141,7 +141,7 @@ public class SubLevelDependenciesData {
                         VecUtil.projectPos(mainSubLevel.logicalPose(), subLevel.logicalPose(), contraptionGravityDisplacement),
                         VecUtil.projectDirection(mainSubLevel.logicalPose(), subLevel.logicalPose(), contraptionGravityForce)
                     );*/
-                    forces.putSingle(BCDForceGroups.CONTRAPTION_GRAVITY, new QueuedForceGroup.PointForce(new Vector3d(contraptionGravityDisplacement),new Vector3d(contraptionGravityForce)));
+                    forces.putSingle(BCDForceGroups.CONTRAPTION_GRAVITY, new QueuedForceGroup.PointForce(new Vector3d(contraptionGravityDisplacement), new Vector3d(contraptionGravityForce)));
                 }
             }
         }

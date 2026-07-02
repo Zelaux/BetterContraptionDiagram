@@ -69,11 +69,11 @@ public class RotationConstraintForceMapper extends LocalConstraint<RotaryConstra
                     leftForce.set(force.force());
                 } else {
                     force.force().fma(-tangentProj, force.force(), leftForce);
-                    origin.addProjectedForce(forceGroup,toAttachPose,originPose,
+                    origin.addProjectedForce(forceGroup, toAttachPose, originPose,
                         new QueuedForceGroup.PointForce(force.point(), tangentAxis.mul(tangentProj, new Vector3d()))
                     );
                 }
-                if(false && !CenterMassCalculator.equals(leftForce.lengthSquared(), 0)){
+                if(false && !CenterMassCalculator.equals(leftForce.lengthSquared(), 0)) {
                     origin.addForce(forceGroup, new QueuedForceGroup.PointForce(force.point(), new Vector3d(leftForce)));
                 }
 

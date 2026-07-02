@@ -7,10 +7,11 @@ import java.util.List;
 public interface ClientLevelPlotExt {
     List<KinematicContraption> bcd$getContraptions();
 
-    default void addContraption(KinematicContraption contraption){
+    default void addContraption(KinematicContraption contraption) {
         bcd$getContraptions().add(contraption);
     }
-    default void removeContraption(KinematicContraption contraption){
+
+    default void removeContraption(KinematicContraption contraption) {
         bcd$getContraptions().remove(contraption);
     }
 }

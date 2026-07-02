@@ -149,8 +149,8 @@ public class RopeForceMapper extends AbstractForceMapper {
         return new RopeStat(
             totalExtension,
             lenStat,
-            equalySpacedIndex<0?lastI-1:equalySpacedIndex,
-            equalySpacedIndex2<0?lastI-1:equalySpacedIndex2,
+            equalySpacedIndex < 0 ? lastI - 1 : equalySpacedIndex,
+            equalySpacedIndex2 < 0 ? lastI - 1 : equalySpacedIndex2,
             singleDirected,
             maxDistance,
             minDistance,

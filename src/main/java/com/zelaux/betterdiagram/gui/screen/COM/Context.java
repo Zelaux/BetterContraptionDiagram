@@ -71,7 +71,9 @@ public class Context {
         return new Context(new Entry[]{
             Entry.makeEntry(Direction.Axis.X), Entry.makeEntry(Direction.Axis.Y), Entry.makeEntry(Direction.Axis.Z)
         }, ItemStack.EMPTY);
-    }    private final Lazy<COMPairs> pairsReload = Lazy.of(() -> {
+    }
+
+    private final Lazy<COMPairs> pairsReload = Lazy.of(() -> {
         pairs.reload();
         return pairs;
     });
@@ -156,8 +158,6 @@ public class Context {
             return new COMPair(pair.getKey(), pair.getValue());
         }
     }
-
-
 
 
 }

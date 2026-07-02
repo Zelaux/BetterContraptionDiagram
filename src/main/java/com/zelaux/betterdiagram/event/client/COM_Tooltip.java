@@ -191,12 +191,12 @@ public class COM_Tooltip {
         MutableComponent symmetryComponent;
         if(entry.rotationSymmetryMask == TransformationPair.fullRotationFlag) {
             symmetryComponent = translatable("better_contraption_diagram.item.tooltip.com.full-rotation-symmetric");
-        } else if(entry.symmetricPairs.size()>0) {
+        } else if(entry.symmetricPairs.size() > 0) {
             symmetryComponent = translatable("better_contraption_diagram.item.tooltip.com.amount-of-symmetric", entry.symmetricPairs.size());
-        }else{
-            symmetryComponent=literal("");
+        } else {
+            symmetryComponent = literal("");
         }
-        symmetryComponent=symmetryComponent.withStyle(ChatFormatting.DARK_GRAY);
+        symmetryComponent = symmetryComponent.withStyle(ChatFormatting.DARK_GRAY);
         return literal("   ")
             .append(
                 translatable("better_contraption_diagram.item.tooltip.com.non-trivial", position, symmetryComponent)

@@ -12,12 +12,12 @@ import org.spongepowered.asm.mixin.*;
 })
 public abstract class MassTrackerLambdas implements BlockPropertiesComputers.Lambda0Access_State_BlockGetter_X<Vector3dc> {
     @Shadow
-    protected static Vector3dc lambda$apply$0(BlockState par1, BlockGetter par2, int par3){throw null;}
+    protected static Vector3dc lambda$apply$0(BlockState par1, BlockGetter par2, int par3) {throw null;}
 
 
     @Unique
     @Override
-    public Vector3dc bcd$lambda$apply$0(BlockState par1, BlockGetter par2, int par3){
+    public Vector3dc bcd$lambda$apply$0(BlockState par1, BlockGetter par2, int par3) {
         return lambda$apply$0(par1, par2, par3);
     }
 

@@ -24,7 +24,7 @@ public abstract class DiagramDataPacketMixin {
         method = "handle(Ldev/simulated_team/simulated/network/packets/contraption_diagram/DiagramDataPacket;)V",
         at = @At(value = "INVOKE", target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;updateData(Ldev/simulated_team/simulated/network/packets/contraption_diagram/DiagramDataPacket;)V")
     )
-    private static void handle(final DiagramScreen instance,final DiagramDataPacket data, Operation<Void> original) {
+    private static void handle(final DiagramScreen instance, final DiagramDataPacket data, Operation<Void> original) {
         List<QueuedForceGroup.PointForce> gravity = data.forces().get(ForceGroups.GRAVITY.get());
         if(gravity == null || gravity.size() != 1) {
             original.call(instance, data);
@@ -37,7 +37,7 @@ public abstract class DiagramDataPacketMixin {
             return;
         }
         SubLevelDependenciesData dependenciesData = dependencies.bcd$subLevelDependencies();
-        if(dependenciesData==null) {
+        if(dependenciesData == null) {
             original.call(instance, data);
             return;
         }

@@ -87,7 +87,7 @@ public abstract class DiagramScreenMixin extends AbstractSimiScreen {
     @Inject(method = "addForceToggleWidgets", at = @At("TAIL"))
     protected void addForceToggleWidgets_scroll(int diagramX, int diagramY, CallbackInfo ci) {
         var list = forceToggleWidgets;
-        bcd$forceToggleList = new DiagramForceGroupToggleList(Minecraft.getInstance(), SimGUITextures.DIAGRAM_PAPER.width, 11*8, 11);
+        bcd$forceToggleList = new DiagramForceGroupToggleList(Minecraft.getInstance(), SimGUITextures.DIAGRAM_PAPER.width, 11 * 8, 11);
         bcd$forceToggleList.setPosition(list.get(0).getX(), list.get(0).getY());
         for(DiagramForceGroupToggle toggle : list) {
             bcd$forceToggleList.addEntry(toggle);
@@ -95,20 +95,24 @@ public abstract class DiagramScreenMixin extends AbstractSimiScreen {
         removeWidgets(list);
         addWidget(bcd$forceToggleList);
     }
-    @Inject(method = "renderWindow", at = @At(value = "FIELD",target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;forceToggleWidgets:Ljava/util/List;",ordinal = 0))
+
+    @Inject(method = "renderWindow", at = @At(value = "FIELD", target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;forceToggleWidgets:Ljava/util/List;", ordinal = 0))
     protected void renderWindow_initPosition(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        bcd$forceToggleList.renderTabs(graphics,mouseX,mouseY,partialTicks);
+        bcd$forceToggleList.renderTabs(graphics, mouseX, mouseY, partialTicks);
 
     }
+
     @WrapOperation(method = "renderWindow", at = @At(value = "INVOKE", target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramForceGroupToggle;renderTab(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"))
     protected void renderWindow_initPosition(DiagramForceGroupToggle instance, GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks, Operation<Void> original) {
     }
-    @Inject(method = "renderWindow", at = @At(value = "FIELD",target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;forceToggleWidgets:Ljava/util/List;",ordinal = 1))
+
+    @Inject(method = "renderWindow", at = @At(value = "FIELD", target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;forceToggleWidgets:Ljava/util/List;", ordinal = 1))
     protected void renderWindow_renderScroll(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        bcd$forceToggleList.renderItems(graphics,mouseX,mouseY,partialTicks);
+        bcd$forceToggleList.renderItems(graphics, mouseX, mouseY, partialTicks);
     }
-    @WrapOperation(method = "renderWindow",at= @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;",ordinal = 1))
-    private Iterator<DiagramForceGroupToggle> renderWindow_doNotRenderDefault(List<DiagramForceGroupToggle> instance, Operation<Iterator<DiagramForceGroupToggle>> original){
+
+    @WrapOperation(method = "renderWindow", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;", ordinal = 1))
+    private Iterator<DiagramForceGroupToggle> renderWindow_doNotRenderDefault(List<DiagramForceGroupToggle> instance, Operation<Iterator<DiagramForceGroupToggle>> original) {
         original.call(instance);
         return Collections.emptyIterator();
     }

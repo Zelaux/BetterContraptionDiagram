@@ -34,7 +34,8 @@ public class MergedPointForceCalculator {
         }
         displacement.set(totalForce).cross(totalTorque).div(scalar);
     }
-    public void endPlusCOM(){
+
+    public void endPlusCOM() {
         end();
         displacement.add(COM);
     }
@@ -42,6 +43,7 @@ public class MergedPointForceCalculator {
     public void add(QueuedForceGroup.PointForce pointForce) {
         add(pointForce.point(), pointForce.force());
     }
+
     public void addAll(Iterable<QueuedForceGroup.PointForce> forces) {
         forces.forEach(this::add);
     }

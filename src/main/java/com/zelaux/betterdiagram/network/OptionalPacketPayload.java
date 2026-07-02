@@ -11,20 +11,21 @@ import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 @SuppressWarnings("UnstableApiUsage")
 public interface OptionalPacketPayload {
-    default void trySend(ServerPlayer player){
+    default void trySend(ServerPlayer player) {
         CustomPacketPayload payload = (CustomPacketPayload) this;
-        if(NetworkRegistry.hasChannel(player.connection,payload.type().id())) {
+        if(NetworkRegistry.hasChannel(player.connection, payload.type().id())) {
             player.connection.send(new ClientboundCustomPayloadPacket(payload));
         }
     }
-    default void trySendServer(){
+
+    default void trySendServer() {
         Minecraft instance = Minecraft.getInstance();
-        if(instance==null)return;
+        if(instance == null) return;
         ClientPacketListener connection = instance.getConnection();
-        if(connection==null)return;
+        if(connection == null) return;
         VeilPacketManager.server().sendPacket();
         CustomPacketPayload payload = (CustomPacketPayload) this;
-        if(NetworkRegistry.hasChannel(connection,payload.type().id())) {
+        if(NetworkRegistry.hasChannel(connection, payload.type().id())) {
             connection.send(new ServerboundCustomPayloadPacket(payload));
         }
     }

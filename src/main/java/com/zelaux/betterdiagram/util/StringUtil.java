@@ -21,14 +21,15 @@ public class StringUtil {
     public static @NotNull DecimalFormat makeFormat(String pattern) {
         return makeFormat(pattern, false);
     }
+
     public static @NotNull DecimalFormat makeFormat(String pattern, boolean parsable) {
 
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.applyPattern(pattern);
-        if(!parsable){
+        if(!parsable) {
             decimalFormat.setGroupingSize(3);
             decimalFormat.setGroupingUsed(true);
-        }else{
+        } else {
             decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
         }
         return decimalFormat;

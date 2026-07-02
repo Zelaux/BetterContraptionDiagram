@@ -167,6 +167,7 @@ public class VecUtil {
 
         return new QueuedForceGroup.PointForce(localPointB, localForceB);
     }
+
     public static Vector3d projectPos(Pose3dc poseB, Pose3dc poseA, Vector3dc posInA) {
         //force to world
         Vector3d worldPoint = projectToWorld(poseA, posInA);

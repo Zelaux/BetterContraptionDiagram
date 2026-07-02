@@ -50,7 +50,7 @@ public class LevelData {
         File file = infoFile;
         infoFile.getParentFile().mkdirs();
         try(var stream = new FileOutputStream(file)) {
-            stream.write((CURRENT_TICK + "=" + currentTick+"\n").getBytes(StandardCharsets.UTF_8));
+            stream.write((CURRENT_TICK + "=" + currentTick + "\n").getBytes(StandardCharsets.UTF_8));
         } catch(Exception ignore) {
 
         }

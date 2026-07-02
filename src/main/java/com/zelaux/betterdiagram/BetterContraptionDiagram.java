@@ -2,11 +2,11 @@ package com.zelaux.betterdiagram;
 
 import com.mojang.logging.LogUtils;
 import com.zelaux.betterdiagram.command.ServerHelpers;
-import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.RopeActor;
-import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.DockingConnectorActor;
+import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.RopeActor;
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.SwivelBearingActor;
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.SwivelBearingPlateActor;
+import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
 import com.zelaux.betterdiagram.network.BCDPacketManager;
 import com.zelaux.betterdiagram.network.HelloMessage;
 import com.zelaux.betterdiagram.network.ModAPIVersionPacket;
@@ -68,7 +68,7 @@ public class BetterContraptionDiagram {
     }
 
     @SubscribeEvent
-    void syncHello(OnDatapackSyncEvent event){
+    void syncHello(OnDatapackSyncEvent event) {
         if(event.getPlayer() == null) return;
         HelloMessage.INSTANCE.trySend(event.getPlayer());
         ModAPIVersionPacket.SERVER_TO_CLIENT.trySend(event.getPlayer());
@@ -77,6 +77,6 @@ public class BetterContraptionDiagram {
 
     @SubscribeEvent
     private void registerResqueCommand(RegisterCommandsEvent event) {
-        ServerHelpers.register(event.getDispatcher(),event.getBuildContext());
+        ServerHelpers.register(event.getDispatcher(), event.getBuildContext());
     }
 }

@@ -117,10 +117,10 @@ public class ServerHelpers {
             .map(entry -> {
                 BitSet bitSet = entry.accessors.usedIndices();
                 ArrayList<ChunkPos> newChunk = new ArrayList<>();
-                for(int i = bitSet.nextSetBit(0); i >= 0; i = bitSet.nextSetBit(i+1)) {
+                for(int i = bitSet.nextSetBit(0); i >= 0; i = bitSet.nextSetBit(i + 1)) {
                     // return localX | (localZ << LOG_SIDE_LENGTH);
                     int mask = ~(-1 << SubLevelRegionFile.LOG_SIDE_LENGTH);
-                    int z = (i >> SubLevelRegionFile.LOG_SIDE_LENGTH)&mask;
+                    int z = (i >> SubLevelRegionFile.LOG_SIDE_LENGTH) & mask;
                     int x = i & mask;
                     newChunk.add(new ChunkPos(
                         entry.chunkPos.x + x,
@@ -131,7 +131,7 @@ public class ServerHelpers {
             }).toList();
         Map<ChunkPos, Optional<SubLevelHoldingChunk>> collected = list.stream()
                                                                       .flatMap(x -> x.subchunks.stream())
-            .distinct()
+                                                                      .distinct()
                                                                       .collect(Collectors.toMap(x -> x, x -> getSubLevelHoldingChunk(x, storage)));
         collected.forEach((chunkPos, holdingChunk0) -> {
             if(holdingChunk0.isEmpty()) return;
@@ -173,7 +173,7 @@ public class ServerHelpers {
                 if(shouldSave) {
                     context.getSource().sendSuccess(() -> Component.literal("Try to resque sublevel"), true);
                     //TODO also try load if located in loaded chunks
-                    storage.attemptSaveSubLevel(new GlobalSavedSubLevelPointer(chunkPos,pointer.storageIndex(),pointer.subLevelIndex()), data);
+                    storage.attemptSaveSubLevel(new GlobalSavedSubLevelPointer(chunkPos, pointer.storageIndex(), pointer.subLevelIndex()), data);
                 }
                 //logFoundSubLevel(pointer, data, chunkPos, source, level);
             }

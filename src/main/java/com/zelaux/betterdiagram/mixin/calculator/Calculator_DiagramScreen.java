@@ -10,8 +10,8 @@ import com.zelaux.betterdiagram.gui.CenterMassMovingScreen;
 import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
 import com.zelaux.betterdiagram.gui.tooltip.DiagramInfoTooltip;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
-import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.util.*;
@@ -102,7 +102,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         var layout = UIUtil.vertical(4,
             new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_CALCULATOR, 0, 0, Component.translatable("better_contraption_diagram.diagram-button"), () -> CenterMassMovingScreen.toggle(self()))
                 .setColorSelector((active, hover, texture) -> hover | Minecraft.getInstance().screen instanceof CenterMassMovingScreen ? 1 : 0)
-                .withTooltip(()->Component.translatable("better_contraption_diagram.diagram-button"))
+                .withTooltip(() -> Component.translatable("better_contraption_diagram.diagram-button"))
             ,
             new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_INFO, 0, 0,
                 Component.translatable("better_contraption_diagram.extra-info.diagram-button"), () -> {
@@ -162,7 +162,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                          int areaHeight,
                          CallbackInfo ci,
                          @Local(index = 11) LocalDoubleRef maxArrowLengthSquared
-                         ) {
+    ) {
         if(!((WithClientData) diagram).bcdDataNotNull_readOnly().shouldRenderMergedForces) return;
 
         var mergedForce = new MergedPointForceCalculator();
@@ -179,17 +179,17 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
 
         mergedForce.endPlusCOM();
 
-        maxArrowLengthSquared.set(Math.max(maxArrowLengthSquared.get(),mergedForce.totalForce.lengthSquared()));
+        maxArrowLengthSquared.set(Math.max(maxArrowLengthSquared.get(), mergedForce.totalForce.lengthSquared()));
 
         mergedForce.displacement.add(CenterMassCalculator.centerOfMass(subLevel));
         renderForceArrow(
             graphics,
             BCDForceGroups.MERGED_FORCE_GROUP.group,
-            new ForceClusterFinder.Cluster(mergedForce.displacement,mergedForce.totalForce,new MutableInt(1)),
+            new ForceClusterFinder.Cluster(mergedForce.displacement, mergedForce.totalForce, new MutableInt(1)),
             Math.sqrt(maxArrowLengthSquared.get()),
             mouseX - areaOriginX,
             mouseY - areaOriginY,
-            tooltipList,orientation,cameraPos,projMatrix,areaWidth,areaHeight
+            tooltipList, orientation, cameraPos, projMatrix, areaWidth, areaHeight
 
         );
     }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 public abstract class AbstractForceMapper {
     public static @NotNull SubLevelInfo sublevelInfo(SubLevel origin, SubLevel toAttach, Map<SubLevel, SubLevelGroup> subLevel2Group) {
@@ -25,7 +25,8 @@ public abstract class AbstractForceMapper {
         SubLevelGroup sourceGroup,
         SubLevel targetSubLevel,
         SubLevelGroup targetGroup
-    ){}
+    ) {}
+
     SubLevel originSubLevel;
     SubLevelGroup originGroup;
     SubLevel toAttachSubLevel;
@@ -37,6 +38,7 @@ public abstract class AbstractForceMapper {
         this.toAttachSubLevel = toAttachSubLevel;
         this.toAttachGroup = toAttachGroup;
     }
+
     public AbstractForceMapper(SubLevelInfo info) {
         this.originSubLevel = info.sourceSubLevel;
         this.originGroup = info.sourceGroup;

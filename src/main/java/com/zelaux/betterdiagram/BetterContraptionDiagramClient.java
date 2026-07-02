@@ -67,7 +67,7 @@ public class BetterContraptionDiagramClient {
             FormattedText text = left.get();
             if(text instanceof WrappedTooltipComponent.MockComponent mock) {
                 tooltipElements.set(i, Either.right(mock.component));
-            }else if (text instanceof FormattedTextAsComponent formattedTextAsComponent){
+            } else if(text instanceof FormattedTextAsComponent formattedTextAsComponent) {
                 tooltipElements.set(i, Either.left(formattedTextAsComponent.text));
             }
         }

@@ -11,8 +11,10 @@ import java.util.BitSet;
 public interface SubLevelStorageFileAccessors {
     @Accessor("sectorSpans")
     IntBuffer sectorSpans();
+
     @Accessor("usedIndices")
     BitSet usedIndices();
+
     @Accessor("usedSectors")
     BitSet usedSectors();
 }

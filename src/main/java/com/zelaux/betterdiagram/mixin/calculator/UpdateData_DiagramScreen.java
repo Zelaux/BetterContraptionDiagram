@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
 @Mixin(DiagramScreen.class)
-public abstract class UpdateData_DiagramScreen{
+public abstract class UpdateData_DiagramScreen {
 
     @Shadow
     @Final
@@ -24,7 +24,7 @@ public abstract class UpdateData_DiagramScreen{
     private void updateData(DiagramDataPacket packet, CallbackInfo ci) {
         WithClientData clientData = (WithClientData) diagram;
         BCDData data = clientData.bcdiagram$dataOrNull();
-        if(data==null || serverData!=null && serverData.mass()==packet.mass())return;
+        if(data == null || serverData != null && serverData.mass() == packet.mass()) return;
         clientData.bcdiagram$updateData(data.withCache(null));
     }
 

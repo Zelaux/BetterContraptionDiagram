@@ -215,7 +215,7 @@ public class MixinCalculatorUtil {
         double dst2 = originCoords.distanceSquared(mouseX - accessor.bcd$originX(), mouseY - accessor.bcd$originY());
 
         if(dst2 < 8 * 8) {
-            tooltipList.add(Component.translatable("force-group.merged-force.displacement",VecFormat.Presets.displacement(mergedForce.displacement.sub(mergedForce.com()))));
+            tooltipList.add(Component.translatable("force-group.merged-force.displacement", VecFormat.Presets.displacement(mergedForce.displacement.sub(mergedForce.com()))));
         }
     }
 
@@ -228,7 +228,7 @@ public class MixinCalculatorUtil {
                                                             GuiGraphics graphics,
                                                             int mouseX,
                                                             int mouseY, boolean shouldClipWeights) {
-        ArrayList<OffCenteredBlock> blocks = CenterMassCalculator.getOrCreateOffCenteredBlocks( self);
+        ArrayList<OffCenteredBlock> blocks = CenterMassCalculator.getOrCreateOffCenteredBlocks(self);
         if(blocks == null || blocks.isEmpty()) return null;
         final int shadowColor = 0xfff9f2de;
         Vector3d tmp = new Vector3d();

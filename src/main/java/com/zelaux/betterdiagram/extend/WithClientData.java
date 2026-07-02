@@ -19,7 +19,7 @@ public interface WithClientData {
 
     default boolean axisStates(int i, boolean value) {
         BCDData data = bcdDataOrTryDefault();
-        if(data==null)return value;
+        if(data == null) return value;
         bcdiagram$updateData(data.withAxisStateInt(i, value ? 1 : 0));
         return value;
     }
@@ -36,7 +36,6 @@ public interface WithClientData {
      * @return bcdData - if exists<br>
      * null if server has installed mod and waiting for server data object
      * otherwise {@link BCDData#DEFAULT()}
-     *
      * @see com.zelaux.betterdiagram.network.DiagramOpenBCDDataPacket
      * @see BetterContraptionDiagramClient#isServerSideInstalled
      */

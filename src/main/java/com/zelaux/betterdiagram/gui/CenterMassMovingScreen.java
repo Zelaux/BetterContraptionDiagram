@@ -1,7 +1,7 @@
 package com.zelaux.betterdiagram.gui;
 
 import com.ibm.icu.impl.Pair;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.zelaux.betterdiagram.ClientEvents;
@@ -19,11 +19,11 @@ import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
 import com.zelaux.betterdiagram.gui.user.ButtonKind;
 import com.zelaux.betterdiagram.gui.user.ClickHandler;
 import com.zelaux.betterdiagram.gui.widget.*;
-import com.zelaux.betterdiagram.struct.BCDForceGroup;
+import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.index.Colors;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.mixin.accessors.EditBoxAccessors;
+import com.zelaux.betterdiagram.struct.BCDForceGroup;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
@@ -61,7 +61,10 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
-import org.joml.*;
+import org.joml.Vector2d;
+import org.joml.Vector2i;
+import org.joml.Vector3d;
+import org.joml.Vector3dc;
 import org.lwjgl.glfw.GLFW;
 
 import java.text.DecimalFormat;
@@ -121,7 +124,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
 
     public static void toggle(@NotNull final DiagramScreen owner) {
         final Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.screen instanceof CenterMassMovingScreen it){
+        if(minecraft.screen instanceof CenterMassMovingScreen it) {
             it.onClose();
             return;
         }
@@ -264,9 +267,9 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
 
             @Override
             public boolean mouseClicked(double mouseX, double mouseY, int button) {
-                boolean v=validClick[button % 10] =super.mouseClicked(mouseX, mouseY, button);
-                if (!v && button==2){
-                    v=validClick[button % 10] =true;
+                boolean v = validClick[button % 10] = super.mouseClicked(mouseX, mouseY, button);
+                if(!v && button == 2) {
+                    v = validClick[button % 10] = true;
                     setDragging(true);
                 }
                 return v;
@@ -274,7 +277,8 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
 
             @Override
             public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-                if(hasEnhanced && validClick[button%10])return target.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+                if(hasEnhanced && validClick[button % 10])
+                    return target.mouseDragged(mouseX, mouseY, button, dragX, dragY);
                 return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
             }
 
@@ -282,7 +286,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
             public boolean mouseReleased(double mouseX, double mouseY, int button) {
                 if(validClick[button % 10]) {
                     validClick[button % 10] = false;
-                    if(button==2){
+                    if(button == 2) {
                         setDragging(false);
                     }
                     return target.mouseReleased(mouseX, mouseY, button);
@@ -328,7 +332,8 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(button==2 && getFocused() == partialInterationForScreen)return partialInterationForScreen.mouseDragged(mouseX,mouseY,button,dragX,dragY);
+        if(button == 2 && getFocused() == partialInterationForScreen)
+            return partialInterationForScreen.mouseDragged(mouseX, mouseY, button, dragX, dragY);
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
@@ -656,7 +661,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
                 accessors.bcd$textColorUneditable(wasColor2);
                 int expand = -1;
                 guiGraphics.flush();
-                int x = getX() - expand, y = getY() - expand, x2 = getX() + getWidth()  + expand, y2 = getY() + getHeight() + expand;
+                int x = getX() - expand, y = getY() - expand, x2 = getX() + getWidth() + expand, y2 = getY() + getHeight() + expand;
                 PoseStack pose = guiGraphics.pose();
                 pose.pushPose();
                 pose.translate(0, 0, 1);
@@ -682,7 +687,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
                 return scrollInput.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
             }
         };
-        if(clientData.bcdDataNotNull_readOnly().eCOM() != null){
+        if(clientData.bcdDataNotNull_readOnly().eCOM() != null) {
             editBox.progress.startWithValue(0f);
         }
         EditBoxAccessors boxAccessors = editBox.accessors;

@@ -10,7 +10,7 @@ public abstract class AbstractWidgetMixin implements AbstractWidgetAccessors {
     protected abstract boolean isValidClickButton(int button);
 
     @Override
-    public boolean bcd$isValidClickButton(int button){
+    public boolean bcd$isValidClickButton(int button) {
         return isValidClickButton(button);
     }
 

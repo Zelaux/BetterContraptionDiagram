@@ -10,12 +10,12 @@ import dev.ryanhcode.sable.sublevel.SubLevel;
 
 public class DummyConstraintForceMapper<Config extends PhysicsConstraintConfiguration<?>> extends LocalConstraint<Config> {
     public DummyConstraintForceMapper(Config configuration, ConstaintKind kind, SubLevel a, SubLevel b, SubLevelGroup groupA, SubLevelGroup groupB) {
-        super(configuration, kind, a, b,groupA,groupB);
+        super(configuration, kind, a, b, groupA, groupB);
     }
 
     @Override
     public boolean fixed() {
-        return kind==ConstaintKind.Fixed;
+        return kind == ConstaintKind.Fixed;
     }
 
     @Override

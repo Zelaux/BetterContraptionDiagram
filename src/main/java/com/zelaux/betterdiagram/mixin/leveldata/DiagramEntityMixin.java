@@ -38,13 +38,14 @@ public class DiagramEntityMixin implements WithClientData {
 
     @Override
     public BCDData bcdiagram$setDataSilent(BCDData data) {
-        return bcd$data=data;
+        return bcd$data = data;
     }
+
     @Override
     public BCDData bcdiagram$updateData(BCDData data) {
         bcd$data = data;
         DiagramEntity self = (DiagramEntity) ((Object) this);
-         DiagramEntityData.get(self.level()).saveData(self.getUUID(),data);
+        DiagramEntityData.get(self.level()).saveData(self.getUUID(), data);
         return data;
     }
 }

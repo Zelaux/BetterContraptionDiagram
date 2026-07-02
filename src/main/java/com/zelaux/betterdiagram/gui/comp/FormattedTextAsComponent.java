@@ -25,9 +25,11 @@ public class FormattedTextAsComponent implements Component {
         this.text = text;
         contents = new FormattedTextComponentContents(text);
     }
-    public static Component create(FormattedText text){
+
+    public static Component create(FormattedText text) {
         return new FormattedTextAsComponent(text);
     }
+
     @Override
     public @NotNull Style getStyle() {
         return Style.EMPTY;

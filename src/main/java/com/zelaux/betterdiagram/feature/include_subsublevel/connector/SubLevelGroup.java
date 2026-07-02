@@ -22,7 +22,7 @@ public abstract sealed class SubLevelGroup implements Iterable<SubLevel> {
     public abstract List<SubLevel> all();
 
     public SubLevelGroup with(SubLevel b) {
-        if(all().contains(b))return this;
+        if(all().contains(b)) return this;
         return new Many(
             ImmutableList.<SubLevel>builder()
                          .addAll(all())
@@ -30,15 +30,16 @@ public abstract sealed class SubLevelGroup implements Iterable<SubLevel> {
                          .build()
         );
     }
+
     public SubLevelGroup with(Iterable<SubLevel> b) {
         ImmutableList.Builder<SubLevel> builder = null;
         List<SubLevel> all = all();
         for(SubLevel subLevel : b) {
-            if(all.contains(subLevel))continue;
-            if(builder==null)builder=ImmutableList.<SubLevel>builder().addAll(all);
+            if(all.contains(subLevel)) continue;
+            if(builder == null) builder = ImmutableList.<SubLevel>builder().addAll(all);
             builder.add(subLevel);
         }
-        if(builder==null)return this;
+        if(builder == null) return this;
 
         return new Many(builder.build());
     }

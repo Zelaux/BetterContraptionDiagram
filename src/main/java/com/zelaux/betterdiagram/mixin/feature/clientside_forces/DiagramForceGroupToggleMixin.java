@@ -47,9 +47,9 @@ public abstract class DiagramForceGroupToggleMixin extends AbstractWidget {
         return original.call(instance);
     }
 
-    @Inject(method = "toggleActive",at=@At("HEAD"), cancellable = true)
-    private void toggleActive_doNothingIfNoId(CallbackInfo ci){
-        if(groupId==null)ci.cancel();
+    @Inject(method = "toggleActive", at = @At("HEAD"), cancellable = true)
+    private void toggleActive_doNothingIfNoId(CallbackInfo ci) {
+        if(groupId == null) ci.cancel();
     }
 
 
@@ -58,7 +58,7 @@ public abstract class DiagramForceGroupToggleMixin extends AbstractWidget {
         boolean usedInBalance = bcd$clientData.bcdDataNotNull_readOnly().enabledForces.balance.contains(group);
         BCDTexture texture = usedInBalance ? BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT : BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT_CROSS;
 
-        int dx = SimGUITextures.DIAGRAM_PAPER.width - texture.width-8;
+        int dx = SimGUITextures.DIAGRAM_PAPER.width - texture.width - 8;
         int dy = -4;
 
         //texture.render(guiGraphics, dx,dy, usedInBalance ? ENABLED_TEXT : DISABLED_TEXT);
@@ -73,10 +73,10 @@ public abstract class DiagramForceGroupToggleMixin extends AbstractWidget {
     }
 
 
-    @Inject(method = "updateForceState",at=@At("RETURN"))
-    void updateForceState(DiagramDataPacket serverData, CallbackInfo ci){
-        if(this.group == BCDForceGroups.MERGED_FORCE_GROUP.group){
-            forceCount=1;
+    @Inject(method = "updateForceState", at = @At("RETURN"))
+    void updateForceState(DiagramDataPacket serverData, CallbackInfo ci) {
+        if(this.group == BCDForceGroups.MERGED_FORCE_GROUP.group) {
+            forceCount = 1;
         }
     }
 

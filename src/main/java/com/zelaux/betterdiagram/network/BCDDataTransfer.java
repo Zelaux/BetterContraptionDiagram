@@ -13,7 +13,7 @@ public class BCDDataTransfer {
         return new DiagramOpenBCDDataPacket(data);
     }
 
-    public static OptionalPacketPayload whenSave(int entityId,@Nullable BCDData data) {
-        return new DiagramSaveBCDDataPacket(entityId,Optional.ofNullable(data));
+    public static OptionalPacketPayload whenSave(int entityId, @Nullable BCDData data) {
+        return new DiagramSaveBCDDataPacket(entityId, Optional.ofNullable(data));
     }
 }

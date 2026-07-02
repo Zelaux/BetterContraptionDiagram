@@ -17,7 +17,8 @@ import net.minecraft.world.level.Level;
 import java.util.Optional;
 
 
-public record DiagramSaveBCDDataPacket(int entityID, Optional<BCDData> config) implements CustomPacketPayload ,OptionalPacketPayload{
+public record DiagramSaveBCDDataPacket(int entityID,
+                                       Optional<BCDData> config) implements CustomPacketPayload, OptionalPacketPayload {
     public static final Type<DiagramSaveBCDDataPacket> TYPE = new Type<>(BetterContraptionDiagram.resource("save_bcddata"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DiagramSaveBCDDataPacket> CODEC = StreamCodec.composite(

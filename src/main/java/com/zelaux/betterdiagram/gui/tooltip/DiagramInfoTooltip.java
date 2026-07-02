@@ -28,7 +28,7 @@ import java.util.Set;
 @Slf4j
 public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
 
-    private static final MergedPointForceCalculator mergedForce=new MergedPointForceCalculator();
+    private static final MergedPointForceCalculator mergedForce = new MergedPointForceCalculator();
     private final ClientSubLevel subLevel;
     private final @NotNull DiagramScreen diagramScreeen;
     private final @NotNull DiagramScreenAccessors diagramScreeenAcc;
@@ -38,7 +38,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
     public DiagramInfoTooltip(@NotNull DiagramScreen self, ClientSubLevel subLevel, DiagramDataPacket serverData) {
         this.diagramScreeen = self;
         diagramScreeenAcc = DiagramScreenAccessors.of(self);
-        diagramScreenWithDependencies = (IDiagramScreenWithDependencies)self;
+        diagramScreenWithDependencies = (IDiagramScreenWithDependencies) self;
         tooltipColor = diagramScreeenAcc.TOOLTIP_LABEL_COLOR();
         this.subLevel = subLevel;
     }
@@ -64,8 +64,6 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
         final var directionComponent = VecFormat.Presets.lightGray(mergedForce.totalForce);
 
 
-
-
         return List.of(
             Component.translatable("better_contraption_diagram.extra-info.diagram-button").withColor(tooltipColor),
             Component.translatable("better_contraption_diagram.extra-info.gravity", gravityComponent),
@@ -77,11 +75,10 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
 
     private Vector2d calculateSpeed(Vector3d displacement, Vector3d force) {
         SubLevelDependenciesData dependenciesData = diagramScreenWithDependencies.bcd$subLevelDependencies();
-        if(dependenciesData==null)return null;
+        if(dependenciesData == null) return null;
         BCDData data = ((WithClientData) diagramScreeenAcc.betterContraptionDiagram$diagram()).bcdDataNotNull_readOnly();
 
         Vector3d COM = CenterMassCalculator.calculateMergedBalancePoint(dependenciesData, data);
-
 
 
         return null;

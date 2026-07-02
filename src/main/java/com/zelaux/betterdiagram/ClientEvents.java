@@ -2,12 +2,12 @@ package com.zelaux.betterdiagram;
 
 import com.mojang.datafixers.util.Either;
 import com.zelaux.betterdiagram.command.BCDCommand;
-import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
-import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
-import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
 import com.zelaux.betterdiagram.feature.leveldata.DiagramEntityData;
 import com.zelaux.betterdiagram.feature.leveldata.LevelData;
 import com.zelaux.betterdiagram.feature.leveldata.LevelDatas;
+import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
+import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
+import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
 import com.zelaux.betterdiagram.util.CenterMassCache;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -19,7 +19,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
@@ -30,26 +29,28 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 
 @EventBusSubscriber(modid = BetterContraptionDiagram.MODID, value = Dist.CLIENT)
 public class ClientEvents {
-    public static float clientTime(){
+    public static float clientTime() {
         return AnimationTickHolder.getTicks(true) + AnimationTickHolder.getPartialTicks();
     }
+
     @SubscribeEvent
     public static void onTickPre(ClientTickEvent.Pre event) {
         OffCenteredBlockTooltipHandler.tick();
         LevelData data = LevelDatas.levelData();
-        if(data!=null)data.currentTick();
+        if(data != null) data.currentTick();
 
     }
+
     @SubscribeEvent
     public static void onEntityLeave(EntityLeaveLevelEvent event) {
         Level level = event.getLevel();
         if(!level.isClientSide) return;
         var entity = event.getEntity();
-        if (entity instanceof DiagramEntity diagramEntity) {
+        if(entity instanceof DiagramEntity diagramEntity) {
             var reason = diagramEntity.getRemovalReason();
 
-            if (reason == Entity.RemovalReason.KILLED) {
-                DiagramEntityData.get(level).saveData(diagramEntity.getUUID(),null);
+            if(reason == Entity.RemovalReason.KILLED) {
+                DiagramEntityData.get(level).saveData(diagramEntity.getUUID(), null);
             }
         }
     }
@@ -79,23 +80,25 @@ public class ClientEvents {
     private static void registerCommand(final RegisterClientCommandsEvent event) {
         BCDCommand.register(event.getDispatcher(), event.getBuildContext());
     }
+
     @SubscribeEvent
-    static void onLevelLoad(LevelEvent.Load load){
-        if(load.getLevel() instanceof  ClientLevel) {
+    static void onLevelLoad(LevelEvent.Load load) {
+        if(load.getLevel() instanceof ClientLevel) {
             CenterMassCache.resetCache(true);
 
         }
     }
+
     @SubscribeEvent
-    static void onLevelUnload(LevelEvent.Unload load){
-        if(load.getLevel() instanceof  ClientLevel level) {
+    static void onLevelUnload(LevelEvent.Unload load) {
+        if(load.getLevel() instanceof ClientLevel level) {
             CenterMassCache.resetCache(false);
             DiagramEntityData.get(level).trySave();
         }
     }
 
     @SubscribeEvent
-    static void onWorldLeave(ClientPlayerNetworkEvent.LoggingOut event){
+    static void onWorldLeave(ClientPlayerNetworkEvent.LoggingOut event) {
         LevelDatas.disconnect();
         BetterContraptionDiagramClient.isServerSideInstalled = false;
     }

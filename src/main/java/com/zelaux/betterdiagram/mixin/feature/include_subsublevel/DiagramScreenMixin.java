@@ -25,8 +25,8 @@ public abstract class DiagramScreenMixin implements IDiagramScreenWithDependenci
     @Shadow
     private @Nullable DiagramDataPacket serverData;
 
-    @ModifyVariable(method = "renderCenterOfMass",at=@At(value = "STORE",ordinal = 0))
-    protected Vector3d renderCenterOfMass(Vector3d COM){
+    @ModifyVariable(method = "renderCenterOfMass", at = @At(value = "STORE", ordinal = 0))
+    protected Vector3d renderCenterOfMass(Vector3d COM) {
         SubLevelDependenciesData dependenciesData = bcd$subLevelDependencies();
         return CenterMassCalculator.locateMergedCenterOfMass(COM, dependenciesData);
     }
@@ -37,6 +37,7 @@ public abstract class DiagramScreenMixin implements IDiagramScreenWithDependenci
             serverData = bcd$subLevelDependencies.mergedForces();
         }
     }
+
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Ldev/simulated_team/simulated/network/packets/contraption_diagram/RequestDiagramDataPacket;<init>(Ljava/util/UUID;)V"))
     public void tick1(CallbackInfo ci) {
 
@@ -54,8 +55,8 @@ public abstract class DiagramScreenMixin implements IDiagramScreenWithDependenci
     ) {
         IDiagramScreenWithDependencies dependencies = (IDiagramScreenWithDependencies) screen;
 
-        var data = SubLevelDependenciesData.tryConstruct(subLevel,3);
-        if(data!=null) {
+        var data = SubLevelDependenciesData.tryConstruct(subLevel, 3);
+        if(data != null) {
             dependencies.bcd$subLevelDependencies(data);
         }
 

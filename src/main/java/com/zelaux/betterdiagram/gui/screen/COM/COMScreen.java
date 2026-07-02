@@ -73,7 +73,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
     public final AbstractContainerScreenAccessors accessors = (AbstractContainerScreenAccessors) this;
     public BCDTexture inventoryBG = BCDTextures.COMScreen.inventory;
     private float partialTick;
-    private final AtomicReference<SearchEntry[]> savedSearchEntries=new AtomicReference<>();
+    private final AtomicReference<SearchEntry[]> savedSearchEntries = new AtomicReference<>();
 
     public COMScreen(Context context, LocalPlayer player) {
         super(new CenterOfMassMenu(
@@ -206,7 +206,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
                 if(pairsObj.isNotLoaded()) return;
                 if(button != 0) return;
                 ArrayList<Context.COMPair> pairs = pairsObj.pairs();
-                if(pairs.size()==0)return;
+                if(pairs.size() == 0) return;
                 int col = (int) ((mouseX - getX()) / PREVIEW_PANEL_CELL_SIZE);
                 int row = (int) ((mouseY - getY()) / PREVIEW_PANEL_CELL_SIZE);
 
@@ -254,18 +254,18 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         var lookup = player.level().registryAccess().lookup(Registries.BLOCK).orElse(null);
         if(lookup == null) return;
         CenterMassCache.getCOM2_Block2States(player.level())
-            .ifLeft(comStats->{
-                this.savedSearchEntries.set(null);
-                loadSearchResults(entries, comStats, items);
-            })
-            .ifRight(future->{
-                this.savedSearchEntries.set(entries);
-                future.thenAccept(comStats-> Minecraft.getInstance().execute(()->{
-                    SearchEntry[] searchEntries = savedSearchEntries.getAndSet(null);
-                    if(searchEntries==null)return;
-                    doSearch(searchEntries);
-                }));
-            })
+                       .ifLeft(comStats -> {
+                           this.savedSearchEntries.set(null);
+                           loadSearchResults(entries, comStats, items);
+                       })
+                       .ifRight(future -> {
+                           this.savedSearchEntries.set(entries);
+                           future.thenAccept(comStats -> Minecraft.getInstance().execute(() -> {
+                               SearchEntry[] searchEntries = savedSearchEntries.getAndSet(null);
+                               if(searchEntries == null) return;
+                               doSearch(searchEntries);
+                           }));
+                       })
         ;
         //this.scrollOffs = this.menu.getScrollForRowIndex(i);
         //this.menu.scrollTo(this.scrollOffs);
@@ -277,7 +277,8 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         for(var comStat : comStats.entrySet()) {
             Vector3dc key = comStat.getKey();
             for(var entry : entries) {
-                if(!CenterMassCalculator.equals(VecUtil.GETTERS_3d[entry.axis.ordinal()].get(key), entry.value)) continue forLoop;
+                if(!CenterMassCalculator.equals(VecUtil.GETTERS_3d[entry.axis.ordinal()].get(key), entry.value))
+                    continue forLoop;
             }
 
             for(var entry : comStat.getValue().entrySet()) {
@@ -335,7 +336,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
 
         var pairs = entry.cachePairs();
 
-        renderLeftSide(guiGraphics,entry.COM(), pairs, mySlot.entityWorldContainer);
+        renderLeftSide(guiGraphics, entry.COM(), pairs, mySlot.entityWorldContainer);
 
         return false;
     }
@@ -389,7 +390,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
                     int size = PREVIEW_PANEL_CELL_SIZE;
                     var pairs = context.pairs().pairs();
                     for(int i = 0; i < pairs.size(); i++) {
-                        Context.COMPair pair =pairs.get(i);
+                        Context.COMPair pair = pairs.get(i);
                         int row = i / perRow, col = i % perRow;
                         int x = ox + col * size, y = oy + row * size;
                         boolean isSelected = context.selectedPair == i;

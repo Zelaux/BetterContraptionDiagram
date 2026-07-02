@@ -33,7 +33,7 @@ public abstract class DiagramScreenMixin implements IDiagramScreen {
 
     @Inject(
         method = "<init>",
-        at=@At("CTOR_HEAD")
+        at = @At("CTOR_HEAD")
     )
     private static void resetData(DiagramEntity diagramEntity, ClientSubLevel subLevel, CallbackInfo ci) {
         if(!BetterContraptionDiagramClient.isServerSideInstalled) return;

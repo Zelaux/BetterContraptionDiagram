@@ -23,11 +23,11 @@ public class AsyncComputeHolder<T, Part> {
      * Invalidates the cache, causing the supplier to be called again on the next access.
      */
     public synchronized void invalidate() {
-            StateValue<T, Part> state = this.state;
-            if(state.calc ) {
-                state.pair.future.cancel(true);
-            }
-            this.state = StateValue.unset();
+        StateValue<T, Part> state = this.state;
+        if(state.calc) {
+            state.pair.future.cancel(true);
+        }
+        this.state = StateValue.unset();
     }
 
     public Either<T, Pair<T, Part>> getAsync(Function<ConcurrentLinkedQueue<Part>, T> calculator, Executor executor) {
@@ -44,22 +44,22 @@ public class AsyncComputeHolder<T, Part> {
             var pair = new Pair<>(future, linkedQueue);
 
             // Сначала обновляем состояние, чтобы фоновый поток мог его увидеть
-            this.state =StateValue.calc(pair);
+            this.state = StateValue.calc(pair);
 
             executor.execute(() -> {
                 try {
                     T result = calculator.apply(linkedQueue);
-                    synchronized (this) {
+                    synchronized(this) {
                         // Сравниваем по ссылке на pair, это надежнее и быстрее
-                        if (this.state.pair == pair) {
+                        if(this.state.pair == pair) {
                             this.state = StateValue.set(result);
                         }
                     }
                     future.complete(result);
-                } catch (Exception e) {
+                } catch(Exception e) {
                     BetterContraptionDiagram.LOGGER.error("AsyncComputeHolder error: ", e);
-                    synchronized (this) {
-                        if (this.state.pair == pair) this.state = StateValue.unset();
+                    synchronized(this) {
+                        if(this.state.pair == pair) this.state = StateValue.unset();
                     }
                     future.completeExceptionally(e);
                 }
@@ -70,17 +70,19 @@ public class AsyncComputeHolder<T, Part> {
     }
 
     public void put(T value) {
-        synchronized(this){
+        synchronized(this) {
             invalidate();
-            state=StateValue.set(value);
+            state = StateValue.set(value);
         }
     }
 
     private record StateValue<T, Part>(boolean set, boolean calc, @Nullable T value, Pair<T, Part> pair) {
         private static final StateValue<?, ?> UNSET = new StateValue<>(false, false, null, null);
 
-        private static <T, Part> @NotNull StateValue<T, Part> calc(@NonNull Pair<T,Part> pair) {return new StateValue<>(false,true,null,pair);}
-        private static <T, Part> @NotNull StateValue<T, Part> set(T value) {return new StateValue<>(true,false,value,null);}
+        private static <T, Part> @NotNull StateValue<T, Part> calc(@NonNull Pair<T, Part> pair) {return new StateValue<>(false, true, null, pair);}
+
+        private static <T, Part> @NotNull StateValue<T, Part> set(T value) {return new StateValue<>(true, false, value, null);}
+
         @SuppressWarnings("unchecked")
         private static <T, Part> @NotNull StateValue<T, Part> unset() {return (StateValue<T, Part>) UNSET;}
     }

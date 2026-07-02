@@ -15,22 +15,21 @@ import java.util.Map;
 @Mixin(DiagramOpenPacket.class)
 public abstract class DiagramOpenPacketMixin {
     @WrapMethod(method = "handle")
-    public void handle(ClientPacketContext context, Operation<Void> original){
+    public void handle(ClientPacketContext context, Operation<Void> original) {
         try {
             original.call(context);
         } catch(MixinError | MixinException e) {
-            try{
+            try {
                 Field field = ClassInfo.class.getDeclaredField("cache");
                 field.setAccessible(true);
-                Map<String, ClassInfo> map= (Map<String, ClassInfo>) field.get(null);
+                Map<String, ClassInfo> map = (Map<String, ClassInfo>) field.get(null);
                 map.remove("dev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen");
                 original.call(context);
-            }catch(Exception ignore){
+            } catch(Exception ignore) {
                 throw Lombok.sneakyThrow(e);
             }
         }
     }
-
 
 
 }

@@ -5,7 +5,10 @@ import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.DummyCo
 import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.RotationConstraintForceMapper;
 import dev.ryanhcode.sable.api.physics.constraint.*;
 import dev.ryanhcode.sable.sublevel.SubLevel;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +24,7 @@ public abstract class LocalConstraint<Config extends PhysicsConstraintConfigurat
 
 
     public LocalConstraint(Config configuration, ConstaintKind kind, SubLevel a, SubLevel b, SubLevelGroup groupA, SubLevelGroup groupB) {
-        super(a,groupA,b,groupB);
+        super(a, groupA, b, groupB);
         this.configuration = configuration;
         this.kind = kind;
     }
@@ -29,15 +32,16 @@ public abstract class LocalConstraint<Config extends PhysicsConstraintConfigurat
     public static @NotNull LocalConstraint<?> from(PhysicsConstraintConfiguration<?> configuration, SubLevel a, SubLevel b, Map<SubLevel, SubLevelGroup> subLevel2Group) {
         SubLevelGroup groupA = subLevel2Group.get(a);
         SubLevelGroup groupB = subLevel2Group.get(b);
-        if(configuration instanceof RotaryConstraintConfiguration rotary){
-            return new RotationConstraintForceMapper(rotary,a,b,groupA,groupB);
+        if(configuration instanceof RotaryConstraintConfiguration rotary) {
+            return new RotationConstraintForceMapper(rotary, a, b, groupA, groupB);
         }
         ConstaintKind kind = switch(configuration) {
             case FixedConstraintConfiguration ignored -> ConstaintKind.Fixed;
             case FreeConstraintConfiguration ignored -> ConstaintKind.Free;
             case GenericConstraintConfiguration ignored -> ConstaintKind.Generic;
-            case RotaryConstraintConfiguration ignored ->throw new IllegalStateException("Unexpected value: " + configuration);
+            case RotaryConstraintConfiguration ignored ->
+                throw new IllegalStateException("Unexpected value: " + configuration);
         };
-        return new DummyConstraintForceMapper<>(configuration, kind, a, b,groupA,groupB);
+        return new DummyConstraintForceMapper<>(configuration, kind, a, b, groupA, groupB);
     }
 }

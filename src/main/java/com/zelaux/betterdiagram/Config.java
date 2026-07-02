@@ -43,7 +43,7 @@ public class Config {
         .defineInRange("maxDiagramDataStoredPreLevel", 1000, 1, 100_000);
     public static final ModConfigSpec.BooleanValue SHOW_WARGING_WHEN_GRID = BUILDER
         .comment("Show warning(only once) when using grid mode when enabled Enhanced Diagrams ")
-        .define("showWargingWhenGrid",true);
+        .define("showWargingWhenGrid", true);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 

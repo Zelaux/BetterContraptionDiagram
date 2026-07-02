@@ -35,6 +35,7 @@ public class VecFormat {
         static MutableComponent blockCenterOfMass(Vector3dc v) {
             return lightGray(v);
         }
+
         static MutableComponent trivialCenterOfMass(Vector3dc v) {
             return gray(v);
         }

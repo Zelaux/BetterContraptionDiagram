@@ -16,8 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 
 /**
  * @see dev.ryanhcode.sable.neoforge.mixin.compatibility.create.contraptions.AbstractContraptionEntityMixin
- * */
-@Mixin(value = AbstractContraptionEntity.class,priority = 2000)
+ *
+ */
+@Mixin(value = AbstractContraptionEntity.class, priority = 2000)
 public abstract class AbstractContraptionEntityMixin extends Entity implements KinematicContraption {
 
     @Unique
@@ -26,13 +27,14 @@ public abstract class AbstractContraptionEntityMixin extends Entity implements K
     public AbstractContraptionEntityMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
-@Dynamic
+
+    @Dynamic
     @Shadow
-  private  void sable$buildProperties(){}
+    private void sable$buildProperties() {}
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;"), remap = false)
     private void sable$contraptionInitialize(final CallbackInfo ci) {
-        if (!this.bcd$client$sable$initialized && this.level() instanceof ClientLevel) {
+        if(!this.bcd$client$sable$initialized && this.level() instanceof ClientLevel) {
             this.sable$buildProperties();
             this.bcd$client$sable$initialized = true;
             bcd$sable$addToPlot();
@@ -42,7 +44,7 @@ public abstract class AbstractContraptionEntityMixin extends Entity implements K
     private void bcd$sable$addToPlot() {
         final SubLevel subLevel = Sable.HELPER.getContaining(this);
 
-        if (subLevel  instanceof final ClientSubLevel clientSubLevel) {
+        if(subLevel instanceof final ClientSubLevel clientSubLevel) {
 
             ((ClientLevelPlotExt) clientSubLevel.getPlot()).addContraption(this);
         }
@@ -52,14 +54,14 @@ public abstract class AbstractContraptionEntityMixin extends Entity implements K
     private void bcd$sable$removeFromPlot() {
         final SubLevel subLevel = Sable.HELPER.getContaining(this);
 
-        if (subLevel instanceof final ClientSubLevel clientSubLevel) {
+        if(subLevel instanceof final ClientSubLevel clientSubLevel) {
             ((ClientLevelPlotExt) clientSubLevel.getPlot()).removeContraption(this);
         }
     }
 
-    @Inject(method = "setRemoved",at=@At("RETURN"))
-    public void setRemoved(final RemovalReason removalReason,final CallbackInfo ci) {
-        if (this.level() instanceof ClientLevel) {
+    @Inject(method = "setRemoved", at = @At("RETURN"))
+    public void setRemoved(final RemovalReason removalReason, final CallbackInfo ci) {
+        if(this.level() instanceof ClientLevel) {
             this.bcd$sable$removeFromPlot();
         }
     }
