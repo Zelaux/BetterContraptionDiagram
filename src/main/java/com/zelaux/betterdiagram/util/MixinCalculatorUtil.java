@@ -14,6 +14,8 @@ import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.MassStack;
 import dev.ryanhcode.sable.Sable;
+import dev.ryanhcode.sable.api.physics.force.ForceGroup;
+import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
@@ -46,6 +48,7 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.zelaux.betterdiagram.Config.COM_viewType;
 import static net.createmod.catnip.lang.LangBuilder.DEFAULT_SPACE_WIDTH;
@@ -194,18 +197,27 @@ public class MixinCalculatorUtil {
                                           int mouseX,
                                           int mouseY, boolean shouldClipWeights) {
         if(serverData == null || !withClientData.bcdDataNotNull_readOnly().shouldRenderMergedForces) return;
-        Vector3d mergedDisplacement = new Vector3d();
-        Vector3d sumOfForces = new Vector3d();
-        Vector3d tmp = new Vector3d();
+        var mergedForce = new MergedPointForceCalculator();
+
         ClientSubLevel subLevel = self.subLevel;
-        CenterMassCalculator.calculateSumOfForcesMomentum(mergedDisplacement, sumOfForces, tmp, serverData, subLevel);
-        Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(tmp.set(CenterMassCalculator.centerOfMass(subLevel)).add(mergedDisplacement));
+        mergedForce.begin(CenterMassCalculator.centerOfMass(subLevel));
+
+        for(var entry : serverData.forces().entrySet()) {
+            if(CenterMassCalculator.FORCE_GROUP_BLACKLIST.contains(entry.getKey())) {
+                continue;
+            }
+            for(QueuedForceGroup.PointForce force : entry.getValue()) {
+                mergedForce.add(force);
+            }
+        }
+        mergedForce.endPlusCOM();
+        Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(new Vector3d(mergedForce.displacement));
         if(!accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.y)) return;
         BCDTextures.Diagram.ICON_TOTAL_DISPLACEMENT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
         double dst2 = originCoords.distanceSquared(mouseX - accessor.bcd$originX(), mouseY - accessor.bcd$originY());
 
         if(dst2 < 8 * 8) {
-            tooltipList.add(Component.translatable("force-group.merged-force.displacement",VecFormat.Presets.displacement(mergedDisplacement)));
+            tooltipList.add(Component.translatable("force-group.merged-force.displacement",VecFormat.Presets.displacement(mergedForce.displacement.sub(mergedForce.com()))));
         }
     }
 

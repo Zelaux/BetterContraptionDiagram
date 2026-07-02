@@ -39,7 +39,6 @@ import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public class CenterMassCalculator {
     public static final float DELTA = 0.00001f;
@@ -187,6 +186,7 @@ public class CenterMassCalculator {
         return COM1.equals(COM2, DELTA);
     }
 
+    //TODO: candidate for removal
     public static Vector3d calculateGravityDirection(ClientSubLevel subLevel, DiagramDataPacket serverData, @Nullable Vector3d output) {
         //DimensionPhysicsData.getGravity(level)
         var gravity = serverData.forces().get(ForceGroups.GRAVITY.get());
@@ -281,38 +281,6 @@ public class CenterMassCalculator {
         return offCenteredBlocks;
     }
 
-    public static void calculateSumOfForcesMomentum(Vector3d mergedDisplacement, Vector3d sumOfForces, Vector3d tmp1, DiagramDataPacket serverData, ClientSubLevel subLevel1) {
-        calculateSumOfMomentum(mergedDisplacement, sumOfForces, tmp1, serverData, subLevel1, FORCE_GROUP_BLACKLIST);
-    }
-
-    public static void calculateSumOfMomentum(Vector3d mergedDisplacement, Vector3d sumOfForces, Vector3d tmp1, DiagramDataPacket serverData, ClientSubLevel subLevel1, Set<ForceGroup> blackList) {
-        Consumer<Consumer<QueuedForceGroup.PointForce>> forEachForce=forceConsumer->{
-            Map<ForceGroup, List<QueuedForceGroup.PointForce>> forces = serverData.forces();
-            forces.forEach((_i, pointForces) -> {
-                if(blackList.contains(_i)) return;
-                for(QueuedForceGroup.PointForce force : pointForces) {
-                    forceConsumer.accept(force);
-                }
-            });
-        };
-        calculateSumOfForcesMomentum(mergedDisplacement, sumOfForces, tmp1, new Vector3d(centerOfMass(subLevel1)), forEachForce);
-    }
-
-    @Deprecated
-    public static void calculateSumOfForcesMomentum(Vector3d mergedDisplacement, Vector3d sumOfForces, Vector3d tmp1, Vector3dc COM, Consumer<Consumer<QueuedForceGroup.PointForce>> forEachForce) {
-        mergedDisplacement.zero();
-        sumOfForces.zero();
-        tmp1.zero();
-        Vector3d sumOfMoments = tmp1;
-        Vector3d tmp2 = mergedDisplacement;
-        sumOfMoments.zero();
-        forEachForce.accept(force->{
-            sumOfForces.add(force.force());
-            Vector3d momentOfForce = tmp2.set(force.point()).sub(COM).cross(force.force());
-            sumOfMoments.add(momentOfForce);
-        });
-        mergedDisplacement.set(sumOfForces).cross(sumOfMoments).div(sumOfForces.lengthSquared());
-    }
 
     public static Vector3d calculateMergedBalancePoint(SubLevelDependenciesData dependenciesData, BCDData data) {
         if(dependenciesData == null) return null;

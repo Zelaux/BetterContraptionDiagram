@@ -42,4 +42,11 @@ public class MergedPointForceCalculator {
     public void add(QueuedForceGroup.PointForce pointForce) {
         add(pointForce.point(), pointForce.force());
     }
+    public void addAll(Iterable<QueuedForceGroup.PointForce> forces) {
+        forces.forEach(this::add);
+    }
+
+    public Vector3dc com() {
+        return COM;
+    }
 }

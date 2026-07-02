@@ -8,8 +8,11 @@ import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependencies
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
+import com.zelaux.betterdiagram.util.MergedPointForceCalculator;
 import com.zelaux.betterdiagram.util.VecFormat;
+import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
+import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
@@ -20,14 +23,14 @@ import org.joml.Vector2d;
 import org.joml.Vector3d;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
 @Slf4j
 public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
-    private static final Vector3d tmp = new Vector3d();
-    private static final Vector3d sumOfForces = new Vector3d();
-    private static final Vector3d sumOfMoments = new Vector3d();
+
+    private static final MergedPointForceCalculator mergedForce=new MergedPointForceCalculator();
     private final ClientSubLevel subLevel;
     private final @NotNull DiagramScreen diagramScreeen;
     private final @NotNull DiagramScreenAccessors diagramScreeenAcc;
@@ -46,24 +49,21 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
     public List<Component> get() {
         DiagramDataPacket serverData = diagramScreeenAcc.betterContraptionDiagram$serverData();
         if(serverData == null) return List.of();
-        final var gravityDirection = CenterMassCalculator.calculateGravityDirection(subLevel, serverData, tmp);
+        final var gravityDirection = CenterMassCalculator.calculateGravityDirection(subLevel, serverData, new Vector3d());
         final var gravityComponent = VecFormat.Presets.lightGray(gravityDirection);
-        Vector3d mergedDisplacement = tmp;
-        CenterMassCalculator.calculateSumOfMomentum(
-            mergedDisplacement,
-            sumOfForces,
-            sumOfMoments,
-            serverData,
-            subLevel,
-            Set.of(ForceGroups.DRAG.get(), BCDForceGroups.MERGED_FORCE_GROUP.group)
-        );
-        Vector2d calculateSpeed=calculateSpeed(mergedDisplacement,sumOfForces);
-        //VecUtil.subMinVec3d(mergedDisplacement, subLevel.getPlot().getBoundingBox());
+        mergedForce.begin(CenterMassCalculator.centerOfMass(subLevel));
+
+        Set<ForceGroup> blackList = Set.of(ForceGroups.DRAG.get(), BCDForceGroups.MERGED_FORCE_GROUP.group);
+        for(var entry : serverData.forces().entrySet()) {
+            if(blackList.contains(entry.getKey())) continue;
+
+            mergedForce.addAll(entry.getValue());
+        }
+        mergedForce.end();
 
 
-
-        final var displacementComponent = VecFormat.Presets.lightGray(mergedDisplacement);
-        final var directionComponent = VecFormat.Presets.lightGray(sumOfForces);
+        final var displacementComponent = VecFormat.Presets.lightGray(mergedForce.displacement);
+        final var directionComponent = VecFormat.Presets.lightGray(mergedForce.totalForce);
 
 
 

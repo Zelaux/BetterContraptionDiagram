@@ -14,11 +14,9 @@ import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.struct.BCDTexture;
 import com.zelaux.betterdiagram.struct.MassStack;
-import com.zelaux.betterdiagram.util.CenterMassCalculator;
-import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
-import com.zelaux.betterdiagram.util.StringUtil;
-import com.zelaux.betterdiagram.util.UIUtil;
+import com.zelaux.betterdiagram.util.*;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
+import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
@@ -46,6 +44,7 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 import java.lang.Math;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.zelaux.betterdiagram.util.VecUtil.*;
 
@@ -169,17 +168,27 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                          ) {
         if(!((WithClientData) diagram).bcdDataNotNull_readOnly().shouldRenderMergedForces) return;
 
-        Vector3d mergedDisplacement = new Vector3d();
-        Vector3d sumOfForces = new Vector3d();
-        Vector3d tmp = new Vector3d();
-        CenterMassCalculator.calculateSumOfForcesMomentum(mergedDisplacement, sumOfForces, tmp, serverData, subLevel);
-        maxArrowLengthSquared.set(Math.max(maxArrowLengthSquared.get(),sumOfForces.lengthSquared()));
+        var mergedForce = new MergedPointForceCalculator();
+        mergedForce.begin(new Vector3d(CenterMassCalculator.centerOfMass(subLevel)));
 
-        mergedDisplacement.add(CenterMassCalculator.centerOfMass(subLevel));
+        for(var entry : serverData.forces().entrySet()) {
+            if(CenterMassCalculator.FORCE_GROUP_BLACKLIST.contains(entry.getKey())) {
+                continue;
+            }
+            for(QueuedForceGroup.PointForce force : entry.getValue()) {
+                mergedForce.add(force);
+            }
+        }
+
+        mergedForce.endPlusCOM();
+
+        maxArrowLengthSquared.set(Math.max(maxArrowLengthSquared.get(),mergedForce.totalForce.lengthSquared()));
+
+        mergedForce.displacement.add(CenterMassCalculator.centerOfMass(subLevel));
         renderForceArrow(
             graphics,
             BCDForceGroups.MERGED_FORCE_GROUP.group,
-            new ForceClusterFinder.Cluster(mergedDisplacement,sumOfForces,new MutableInt(1)),
+            new ForceClusterFinder.Cluster(mergedForce.displacement,mergedForce.totalForce,new MutableInt(1)),
             Math.sqrt(maxArrowLengthSquared.get()),
             mouseX - areaOriginX,
             mouseY - areaOriginY,
