@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.leveldata;
+package com.zelaux.betterdiagram.feature.leveldata;
 
 import java.nio.file.Path;
 

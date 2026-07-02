@@ -28,16 +28,6 @@ public interface WithClientData {
         return axisStates(i, !axisStates(i));
     }
 
-    class Key<T> {
-        private static int counter = 0;
-        public final int id = counter++;
-
-        @Override
-        public int hashCode() {
-            return counter;
-        }
-    }
-
     @Nullable
     @Contract(pure = true)
     BCDData bcdiagram$dataOrNull();

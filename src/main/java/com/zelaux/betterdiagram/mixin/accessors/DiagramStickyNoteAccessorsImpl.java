@@ -47,8 +47,6 @@ public abstract class DiagramStickyNoteAccessorsImpl implements DiagramStickyNot
     @Final
     private int renderXStart;
 
-    @Shadow
-    private DiagramScreen parent;
 
     @Override
     public Vector2d betterContraptionDiagram$getScreenCoords(Vector3d point, Vector3d cameraPos) {

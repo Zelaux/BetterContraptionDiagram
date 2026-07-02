@@ -71,12 +71,4 @@ public class VecFormat {
             ;
     }
 
-    @Unique
-    private static @NotNull String vecToString(double x, double y, double z) {
-        var sx = StringUtil.plainDouble(x);
-        var sy = StringUtil.plainDouble(y);
-        var sz = StringUtil.plainDouble(z);
-
-        return "(" + sx + ", " + sy + ", " + sz + ")";
-    }
 }

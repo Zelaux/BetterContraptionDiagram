@@ -336,9 +336,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
-    private Vector3d expectedCenterOfMassOffset() {
-        return minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox()).negate().add(expectedCenterOfMass());
-    }
 
     private void addGrid(MyGridClicker myGridClicker, BoundingBox2i[] boxes1, BoundingBox2i[] boxes) {
         grids.add(Pair.of(
@@ -351,24 +348,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
                 )
             )
         ));
-    }
-
-    private void drawFboTexture(GuiGraphics graphics, int id, int x, int y, int width, int height) {
-        //if(true)return;
-        RenderSystem.setShaderTexture(0, id);
-        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-        RenderSystem.enableBlend();
-        final Matrix4f matrix4f = graphics.pose().last().pose();
-        final BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-
-        final float x1 = x, x2 = x + width;
-        final float y1 = y, y2 = y + height;
-        bufferbuilder.addVertex(matrix4f, x1, y1, 0.0f).setUv(0.0f, 1.0f).setColor(0xFFFFFFFF);
-        bufferbuilder.addVertex(matrix4f, x1, y2, 0.0f).setUv(0.0f, 0.0f).setColor(0xFFFFFFFF);
-        bufferbuilder.addVertex(matrix4f, x2, y2, 0.0f).setUv(1.0f, 0.0f).setColor(0xFFFFFFFF);
-        bufferbuilder.addVertex(matrix4f, x2, y1, 0.0f).setUv(1.0f, 1.0f).setColor(0xFFFFFFFF);
-        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
-        RenderSystem.disableBlend();
     }
 
     private MyGridClicker makeGrid(BoundingBox3ic bb, int diaX, int diaY, TransformedAxes projectedAxes, ProjectionAccessor projectionAccessor) {
@@ -415,11 +394,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         SETTERS_3d[yi].set(out, gridPos.y + 0.5 + GETTERS_3d[yi].get(offset));
     }
 
-    private Vector2d normalToGridVector(Vector3d in, Vector2d gridPos) {
-        gridPos.x = VecUtil.GETTERS_3d[mainProjectedAxes.xyzIndex[0]].get(in) - 0.5;
-        gridPos.y = VecUtil.GETTERS_3d[mainProjectedAxes.xyzIndex[1]].get(in) - 0.5;
-        return gridPos;
-    }
 
     public void selectBlock(GridClicker.MouseConsumer consumer) {
         enableGrid((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {

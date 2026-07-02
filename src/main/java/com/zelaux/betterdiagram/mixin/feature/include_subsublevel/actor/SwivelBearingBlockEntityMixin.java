@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.mixin.include_subsublevel.actor;
+package com.zelaux.betterdiagram.mixin.feature.include_subsublevel.actor;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.zelaux.betterdiagram.feature.include_subsublevel.math.Vector3dWith;

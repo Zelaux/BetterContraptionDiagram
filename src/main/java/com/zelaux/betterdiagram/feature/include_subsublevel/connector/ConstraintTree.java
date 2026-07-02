@@ -54,27 +54,6 @@ public class ConstraintTree {
         );
     }
 
-    public boolean merge(SubLevel level, Consumer<ConstraintTree> removed) {
-        if(path.contains(level))return false;
-        subLevelGroup = subLevelGroup.with(level);
-        path= ImmutableSet.<SubLevel>builder().addAll(path).add(level).build();
-        int offset=0;
-        for(var iterator = childrenSet.object2IntEntrySet().iterator(); iterator.hasNext(); ) {
-            var entry = iterator.next();
-            int i = entry.getIntValue();
-            var constraint = entry.getKey();
-            if(offset!=0){
-                i-=offset;
-                entry.setValue(i);
-
-            }
-            if (constraint.toAttachSubLevel() != level)continue;
-            iterator.remove();
-            removed.accept(children.remove(i));
-        }
-        return true;
-    }
-
     public boolean isValid() {
         return parent==null || parent.hasChild(this.transitionConstraint);
     }

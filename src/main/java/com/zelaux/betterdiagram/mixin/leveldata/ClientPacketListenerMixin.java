@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.mixin.leveldata;
 
-import com.zelaux.betterdiagram.leveldata.LevelDatas;
+import com.zelaux.betterdiagram.feature.leveldata.LevelDatas;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.network.protocol.game.ClientboundLoginPacket;

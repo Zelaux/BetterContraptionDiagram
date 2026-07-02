@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.leveldata;
+package com.zelaux.betterdiagram.feature.leveldata;
 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;

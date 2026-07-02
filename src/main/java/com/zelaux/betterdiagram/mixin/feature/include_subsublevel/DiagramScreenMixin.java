@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.mixin.include_subsublevel;
+package com.zelaux.betterdiagram.mixin.feature.include_subsublevel;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDependencies;

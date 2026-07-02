@@ -28,9 +28,6 @@ public abstract class LevelRendererMixin {
     @Shadow
     private ClientLevel level;
 
-    @Shadow
-    protected abstract void renderHitOutline(PoseStack poseStack, VertexConsumer consumer, Entity entity, double camX, double camY, double camZ, BlockPos pos, BlockState state);
-
     @Inject(method = "renderLevel", at = @At("TAIL"))
     private void renderLevel(final DeltaTracker deltaTracker, final boolean bl, final Camera camera, final GameRenderer gameRenderer, final LightTexture lightTexture, final Matrix4f matrix4f, final Matrix4f matrix4f2, final CallbackInfo ci) {
 

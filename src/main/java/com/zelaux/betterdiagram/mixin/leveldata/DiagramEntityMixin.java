@@ -1,13 +1,11 @@
 package com.zelaux.betterdiagram.mixin.leveldata;
 
-import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.BetterContraptionDiagramClient;
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.extend.WithClientData;
-import com.zelaux.betterdiagram.leveldata.DiagramEntityData;
+import com.zelaux.betterdiagram.feature.leveldata.DiagramEntityData;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
 import net.minecraft.world.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;

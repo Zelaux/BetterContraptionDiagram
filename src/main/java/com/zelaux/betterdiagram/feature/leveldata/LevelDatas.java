@@ -1,7 +1,6 @@
-package com.zelaux.betterdiagram.leveldata;
+package com.zelaux.betterdiagram.feature.leveldata;
 
 import com.google.common.net.InetAddresses;
-import com.zelaux.betterdiagram.annotations.DebugOnly;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
@@ -17,7 +16,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LevelDatas {
-    public static final String LOCAL_HOST = "127.0.0.1";
     private static LevelData currentData;
     private static final Path SERVER_LOCAL_DATA_PATH, LEVEL_DATA_PATH;
     private static final Pattern IPV4 = Pattern.compile("^(\\d{1,3}(?:\\.\\d{1,3}){3})(?::(?<port>\\d{1,5}))?$");

@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.mixin.include_subsublevel;
+package com.zelaux.betterdiagram.mixin.feature.include_subsublevel;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;

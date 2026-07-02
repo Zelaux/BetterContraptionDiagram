@@ -37,7 +37,6 @@ import java.util.stream.Stream;
 public class SubLevelDependenciesData {
 
     public final Object2ObjectOpenHashMap<UUID, SubLevelDependenciesData.Entry> sublevelDataMap = new Object2ObjectOpenHashMap<>();
-    public static final Vector3d TMP1 = new Vector3d();
     public final ConstraintTree constraintTree;
     public boolean updated;
     private DiagramDataPacket mergedForces;

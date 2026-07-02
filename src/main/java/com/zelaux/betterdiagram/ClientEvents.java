@@ -5,9 +5,9 @@ import com.zelaux.betterdiagram.command.BCDCommand;
 import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
 import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
 import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
-import com.zelaux.betterdiagram.leveldata.DiagramEntityData;
-import com.zelaux.betterdiagram.leveldata.LevelData;
-import com.zelaux.betterdiagram.leveldata.LevelDatas;
+import com.zelaux.betterdiagram.feature.leveldata.DiagramEntityData;
+import com.zelaux.betterdiagram.feature.leveldata.LevelData;
+import com.zelaux.betterdiagram.feature.leveldata.LevelDatas;
 import com.zelaux.betterdiagram.util.CenterMassCache;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -27,10 +27,6 @@ import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
-import org.spongepowered.asm.mixin.transformer.*;
-
-import java.lang.reflect.Field;
-import java.util.Map;
 
 @EventBusSubscriber(modid = BetterContraptionDiagram.MODID, value = Dist.CLIENT)
 public class ClientEvents {

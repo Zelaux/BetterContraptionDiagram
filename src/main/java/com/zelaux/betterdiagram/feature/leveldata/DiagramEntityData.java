@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.leveldata;
+package com.zelaux.betterdiagram.feature.leveldata;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -83,10 +83,6 @@ public class DiagramEntityData {
                      .orElseGet(ConcurrentHashMap::new);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public static DiagramEntityData get() {
-        return get(Minecraft.getInstance().level);
-    }
 
     @SneakyThrows
     public static DiagramEntityData get(Level level) {

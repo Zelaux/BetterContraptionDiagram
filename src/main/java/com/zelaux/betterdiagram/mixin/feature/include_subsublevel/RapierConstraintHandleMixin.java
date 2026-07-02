@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.mixin.include_subsublevel;
+package com.zelaux.betterdiagram.mixin.feature.include_subsublevel;
 
 import dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis;
 import dev.ryanhcode.sable.physics.impl.rapier.constraint.RapierConstraintHandle;

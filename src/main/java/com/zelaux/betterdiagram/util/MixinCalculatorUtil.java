@@ -176,10 +176,6 @@ public class MixinCalculatorUtil {
         return Mth.ceil(DEFAULT_SPACE_WIDTH * defaultIndents / spaceWidth);
     }
 
-    public static void forGoogles(List<Component> tooltip, int indent, MutableComponent component) {
-        tooltip.add(indented(indent, component)
-        );
-    }
 
     public static @NotNull MutableComponent indented(int indent, MutableComponent component) {
         return Component

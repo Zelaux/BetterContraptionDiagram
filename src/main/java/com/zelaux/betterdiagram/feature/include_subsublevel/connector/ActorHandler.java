@@ -44,18 +44,4 @@ public interface ActorHandler {
     @Nullable
     Iterable<? extends AbstractForceMapper> mapToConstraint(SubLevel a, Map<SubLevel, SubLevelGroup> subLevel2Group);
 
-    @Nullable
-    default Iterable<SubLevel> collectWithFixedConstraint(SubLevel a, Map<SubLevel, SubLevelGroup> subLevel2Group) {
-        Iterable<? extends AbstractForceMapper> constraints = mapToConstraint(a, subLevel2Group);
-        if(constraints == null) return null;
-        List<SubLevel> result = null;
-        for(Object obj : constraints) {
-            if(!(obj instanceof LocalConstraint<?> constraint) || constraint.kind() != ConstaintKind.Fixed) {
-                continue;
-            }
-            var list = result == null ? result = new ObjectArrayList<>() : result;
-            list.add(constraint.toAttachSubLevel());
-        }
-        return result;
-    }
 }

@@ -63,10 +63,6 @@ public class CenterMassCalculator {
         return recalculateStacks(clientData, screen.subLevel, diagramDataPacket.mass(), Objects.requireNonNullElse(COM, centerOfMass(screen.subLevel)));
     }
 
-    public static Weights[] recalculateStacks0(WithClientData clientData, ClientSubLevel subLevel, double mass) {
-        Vector3dc currentCOM = centerOfMass(subLevel);
-        return recalculateStacks(clientData, subLevel, mass, currentCOM);
-    }
 
     public static Weights @Nullable [] recalculateStacks(WithClientData clientData, ClientSubLevel subLevel, double mass, Vector3dc currentCOM) {
         BCDData data = clientData.bcdDataOrTryDefault();
@@ -348,8 +344,6 @@ public class CenterMassCalculator {
 
         return COM.set(pointForces.getFirst().point());
     }
-
-    public record SumOfForcesMomentumCache(Vector3d displacement, Vector3d force, Vector3d tmp) {}
 
     @Getter
     @AllArgsConstructor(access = AccessLevel.PRIVATE)

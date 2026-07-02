@@ -29,7 +29,6 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
     private static final Vector3d sumOfForces = new Vector3d();
     private static final Vector3d sumOfMoments = new Vector3d();
     private final ClientSubLevel subLevel;
-    private final DiagramDataPacket serverData;
     private final @NotNull DiagramScreen diagramScreeen;
     private final @NotNull DiagramScreenAccessors diagramScreeenAcc;
     private final @NotNull IDiagramScreenWithDependencies diagramScreenWithDependencies;
@@ -41,7 +40,6 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
         diagramScreenWithDependencies = (IDiagramScreenWithDependencies)self;
         tooltipColor = diagramScreeenAcc.TOOLTIP_LABEL_COLOR();
         this.subLevel = subLevel;
-        this.serverData = serverData;
     }
 
     @Override

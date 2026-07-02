@@ -21,10 +21,6 @@ import java.util.List;
 
 @Mixin(DiagramScreen.class)
 public abstract class DiagramScreenMixin {
-    @Shadow
-    @Final
-    public ClientSubLevel subLevel;
-
     @Inject(method = "addForceArrowTooltip", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/createmod/catnip/lang/LangBuilder;color(I)Lnet/createmod/catnip/lang/LangBuilder;", ordinal = 1))
     private static void addForceArrowTooltip(
         ForceGroup forceGroup,

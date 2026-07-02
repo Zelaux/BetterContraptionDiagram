@@ -25,8 +25,6 @@ public class DockingConnectorActor implements ActorHandler {
     DockingConnectorBlockEntity entity;
     private static final DockingConnectorPair DUMMY_PAIR = new DockingConnectorPair(null, null, null);
     private static final IDockingConnectorPair IDUMMY_PAIR = ((IDockingConnectorPair) DUMMY_PAIR);
-    private final Quaterniond orientation1 = new Quaterniond();
-    private final Quaterniond orientation2 = new Quaterniond();
 
     @Override
     public @Nullable Iterable<LocalConstraint<?>> mapToConstraint(SubLevel a, Map<SubLevel, SubLevelGroup> subLevel2Group) {

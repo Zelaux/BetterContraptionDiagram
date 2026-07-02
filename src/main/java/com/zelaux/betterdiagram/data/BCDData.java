@@ -111,14 +111,6 @@ public class BCDData {
 
     public static BCDData DEFAULT() {return DEFAULT_VALUE;}
 
-    public BCDData withResetedECOMRelatedData() {
-        return toBuilder()
-            .weightStacksByAxis(null)
-            .cache(null)
-            .offCenteredBlocks(null)
-            .build();
-    }
-
     @Contract(value = "!null->param1", mutates = "param1")
     public boolean[] axisStatesAsArray(boolean[] def) {
         if(def == null) def = new boolean[3];

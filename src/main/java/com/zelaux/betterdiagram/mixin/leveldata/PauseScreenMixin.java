@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.mixin.leveldata;
 
-import com.zelaux.betterdiagram.leveldata.DiagramEntityData;
+import com.zelaux.betterdiagram.feature.leveldata.DiagramEntityData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.PauseScreen;
 import org.spongepowered.asm.mixin.*;

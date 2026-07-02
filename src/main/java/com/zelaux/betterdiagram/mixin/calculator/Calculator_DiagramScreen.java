@@ -53,10 +53,6 @@ import static com.zelaux.betterdiagram.util.VecUtil.*;
 public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implements ProjectionAccessor {
 
     @Shadow
-    @Final
-    private static int TOOLTIP_LABEL_COLOR;
-
-    @Shadow
     private @Nullable DiagramDataPacket serverData;
 
     @Shadow

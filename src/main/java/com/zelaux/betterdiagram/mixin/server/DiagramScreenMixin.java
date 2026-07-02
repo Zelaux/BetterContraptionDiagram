@@ -19,17 +19,9 @@ public abstract class DiagramScreenMixin implements IDiagramScreen {
     @Shadow
     @Final
     private DiagramEntity diagram;
-    @Shadow
-    public static int UPDATE_REQUEST_INTERVAL;
-    @Shadow
-    @Final
-    public ClientSubLevel subLevel;
-
 
     @Unique
     private BCDData bcd$prevData;
-    @Unique
-    private int bcd$ticksWithoutUpdate;
 
     @Override
     public void bcd$applyBCDDATA(BCDData data) {

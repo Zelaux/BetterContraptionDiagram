@@ -1,11 +1,10 @@
-package com.zelaux.betterdiagram.leveldata;
+package com.zelaux.betterdiagram.feature.leveldata;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.zelaux.betterdiagram.data.BCDData;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.spongepowered.asm.mixin.*;
 
 @FieldDefaults(level = AccessLevel.PUBLIC)
 @Getter

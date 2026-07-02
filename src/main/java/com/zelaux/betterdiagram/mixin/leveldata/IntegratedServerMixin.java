@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.mixin.leveldata;
 
-import com.zelaux.betterdiagram.leveldata.DiagramEntityData;
+import com.zelaux.betterdiagram.feature.leveldata.DiagramEntityData;
 import net.minecraft.client.server.IntegratedServer;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
