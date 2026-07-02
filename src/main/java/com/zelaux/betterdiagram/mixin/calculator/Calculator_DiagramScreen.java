@@ -44,7 +44,6 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 import java.lang.Math;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.zelaux.betterdiagram.util.VecUtil.*;
 
@@ -101,9 +100,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final int diagramX = this.width / 2 - DIAGRAM_TEXTURE.width / 2;
         final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
         var layout = UIUtil.vertical(4,
-            new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_CALCULATOR, 0, 0, Component.translatable("better_contraption_diagram.diagram-button"), () -> {
-                CenterMassMovingScreen.toggle(self());
-            })
+            new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_CALCULATOR, 0, 0, Component.translatable("better_contraption_diagram.diagram-button"), () -> CenterMassMovingScreen.toggle(self()))
                 .setColorSelector((active, hover, texture) -> hover | Minecraft.getInstance().screen instanceof CenterMassMovingScreen ? 1 : 0)
                 .withTooltip(()->Component.translatable("better_contraption_diagram.diagram-button"))
             ,

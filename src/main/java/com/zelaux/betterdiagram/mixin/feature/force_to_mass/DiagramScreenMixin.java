@@ -5,7 +5,6 @@ import com.zelaux.betterdiagram.index.Colors;
 import com.zelaux.betterdiagram.index.SomeConstants;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
-import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.client.Minecraft;

@@ -48,9 +48,7 @@ public class ServerHelpers {
             .requires(x -> x.hasPermission(2))
             .then(Commands
                 .literal("resque")
-                .executes(context -> {
-                    return checkLoaded(context) + checkSaved(context);
-                })
+                .executes(context -> checkLoaded(context) + checkSaved(context))
             )
 
         );
@@ -72,7 +70,6 @@ public class ServerHelpers {
         final PhysicsPipeline pipeline = SableCommandHelper.requireSubLevelPhysicsPipeline(context);
         for(ServerSubLevel subLevel : container.getAllSubLevels()) {
             if(!(subLevel.latestLinearVelocity.y < 0)) continue;
-            ;
             Vector3d position = subLevel.logicalPose().position();
             if(!(position.y < level.getMinBuildHeight() - 64 - 40)) continue;
             position.y = y;
@@ -146,7 +143,6 @@ public class ServerHelpers {
                 BoundingBox3d bounds = data.bounds();
 
                 final BoundingBox3i chunkBounds = getChunkBounds(bounds);
-                ;
                 int middleChunk = (int) ((bounds.center(tmp).y) / 16);
                 boolean shouldSave = false;
                 if(!chunkBounds.contains(chunkPos.x, middleChunk, chunkPos.z)) {
@@ -210,7 +206,7 @@ public class ServerHelpers {
     }
 
     private static @NotNull BoundingBox3i getChunkBounds(BoundingBox3dc bounds) {
-        final BoundingBox3i chunkBounds = new BoundingBox3i(
+        return new BoundingBox3i(
             Mth.floor(bounds.minX() - 1.0) >> 4,
             Mth.floor(bounds.minY() - 1.0) >> 4,
             Mth.floor(bounds.minZ() - 1.0) >> 4,
@@ -218,7 +214,6 @@ public class ServerHelpers {
             Mth.floor(bounds.maxY() + 1.0) >> 4,
             Mth.floor(bounds.maxZ() + 1.0) >> 4
         );
-        return chunkBounds;
     }
 
     static <A, B> ArrayList<B> map(ArrayList<A> a, Function<A, B> mapper) {

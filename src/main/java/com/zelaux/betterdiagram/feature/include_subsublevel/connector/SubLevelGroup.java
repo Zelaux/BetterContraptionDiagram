@@ -1,7 +1,6 @@
 package com.zelaux.betterdiagram.feature.include_subsublevel.connector;
 
 import com.google.common.collect.ImmutableList;
-import dev.ryanhcode.sable.companion.SubLevelAccess;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;

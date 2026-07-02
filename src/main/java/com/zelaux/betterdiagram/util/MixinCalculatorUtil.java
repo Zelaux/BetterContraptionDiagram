@@ -14,7 +14,6 @@ import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.MassStack;
 import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
@@ -48,7 +47,6 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.zelaux.betterdiagram.Config.COM_viewType;
 import static net.createmod.catnip.lang.LangBuilder.DEFAULT_SPACE_WIDTH;

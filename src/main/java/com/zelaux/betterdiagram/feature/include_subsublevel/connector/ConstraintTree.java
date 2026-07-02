@@ -7,10 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Consumer;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConstraintTree {

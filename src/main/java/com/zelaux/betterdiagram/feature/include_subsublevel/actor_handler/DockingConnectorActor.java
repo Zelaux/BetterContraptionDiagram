@@ -44,9 +44,6 @@ public class DockingConnectorActor implements ActorHandler {
         final Quaterniond orientation = target.mul(blockOrientation1, new Quaterniond()).mul(blockOrientation2.conjugate());
 
 
-        ;
-
-
         return List.of(LocalConstraint.from(new FixedConstraintConfiguration(
             JOMLConversion.toJOML(entity.getTipPosition()),
             JOMLConversion.toJOML(dock2.getTipPosition()),

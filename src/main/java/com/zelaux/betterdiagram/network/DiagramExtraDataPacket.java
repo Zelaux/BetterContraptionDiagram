@@ -3,7 +3,6 @@ package com.zelaux.betterdiagram.network;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
-import com.zelaux.betterdiagram.extend.IDiagramScreen;
 import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDependencies;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.mixin.accessors.FloatingBlockDataAccessors;
@@ -14,7 +13,6 @@ import dev.ryanhcode.sable.physics.floating_block.FloatingClusterContainer;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import foundry.veil.api.network.handler.ClientPacketContext;
 import foundry.veil.api.util.CodecUtil;
-import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
@@ -75,7 +73,6 @@ public record DiagramExtraDataPacket(UUID sublevel, Matrix3dc inertiaTensor,
                 entry.getDoubleValue()
             ));
         }
-        ;
         return clusters;
     }
 

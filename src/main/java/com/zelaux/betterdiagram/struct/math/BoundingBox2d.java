@@ -183,7 +183,7 @@ public final class BoundingBox2d implements BoundingBox2dc {
      * @param y the y value of the point
      * @return this
      */
-    @Contract(value = "_,_,_->this", mutates = "this")
+    @Contract(value = "_,_->this", mutates = "this")
     public BoundingBox2d expandTo(final double x, final double y) {
         return this.expandTo(x, y, this);
     }

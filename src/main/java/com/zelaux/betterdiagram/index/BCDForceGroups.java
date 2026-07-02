@@ -1,18 +1,14 @@
 package com.zelaux.betterdiagram.index;
 
-import com.mojang.serialization.Codec;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.struct.BCDForceGroup;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import dev.simulated_team.simulated.Simulated;
-import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.util.strategy.IdentityStrategy;
 import org.jetbrains.annotations.Nullable;

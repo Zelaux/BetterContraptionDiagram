@@ -32,8 +32,7 @@ public class BCDTexture implements ScreenElement {
 
 
     public BCDTexture(final String namespace, final String location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {
-        final ResourceLocation loc = ResourceLocation.fromNamespaceAndPath(namespace, "textures/" + location + ".png");
-        this.location = loc;
+        this.location = ResourceLocation.fromNamespaceAndPath(namespace, "textures/" + location + ".png");
         this.width = width;
         this.height = height;
         this.startX = startX;

@@ -25,7 +25,6 @@
     "feature.force_to_mass.DiagramScreenMixin",
     "fix.DiagramOpenPacketMixin",
     "feature.include_subsublevel.DiagramDataPacketMixin",
-    "feature.include_subsublevel.RapierConstraintHandleMixin",
     "feature.include_subsublevel.actor.SwivelBearingBlockEntityMixin",
     "server.DiagramEntityMixin"
   ],

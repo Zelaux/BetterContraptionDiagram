@@ -122,12 +122,9 @@ public class COM_Tooltip {
             var entry = list.get(i);
             SymmetryEntry symmetryEntry = new SymmetryEntry(entry.getKey());
             for(BlockState blockState : entry.getValue()) {
-                for(int mirrorI = 0; mirrorI < mirrors.length; mirrorI++) {
-                    Mirror mirror = mirrors[mirrorI];
+                for(Mirror mirror : mirrors) {
                     BlockState state = blockState.mirror(mirror);
-                    for(int rotationI = 0; rotationI < rotations.length; rotationI++) {
-                        Rotation rotation = rotations[rotationI];
-
+                    for(Rotation rotation : rotations) {
                         SymmetryEntry exists = putIfAbsent.apply(state.rotate(rotation), symmetryEntry);
                         if(exists != null) {
                             SymmetryEntry link = exists.link();
@@ -180,7 +177,7 @@ public class COM_Tooltip {
         }
     }
 
-    static record TransformationPair(Mirror mirror, Rotation rotation) {
+    record TransformationPair(Mirror mirror, Rotation rotation) {
         public static final int fullRotationFlag = 0b1110;
 
         public int rotationFlag() {

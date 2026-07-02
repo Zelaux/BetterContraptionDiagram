@@ -61,7 +61,8 @@ public class CompositeWidgetLayouted extends AbstractContainerWidget implements 
         return child;
     }
 
-    public <T extends AbstractWidget> CompositeWidgetLayouted add(T child0, T child1, T... children) {
+    @SafeVarargs
+    public final <T extends AbstractWidget> CompositeWidgetLayouted add(T child0, T child1, T... children) {
         add(child0);
         add(child1);
         for(T child : children) add(child);

@@ -120,9 +120,7 @@ public class CenterMassCache {
             .forEach(ref -> {
                 Block block = ref.value();
                 var collectorTree = new HashMap<Vector3dc, ArrayList<BlockState>>();
-                forEachCOM(level, block, false, (state, centerOfMass) -> {
-                    collectorTree.computeIfAbsent(internVec3(centerOfMass, cordsMap), it -> getSaved(allocatedLists)).add(state);
-                });
+                forEachCOM(level, block, false, (state, centerOfMass) -> collectorTree.computeIfAbsent(internVec3(centerOfMass, cordsMap), it -> getSaved(allocatedLists)).add(state));
                 for(ArrayList<BlockState> list : allocatedLists) {
                     list.trimToSize();
                 }

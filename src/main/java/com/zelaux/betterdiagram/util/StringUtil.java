@@ -1,6 +1,5 @@
 package com.zelaux.betterdiagram.util;
 
-import com.zelaux.betterdiagram.annotations.DebugOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;

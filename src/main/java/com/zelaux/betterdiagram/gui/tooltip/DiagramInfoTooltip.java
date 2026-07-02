@@ -12,7 +12,6 @@ import com.zelaux.betterdiagram.util.MergedPointForceCalculator;
 import com.zelaux.betterdiagram.util.VecFormat;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
-import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
@@ -23,7 +22,6 @@ import org.joml.Vector2d;
 import org.joml.Vector3d;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 

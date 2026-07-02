@@ -173,31 +173,28 @@ public class VecUtil {
 
 
         //world to poseB
-        Vector3d localPointB = unprojectPosToLocal(poseB, worldPoint);
 
 
-        return localPointB;
+        return unprojectPosToLocal(poseB, worldPoint);
     }
 
     public static Vector3d unprojectPosToLocal(Pose3dc pose, Vector3d worldPoint) {
         Quaterniond invOrientB = new Quaterniond(pose.orientation()).conjugate();
 
-        Vector3d localPointB = worldPoint
+        return worldPoint
             .sub(pose.position())
             .rotate(invOrientB)
             .div((Vector3d) pose.scale())
             .add(pose.rotationPoint());
-        return localPointB;
     }
 
     public static Vector3d projectToWorld(Pose3dc poseA, Vector3dc posInA) {
         Quaterniondc orientationA = poseA.orientation();
-        Vector3d worldPoint = new Vector3d(posInA)
+        return new Vector3d(posInA)
             .sub(poseA.rotationPoint())
             .mul(poseA.scale())
             .rotate(orientationA)
             .add(poseA.position());
-        return worldPoint;
     }
 
     public static Vector3d projectDirection(Pose3dc poseB, Pose3dc poseA, Vector3dc forceInA) {
@@ -206,23 +203,20 @@ public class VecUtil {
 
 
         //world to poseB
-        Vector3d localForceB = unprojectDirectionToLocal(poseB, worldForce);
 
-        return localForceB;
+        return unprojectDirectionToLocal(poseB, worldForce);
     }
 
     public static Vector3d unprojectDirectionToLocal(Pose3dc poseB, Vector3d worldForce) {
         Quaterniond invOrientB = new Quaterniond(poseB.orientation()).conjugate();
-        Vector3d localForceB = worldForce
+        return worldForce
             .rotate(invOrientB);
-        return localForceB;
     }
 
     public static Vector3d projectForceToWorld(Pose3dc poseA, Vector3dc forceInA) {
         Quaterniondc orientationA = poseA.orientation();
 
-        Vector3d worldForce = new Vector3d(forceInA)
+        return new Vector3d(forceInA)
             .rotate(orientationA);
-        return worldForce;
     }
 }

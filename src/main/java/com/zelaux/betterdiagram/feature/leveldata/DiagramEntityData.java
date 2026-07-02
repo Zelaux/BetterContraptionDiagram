@@ -8,12 +8,9 @@ import com.zelaux.betterdiagram.BetterContraptionDiagramClient;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.data.BCDData;
 import lombok.SneakyThrows;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.*;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;

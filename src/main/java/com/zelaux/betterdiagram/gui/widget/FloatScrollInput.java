@@ -40,9 +40,7 @@ public class FloatScrollInput extends AbstractSimiWidget {
         max = 1;
         shiftStep = 5;
         step = standardStep();
-        formatter = i -> {
-            return Component.literal(String.valueOf(i));
-        };
+        formatter = i -> Component.literal(String.valueOf(i));
         soundPlayed = false;
     }
 
@@ -144,7 +142,7 @@ public class FloatScrollInput extends AbstractSimiWidget {
 
         double priorState = state;
         boolean shifted = AllKeys.shiftDown();
-        double step = ((int) Math.signum(pScrollY)) * this.step.apply(context);
+        float step = ((int) Math.signum(pScrollY)) * this.step.apply(context);
 
         state += step;
         //if(shifted)

@@ -38,7 +38,6 @@ public class RopeForceMapper extends AbstractForceMapper {
         super(info);
         this.startIsOrigin = startIsOrigin;
         this.clientRopeStrand = clientRopeStrand;
-        ;
     }
 
     @Override

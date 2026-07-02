@@ -192,7 +192,7 @@ public final class BoundingBox2i implements BoundingBox2ic {
      * @param y the y value of the point
      * @return this
      */
-    @Contract(value = "_,_,_->this", mutates = "this")
+    @Contract(value = "_,_->this", mutates = "this")
     public BoundingBox2i expandTo(final int x, final int y) {
         return this.expandTo(x, y, this);
     }

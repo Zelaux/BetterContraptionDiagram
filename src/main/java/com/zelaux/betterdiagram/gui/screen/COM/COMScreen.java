@@ -14,6 +14,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -128,8 +129,6 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
-    ;
-
     public void handleItemDrop(ItemTossEvent event) {
         if(minecraft == null || minecraft.gameMode == null) return;
         minecraft.gameMode.handleCreativeModeItemDrop(event.getEntity().getItem());
@@ -156,7 +155,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         layout.setPosition(leftPos, 0);
         var coordsLayout = horizontal(4);
         for(Entry entry : context.entries) {
-            coordsLayout.addChild(UIUtil.label(entry.axis.name()), it -> it.alignVerticallyMiddle());
+            coordsLayout.addChild(UIUtil.label(entry.axis.name()), LayoutSettings::alignVerticallyMiddle);
             coordsLayout.addChild(entry.editBox);
         }
         layout.addChild(coordsLayout);
@@ -261,13 +260,11 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
             })
             .ifRight(future->{
                 this.savedSearchEntries.set(entries);
-                future.thenAccept(comStats-> {
-                    Minecraft.getInstance().execute(()->{
-                        SearchEntry[] searchEntries = savedSearchEntries.getAndSet(null);
-                        if(searchEntries==null)return;
-                        doSearch(searchEntries);
-                    });
-                });
+                future.thenAccept(comStats-> Minecraft.getInstance().execute(()->{
+                    SearchEntry[] searchEntries = savedSearchEntries.getAndSet(null);
+                    if(searchEntries==null)return;
+                    doSearch(searchEntries);
+                }));
             })
         ;
         //this.scrollOffs = this.menu.getScrollForRowIndex(i);
@@ -393,7 +390,6 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
                     var pairs = context.pairs().pairs();
                     for(int i = 0; i < pairs.size(); i++) {
                         Context.COMPair pair =pairs.get(i);
-                            ;
                         int row = i / perRow, col = i % perRow;
                         int x = ox + col * size, y = oy + row * size;
                         boolean isSelected = context.selectedPair == i;

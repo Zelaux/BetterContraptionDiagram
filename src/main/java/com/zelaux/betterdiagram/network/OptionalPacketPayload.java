@@ -1,6 +1,5 @@
 package com.zelaux.betterdiagram.network;
 
-import foundry.veil.Veil;
 import foundry.veil.api.network.VeilPacketManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;

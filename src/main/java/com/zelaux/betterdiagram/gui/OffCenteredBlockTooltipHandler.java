@@ -73,7 +73,6 @@ public class OffCenteredBlockTooltipHandler {
                 OffCenteredBlock block = hoveredOCBlock.block();
                 context.setEntries(block.COM());
                 Item item = Item.BY_BLOCK.get(block.state().getBlock());
-                openDialog:
                 if(item != null) {
                     context.filterItem(new ItemStack(item));
                     var pairs = context.pairs();

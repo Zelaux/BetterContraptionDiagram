@@ -2,7 +2,6 @@ package com.zelaux.betterdiagram.network;
 
 import com.zelaux.betterdiagram.data.BCDData;
 import lombok.NonNull;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;

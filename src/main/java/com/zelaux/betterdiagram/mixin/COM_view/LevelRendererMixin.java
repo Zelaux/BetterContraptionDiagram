@@ -1,7 +1,5 @@
 package com.zelaux.betterdiagram.mixin.COM_view;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
 import dev.ryanhcode.sable.mixinhelpers.block_outline_render.SubLevelCamera;
 import net.minecraft.client.Camera;
@@ -10,9 +8,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.*;

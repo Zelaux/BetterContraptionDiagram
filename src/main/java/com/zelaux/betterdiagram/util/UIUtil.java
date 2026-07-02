@@ -15,7 +15,6 @@ import java.util.function.Consumer;
 public class UIUtil {
     public static FrameLayout stackFill(LayoutElement... widgets) {
         var layout = new FrameLayout(0, 0);
-        ;
         for(var widget : widgets) layout.addChild(widget);
         return layout;
     }

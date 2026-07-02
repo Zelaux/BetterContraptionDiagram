@@ -1,6 +1,5 @@
 package com.zelaux.betterdiagram.feature.include_subsublevel.connector;
 
-import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.DummyConstraintForceMapper;
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;

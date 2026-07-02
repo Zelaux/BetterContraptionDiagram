@@ -134,7 +134,6 @@ public class InplaceBlockRenderer {
         } else if(orCreate != null) {
             var renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher();
 
-            ;
             BlockEntityRenderer<BlockEntity> renderer1 = renderer.getRenderer(orCreate);
             if(renderer1 != null)
                 RenderSystem.runAsFancy(() -> renderer1.render(orCreate, partialTick, pose, guiGraphics.bufferSource(),

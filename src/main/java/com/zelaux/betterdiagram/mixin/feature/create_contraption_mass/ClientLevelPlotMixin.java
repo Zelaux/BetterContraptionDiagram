@@ -1,6 +1,5 @@
 package com.zelaux.betterdiagram.mixin.feature.create_contraption_mass;
 
-import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.zelaux.betterdiagram.feature.create_contraption_mass.ClientLevelPlotExt;
 import dev.ryanhcode.sable.api.sublevel.KinematicContraption;
 import dev.ryanhcode.sable.sublevel.plot.ClientLevelPlot;

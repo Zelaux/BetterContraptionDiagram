@@ -3,7 +3,6 @@ package com.zelaux.betterdiagram.network;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import foundry.veil.api.network.handler.ClientPacketContext;
 import foundry.veil.api.network.handler.ServerPacketContext;
-import foundry.veil.api.util.CodecUtil;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import net.minecraft.network.RegistryFriendlyByteBuf;

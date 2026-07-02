@@ -42,17 +42,13 @@ public abstract class DiagramDataPacketMixin {
             return;
         }
         var found = dependenciesData.allSublevels()
-                                              .map(x -> new SubLevelWithDistance(x, CenterMassCalculator.centerOfMass(x).distance(packetCOM)))
-                                              .filter(x -> x.distance() < 0.0625f)
-                                              .sorted(Comparator.comparingDouble(SubLevelWithDistance::distance))
-                                              .findFirst();
+                                    .map(x -> new SubLevelWithDistance(x, CenterMassCalculator.centerOfMass(x).distance(packetCOM)))
+                                    .filter(x -> x.distance() < 0.0625f)
+                                    .min(Comparator.comparingDouble(SubLevelWithDistance::distance));
         if(found.isEmpty()) {
             return;
         }
         SubLevel subLevel = found.get().subLevel();
-        if(subLevel == instance.subLevel) {
-            //original.call(instance, data);
-        }
         dependenciesData.updateData(subLevel, data);
 
     }

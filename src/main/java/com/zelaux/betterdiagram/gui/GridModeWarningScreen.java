@@ -1,17 +1,13 @@
 package com.zelaux.betterdiagram.gui;
 import com.zelaux.betterdiagram.Config;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LinearLayout;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.multiplayer.WarningScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Consumer;
 
 public class GridModeWarningScreen extends WarningScreen {
     private final Runnable onConfirm; // Обратный вызов (true если чекбокс нажат)

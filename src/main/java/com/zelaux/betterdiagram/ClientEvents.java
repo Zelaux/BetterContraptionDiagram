@@ -100,10 +100,4 @@ public class ClientEvents {
         BetterContraptionDiagramClient.isServerSideInstalled = false;
     }
 
-    @SubscribeEvent
-    static void onClientSetup(FMLClientSetupEvent event) {
-        // Some client setup code
-        //BetterContraptionDiagram.LOGGER.info("HELLO FROM CLIENT SETUP");
-        //BetterContraptionDiagram.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-    }
 }

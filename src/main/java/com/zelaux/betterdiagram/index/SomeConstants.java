@@ -1,10 +1,8 @@
 package com.zelaux.betterdiagram.index;
 
-import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysics;
 import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysicsData;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.Level;
-import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
 public interface SomeConstants {

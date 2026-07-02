@@ -1,7 +1,5 @@
 package com.zelaux.betterdiagram.feature.create_contraption_mass;
 
-import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
-import com.simibubi.create.content.contraptions.Contraption;
 import dev.ryanhcode.sable.api.sublevel.KinematicContraption;
 
 import java.util.List;

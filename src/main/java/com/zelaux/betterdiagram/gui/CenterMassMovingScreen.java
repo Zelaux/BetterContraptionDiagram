@@ -1,7 +1,6 @@
 package com.zelaux.betterdiagram.gui;
 
 import com.ibm.icu.impl.Pair;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.foundation.gui.widget.Label;
@@ -52,7 +51,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -160,14 +158,12 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
             expectedCenterOfMass(newValue);
             positionUpdatedNotFromEditBox(VecUtil.subMinVec3d(tmp.set(newValue), bb));
         }, () -> Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"));
-        final var selectBlock = makeButton(Component.translatable("better_contraption_diagram.calculator.select_block"), () -> {
-            selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
-                Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox());
-                gridToNormalVector(grid, gridPos, tmp.set(expectedCenterOfMass()).sub(offset));
-                expectedCenterOfMass(tmp.add(offset));
-                positionUpdatedNotFromEditBox(tmp.sub(offset));
-            });
-        }, () -> Component.translatable("better_contraption_diagram.calculator.select_block"));
+        final var selectBlock = makeButton(Component.translatable("better_contraption_diagram.calculator.select_block"), () -> selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
+            Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox());
+            gridToNormalVector(grid, gridPos, tmp.set(expectedCenterOfMass()).sub(offset));
+            expectedCenterOfMass(tmp.add(offset));
+            positionUpdatedNotFromEditBox(tmp.sub(offset));
+        }), () -> Component.translatable("better_contraption_diagram.calculator.select_block"));
         final var resetBlock = makeButton(Component.translatable("better_contraption_diagram.calculator.reset_block"), () -> {
             expectedCenterOfMass(null);
             positionUpdatedNotFromEditBox(tmp.set(currentCenterOfMass()).sub(bb.minX(), bb.minY(), bb.minZ()));
@@ -595,9 +591,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
                 //var tooltip=(List<FormattedText>)(List)toolTip;
                 BCDData data = clientData.bcdDataNotNull_readOnly();
                 if(data.eCOM() == null) {
-                    font.getSplitter().splitLines(CLICK_TO_SET, 256, CLICK_TO_SET.getStyle(), (text, isNewLine) -> {
-                        toolTip.add(FormattedTextAsComponent.create(text));
-                    });
+                    font.getSplitter().splitLines(CLICK_TO_SET, 256, CLICK_TO_SET.getStyle(), (text, isNewLine) -> toolTip.add(FormattedTextAsComponent.create(text)));
                     //toolTip.add(CLICK_TO_SET);
                     //toolTip.add(new SeparatorTooltipComponent().wrapComponent());
                 } else {
@@ -673,7 +667,6 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
                 if(clientData.bcdDataNotNull_readOnly().eCOM() != null || !active) return;
 
 
-                ;
                 int color = Colors.mixMany((ClientEvents.clientTime() / 60f / 4) % 1, Colors.BLUE_GRADIENT).getRGB();
                 //int expand = 0;
                 //int x = getX() - expand, y = getY() - expand, x2 = getX() + getWidth() - 1 + expand, y2 = getY() + getHeight() - 1 + expand;

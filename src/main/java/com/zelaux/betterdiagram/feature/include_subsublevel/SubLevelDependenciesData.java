@@ -88,8 +88,7 @@ public class SubLevelDependenciesData {
 
         updated = false;
 
-        ConstraintTree constraintTree1 = constraintTree;
-        var forces = collectAllForces(constraintTree1);
+        var forces = collectAllForces(constraintTree);
         if(forces == null) return null;
 
         return mergedForces = new DiagramDataPacket(forces, forces.mass);

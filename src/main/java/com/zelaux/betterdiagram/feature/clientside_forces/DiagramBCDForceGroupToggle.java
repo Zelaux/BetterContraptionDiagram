@@ -7,9 +7,7 @@ import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.struct.BCDForceGroup;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramForceGroupToggle;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
-import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.Nullable;
 
 public class DiagramBCDForceGroupToggle extends DiagramForceGroupToggle {
     private final WithClientData clientData;
@@ -36,7 +34,7 @@ public class DiagramBCDForceGroupToggle extends DiagramForceGroupToggle {
     public void toggleActive() {
         BCDData data = clientData.bcdDataOrTryDefault();
         if(data == null) return;
-        BCDData newData = data;
+        BCDData newData;
         if(isEnabled()) {
             newData = data.withEnabledForces(data.enabledForces.removeDisplay(forceGroup));
         } else {

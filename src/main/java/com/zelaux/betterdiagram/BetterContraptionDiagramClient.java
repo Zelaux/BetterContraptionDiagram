@@ -25,7 +25,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
 import java.util.List;
-import java.util.Optional;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = BetterContraptionDiagram.MODID, dist = Dist.CLIENT)
@@ -36,7 +35,6 @@ public class BetterContraptionDiagramClient {
     public static boolean isServerSideInstalled;
 
     public BetterContraptionDiagramClient(ModContainer container) {
-        ;
         container.registerConfig(ModConfig.Type.CLIENT, Config.SPEC);
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
