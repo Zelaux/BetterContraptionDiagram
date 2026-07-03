@@ -8,6 +8,7 @@ import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.joml.*;
 
@@ -168,9 +169,11 @@ public class VecUtil {
         return new QueuedForceGroup.PointForce(localPointB, localForceB);
     }
 
+    @Contract("_,_,_->new")
     public static Vector3d projectPos(Pose3dc poseB, Pose3dc poseA, Vector3dc posInA) {
+        if(poseB==poseA)return new Vector3d(posInA);
         //force to world
-        Vector3d worldPoint = projectToWorld(poseA, posInA);
+        Vector3d worldPoint = projectToWorld(poseA, new Vector3d(posInA));
 
 
         //world to poseB
@@ -178,7 +181,7 @@ public class VecUtil {
 
         return unprojectPosToLocal(poseB, worldPoint);
     }
-
+    @Contract("_,_->param2")
     public static Vector3d unprojectPosToLocal(Pose3dc pose, Vector3d worldPoint) {
         Quaterniond invOrientB = new Quaterniond(pose.orientation()).conjugate();
 
@@ -188,19 +191,20 @@ public class VecUtil {
             .div((Vector3d) pose.scale())
             .add(pose.rotationPoint());
     }
-
-    public static Vector3d projectToWorld(Pose3dc poseA, Vector3dc posInA) {
+    @Contract("_,_->param2")
+    public static Vector3d projectToWorld(Pose3dc poseA, Vector3d posInA) {
         Quaterniondc orientationA = poseA.orientation();
-        return new Vector3d(posInA)
+        return posInA
             .sub(poseA.rotationPoint())
             .mul(poseA.scale())
             .rotate(orientationA)
             .add(poseA.position());
     }
-
+    @Contract("_,_,_->new")
     public static Vector3d projectDirection(Pose3dc poseB, Pose3dc poseA, Vector3dc forceInA) {
+        if(poseB==poseA)return new Vector3d(forceInA);
         //force to world
-        Vector3d worldForce = projectForceToWorld(poseA, forceInA);
+        Vector3d worldForce = projectForceToWorld(poseA, new Vector3d(forceInA));
 
 
         //world to poseB
@@ -214,10 +218,11 @@ public class VecUtil {
             .rotate(invOrientB);
     }
 
-    public static Vector3d projectForceToWorld(Pose3dc poseA, Vector3dc forceInA) {
+    @Contract(value = "_,_->param2",mutates = "param2")
+    public static Vector3d projectForceToWorld(Pose3dc poseA, Vector3d forceInA) {
         Quaterniondc orientationA = poseA.orientation();
 
-        return new Vector3d(forceInA)
+        return forceInA
             .rotate(orientationA);
     }
 }
