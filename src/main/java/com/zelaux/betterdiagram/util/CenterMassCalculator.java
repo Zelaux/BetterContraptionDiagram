@@ -12,6 +12,7 @@ import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
+import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.struct.Weights;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
@@ -25,12 +26,15 @@ import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.util.strategy.IdentityStrategy;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -350,8 +354,8 @@ public class CenterMassCalculator {
         return calculator.displacement;
     }
 
-    public static Vector3d locateMergedCenterOfMass(Vector3d COM, SubLevelDependenciesData dependenciesData) {
-        if(dependenciesData == null) return COM;
+    public static Vector3d locateMergedCenterOfMass(Vector3d COM, SubLevelDependenciesData dependenciesData, @NotNull BCDData data) {
+        if(dependenciesData == null || !data.shouldMergedForcesWithConnectedSublevels) return COM;
         SubLevelGroup levelGroup = dependenciesData.constraintTree.subLevelGroup;
         Forces forces = dependenciesData.collectFixedForces(levelGroup);
         if(forces == null) return COM;
