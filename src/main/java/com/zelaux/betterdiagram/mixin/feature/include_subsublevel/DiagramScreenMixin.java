@@ -25,6 +25,14 @@ public abstract class DiagramScreenMixin implements IDiagramScreenWithDependenci
     @Shadow
     private @Nullable DiagramDataPacket serverData;
 
+    @Shadow
+    @Final
+    private DiagramEntity diagram;
+
+    @Shadow
+    @Final
+    public ClientSubLevel subLevel;
+
     @ModifyVariable(method = "renderCenterOfMass", at = @At(value = "STORE", ordinal = 0))
     protected Vector3d renderCenterOfMass(Vector3d COM) {
         SubLevelDependenciesData dependenciesData = bcd$subLevelDependencies();
@@ -34,7 +42,11 @@ public abstract class DiagramScreenMixin implements IDiagramScreenWithDependenci
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
         if(bcd$subLevelDependencies != null) {
-            serverData = bcd$subLevelDependencies.mergedForces();
+            if(((WithClientData) diagram).bcdDataNotNull_readOnly().shouldMergedForcesWithConnectedSublevels){
+                serverData = bcd$subLevelDependencies.mergedForces();
+            }else{
+                serverData = bcd$subLevelDependencies.get(subLevel).data;
+            }
         }
     }
 

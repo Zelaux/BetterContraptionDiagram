@@ -27,11 +27,15 @@ public class Forces extends Object2ObjectOpenHashMap<ForceGroup, List<QueuedForc
     }
 
     public void putSingle(ForceGroup forceGroup, QueuedForceGroup.PointForce pointForce) {
-        put(forceGroup, List.of(pointForce));
+        put(forceGroup, single(pointForce));
     }
 
     public void putSingle(BCDForceGroup forceGroup, QueuedForceGroup.PointForce pointForce) {
-        put(forceGroup.group(), List.of(pointForce));
+        put(forceGroup.group(), single(pointForce));
+    }
+
+    private List<QueuedForceGroup.PointForce> single(QueuedForceGroup.PointForce pointForce) {
+        return new ObjectArrayList<>(List.of(pointForce));
     }
 
     public void addForce(BCDForceGroup forceGroup, QueuedForceGroup.PointForce pointForce) {

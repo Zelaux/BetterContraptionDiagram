@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.struct.Weights;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import dev.ryanhcode.sable.companion.impl.SableCompanionUtil;
@@ -60,12 +61,30 @@ public class BCDData {
             SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", NULL_ECOM).xmap(x -> x, x -> x == null ? NULL_ECOM : x).forGetter(BCDData::eCOM_m),
             Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask),
             OffCenterBlocksShowState.CODEC.optionalFieldOf("offcenterShowState", OffCenterBlocksShowState.none).forGetter(BCDData::offCenterBlocksShowState),
-            Codec.BOOL.optionalFieldOf("shouldRenderMergedForces", false).forGetter(BCDData::shouldRenderMergedForces)
-        ).apply(i, (ecom, axisStates, offCenterBlocksShowState, shouldRenderMergedForces) ->
-            make(ecom == NULL_ECOM ? null : ecom,
+            Codec.BOOL.optionalFieldOf("shouldRenderMergedForces", false).forGetter(_i -> false),
+            Codec.BOOL.optionalFieldOf("shouldMergedForcesWithConnectedSublevels", false).forGetter(BCDData::shouldMergedForcesWithConnectedSublevels),
+            EnabledForces.CODEC.optionalFieldOf("enabledForces", DEFAULT().enabledForces).forGetter(BCDData::enabledForces)
+        ).apply(i,
+            (
+                ecom,
                 axisStates,
-                offCenterBlocksShowState
-            ).withShouldRenderMergedForces(shouldRenderMergedForces))
+                offCenterBlocksShowState,
+                shouldRenderMergedForces,
+                shouldMergedForcesWithConnectedSublevels,
+                enabledForces
+            ) -> {
+                Vector3d x = ecom == NULL_ECOM ? null : ecom;
+                return BCDData.DEFAULT().toBuilder()
+                              .eCOM(x)
+                              .weightStacksByAxis(null)
+                              .cache(null)
+                              .axisStatesMask(axisStates)
+                              .offCenterBlocksShowState(offCenterBlocksShowState)
+                              .enabledForces(shouldRenderMergedForces ? BCDData.DEFAULT().enabledForces.addDisplay(BCDForceGroups.MERGED_FORCE_GROUP) : enabledForces)
+                              .shouldMergedForcesWithConnectedSublevels(shouldMergedForcesWithConnectedSublevels)
+                              .build()
+                    ;
+            })
     );
     public static final Codec<Optional<BCDData>> SHORT_CODEC = NON_NULL_CODEC.optionalFieldOf("data").codec();
 
@@ -96,7 +115,7 @@ public class BCDData {
     @NonNull
     public OffCenterBlocksShowState offCenterBlocksShowState;
 
-    public boolean shouldRenderMergedForces;
+    public boolean shouldMergedForcesWithConnectedSublevels;
     public EnabledForces enabledForces;
 
 

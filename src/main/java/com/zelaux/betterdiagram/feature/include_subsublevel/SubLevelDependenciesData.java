@@ -28,6 +28,7 @@ import lombok.experimental.FieldDefaults;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
+import org.joml.Vector3dc;
 
 import java.util.Collection;
 import java.util.List;
@@ -119,9 +120,27 @@ public class SubLevelDependenciesData {
 
         var forces = new Forces(0);
 
+        Vector3dc localGravity=VecUtil.unprojectDirectionToLocal(mainSubLevel.logicalPose(),new Vector3d(
+            SomeConstants.gravityVector(mainSubLevel.getLevel())
+        ));
+        Vector3d innerSublevelDirection=new Vector3d();
+        Vector3d innerSublevelCOM=new Vector3d();
+        double sumOfMass=0;
         for(SubLevel subLevel : subLevelGroup) {
             Entry entry = get(subLevel);
+
             if(entry.data == null) continue;
+            Vector3d com =VecUtil.unprojectPosToLocal(mainSubLevel.logicalPose(), innerSublevelCOM.set(subLevel.logicalPose().position()));
+            double mass = entry.data.mass();
+            forces.putSingle(BCDForceGroups.CONTRAPTION_GRAVITY, new QueuedForceGroup.PointForce(
+                new Vector3d(com),
+                localGravity.mul(mass,new Vector3d()))
+            );
+
+            mergedGravity.displacement.fma(mass,com);
+            sumOfMass+= mass;
+
+            if(true)continue;
             List<QueuedForceGroup.PointForce> pointForces = entry.data.forces().get(ForceGroups.GRAVITY.get());
             if(pointForces == null) {
                 updated = true;
@@ -145,8 +164,9 @@ public class SubLevelDependenciesData {
                 }
             }
         }
-
-        mergedGravity.endPlusCOM();
+mergedGravity.displacement.div(sumOfMass);
+        mergedGravity.totalForce.set(localGravity).mul(sumOfMass);
+        //mergedGravity.endPlusCOM();
 
         boolean wasAny = false;
         for(SubLevel subLevel : subLevelGroup) {

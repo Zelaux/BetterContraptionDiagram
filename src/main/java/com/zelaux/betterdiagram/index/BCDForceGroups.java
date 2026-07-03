@@ -36,7 +36,7 @@ public interface BCDForceGroups {
     BCDForceGroup[] AXIS_GROUPS = {AXIS_X_GROUP, AXIS_Y_GROUP, AXIS_Z_GROUP};
 
     ObjectArrayList<BCDForceGroup> CUSTOM_FORCES = new ObjectArrayList<>(List.of(
-        ROPE_FORCE, MERGED_FORCE_GROUP, ROPE_MASS_FORCE, CONTRAPTION_GRAVITY
+        MERGED_FORCE_GROUP,ROPE_FORCE, ROPE_MASS_FORCE
     ));
 
     static BCDForceGroup registerGroup(String innerName, Component name, Component description, int color, boolean defaultDisplayed, Component axisName) {

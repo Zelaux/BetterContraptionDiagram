@@ -59,6 +59,9 @@ public interface BCDTextures {
 
         BCDTexture DIAGRAM_ICON_CALCULATOR = gridCell(atlas, 0, 3);
         BCDTexture DIAGRAM_ICON_INFO = gridCell(atlas, 0, 4);
+        BCDTexture ICON_SINGLE_SHIP = gridCell(atlas, 0, 14);
+        BCDTexture ICON_MANY_SHIPS = gridCell(atlas, 1, 14);
+        BCDTexture[] ICONS_SHIPS = {ICON_SINGLE_SHIP,ICON_MANY_SHIPS};
 
         BCDTexture ICON_X = gridCell(atlas, 0, 5);
         BCDTexture ICON_X_CROSS = gridCell(atlas, 1, 5);

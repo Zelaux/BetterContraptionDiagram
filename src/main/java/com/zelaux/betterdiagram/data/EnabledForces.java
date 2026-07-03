@@ -88,4 +88,8 @@ public class EnabledForces {
         }
         return builder.build();
     }
+
+    public boolean display(BCDForceGroup forceGroup) {
+        return display.contains(forceGroup);
+    }
 }

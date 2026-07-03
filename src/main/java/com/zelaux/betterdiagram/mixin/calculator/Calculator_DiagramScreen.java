@@ -32,7 +32,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import org.apache.commons.lang3.mutable.MutableInt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
@@ -44,6 +43,7 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 import java.lang.Math;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.zelaux.betterdiagram.util.VecUtil.*;
 
@@ -94,24 +94,42 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
     @Shadow
     protected abstract void renderForceArrow(GuiGraphics graphics, ForceGroup forceGroup, ForceClusterFinder.Cluster pointForce, double maxArrowLength, int mouseX, int mouseY, List<FormattedText> tooltipLines, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight);
 
+    @Shadow
+    @Final
+    private static int TOOLTIP_LABEL_COLOR;
+
     @Inject(at = @At(value = "TAIL"), method = "init")
     private void inject(CallbackInfo ci) {
 
         final int diagramX = this.width / 2 - DIAGRAM_TEXTURE.width / 2;
         final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
+        WithClientData clientData = (WithClientData) diagram;
         var layout = UIUtil.vertical(4,
             new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_CALCULATOR, 0, 0, Component.translatable("better_contraption_diagram.diagram-button"), () -> CenterMassMovingScreen.toggle(self()))
                 .setColorSelector((active, hover, texture) -> hover | Minecraft.getInstance().screen instanceof CenterMassMovingScreen ? 1 : 0)
                 .withTooltip(() -> Component.translatable("better_contraption_diagram.diagram-button"))
             ,
-            new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_INFO, 0, 0,
-                Component.translatable("better_contraption_diagram.extra-info.diagram-button"), () -> {
-                WithClientData clientData = (WithClientData) diagram;
+            new BDiagramButton(BCDTextures.Diagram.ICONS_SHIPS, 0, 0,
+                Component.translatable("bcd.contraption_diagram.join-forces"), () -> {
                 BCDData data = clientData.bcdDataOrTryDefault();
                 if(data == null) return;
-                clientData.bcdiagram$updateData(data.withShouldRenderMergedForces(!data.shouldRenderMergedForces()));
+                clientData.bcdiagram$updateData(data.withShouldMergedForcesWithConnectedSublevels(!data.shouldMergedForcesWithConnectedSublevels()));
             })
-                .setColorSelector((active, hovered, textureIndex) -> ((WithClientData) diagram).bcdDataNotNull_readOnly().shouldRenderMergedForces() ? 1 : 0)
+                .setColorSelector((active, hovered, textureIndex) -> hovered ? 1 : 0)
+                .setIconSwitch((active, hover) -> ((WithClientData) diagram).bcdDataNotNull_readOnly().shouldMergedForcesWithConnectedSublevels() ? 1 : 0)
+                .withTooltip(() ->
+                    Component.empty()
+                             .append(Component.translatable("bcd.contraption_diagram.join-forces").withColor(TOOLTIP_LABEL_COLOR))
+                             .append(
+                                 clientData.bcdDataNotNull_readOnly().shouldMergedForcesWithConnectedSublevels() ?
+                                     Component.translatable("bcd.contraption_diagram.join-forces.enabled") :
+                                     Component.translatable("bcd.contraption_diagram.join-forces.disabled")
+                             )
+                )
+            ,
+            new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_INFO, 0, 0,
+                Component.translatable("better_contraption_diagram.extra-info.diagram-button"), () -> {
+            })
                 .withTooltip(new DiagramInfoTooltip(self(), this.subLevel, this.serverData))
 
         );
@@ -163,7 +181,9 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                          CallbackInfo ci,
                          @Local(index = 11) LocalDoubleRef maxArrowLengthSquared
     ) {
-        if(!((WithClientData) diagram).bcdDataNotNull_readOnly().shouldRenderMergedForces) return;
+        if(serverData == null || !((WithClientData) diagram).bcdDataNotNull_readOnly().enabledForces.display(BCDForceGroups.MERGED_FORCE_GROUP))
+            return;
+
 
         var mergedForce = new MergedPointForceCalculator();
         mergedForce.begin(new Vector3d(CenterMassCalculator.centerOfMass(subLevel)));

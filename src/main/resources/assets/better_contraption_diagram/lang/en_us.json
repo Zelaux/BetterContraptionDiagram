@@ -97,6 +97,10 @@
 
 
 
+  "bcd.contraption_diagram.join-forces": "Forces from Connected Contraption: ",
+  "bcd.contraption_diagram.join-forces.enabled": "Shown",
+  "bcd.contraption_diagram.join-forces.disabled": "Hidden",
+
   "better_contraption_diagram.extra-info.diagram-button": "Extra Information",
   "better_contraption_diagram.extra-info.gravity": "Current Gravity Constant: %s",
   "better_contraption_diagram.extra-info.sum-of-forces.title": "Sum of Forces",
