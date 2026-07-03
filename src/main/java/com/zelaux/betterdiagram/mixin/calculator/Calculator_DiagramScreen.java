@@ -1,7 +1,5 @@
 package com.zelaux.betterdiagram.mixin.calculator;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalDoubleRef;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.extend.WithClientData;
@@ -165,7 +163,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
     }
 
     @Inject(
-        at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Ldev/simulated_team/simulated/content/entities/diagram/DiagramConfig;enabledForceGroups()Ljava/util/List;", ordinal = 1),
+        at = @At(value = "HEAD"),
         method = "renderArrows"
     )
     void drawMergedForce(GuiGraphics graphics,
@@ -178,17 +176,17 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                          Matrix4fc projMatrix,
                          int areaWidth,
                          int areaHeight,
-                         CallbackInfo ci,
-                         @Local(index = 11) LocalDoubleRef maxArrowLengthSquared
+                         CallbackInfo ci
     ) {
         if(serverData == null || !((WithClientData) diagram).bcdDataNotNull_readOnly().enabledForces.display(BCDForceGroups.MERGED_FORCE_GROUP))
             return;
 
 
         var mergedForce = new MergedPointForceCalculator();
-        mergedForce.begin(new Vector3d(CenterMassCalculator.centerOfMass(subLevel)));
+        mergedForce.begin(new Vector3d(CenterMassCalculator.getMergedBalancePointOrCOM((DiagramScreen) (Object) this)));
 
-        for(var entry : serverData.forces().entrySet()) {
+        Map<ForceGroup, List<QueuedForceGroup.PointForce>> forces = serverData.forces();
+        for(var entry : forces.entrySet()) {
             if(CenterMassCalculator.FORCE_GROUP_BLACKLIST.contains(entry.getKey())) {
                 continue;
             }
@@ -198,20 +196,9 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         }
 
         mergedForce.endPlusCOM();
-
-        maxArrowLengthSquared.set(Math.max(maxArrowLengthSquared.get(), mergedForce.totalForce.lengthSquared()));
-
-        mergedForce.displacement.add(CenterMassCalculator.centerOfMass(subLevel));
-        renderForceArrow(
-            graphics,
-            BCDForceGroups.MERGED_FORCE_GROUP.group,
-            new ForceClusterFinder.Cluster(mergedForce.displacement, mergedForce.totalForce, new MutableInt(1)),
-            Math.sqrt(maxArrowLengthSquared.get()),
-            mouseX - areaOriginX,
-            mouseY - areaOriginY,
-            tooltipList, orientation, cameraPos, projMatrix, areaWidth, areaHeight
-
-        );
+        forces.put(BCDForceGroups.MERGED_FORCE_GROUP.group, List.of(new QueuedForceGroup.PointForce(
+            mergedForce.displacement, mergedForce.totalForce
+        )));
     }
 
     @Inject(method = "renderArrows", at = @At(value = "TAIL"))

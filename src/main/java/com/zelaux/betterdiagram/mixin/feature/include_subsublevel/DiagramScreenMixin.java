@@ -1,9 +1,11 @@
 package com.zelaux.betterdiagram.mixin.feature.include_subsublevel;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDependencies;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
+import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
@@ -36,7 +38,7 @@ public abstract class DiagramScreenMixin implements IDiagramScreenWithDependenci
     @ModifyVariable(method = "renderCenterOfMass", at = @At(value = "STORE", ordinal = 0))
     protected Vector3d renderCenterOfMass(Vector3d COM) {
         SubLevelDependenciesData dependenciesData = bcd$subLevelDependencies();
-        return CenterMassCalculator.locateMergedCenterOfMass(COM, dependenciesData);
+        return CenterMassCalculator.locateMergedCenterOfMass(COM, dependenciesData, ((WithClientData)diagram).bcdDataNotNull_readOnly());
     }
 
     @Inject(method = "tick", at = @At("TAIL"))

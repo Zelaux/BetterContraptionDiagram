@@ -11,6 +11,7 @@ import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.gui.comp.InTextBlockRenderer;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
+import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.MassStack;
 import dev.ryanhcode.sable.Sable;
@@ -194,28 +195,18 @@ public class MixinCalculatorUtil {
                                           GuiGraphics graphics,
                                           int mouseX,
                                           int mouseY, boolean shouldClipWeights) {
-        if(serverData == null || !withClientData.bcdDataNotNull_readOnly().shouldRenderMergedForces) return;
-        var mergedForce = new MergedPointForceCalculator();
-
-        ClientSubLevel subLevel = self.subLevel;
-        mergedForce.begin(CenterMassCalculator.centerOfMass(subLevel));
-
-        for(var entry : serverData.forces().entrySet()) {
-            if(CenterMassCalculator.FORCE_GROUP_BLACKLIST.contains(entry.getKey())) {
-                continue;
-            }
-            for(QueuedForceGroup.PointForce force : entry.getValue()) {
-                mergedForce.add(force);
-            }
-        }
-        mergedForce.endPlusCOM();
-        Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(new Vector3d(mergedForce.displacement));
+        if(serverData == null || !withClientData.bcdDataNotNull_readOnly().enabledForces.display.contains(BCDForceGroups.MERGED_FORCE_GROUP))
+            return;
+        List<QueuedForceGroup.PointForce> pointForces = serverData.forces().get(BCDForceGroups.MERGED_FORCE_GROUP.group);
+        if(pointForces == null) return;
+        Vector3dc displacement = pointForces.get(0).point();
+        Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(new Vector3d(displacement));
         if(!accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.y)) return;
         BCDTextures.Diagram.ICON_TOTAL_DISPLACEMENT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
         double dst2 = originCoords.distanceSquared(mouseX - accessor.bcd$originX(), mouseY - accessor.bcd$originY());
 
         if(dst2 < 8 * 8) {
-            tooltipList.add(Component.translatable("force-group.merged-force.displacement", VecFormat.Presets.displacement(mergedForce.displacement.sub(mergedForce.com()))));
+            tooltipList.add(Component.translatable("force-group.merged-force.displacement", VecFormat.Presets.displacement(new Vector3d(displacement).sub(CenterMassCalculator.getMergedBalancePointOrCOM(self)))));
         }
     }
 
