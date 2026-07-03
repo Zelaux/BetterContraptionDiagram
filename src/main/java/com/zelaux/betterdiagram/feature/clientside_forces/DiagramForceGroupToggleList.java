@@ -23,7 +23,7 @@ public class DiagramForceGroupToggleList extends ObjectSelectionList<DiagramForc
 
     @Override
     protected void renderSelection(GuiGraphics guiGraphics, int top, int width, int height, int outerColor, int innerColor) {
-        super.renderSelection(guiGraphics, top, width, height, outerColor, innerColor);
+        //super.renderSelection(guiGraphics, top, width, height, outerColor, innerColor);
     }
 
     @Override
