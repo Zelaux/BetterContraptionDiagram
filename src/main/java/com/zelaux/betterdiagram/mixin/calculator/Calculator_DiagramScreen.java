@@ -7,6 +7,7 @@ import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.gui.CenterMassMovingScreen;
 import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
 import com.zelaux.betterdiagram.gui.tooltip.DiagramInfoTooltip;
+import com.zelaux.betterdiagram.gui.user.ButtonKind;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.BCDTextures;
@@ -126,8 +127,8 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 )
             ,
             new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_INFO, 0, 0,
-                Component.translatable("better_contraption_diagram.extra-info.diagram-button"), () -> {
-            })
+                Component.translatable("better_contraption_diagram.extra-info.diagram-button"), (Runnable) null)
+                .supportedButtons(ButtonKind.EMPTY_ARRAY)
                 .withTooltip(new DiagramInfoTooltip(self(), this.subLevel, this.serverData))
 
         );
