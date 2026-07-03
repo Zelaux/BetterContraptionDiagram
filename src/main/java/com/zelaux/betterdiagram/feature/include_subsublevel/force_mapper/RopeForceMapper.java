@@ -64,7 +64,7 @@ public class RopeForceMapper extends AbstractForceMapper {
             originSegment.negate();
             toAttachSegment.negate();
         }
-        if(lastI != ropeStat.equalySpacedIndexFromStart) {
+        if(lastI == ropeStat.equalySpacedIndexFromStart) {
             applyRopeForce(origin, originSegment, toAttach, toAttachSegment, points);
         }
         applyRopeMass(originSubLevel, originSegment, origin, segmentDirections, firstSegmentI, lastSegmentI, segmentStep, points);
