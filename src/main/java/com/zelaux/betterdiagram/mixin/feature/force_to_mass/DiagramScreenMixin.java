@@ -12,6 +12,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
+import org.joml.Runtime;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
@@ -33,8 +34,8 @@ public abstract class DiagramScreenMixin {
         if(!Screen.hasShiftDown()) return;
         double mass = forceMagnitude / SomeConstants.gravityScalar(Minecraft.getInstance().level);
         String formatted = String.format("%,.2f", mass);
-        boolean isEqual = CenterMassCalculator.equals(mass, (int) (mass * 100) / 100.0);
-        if(isEqual) formatted = "~" + formatted;
+        boolean isEqual = Runtime.equals(mass, (int) (mass * 100) / 100.0,0.01f);
+        if(!isEqual) formatted = "~" + formatted;
         MutableComponent value = Component.translatable("simulated.contraption_diagram.mass", formatted).withColor(0xffffffff);
         forceMagnitudeText.add(Component
             .empty()
