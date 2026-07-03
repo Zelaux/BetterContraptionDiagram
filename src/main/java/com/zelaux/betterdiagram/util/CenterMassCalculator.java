@@ -44,8 +44,17 @@ import java.util.Objects;
 import java.util.Set;
 
 public class CenterMassCalculator {
-    public static final float DELTA = 0.00001f;
-    public static Set<ForceGroup> FORCE_GROUP_BLACKLIST = Set.of(ForceGroups.GRAVITY.get());
+    public static  float DELTA = 0.0001f;
+    public static final Set<ForceGroup> FORCE_GROUP_BLACKLIST;
+
+    static {
+        var forceGroupBlacklist = new ObjectOpenCustomHashSet<ForceGroup>(IdentityStrategy.IDENTITY);
+        forceGroupBlacklist.add(ForceGroups.GRAVITY.get());
+        forceGroupBlacklist.add(BCDForceGroups.MERGED_FORCE_GROUP.group);
+        forceGroupBlacklist.add(BCDForceGroups.CONTRAPTION_GRAVITY.group);
+
+        FORCE_GROUP_BLACKLIST = forceGroupBlacklist;
+    }
 
     public static Weights @NotNull [] makeMassStacks() {
         return new Weights[]{new Weights(), new Weights(), new Weights()};
@@ -59,10 +68,16 @@ public class CenterMassCalculator {
         var accessors = accessors(screen);
         DiagramDataPacket diagramDataPacket = accessors.betterContraptionDiagram$serverData();
         if(diagramDataPacket == null) return null;
+        WithClientData clientData = accessors.betterContraptionDiagram$clientData();
+        return recalculateStacks(clientData, screen.subLevel, diagramDataPacket.mass(), getMergedBalancePointOrCOM(screen));
+    }
+
+    public static @NotNull Vector3dc getMergedBalancePointOrCOM(DiagramScreen screen) {
+        var accessors = accessors(screen);
         SubLevelDependenciesData dependenciesData = accessors.bcd$subLevelDependencies();
         WithClientData clientData = accessors.betterContraptionDiagram$clientData();
         Vector3d COM = calculateMergedBalancePoint(dependenciesData, clientData.bcdDataNotNull_readOnly());
-        return recalculateStacks(clientData, screen.subLevel, diagramDataPacket.mass(), Objects.requireNonNullElse(COM, centerOfMass(screen.subLevel)));
+        return Objects.requireNonNullElse(COM, centerOfMass(screen.subLevel));
     }
 
 
@@ -116,15 +131,15 @@ public class CenterMassCalculator {
 
 
     private static void addStacks(Weights weights, Vector3d uni, Vector3dc expectedCOM, double value0) {
-        if(equals(value0, 0)) value0 = 0;
+        if(equals2(value0, 0)) value0 = 0;
         weights.totalWeight = value0 / 4f;
         long value = (long) Math.floor(value0);
         final int maxIterations = Config.MAX_ITERATION.getAsInt();
         final int maxFixDistance = Config.MAX_FIX_DISTANCE.getAsInt();
 
         long sig = value0 < 0 ? -1 : 1;
-        if(equals(Math.abs(value0 - value), 1)) value += sig;
-        else if(!Runtime.equals(value0, value, 0.0001f)) {
+        if(equals2(Math.abs(value0 - value), 1)) value += sig;
+        else if(!equals2(value0, value)) {
             double v1 = (value0 - value) / 4f;
 
             long sigV1 = v1 < 0 ? -1 : 1;
@@ -157,6 +172,7 @@ public class CenterMassCalculator {
         }
     }
 
+
     public static Vector3dc expectedCenterOfMass(DiagramScreen screen) {
         return expectedCenterOfMass((accessors(screen).betterContraptionDiagram$clientData()), screen.subLevel);
     }
@@ -182,6 +198,14 @@ public class CenterMassCalculator {
 
     public static boolean equals(double v1, double v2) {
         return Runtime.equals(v1, v2, DELTA);
+    }
+
+    public static boolean equals3(double v1, double v2) {
+        return Runtime.equals(v1, v2, 0.001f);
+    }
+
+    public static boolean equals2(double v1, double v2) {
+        return Runtime.equals(v1, v2, 0.01f);
     }
 
     public static boolean equals(Vector3dc COM1, Vector3dc COM2) {
@@ -264,7 +288,7 @@ public class CenterMassCalculator {
             return null;
         }
         boolean[] shouldUpdate = {false};
-        data = checkCache(serverData.mass(), data, centerOfMass(self.subLevel), shouldUpdate);
+        data = checkCache(serverData.mass(), data, getMergedBalancePointOrCOM(self), shouldUpdate);
         if(data.offCenteredBlocks != null && !shouldUpdate[0]) return data.offCenteredBlocks;
         ArrayList<OffCenteredBlock> offCenteredBlocks = findOffCenteredBlocks(
             clientData,
@@ -286,14 +310,35 @@ public class CenterMassCalculator {
 
 
     public static Vector3d calculateMergedBalancePoint(SubLevelDependenciesData dependenciesData, BCDData data) {
-        if(dependenciesData == null) return null;
+        if(dependenciesData == null || !data.shouldMergedForcesWithConnectedSublevels) return null;
         SubLevelGroup levelGroup = dependenciesData.constraintTree.subLevelGroup;
         SubLevel mainSublevel = levelGroup.first();
-        Forces forces = dependenciesData.collectFixedForces(levelGroup);
 
+
+        EnabledForces enabledForces = data.enabledForces.addBalance(ForceGroups.GRAVITY.get());
+        if(enabledForces.balance.size() == 1) {//ONLY gravity
+            Vector3d weightedMass = new Vector3d();
+            double totalMass = 0;
+            boolean wasError = false;
+            for(SubLevel subLevel : levelGroup) {
+                DiagramDataPacket sublevelData = dependenciesData.get(subLevel).data;
+                if(sublevelData == null) {
+                    wasError = true;
+                    break;
+                }
+                Vector3d com = VecUtil.projectPos(mainSublevel.logicalPose(), subLevel.logicalPose(), centerOfMass(subLevel));
+                double mass = sublevelData.mass();
+                weightedMass.add(com.mul(mass));
+                totalMass += mass;
+            }
+            if(wasError) return null;
+
+            return weightedMass.div(totalMass);
+        }
         var calculator = new MergedPointForceCalculator();
         calculator.begin(centerOfMass(mainSublevel));
-        EnabledForces enabledForces = data.enabledForces.addBalance(ForceGroups.GRAVITY.get());
+        Forces forces = dependenciesData.collectFixedForces(levelGroup);
+        if(forces == null) return null;
         for(ForceGroup group : enabledForces.balance) {
             var list = forces.get(group);
             if(list == null) continue;
