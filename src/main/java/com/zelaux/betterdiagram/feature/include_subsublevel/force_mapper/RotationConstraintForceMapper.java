@@ -84,7 +84,7 @@ public class RotationConstraintForceMapper extends LocalConstraint<RotaryConstra
     @Override
     public void mergeForces(Forces origin, Forces toAttach, SubLevelDependenciesData subLevelDependenciesData) {
         RotaryConstraintConfiguration configuration1 = projectedConfiguration.get();
-
+        if(false)return;
         mergeForces(
             this, origin, toAttach,
             configuration1.pos1(), configuration1.pos2(),
