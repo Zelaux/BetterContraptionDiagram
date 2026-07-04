@@ -17,15 +17,17 @@
     "accessors.server_helpers.SubLevelStorageMixin",
     "calculator.Calculator_DiagramDataPacket",
     "COM_view.com_view_GoggleOverlayRenderer",
+    "debug.TestMixin",
+    "feature.buoyancy.DiagramEntityMixin",
     "feature.clientside_forces.DiagramScreenMixin",
     "feature.create_contraption_mass.AbstractContraptionEntityMixin",
     "feature.create_contraption_mass.ClientLevelPlotMixin",
     "feature.extra_info_deliver.DiagramEntityMixin",
     "feature.extra_info_deliver.FloatingBlockControllerExt",
     "feature.force_to_mass.DiagramScreenMixin",
-    "fix.DiagramOpenPacketMixin",
     "feature.include_subsublevel.DiagramDataPacketMixin",
     "feature.include_subsublevel.actor.SwivelBearingBlockEntityMixin",
+    "fix.DiagramOpenPacketMixin",
     "server.DiagramEntityMixin"
   ],
   "client": [

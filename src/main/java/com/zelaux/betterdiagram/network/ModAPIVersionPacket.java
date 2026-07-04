@@ -1,6 +1,8 @@
 package com.zelaux.betterdiagram.network;
 
+import com.google.common.collect.ImmutableSet;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
+import com.zelaux.betterdiagram.ModFeature;
 import foundry.veil.api.network.handler.ClientPacketContext;
 import foundry.veil.api.network.handler.ServerPacketContext;
 import io.netty.buffer.ByteBuf;
@@ -9,6 +11,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 import java.util.WeakHashMap;
@@ -40,9 +43,17 @@ public record ModAPIVersionPacket(Type<ModAPIVersionPacket> type,
     }
 
     public enum ModAPIVersion {
-        NONE,
+        NONE(ModFeature.none),
         API_0,
-        NEWER;
+        NEWER(ModFeature.all);
+
+        public final ImmutableSet<ModFeature> supportedFeatures;
+
+        ModAPIVersion(ModFeature... features) {
+            supportedFeatures = ImmutableSet.<ModFeature>builderWithExpectedSize(features.length)
+                                            .add(features)
+                                            .build();
+        }
 
         @Getter
         public final int id = ordinal();
@@ -52,5 +63,13 @@ public record ModAPIVersionPacket(Type<ModAPIVersionPacket> type,
             ByteBufCodecs.INT.map(i -> all[Math.min(NEWER.id, i)],
                 ModAPIVersion::id);
 
+        public static ModAPIVersion get(ServerPlayer player) {
+            return playerVersionMap.getOrDefault(player.connection,NONE);
+        }
+
+        public boolean supports(ModFeature modFeature) {
+            return supportedFeatures.contains(modFeature);
+        }
     }
+
 }

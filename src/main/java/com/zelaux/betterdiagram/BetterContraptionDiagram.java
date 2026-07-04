@@ -1,5 +1,7 @@
 package com.zelaux.betterdiagram;
 
+
+import java.util.Scanner;
 import com.mojang.logging.LogUtils;
 import com.zelaux.betterdiagram.command.ServerHelpers;
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.DockingConnectorActor;
@@ -7,6 +9,7 @@ import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.RopeAc
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.SwivelBearingActor;
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.SwivelBearingPlateActor;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
+import com.zelaux.betterdiagram.feature.buoyancy.BuoyancyCalculator;
 import com.zelaux.betterdiagram.network.BCDPacketManager;
 import com.zelaux.betterdiagram.network.HelloMessage;
 import com.zelaux.betterdiagram.network.ModAPIVersionPacket;
@@ -54,7 +57,8 @@ public class BetterContraptionDiagram {
 
         // Register the item to a creative tab
         //modEventBus.addListener(this::addCreative);
-
+        LOGGER.info(BuoyancyCalculator.helloWorld("Minecraft"));
+		//new Scanner(System.in).nextLine();
         // Register our mod's ModConfigSpec so that FML can create and load the data file for us
         //modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }

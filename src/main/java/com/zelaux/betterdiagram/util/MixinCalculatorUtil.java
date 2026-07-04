@@ -9,21 +9,28 @@ import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.data.OffCenteredBlock;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
+import com.zelaux.betterdiagram.feature.buoyancy.BuoyancyCalculator;
+import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
 import com.zelaux.betterdiagram.gui.comp.InTextBlockRenderer;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.struct.MassStack;
 import dev.ryanhcode.sable.Sable;
+import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
+import dev.ryanhcode.sable.companion.math.Pose3d;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.mixinhelpers.block_outline_render.SubLevelCamera;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
+import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysicsData;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import joptsimple.internal.Strings;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Camera;
@@ -37,6 +44,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -258,6 +266,26 @@ public class MixinCalculatorUtil {
             BCDTextures.Diagram.ICON_COLORED_OFF_CENTERED_BLOCK.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
         }
         return hovered == null ? null : new HoveredOffCenteredBlock(hoveredDistance2, hoveredIndex, hovered);
+    }
+
+    public static @NotNull DiagramDataPacket caclPacketWithExtraForces(ServerSubLevel subLevel, DiagramDataPacket dataPacket) {
+        var copyForces = new Forces(dataPacket.forces(),dataPacket.mass());
+
+        Vector3d buoyancyPoint = new Vector3d();
+        Vector3d buoyancyForce = new Vector3d();
+        Vector3d dragPoint = new Vector3d();
+        Vector3d dragForce = new Vector3d();
+        if(!BuoyancyCalculator.calculateForces(subLevel, buoyancyPoint, buoyancyForce, dragPoint, dragForce))return dataPacket;
+        Pose3d pose = subLevel.logicalPose();
+        ServerLevel level = subLevel.getLevel();
+        final Vector3dc localGravity = pose.transformNormalInverse(DimensionPhysicsData.getGravity(level));
+
+
+        Vector3dc centerOfMass = CenterMassCalculator.centerOfMass(subLevel);
+        copyForces.addForce(BCDForceGroups.BUOYANCY_FORCE_GROUP.group,new QueuedForceGroup.PointForce(buoyancyPoint,buoyancyForce));
+        copyForces.addForce(ForceGroups.DRAG.get(),new QueuedForceGroup.PointForce(dragPoint,dragForce));
+
+        return new DiagramDataPacket(copyForces, copyForces.mass);
     }
 
     public record HoveredOffCenteredBlock(double distanceSquared, int tooltipStartIndex, OffCenteredBlock block) {}

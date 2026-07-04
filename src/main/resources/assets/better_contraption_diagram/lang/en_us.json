@@ -12,6 +12,7 @@
   "force-group.rope-mass": "Rope Mass",
   "force-group.contraption-gravity": "Contraption Gravity",
   "force-group.merged-force": "Merged Force",
+  "force-group.buoyancy-force": "Buoyancy Force",
   "force-group.merged-force.displacement": "Merged Force Displacement: %s",
 
   "bcd.balance-point": "Balance Point",
@@ -101,7 +102,8 @@
   "bcd.contraption_diagram.join-forces.enabled": "Shown",
   "bcd.contraption_diagram.join-forces.disabled": "Hidden",
 
-  "better_contraption_diagram.extra-info.diagram-button": "Extra Information",
+  "bcd.extra-info.diagram-button": "Extra Information",
+  "bcd.extra-info.max-speed": "Max speed: %s",
   "better_contraption_diagram.extra-info.gravity": "Current Gravity Constant: %s",
   "better_contraption_diagram.extra-info.sum-of-forces.title": "Sum of Forces",
   "better_contraption_diagram.extra-info.sum-of-forces.displacement": "Displacement: %s",

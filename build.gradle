@@ -339,3 +339,7 @@ tasks.named("runPostprocessors") {
         // Почти все плагины прокидывают окружение дальше
     }
 }
+
+
+
+apply from: 'rust.gradle'

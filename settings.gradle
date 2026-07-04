@@ -20,6 +20,17 @@ pluginManagement {
         }
     }
 }
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'at.yawk.lz4:lz4-java:1.11.0'
+    }
+}
+
+
+
 
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'

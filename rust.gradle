@@ -1,0 +1,199 @@
+/*
+ * Основано на коде проекта Sable (https://github.com/ryanhcode/sable)
+ * Адаптировано для проекта bcd_sable_ext (BetterContraptionDiagram)
+ */
+
+import org.apache.tools.ant.taskdefs.condition.Os
+import java.nio.file.Files
+
+// --- НАСТРОЙКИ ПРОЕКТА ---
+def nativeLibName = "bcd_sable_ext"
+def pinnedRustVersion = 'nightly-2026-01-29'
+def rustRootDir = file("src/main/rust")
+def rustProjectDir = rustRootDir 
+
+def nativesDir = file("src/main/resources/natives/bcd_sable_ext")
+def cargoCacheDir = project.layout.buildDirectory.file("cargo").get().asFile
+
+// --- ТАРГЕТЫ ---
+def mac(arch) { [triple: "${arch}-apple-darwin", arch: arch, os: "macos", ext: "dylib", lib: true] }
+def linux(arch) { [triple: "${arch}-unknown-linux-gnu", suffix: ".2.17", arch: arch, os: "linux", ext: "so", lib: true] }
+def windows(arch) { [triple: "${arch}-pc-windows-msvc", arch: arch, os: "windows", ext: "dll", lib: false] }
+
+def supportedTargets = [
+        mac("x86_64"),
+        mac("aarch64"),
+        linux("x86_64"),
+        linux("aarch64"),
+        windows("x86_64")
+]
+
+// --- DOCKER CONFIG ---
+def docker = Os.isFamily(Os.FAMILY_MAC) ? "/usr/local/bin/docker" : "docker"
+def xWinImage = 'sable-build-xwin'
+def zigbuildImage = 'sable-build-zigbuild'
+
+def baseDockerCommand = [
+        docker, 'run', '--rm',
+        '-v', "$rustRootDir:/io",
+        '-v', "$cargoCacheDir/git:/usr/local/cargo/git",
+        '-v', "$cargoCacheDir/registry:/usr/local/cargo/registry",
+        '-w', '/io'
+]
+
+// --- ЗАДАЧИ ПОДГОТОВКИ ---
+tasks.register('createCargoCacheDir') {
+    doLast { if (!cargoCacheDir.exists()) cargoCacheDir.mkdirs() }
+}
+
+tasks.register('buildZigbuildImage', Exec) {
+    group = 'rust'
+    workingDir rustRootDir
+    commandLine docker, 'build', '-t', zigbuildImage, 'container/zigbuild', '--build-arg', "RUST_VERSION=${pinnedRustVersion}"
+    dependsOn createCargoCacheDir
+}
+
+tasks.register('buildXWinImage', Exec) {
+    group = 'rust'
+    workingDir rustRootDir
+    commandLine docker, 'build', '-t', xWinImage, 'container/xwin', '--build-arg', "RUST_VERSION=${pinnedRustVersion}"
+    dependsOn createCargoCacheDir
+}
+
+tasks.register('buildRustImages') {
+    group = 'rust'
+    dependsOn buildZigbuildImage, buildXWinImage
+}
+
+// --- ЛОКАЛЬНАЯ СБОРКА (БЫСТРАЯ) ---
+tasks.register('compileRustLocal', Exec) {
+    group = 'rust'
+    description = "Сборка под текущую систему (без Docker)"
+    workingDir rustProjectDir
+    commandLine 'cargo', 'build', '--release'
+    
+    // Захватываем переменные во время конфигурации
+    def targetNativesDir = nativesDir
+    def projectDir = rustProjectDir
+    def libName = nativeLibName
+    def fs = services.get(FileSystemOperations)
+
+    doLast {
+        if (!targetNativesDir.exists()) targetNativesDir.mkdirs()
+        def ext = Os.isFamily(Os.FAMILY_WINDOWS) ? "dll" : (Os.isFamily(Os.FAMILY_MAC) ? "dylib" : "so")
+        def prefix = Os.isFamily(Os.FAMILY_WINDOWS) ? "" : "lib"
+        
+        // Используем конструктор new File вместо метода file()
+        def source = new File(projectDir, "target/release/${prefix}${libName}.${ext}")
+
+        fs.copy {
+            from source
+            into targetNativesDir
+            rename { "${libName}_x86_64_linux.${ext}" }
+        }
+        println "Локальная нативка собрана."
+    }
+    finalizedBy 'packRustNatives'
+}
+
+// --- КРОСС-КОМПИЛЯЦИЯ ---
+supportedTargets.forEach { target ->
+    tasks.register("compileRust-${target.os}-${target.arch}", Exec) {
+        group = 'rust'
+        workingDir rustProjectDir
+        
+        def image = target.os == "windows" ? xWinImage : zigbuildImage
+        def tool = target.os == "windows" ? 'xwin' : 'zigbuild'
+        def triple = target.triple + (target.suffix ?: "")
+        def cargoCmd = "cargo ${tool} ${target.os == 'windows' ? 'build' : ''} --target ${triple} --release"
+        
+        commandLine = [*baseDockerCommand, image, 'sh', '-c', "rustup target add ${target.triple} && ${cargoCmd}"].flatten()
+    }
+}
+
+// Очередность выполнения
+def rustTasks = supportedTargets.collect { "compileRust-${it.os}-${it.arch}" }
+for (int i = 1; i < rustTasks.size(); i++) {
+    def current = rustTasks[i]
+    def previous = rustTasks[i-1]
+    tasks.named(current).configure { mustRunAfter(previous) }
+}
+
+tasks.register('buildRustNatives') {
+    group = 'build'
+    dependsOn rustTasks
+    finalizedBy 'copyRustNatives'
+}
+
+// --- COPY (Configuration Cache Safe) ---
+tasks.register('copyRustNatives', Copy) {
+    group = 'rust'
+    into nativesDir
+    mustRunAfter(buildRustNatives)
+
+    // Захватываем переменные для замыкания
+    def currentLibName = nativeLibName
+    def projectRoot = rustProjectDir
+
+    supportedTargets.each { target ->
+        def newFileName = "${currentLibName}_${target.arch}_${target.os}.${target.ext}"
+        def prefix = target.lib ? "lib" : ""
+        // Используем new File вместо file()
+        def sourceFile = new File(projectRoot, "target/${target.triple}/release/${prefix}${currentLibName}.${target.ext}")
+        
+        from(sourceFile) {
+            rename { String oldName -> newFileName }
+        }
+    }
+    finalizedBy 'packRustNatives'
+}
+
+// --- PACK (Configuration Cache Safe) ---
+tasks.register('packRustNatives') {
+    group = 'rust'
+    // Инъекция сервисов и захват переменных
+    def fs = services.get(FileSystemOperations)
+    def targetNativesDir = nativesDir
+    def libName = nativeLibName
+    def targets = supportedTargets
+
+    doLast {
+        def archiveFile = new File(targetNativesDir, "${libName}_binaries.zip.l4z")
+        if (!targetNativesDir.exists()) return
+
+        def baos = new ByteArrayOutputStream()
+        def zos = new java.util.zip.ZipOutputStream(baos)
+        
+        targets.each { target ->
+            def fileName = "${libName}_${target.arch}_${target.os}.${target.ext}"
+            def f = new File(targetNativesDir, fileName)
+            if (f.exists()) {
+                println "!Packed: "+f.absolutePath
+                zos.putNextEntry(new java.util.zip.ZipEntry(fileName))
+                zos.write(f.readBytes())
+                zos.closeEntry()
+            }else{
+
+                println " Missed: "+f.absolutePath
+            }
+        }
+        zos.close()
+        
+        archiveFile.withOutputStream { fos ->
+            // Используем полные имена классов для LZ4
+            def lz4 = new net.jpountz.lz4.LZ4FrameOutputStream(fos, 
+                net.jpountz.lz4.LZ4FrameOutputStream.BLOCKSIZE.SIZE_4MB, 
+                (long)baos.size(), 
+                net.jpountz.lz4.LZ4FrameOutputStream.FLG.Bits.BLOCK_INDEPENDENCE)
+            lz4.write(baos.toByteArray())
+            lz4.close()
+        }
+        
+        targets.each { target -> 
+            def fileName = "${libName}_${target.arch}_${target.os}.${target.ext}"
+            def fileToDelete = new File(targetNativesDir, fileName)
+            fs.delete { delete fileToDelete } 
+        }
+        println "Архив создан: ${archiveFile.name}"
+    }
+}

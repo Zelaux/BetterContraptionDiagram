@@ -40,3 +40,4 @@ run/
 **/src/generated/**/.cache/
 repo/
 !**/src/**/repo/
+/src/main/rust/target/

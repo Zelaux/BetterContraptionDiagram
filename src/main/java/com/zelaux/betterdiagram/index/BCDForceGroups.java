@@ -29,6 +29,7 @@ public interface BCDForceGroups {
     BCDForceGroup ROPE_FORCE = registerGroup("rope", Component.translatable("force-group.rope"), 0xe6ab56, false);
     BCDForceGroup ROPE_MASS_FORCE = registerGroup("rope-mass", Component.translatable("force-group.rope-mass"), 0x946F3A, false);
     BCDForceGroup MERGED_FORCE_GROUP = registerGroup("merged-force", Component.translatable("force-group.merged-force"), Colors.DISPLACEMENT_GREEN_COLORS[3].getRGB(), false);
+    BCDForceGroup BUOYANCY_FORCE_GROUP = registerGroup("buoyancy-force", Component.translatable("force-group.buoyancy-force"), 0x5759ff, false);
     BCDForceGroup BALANCE_FORCE_GROUP = registerGroup("balance-force", Component.translatable("bcd.balance-point"), Colors.DISPLACEMENT_GREEN_COLORS[3].getRGB(), false);
     BCDForceGroup CONTRAPTION_GRAVITY = registerGroup("contraption_gravity", Component.translatable("force-group.contraption-gravity"), 0x32a580, false);
 
@@ -36,7 +37,7 @@ public interface BCDForceGroups {
     BCDForceGroup[] AXIS_GROUPS = {AXIS_X_GROUP, AXIS_Y_GROUP, AXIS_Z_GROUP};
 
     ObjectArrayList<BCDForceGroup> CUSTOM_FORCES = new ObjectArrayList<>(List.of(
-        MERGED_FORCE_GROUP,ROPE_FORCE, ROPE_MASS_FORCE
+        MERGED_FORCE_GROUP,BUOYANCY_FORCE_GROUP,ROPE_FORCE, ROPE_MASS_FORCE
     ));
 
     static BCDForceGroup registerGroup(String innerName, Component name, Component description, int color, boolean defaultDisplayed, Component axisName) {
