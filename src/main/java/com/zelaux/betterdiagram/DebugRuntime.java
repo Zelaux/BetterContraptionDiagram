@@ -13,30 +13,37 @@ import java.nio.charset.StandardCharsets;
 public class DebugRuntime {
 
     public static final File FOLDER = new File("hello_world.log").getAbsoluteFile();
+    public static final File FILE = new File(FOLDER, "common.txt");
 
     static {
         System.out.println("Loaded : " + FOLDER.getAbsolutePath());
     }
 
     @SneakyThrows
-    public static boolean addThreadToFile(File file) {
+    public static boolean addThreadToFile(File file,String comment) {
         Thread thread = Thread.currentThread();
         file.getParentFile().mkdirs();
         try(FileOutputStream stream = new FileOutputStream(file, true)) {
-            stream.write((thread.toString() + "\n").getBytes(StandardCharsets.UTF_8));
+            stream.write(("["+System.identityHashCode(thread)+"]"+thread+" | "+comment + "\n").getBytes(StandardCharsets.UTF_8));
         }
         return false;
     }
 
+    public static boolean removeAll(String message) {
+        return addThreadToFile(FILE,"removeAll | "+message);
+    }
+    public static boolean add(String message) {
+        return addThreadToFile(FILE, "    add   | " + message);
+    }
     public static boolean isFullBlock() {
-        return addThreadToFile(new File(FOLDER, "fullBlock.txt"));
+        return addThreadToFile(new File(FOLDER, "fullBlock.txt"),"");
     }
 
     public static boolean isSolid() {
-        return addThreadToFile(new File(FOLDER, "isSolid.txt"));
+        return addThreadToFile(new File(FOLDER, "isSolid.txt"),"");
     }
 
     public static boolean centerOfMass() {
-        return addThreadToFile(new File(FOLDER, "centerOfMass.txt"));
+        return addThreadToFile(new File(FOLDER, "centerOfMass.txt"),"");
     }
 }

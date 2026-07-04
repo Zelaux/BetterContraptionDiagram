@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'at.yawk.lz4:lz4-java:1.11.0'
+    }
+}
+
+
+
 plugins {
     id 'java-library'
     id 'maven-publish'
@@ -5,6 +16,7 @@ plugins {
     id 'idea'
     id "com.github.Zelaux.asm-ext.postprocessors" version "$asm_ext_version"
 }
+
 
 tasks.named('wrapper', Wrapper).configure {
     // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
@@ -233,6 +245,7 @@ dependencies {
 //        exclude group: "maven.modrinth"
     }
     compileOnly "dev.ryanhcode.sable:sable-sable_rapier-1.21.1:$sable_rapier_version"
+//    compileOnly "dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:1.6.0"
     api("dev.engine-room.flywheel:flywheel-neoforge-1.21.1:1.0.6")
     api("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") {
 //        exclude group: "foundry.veil"
