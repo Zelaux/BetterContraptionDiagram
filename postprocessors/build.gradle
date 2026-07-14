@@ -9,11 +9,13 @@ repositories {
 
 static String asmExt(String module) {
     if (module.startsWith(':')) module = module.substring(1);
-    return "com.github.Zelaux.asm-ext:${module.replace(':', '-')}:1.0.3"
+    return "com.github.Zelaux.asm-ext:${module.replace(':', '-')}:1.0.5"
 }
 
 dependencies {
-    def asmVersion='9.9'
+    implementation "it.unimi.dsi:fastutil:8.5.12"
+
+    def asmVersion='9.8'
 //    implementation "org.ow2.asm:asm:$asmVersion"
     implementation "org.ow2.asm:asm-util:$asmVersion"
     implementation "org.ow2.asm:asm-tree:$asmVersion"

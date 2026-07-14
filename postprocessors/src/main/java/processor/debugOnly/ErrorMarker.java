@@ -1,6 +1,5 @@
 package processor.debugOnly;
 
-import asmlib.transform.Transformations;
 import org.objectweb.asm.*;
 
 import java.io.PrintStream;
@@ -9,11 +8,11 @@ import java.util.HashSet;
 class ErrorMarker extends ClassVisitor {
 
     private final HashSet<DebugEntry> debugEntries;
-    private final RemovedFromBuild removedFromBuild;
+    private final RemovedFromBuild_Transformer removedFromBuild;
     private String className;
     private String source;
 
-    protected ErrorMarker(HashSet<DebugEntry> debugEntries, RemovedFromBuild removedFromBuild) {
+    protected ErrorMarker(HashSet<DebugEntry> debugEntries, RemovedFromBuild_Transformer removedFromBuild) {
         super(Opcodes.ASM9);
         this.debugEntries = debugEntries;
         this.removedFromBuild = removedFromBuild;

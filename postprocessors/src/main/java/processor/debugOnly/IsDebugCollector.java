@@ -7,25 +7,27 @@ import org.objectweb.asm.tree.MethodNode;
 
 import java.util.ArrayList;
 
-class IsDebugCollector extends ClassVisitor {
+public class IsDebugCollector extends ClassVisitor {
     @Getter
     private final ArrayList<FieldNode> debugFields;
     @Getter
     private final ArrayList<MethodNode> debugMethods;
     @Getter
     private boolean isDebug;
+    private String annotationTypeDescriptor;
 
-    public IsDebugCollector(ClassVisitor classVisitor) {
+    public IsDebugCollector(ClassVisitor classVisitor, String annotationTypeDescriptor) {
         super(Opcodes.ASM9, classVisitor);
 
         debugFields = new ArrayList<>();
         debugMethods = new ArrayList<>();
+        this.annotationTypeDescriptor = annotationTypeDescriptor;
     }
 
     @Override
     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
         if(isDebug) return null;
-        isDebug = descriptor.equals(RemovedFromBuild.ANNOTATION_TYPE_DESCRIPTOR);
+        isDebug = descriptor.equals(annotationTypeDescriptor);
         return null;
     }
 
@@ -38,7 +40,7 @@ class IsDebugCollector extends ClassVisitor {
 
             @Override
             public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-                if(isDebug || descriptor.equals(RemovedFromBuild.ANNOTATION_TYPE_DESCRIPTOR)) {
+                if(isDebug || descriptor.equals(RemovedFromBuild_Transformer.ANNOTATION_TYPE_DESCRIPTOR)) {
                     if(!nodeDebug){
                         nodeDebug = true;
                         debugFields.add(node);
@@ -63,7 +65,7 @@ class IsDebugCollector extends ClassVisitor {
             boolean nodeDebug = false;
             @Override
             public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-                if(isDebug || descriptor.equals(RemovedFromBuild.ANNOTATION_TYPE_DESCRIPTOR)) {
+                if(isDebug || descriptor.equals(annotationTypeDescriptor)) {
                     if(!nodeDebug){
                         nodeDebug = true;
                         debugMethods.add(node);
