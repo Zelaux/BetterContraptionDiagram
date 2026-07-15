@@ -14,13 +14,13 @@ public class DebugRuntime {
     public static final File FOLDER = new File("hello_world.log").getAbsoluteFile();
     public static final File THREAD_FOLDER = new File(FOLDER,"thread").getAbsoluteFile();
     public static final File FILE = new File(FOLDER, "common.txt");
-    public static boolean disableAirflowScaling=true;
+    public static boolean disableAirflowScaling=isDebug();
 
     static {
         System.out.println("Loaded : " + FOLDER.getAbsolutePath());
     }
     /**
-     * Value will be substituted at call-site after compilation
+     * The value will be <b>inlined</b> at the call-site.
      * */
     public static boolean isDebug(){
         return true;

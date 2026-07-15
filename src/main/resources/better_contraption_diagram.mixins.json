@@ -17,6 +17,7 @@
     "accessors.server_helpers.SubLevelStorageMixin",
     "calculator.Calculator_DiagramDataPacket",
     "COM_view.com_view_GoggleOverlayRenderer",
+    "debug.Debug_BlockEntityPropeller",
     "feature.clientside_forces.DiagramScreenMixin",
     "feature.create_contraption_mass.AbstractContraptionEntityMixin",
     "feature.create_contraption_mass.ClientLevelPlotMixin",
