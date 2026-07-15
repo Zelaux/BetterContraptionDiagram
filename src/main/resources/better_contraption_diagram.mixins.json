@@ -23,9 +23,12 @@
     "feature.extra_info_deliver.DiagramEntityMixin",
     "feature.extra_info_deliver.FloatingBlockControllerExt",
     "feature.force_to_mass.DiagramScreenMixin",
-    "fix.DiagramOpenPacketMixin",
     "feature.include_subsublevel.DiagramDataPacketMixin",
     "feature.include_subsublevel.actor.SwivelBearingBlockEntityMixin",
+    "feature.max_speed.Sail_LevelPlot",
+    "feature.max_speed.Sail_PlotChunkHolder_Acc",
+    "feature.max_speed.Sail_ServerLevelPlot",
+    "fix.DiagramOpenPacketMixin",
     "server.DiagramEntityMixin"
   ],
   "client": [

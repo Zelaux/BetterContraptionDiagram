@@ -103,6 +103,8 @@
 
   "bcd.extra-info.diagram-button": "Extra Information",
   "bcd.extra-info.max-speed": "Max speed: %s",
+  "bcd.extra-info.max-speed2": "Max speed2: %s",
+  "bcd.extra-info.max-speed3": "Max speed3: %s",
   "better_contraption_diagram.extra-info.gravity": "Current Gravity Constant: %s",
   "better_contraption_diagram.extra-info.sum-of-forces.title": "Sum of Forces",
   "better_contraption_diagram.extra-info.sum-of-forces.displacement": "Displacement: %s",
