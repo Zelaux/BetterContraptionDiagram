@@ -1,8 +1,9 @@
-package com.zelaux.betterdiagram.network;
+package com.zelaux.betterdiagram.network.bcddata;
 
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.extend.IDiagramScreen;
+import com.zelaux.betterdiagram.network.OptionalPacketPayload;
 import foundry.veil.api.network.handler.ClientPacketContext;
 import lombok.NonNull;
 import net.minecraft.client.Minecraft;

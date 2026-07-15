@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.network;
+package com.zelaux.betterdiagram.network.extradata;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -7,6 +7,7 @@ import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDe
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.mixin.accessors.FloatingBlockDataAccessors;
 import com.zelaux.betterdiagram.mixin.feature.extra_info_deliver.FloatingBlockControllerExt;
+import com.zelaux.betterdiagram.network.OptionalPacketPayload;
 import dev.ryanhcode.sable.physics.floating_block.FloatingBlockCluster;
 import dev.ryanhcode.sable.physics.floating_block.FloatingBlockMaterial;
 import dev.ryanhcode.sable.physics.floating_block.FloatingClusterContainer;
@@ -27,8 +28,11 @@ import org.joml.Matrix3dc;
 import java.util.List;
 import java.util.UUID;
 
-public record DiagramExtraDataPacket(UUID sublevel, Matrix3dc inertiaTensor,
-                                     List<ClusterInfo> clusters) implements CustomPacketPayload, OptionalPacketPayload {
+public record DiagramExtraDataPacket(
+    UUID sublevel,
+    Matrix3dc inertiaTensor,
+    List<ClusterInfo> clusters
+) implements CustomPacketPayload, OptionalPacketPayload {
     public static final Type<DiagramExtraDataPacket> TYPE = new Type<>(BetterContraptionDiagram.resource("extra_diagram"));
 
 

@@ -9,7 +9,7 @@ import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.Swivel
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
 import com.zelaux.betterdiagram.network.BCDPacketManager;
 import com.zelaux.betterdiagram.network.HelloMessage;
-import com.zelaux.betterdiagram.network.ModAPIVersionPacket;
+import com.zelaux.betterdiagram.network.features.ModFeaturesPacket;
 import dev.simulated_team.simulated.content.blocks.docking_connector.DockingConnectorBlockEntity;
 import dev.simulated_team.simulated.content.blocks.rope.rope_connector.RopeConnectorBlockEntity;
 import dev.simulated_team.simulated.content.blocks.rope.rope_winch.RopeWinchBlockEntity;
@@ -71,7 +71,7 @@ public class BetterContraptionDiagram {
     void syncHello(OnDatapackSyncEvent event) {
         if(event.getPlayer() == null) return;
         HelloMessage.INSTANCE.trySend(event.getPlayer());
-        ModAPIVersionPacket.SERVER_TO_CLIENT.trySend(event.getPlayer());
+        ModFeaturesPacket.SERVER_TO_CLIENT.trySend(event.getPlayer());
     }
 
 

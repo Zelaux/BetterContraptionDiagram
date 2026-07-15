@@ -1,8 +1,9 @@
-package com.zelaux.betterdiagram.network;
+package com.zelaux.betterdiagram.network.bcddata;
 
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.extend.ServerSideData;
+import com.zelaux.betterdiagram.network.OptionalPacketPayload;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;

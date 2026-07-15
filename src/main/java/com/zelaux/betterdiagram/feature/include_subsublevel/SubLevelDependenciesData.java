@@ -6,7 +6,7 @@ import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGr
 import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.SomeConstants;
-import com.zelaux.betterdiagram.network.DiagramExtraDataPacket;
+import com.zelaux.betterdiagram.network.extradata.DiagramExtraDataPacket;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.MergedPointForceCalculator;
 import com.zelaux.betterdiagram.util.VecUtil;

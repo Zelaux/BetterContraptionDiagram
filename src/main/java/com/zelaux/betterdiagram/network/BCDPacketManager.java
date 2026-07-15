@@ -1,6 +1,10 @@
 package com.zelaux.betterdiagram.network;
 
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
+import com.zelaux.betterdiagram.network.bcddata.DiagramOpenBCDDataPacket;
+import com.zelaux.betterdiagram.network.bcddata.DiagramSaveBCDDataPacket;
+import com.zelaux.betterdiagram.network.extradata.DiagramExtraDataPacket;
+import com.zelaux.betterdiagram.network.features.ModFeaturesPacket;
 import foundry.veil.api.network.VeilPacketManager;
 
 public class BCDPacketManager {
@@ -13,7 +17,7 @@ public class BCDPacketManager {
         INSTANCE.registerServerbound(DiagramSaveBCDDataPacket.TYPE, DiagramSaveBCDDataPacket.CODEC, DiagramSaveBCDDataPacket::handleServer, true);
         INSTANCE.registerClientbound(DiagramExtraDataPacket.TYPE, DiagramExtraDataPacket.STREAM_CODEC, DiagramExtraDataPacket::handleClient, true);
 
-        INSTANCE.registerClientbound(ModAPIVersionPacket.TYPE_S2C, ModAPIVersionPacket.STREAM_CODEC, ModAPIVersionPacket::handleClient, true);
-        INSTANCE.registerServerbound(ModAPIVersionPacket.TYPE_C2S, ModAPIVersionPacket.STREAM_CODEC, ModAPIVersionPacket::handleServer, true);
+        INSTANCE.registerClientbound(ModFeaturesPacket.TYPE_S2C, ModFeaturesPacket.STREAM_CODEC, ModFeaturesPacket::handleClient, true);
+        INSTANCE.registerServerbound(ModFeaturesPacket.TYPE_C2S, ModFeaturesPacket.STREAM_CODEC, ModFeaturesPacket::handleServer, true);
     }
 }

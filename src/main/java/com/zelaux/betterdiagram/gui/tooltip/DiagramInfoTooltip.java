@@ -10,7 +10,7 @@ import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.Colors;
 import com.zelaux.betterdiagram.mixin.feature.extra_info_deliver.FloatingBlockControllerExt;
-import com.zelaux.betterdiagram.network.DiagramExtraDataPacket;
+import com.zelaux.betterdiagram.network.extradata.DiagramExtraDataPacket;
 import com.zelaux.betterdiagram.util.*;
 import dev.ryanhcode.sable.api.block.BlockSubLevelLiftProvider;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;

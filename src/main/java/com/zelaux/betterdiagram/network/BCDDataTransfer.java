@@ -1,6 +1,8 @@
 package com.zelaux.betterdiagram.network;
 
 import com.zelaux.betterdiagram.data.BCDData;
+import com.zelaux.betterdiagram.network.bcddata.DiagramOpenBCDDataPacket;
+import com.zelaux.betterdiagram.network.bcddata.DiagramSaveBCDDataPacket;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 
