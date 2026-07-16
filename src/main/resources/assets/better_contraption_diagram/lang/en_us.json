@@ -101,11 +101,10 @@
   "bcd.contraption_diagram.join-forces.enabled": "Shown",
   "bcd.contraption_diagram.join-forces.disabled": "Hidden",
 
-  "bcd.extra-info.diagram-button": "Extra Information",
-  "bcd.extra-info.max-speed": "Max speed: %s",
-  "bcd.extra-info.max-speed2": "Max speed2: %s",
-  "bcd.extra-info.max-speed3": "Max speed3: %s",
-  "better_contraption_diagram.extra-info.gravity": "Current Gravity Constant: %s",
+  "bcd.extra-info.diagram-button": "Additional Information",
+  "bcd.extra-info.max-speed": "Terminal speed(approximated): %s",
+  "bcd.extra-info.inertia": "Inertia:",
+  "better_contraption_diagram.extra-info.gravity": "Gravity Direction: %s",
   "better_contraption_diagram.extra-info.sum-of-forces.title": "Sum of Forces",
   "better_contraption_diagram.extra-info.sum-of-forces.displacement": "Displacement: %s",
   "better_contraption_diagram.extra-info.sum-of-forces.direction": "Direction: %s"
