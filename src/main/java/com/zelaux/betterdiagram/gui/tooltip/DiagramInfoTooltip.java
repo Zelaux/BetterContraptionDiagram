@@ -10,6 +10,7 @@ import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.Colors;
 import com.zelaux.betterdiagram.mixin.feature.extra_info_deliver.FloatingBlockControllerExt;
+import com.zelaux.betterdiagram.network.extradata.ClusterInfo;
 import com.zelaux.betterdiagram.network.extradata.DiagramExtraDataPacket;
 import com.zelaux.betterdiagram.util.*;
 import dev.ryanhcode.sable.api.block.BlockSubLevelLiftProvider;
@@ -28,7 +29,6 @@ import dev.ryanhcode.sable.util.SableMathUtils;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectCollection;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.client.Minecraft;
@@ -57,8 +57,8 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
     private final ClientSubLevel mySubLevel;
     private final @NotNull DiagramScreen diagramScreeen;
     private final @NotNull DiagramScreenAccessors diagramScreeenAcc;
-    private final int tooltipColor=Colors.TOOLTIP_COLOR.getRGB();
-    private static float debugScale =-1;
+    private final int tooltipColor = Colors.TOOLTIP_COLOR.getRGB();
+    private static float debugScale = -1;
 
     public DiagramInfoTooltip(@NotNull DiagramScreen self, ClientSubLevel subLevel, DiagramDataPacket serverData) {
         this.diagramScreeen = self;
@@ -80,17 +80,17 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
         mergedForce.begin(CenterMassCalculator.getMergedBalancePointOrCOM(diagramScreeen));
 
         Set<ForceGroup> blackList = new ObjectOpenCustomHashSet<>(Set.of(
-                ForceGroups.DRAG.get(),
-                BCDForceGroups.MERGED_FORCE_GROUP.group,
-                BCDForceGroups.CONTRAPTION_GRAVITY.group,
-                BCDForceGroups.ROPE_FORCE.group,
-                BCDForceGroups.ROPE_MASS_FORCE.group
-            ),IdentityStrategy.IDENTITY);
+            ForceGroups.DRAG.get(),
+            BCDForceGroups.MERGED_FORCE_GROUP.group,
+            BCDForceGroups.CONTRAPTION_GRAVITY.group,
+            BCDForceGroups.ROPE_FORCE.group,
+            BCDForceGroups.ROPE_MASS_FORCE.group
+        ), IdentityStrategy.IDENTITY);
 
-        var list2=new ObjectArrayList<Map.Entry<ForceGroup, List<QueuedForceGroup.PointForce>>>();
+        var list2 = new ObjectArrayList<Map.Entry<ForceGroup, List<QueuedForceGroup.PointForce>>>();
         for(var entry : serverData.forces().entrySet()) {
             if(blackList.contains(entry.getKey())) continue;
-        list2.add(entry);
+            list2.add(entry);
             for(QueuedForceGroup.PointForce force : entry.getValue()) {
                 mergedForce.add(force);
             }
@@ -112,7 +112,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
             if(entry.extraData == null) continue;
             Vector3dc localGravity = DimensionPhysicsData.getGravity(level, subLevel.logicalPose().position());
             double gravityMagnitude = localGravity.length();
-            for(DiagramExtraDataPacket.ClusterInfo cluster : entry.extraData.clusters()) {
+            for(ClusterInfo cluster : entry.extraData.clusters()) {
 
                 double scale = cluster.pressureTimesTotalScale();
                 FloatingBlockMaterial material = cluster.material();
@@ -121,7 +121,11 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
                 }
                 addFriction(totalScaleHV, scale, material);
             }
-            ObjectCollection<BlockSubLevelLiftProvider.LiftProviderContext> liftProviders = ((WithLiftProviders) subLevel.getPlot()).bcd$liftProviders().values();
+            var ctxProviders = entry.extraData.liftProviders();
+            var liftProviders =
+                ctxProviders.isPresent() ?
+                    ctxProviders.get() :
+                    ((WithLiftProviders) subLevel.getPlot()).bcd$liftProviders().values();
             for(var ctx : liftProviders) {
 
                 BlockSubLevelLiftProvider block = (BlockSubLevelLiftProvider) ctx.state().getBlock();
@@ -130,7 +134,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
                 Vector3d blockWorldPos = new Vector3d(
                     ctx.pos().getX() + 0.5, ctx.pos().getY() + 0.5, ctx.pos().getZ() + 0.5
                 );
-                double pressure = DimensionPhysicsData.getAirPressure(level, VecUtil.projectToWorld(subLevel.logicalPose(), blockWorldPos)) ;
+                double pressure = DimensionPhysicsData.getAirPressure(level, VecUtil.projectToWorld(subLevel.logicalPose(), blockWorldPos));
 
                 double kd = block.sable$getDirectionlessDragScalar() * pressure;
                 double kp = block.sable$getParallelDragScalar() * pressure;
@@ -143,7 +147,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
                     Direction localDir = block.sable$getNormal(ctx.state());
                     Vector3i joml = JOMLConversion.toJOML(localDir.getNormal());
                     Vector3d normal =
-                        VecUtil.projectDirection(mainSubLevel.logicalPose(),subLevel.logicalPose(),new Vector3d(joml));
+                        VecUtil.projectDirection(mainSubLevel.logicalPose(), subLevel.logicalPose(), new Vector3d(joml));
 
 
                     SableMathUtils.fmaOuterProduct(normal, normal, kp * debugScale, sailFrictionMatrxi);
@@ -161,7 +165,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
         //double universalDragCoeff = -(serverData.mass() * universalDrag) * ((1 - universalDrag));
 
         //double dampingRate =  universalDrag / (1 - universalDrag);
-        double dampingRate =  universalDrag ;
+        double dampingRate = universalDrag;
         //double dampingRate = -Math.log(1.0 - universalDrag);
         double universalDragCoeff = -serverData.mass() * dampingRate;
         tmpMat.identity().scale(universalDragCoeff);
@@ -175,16 +179,16 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
         Vector3d predictedSpeed = new Vector3d(mergedForce.totalForce);
         displaySpeed(new Matrix3d(resultFrictionMatrxi.add(sailFrictionMatrxi)), list, "bcd.extra-info.max-speed2", predictedSpeed);
 
-        displaySpeed(new Matrix3d(resultFrictionMatrxi.add(tmpMat.identity().scale(gravity.length()*universalDragCoeff))), list, "bcd.extra-info.max-speed3", new Vector3d(mergedForce.totalForce));
+        displaySpeed(new Matrix3d(resultFrictionMatrxi.add(tmpMat.identity().scale(gravity.length() * universalDragCoeff))), list, "bcd.extra-info.max-speed3", new Vector3d(mergedForce.totalForce));
 
-        list.add(VecFormat.Presets.lightGray(resultFrictionMatrxi.transform(predictedSpeed,new Vector3d())));
+        list.add(VecFormat.Presets.lightGray(resultFrictionMatrxi.transform(predictedSpeed, new Vector3d())));
 
         if(DebugRuntime.isDebug()) {
             DecimalFormat format = new DecimalFormat("0.######");
             String message = format.format(predictedSpeed.length()) + " | " + format.format(realSpeed(mainSubLevel).length());
             list.add(Component.literal(message));
-            if(Screen.hasAltDown()){
-                DebugRuntime.logFile("data.csv", message+"\n");
+            if(Screen.hasAltDown()) {
+                DebugRuntime.logFile("data.csv", message + "\n");
                 list.add(Component.literal("SAVED"));
             }
         }
@@ -196,7 +200,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
 
     private @NotNull Vector3d realSpeed(ClientSubLevel clientSubLevel) {
         Minecraft instance = Minecraft.getInstance();
-        SubLevel subLevel=clientSubLevel;
+        SubLevel subLevel = clientSubLevel;
         IntegratedServer singleplayerServer = instance.getSingleplayerServer();
         if(singleplayerServer != null) {
             ServerLevel level = singleplayerServer.getLevel(clientSubLevel.getLevel().dimension());
@@ -221,7 +225,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
             resultFrictionMatrxi.transform(negate, maxSpeed);
             negate.set(maxSpeed);
             list.add(Component.translatable(key, VecFormat.Presets.lightGray(maxSpeed)).withColor(tooltipColor));
-            maxSpeed.div(1-0.09);
+            maxSpeed.div(1 - 0.09);
             list.add(Component.translatable(key, VecFormat.Presets.lightGray(maxSpeed)).withColor(tooltipColor));
         } else {
             list.add(Component.translatable(key, "---").withColor(tooltipColor));
