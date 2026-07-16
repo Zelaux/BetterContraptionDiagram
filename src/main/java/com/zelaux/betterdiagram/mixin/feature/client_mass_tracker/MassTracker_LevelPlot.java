@@ -63,11 +63,12 @@ public abstract class MassTracker_LevelPlot implements MassTrackerLevelPlotI {
         Level level = subLevel.getLevel();
         BlockState prevState = level.getBlockState(pos);
 
-        bcd$encountBlocks(new LevelAccelerator(level), new BlockPos(pos), state, prevState);
+        bcd$accountForBlocks(new LevelAccelerator(level), new BlockPos(pos), state, prevState);
     }
 
     @Unique
-    private void bcd$encountBlocks(LevelAccelerator levelAccelerator, BlockPos pos, BlockState state, BlockState oldState) {
+    private void bcd$accountForBlocks(LevelAccelerator levelAccelerator, BlockPos pos, BlockState state, BlockState oldState) {
+        if(!bcd$shouldTrackMass) return;
         double mass = PhysicsBlockPropertyHelper.getMass(levelAccelerator, pos, state);
         double massOld = PhysicsBlockPropertyHelper.getMass(levelAccelerator, pos, oldState);
         if(mass != 0) {
@@ -102,7 +103,7 @@ public abstract class MassTracker_LevelPlot implements MassTrackerLevelPlotI {
         BlockPos.betweenClosedStream(boundingBox.toMojang()).forEachOrdered(blockPos -> {
             BlockState state = chunk.getBlockState(blockPos);
             if(state.isAir()) return;
-            bcd$encountBlocks(levelAccelerator, chunk.getPos().getBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ()), state, Blocks.AIR.defaultBlockState());
+            bcd$accountForBlocks(levelAccelerator, chunk.getPos().getBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ()), state, Blocks.AIR.defaultBlockState());
         });
     }
 }
