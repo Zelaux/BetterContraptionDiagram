@@ -32,6 +32,7 @@ import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramD
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import lombok.extern.slf4j.Slf4j;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -67,8 +68,21 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
         this.mySubLevel = subLevel;
     }
 
+    int prevUpdateTicks = 0;
+    List<Component> calculatedTooltips;
+
     @Override
     public List<Component> get() {
+        int ticks = AnimationTickHolder.getTicks();
+        if(prevUpdateTicks - ticks > DiagramScreen.UPDATE_REQUEST_INTERVAL || calculatedTooltips == null) {
+            prevUpdateTicks = ticks;
+            calculatedTooltips = calculate();
+        }
+        return calculatedTooltips;
+
+    }
+
+    public List<Component> calculate() {
         DiagramDataPacket serverData = diagramScreeenAcc.betterContraptionDiagram$serverData();
         SubLevelDependenciesData dependenciesData = diagramScreeenAcc.bcd$subLevelDependencies();
         if(serverData == null || dependenciesData == null) return List.of(
@@ -159,7 +173,6 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
             DUMMY_CONTROLLER.bcd$getGravityMatrix(localGravity, totalScaleHV.y, totalScaleHV.x, tmpMat);
             resultFrictionMatrxi.add(tmpMat);
         }
-        double timeStep = 1 / 20f / 2f;
         //0.09
         double universalDrag = SomeConstants.universalDrag(level);
 
