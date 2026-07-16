@@ -90,8 +90,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
             Component.translatable("bcd.extra-info.max-speed", "---").withColor(tooltipColor),
             Component.translatable("better_contraption_diagram.extra-info.gravity", "---").withColor(tooltipColor)
         );
-        final var gravityDirection = CenterMassCalculator.calculateGravityDirection(mySubLevel, serverData, new Vector3d());
-        final var gravityComponent = VecFormat.Presets.lightGray(gravityDirection);
+
         mergedForce.begin(CenterMassCalculator.getMergedBalancePointOrCOM(diagramScreeen));
 
         Set<ForceGroup> blackList = new ObjectOpenCustomHashSet<>(Set.of(
@@ -111,16 +110,13 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
             }
         }
         mergedForce.end();
-
-
         SubLevelGroup group = dependenciesData.constraintTree.subLevelGroup;
 
         ClientSubLevel mainSubLevel = mySubLevel;
         ClientLevel level = mainSubLevel.getLevel();
-        Matrix3d resultFrictionMatrxi = new Matrix3d().zero();
-        Matrix3d sailFrictionMatrxi = new Matrix3d().zero();
+        Matrix3d resultFrictionMatrix = new Matrix3d().zero();
+        Matrix3d sailFrictionMatrix = new Matrix3d().zero();
         Matrix3d tmpMat = new Matrix3d();
-        Vector3dc gravity = DimensionPhysicsData.getGravity(level, mainSubLevel.logicalPose().position());
         for(SubLevel subLevel : group) {
             Vector2d totalScaleHV = new Vector2d();
             SubLevelDependenciesData.Entry entry = dependenciesData.get(subLevel);
@@ -155,7 +151,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
                 double kp = block.sable$getParallelDragScalar() * pressure;
                 if(kd > 0) {
                     tmpMat.identity().scale(kd * debugScale);
-                    sailFrictionMatrxi.add(tmpMat);
+                    sailFrictionMatrix.add(tmpMat);
                 }
                 //todo should lift force be accounted for?
                 if(kp > 0) {
@@ -165,13 +161,13 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
                         VecUtil.projectDirection(mainSubLevel.logicalPose(), subLevel.logicalPose(), new Vector3d(joml));
 
 
-                    SableMathUtils.fmaOuterProduct(normal, normal, kp * debugScale, sailFrictionMatrxi);
+                    SableMathUtils.fmaOuterProduct(normal, normal, kp * debugScale, sailFrictionMatrix);
                 }
             }
 
 
             DUMMY_CONTROLLER.bcd$getGravityMatrix(localGravity, totalScaleHV.y, totalScaleHV.x, tmpMat);
-            resultFrictionMatrxi.add(tmpMat);
+            resultFrictionMatrix.add(tmpMat);
         }
         //0.09
         double universalDrag = SomeConstants.universalDrag(level);
@@ -183,19 +179,13 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
         //double dampingRate = -Math.log(1.0 - universalDrag);
         double universalDragCoeff = -serverData.mass() * dampingRate;
         tmpMat.identity().scale(universalDragCoeff);
-        resultFrictionMatrxi.add(tmpMat);
-        resultFrictionMatrxi.add(sailFrictionMatrxi);
+        resultFrictionMatrix.add(tmpMat);
+        resultFrictionMatrix.add(sailFrictionMatrix);
 
         ObjectArrayList<Component> list = new ObjectArrayList<>();
         list.add(Component.translatable("bcd.extra-info.diagram-button").withColor(tooltipColor));
 
-        displaySpeed(new Matrix3d(resultFrictionMatrxi), list, "bcd.extra-info.max-speed", new Vector3d(mergedForce.totalForce));
-        Vector3d predictedSpeed = new Vector3d(mergedForce.totalForce);
-        displaySpeed(new Matrix3d(resultFrictionMatrxi.add(sailFrictionMatrxi)), list, "bcd.extra-info.max-speed2", predictedSpeed);
-
-        displaySpeed(new Matrix3d(resultFrictionMatrxi.add(tmpMat.identity().scale(gravity.length() * universalDragCoeff))), list, "bcd.extra-info.max-speed3", new Vector3d(mergedForce.totalForce));
-
-        list.add(VecFormat.Presets.lightGray(resultFrictionMatrxi.transform(predictedSpeed, new Vector3d())));
+        Vector3d predictedSpeed = displaySpeed(list, "bcd.extra-info.max-speed", new Matrix3d(resultFrictionMatrix), mergedForce.totalForce);
 
         if(DebugRuntime.isDebug()) {
             DecimalFormat format = new DecimalFormat("0.######");
@@ -206,7 +196,20 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
                 list.add(Component.literal("SAVED"));
             }
         }
-        list.add(Component.translatable("better_contraption_diagram.extra-info.gravity", gravityComponent).withColor(tooltipColor));
+        if(DebugRuntime.isDebug()) {
+            list.add(Component.translatable("bcd.extra-info.inertia").withColor(tooltipColor));
+
+            DiagramExtraDataPacket extraData = dependenciesData.get(mainSubLevel).extraData;
+
+            MatrixFormat.Presets.inertia(
+                extraData.inertiaTensor(),
+                it -> list.add(Component.literal("   ").append(it))
+            );
+        }
+        Vector3dc gravity = DimensionPhysicsData.getGravity(level, mainSubLevel.logicalPose().position());
+        list.add(Component.translatable("better_contraption_diagram.extra-info.gravity",
+            VecFormat.Presets.lightGray(gravity)
+        ).withColor(tooltipColor));
         return list;
         //Component.literal("  ").append(Component.translatable("better_contraption_diagram.extra-info.sum-of-forces.displacement", displacementComponent)),
         //Component.literal("  ").append(Component.translatable("better_contraption_diagram.extra-info.sum-of-forces.direction", directionComponent))
@@ -230,19 +233,17 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
         return jomlPos;
     }
 
-    private void displaySpeed(Matrix3d resultFrictionMatrxi, ObjectArrayList<Component> list, @Translatable String key, Vector3d vector3d) {
-        if(Math.abs(resultFrictionMatrxi.determinant()) > 1e-9) {
+    private Vector3d displaySpeed(ObjectArrayList<Component> list, @Translatable String key, Matrix3d frictionMatrix, Vector3dc vector3d) {
+        if(Math.abs(frictionMatrix.determinant()) > 1e-9) {
             Vector3d maxSpeed = new Vector3d();
-            //resultFrictionMatrxi.scale(20);
-            resultFrictionMatrxi.invert();
-            Vector3d negate = vector3d.negate();
-            resultFrictionMatrxi.transform(negate, maxSpeed);
-            negate.set(maxSpeed);
+            frictionMatrix.invert();
+            frictionMatrix.transform(vector3d.negate(maxSpeed), maxSpeed);
+
             list.add(Component.translatable(key, VecFormat.Presets.lightGray(maxSpeed)).withColor(tooltipColor));
-            maxSpeed.div(1 - 0.09);
-            list.add(Component.translatable(key, VecFormat.Presets.lightGray(maxSpeed)).withColor(tooltipColor));
+            return maxSpeed;
         } else {
             list.add(Component.translatable(key, "---").withColor(tooltipColor));
+            return null;
         }
     }
 
