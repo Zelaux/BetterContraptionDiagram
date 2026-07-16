@@ -9,6 +9,7 @@ import com.zelaux.betterdiagram.feature.max_speed.WithLiftProviders;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.Colors;
+import com.zelaux.betterdiagram.index.SomeConstants;
 import com.zelaux.betterdiagram.mixin.feature.extra_info_deliver.FloatingBlockControllerExt;
 import com.zelaux.betterdiagram.network.extradata.ClusterInfo;
 import com.zelaux.betterdiagram.network.extradata.DiagramExtraDataPacket;
@@ -158,9 +159,9 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
             DUMMY_CONTROLLER.bcd$getGravityMatrix(localGravity, totalScaleHV.y, totalScaleHV.x, tmpMat);
             resultFrictionMatrxi.add(tmpMat);
         }
-        //DimensionPhysicsData.getUniversalDrag()
-        double universalDrag = 0.09f;
         double timeStep = 1 / 20f / 2f;
+        //0.09
+        double universalDrag = SomeConstants.universalDrag(level);
 
         //double universalDragCoeff = -(serverData.mass() * universalDrag) * ((1 - universalDrag));
 

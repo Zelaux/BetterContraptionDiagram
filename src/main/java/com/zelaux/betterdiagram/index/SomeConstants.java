@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram.index;
 
+import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysics;
 import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysicsData;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.Level;
@@ -16,5 +17,12 @@ public interface SomeConstants {
 
     static Vector3dc gravityVector(Level level) {
         return DimensionPhysicsData.getGravity(level);
+    }
+
+    static float universalDrag(Level level) {
+        final DimensionPhysics physics = DimensionPhysicsData.of(level);
+        final DimensionPhysics defaultPhysics = DimensionPhysicsData.getDefault(level);
+
+        return physics.universalDrag().orElseGet(defaultPhysics.universalDrag()::orElseThrow);
     }
 }
