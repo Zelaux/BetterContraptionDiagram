@@ -1,9 +1,12 @@
 package com.zelaux.betterdiagram.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.zelaux.betterdiagram.extend.accessors.SubLevelStorageAccessors;
+import com.zelaux.betterdiagram.index.Colors;
 import com.zelaux.betterdiagram.mixin.accessors.server_helpers.SubLevelStorageFileAccessors;
+import com.zelaux.betterdiagram.util.VecFormat;
 import dev.ryanhcode.sable.api.command.SableCommandHelper;
 import dev.ryanhcode.sable.api.physics.PhysicsPipeline;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
@@ -12,6 +15,7 @@ import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.companion.math.BoundingBox3dc;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import dev.ryanhcode.sable.sublevel.storage.HoldingSubLevel;
 import dev.ryanhcode.sable.sublevel.storage.holding.GlobalSavedSubLevelPointer;
 import dev.ryanhcode.sable.sublevel.storage.holding.SavedSubLevelPointer;
 import dev.ryanhcode.sable.sublevel.storage.holding.SubLevelHoldingChunk;
@@ -21,12 +25,14 @@ import dev.ryanhcode.sable.sublevel.storage.region.SubLevelStorageFile;
 import dev.ryanhcode.sable.sublevel.storage.serialization.SubLevelData;
 import dev.ryanhcode.sable.sublevel.storage.serialization.SubLevelStorage;
 import dev.ryanhcode.sable.util.SableNBTUtils;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
@@ -49,6 +55,10 @@ public class ServerHelpers {
             .then(Commands
                 .literal("resque")
                 .executes(context -> checkLoaded(context) + checkSaved(context))
+                .then(Commands
+                    .argument("shouldLoad", BoolArgumentType.bool())
+                    .executes(context -> checkLoaded(context) + checkSaved(context))
+                )
             )
 
         );
@@ -102,6 +112,12 @@ public class ServerHelpers {
     @SuppressWarnings("UnstableApiUsage")
     private static int checkSaved(CommandContext<CommandSourceStack> context) {
         ServerLevel level = context.getSource().getLevel();
+        boolean shouldLoad = false;
+        try {
+            shouldLoad = BoolArgumentType.getBool(context, "shouldLoad");
+        } catch(Exception e) {
+
+        }
 
         final ServerSubLevelContainer container = SubLevelContainer.getContainer(level);
         assert container != null : "No sub-level container";
@@ -133,6 +149,7 @@ public class ServerHelpers {
                                                                       .flatMap(x -> x.subchunks.stream())
                                                                       .distinct()
                                                                       .collect(Collectors.toMap(x -> x, x -> getSubLevelHoldingChunk(x, storage)));
+        var loadCandidates = new ObjectArrayList<HoldingSubLevel>();
         collected.forEach((chunkPos, holdingChunk0) -> {
             if(holdingChunk0.isEmpty()) return;
             SubLevelHoldingChunk holdingChunk = holdingChunk0.get();
@@ -140,7 +157,9 @@ public class ServerHelpers {
             for(final SavedSubLevelPointer pointer : holdingChunk.getSubLevelPointers()) {
                 final SubLevelData data = storage.attemptLoadSubLevel(chunkPos, pointer);
                 Vector3d position = data.pose().position();
-                BoundingBox3d bounds = data.bounds();
+                Vector3d prevPosition = new Vector3d(position);
+
+                BoundingBox3d bounds = data.bounds();//TODO fix nearby positions
 
                 final BoundingBox3i chunkBounds = getChunkBounds(bounds);
                 int middleChunk = (int) ((bounds.center(tmp).y) / 16);
@@ -171,14 +190,24 @@ public class ServerHelpers {
 
 
                 if(shouldSave) {
-                    context.getSource().sendSuccess(() -> Component.literal("Try to resque sublevel"), true);
-                    //TODO also try load if located in loaded chunks
-                    storage.attemptSaveSubLevel(new GlobalSavedSubLevelPointer(chunkPos, pointer.storageIndex(), pointer.subLevelIndex()), data);
+                    context.getSource().sendSuccess(() -> Component
+                            .literal("Try to resque sublevel")
+                            .append(Component.literal("'" + data.uuid() + "'").setStyle(ComponentUtils.copyOnClickText(data.uuid().toString()).getStyle()))
+                            .append(" at ").append(VecFormat.vectorToFormatted(prevPosition, Colors.GRAY).getString()),
+                        true);
+                    GlobalSavedSubLevelPointer savedSubLevelPointer = new GlobalSavedSubLevelPointer(chunkPos, pointer.storageIndex(), pointer.subLevelIndex());
+                    loadCandidates.add(new HoldingSubLevel(data, savedSubLevelPointer));
+                    storage.attemptSaveSubLevel(savedSubLevelPointer, data);
                 }
                 //logFoundSubLevel(pointer, data, chunkPos, source, level);
             }
         });
 
+        if(shouldLoad) {
+            for(HoldingSubLevel loadCandidate : loadCandidates) {
+                holdingChunkMap.loadHoldingSubLevel(loadCandidate);
+            }
+        }
 
         return 1;
     }
