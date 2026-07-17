@@ -3,6 +3,7 @@ package com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
+import com.zelaux.betterdiagram.feature.rope_data.IRopeData;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.SomeConstants;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
@@ -159,6 +160,10 @@ public class RopeForceMapper extends AbstractForceMapper {
         var directions = new ObjectArrayList<Vector3d>();
         double minDistance = Double.MAX_VALUE, maxDistance = 0;
         boolean wasEqualy = true;
+        double extensionGoal = ((IRopeData) clientRopeStrand1).bcd$extension_goal();
+        if(extensionGoal>=0){
+            minDistance=tmp.set(points.get(1).position()).sub(points.get(0).position()).length()/extensionGoal;
+        }
         for(int i = 0; i < lastI; i++) {
             Vector3d next = points.get(i + 1).position();
             Vector3d cur = points.get(i).position();

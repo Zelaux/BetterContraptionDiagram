@@ -47,6 +47,7 @@
     "calculator.Calculator_DiagramStickyNote",
     "calculator.UpdateData_DiagramScreen",
     "COM_view.LevelRendererMixin",
+    "feature.balance_center.BalanceCenter_DiagramScreen",
     "feature.clientside_forces.DiagramForceGroupToggleMixin",
     "feature.include_subsublevel.DiagramScreenMixin",
     "leveldata.ClientPacketListenerMixin",
