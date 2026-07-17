@@ -6,6 +6,8 @@ import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Lombok;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,10 +16,38 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 public abstract class AbstractForceMapper {
+
+    private final boolean isMergable;
+
+    {
+        try {
+            isMergable = getClass().getMethod("tryMergeWith", AbstractForceMapper.class) != AbstractForceMapper.class.getDeclaredMethod("tryMergeWith", AbstractForceMapper.class);
+        } catch(NoSuchMethodException e) {
+            throw Lombok.sneakyThrow(e);
+        }
+    }
+
+    public @NotNull SubLevelInfo sublevelInfo() {
+        return new SubLevelInfo(
+            this.originSubLevel,
+            this.originGroup,
+            this.toAttachSubLevel,
+            this.toAttachGroup
+        );
+    }
     public static @NotNull SubLevelInfo sublevelInfo(SubLevel origin, SubLevel toAttach, Map<SubLevel, SubLevelGroup> subLevel2Group) {
         SubLevelGroup originGroup = subLevel2Group.get(origin);
         SubLevelGroup toAttachGroup = subLevel2Group.get(toAttach);
         return new SubLevelInfo(origin, originGroup, toAttach, toAttachGroup);
+    }
+
+    public AbstractForceMapper tryMergeWith(AbstractForceMapper other) {
+        return null;
+    }
+
+    @SneakyThrows
+    public boolean isMergable() {
+        return isMergable;
     }
 
     public record SubLevelInfo(

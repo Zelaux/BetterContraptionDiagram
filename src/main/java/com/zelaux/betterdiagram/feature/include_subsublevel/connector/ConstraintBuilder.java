@@ -1,9 +1,11 @@
 package com.zelaux.betterdiagram.feature.include_subsublevel.connector;
 
+import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.AbstractForceMapper;
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -26,25 +28,44 @@ public class ConstraintBuilder {
         ConstraintTree root = ConstraintTree.root(subLevel2Group.get(origin));
         frontier.add(root);
         int depth = 0;
+        var mergableMappers = new ObjectArrayList<AbstractForceMapper>();
         while(!frontier.isEmpty() && depth < maxDepth) {
             depth++;
             for(var tree : frontier) {
                 if(!tree.isValid()) continue;
                 var currentMerged = tree.subLevelGroup;
+                mergableMappers.clear();
                 for(SubLevel current : currentMerged) {
                     for(final BlockEntitySubLevelActor actor : current.getPlot().getBlockEntityActors()) {
                         var constraints = ActorHandler.findFor(actor).mapToConstraint(current, subLevel2Group);
                         if(constraints == null) continue;
+                        constraintsLoop:
                         for(final var constraint : constraints) {
                             if(constraint.originSubLevel() != current) continue;
+
                             SubLevel target = constraint.toAttachSubLevel();
                             if(!tree.path.contains(target) && !tree.hasChild(constraint)) {
                                 if(!constraint.fixed()) {
-                                    nextFrontier.add(tree.child(constraint, subLevel2Group.get(target)));
+                                    if(constraint.isMergable()){
+                                        for(int i = 0; i < mergableMappers.size(); i++) {
+                                            AbstractForceMapper createdMapper = mergableMappers.get(i);
+                                            AbstractForceMapper abstractForceMapper = createdMapper.tryMergeWith(constraint);
+                                            if(abstractForceMapper != null) {
+                                                mergableMappers.set(i, abstractForceMapper);
+                                                continue constraintsLoop;
+                                            }
+                                        }
+                                        mergableMappers.add(constraint);
+                                    }else{
+                                        nextFrontier.add(tree.child(constraint, subLevel2Group.get(target)));
+                                    }
                                 }
                             }
                         }
                     }
+                }
+                for(AbstractForceMapper constraint : mergableMappers) {
+                    nextFrontier.add(tree.child(constraint, subLevel2Group.get(constraint.toAttachSubLevel())));
                 }
             }
             frontier.clear();

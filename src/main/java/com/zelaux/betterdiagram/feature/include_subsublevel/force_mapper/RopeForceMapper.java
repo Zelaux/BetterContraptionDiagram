@@ -15,6 +15,7 @@ import dev.simulated_team.simulated.content.blocks.rope.strand.client.ClientRope
 import dev.simulated_team.simulated.content.blocks.rope.strand.server.ServerRopeStrand;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Runtime;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
@@ -40,8 +41,35 @@ public class RopeForceMapper extends AbstractForceMapper {
         this.clientRopeStrand = clientRopeStrand;
     }
 
+    //todo test how it works with ropes with different lengths
+    @Override
+    public AbstractForceMapper tryMergeWith(AbstractForceMapper other) {
+        if(this.toAttachGroup() != other.toAttachGroup() || originGroup() != other.originGroup()) {
+            return null;
+        }
+        if(other instanceof RopeForceMapper otherRopeMapper) {
+            var mapper = new GroupOfRopesForceMapper(sublevelInfo());
+            mapper.mergedRopes.add(this);
+            mapper.mergedRopes.add(otherRopeMapper);
+            return mapper;
+        } else if(other instanceof GroupOfRopesForceMapper group) {
+            return group.tryMergeWith(this);
+        }
+        return null;
+    }
+
     @Override
     public void mergeForces(Forces origin, Forces toAttach, SubLevelDependenciesData subLevelDependenciesData) {
+        RopeForces ropeForces = calculateForces(origin, toAttach, subLevelDependenciesData);
+        if(ropeForces.ropeForce != null) {
+            origin.addForce(BCDForceGroups.ROPE_FORCE, ropeForces.ropeForce);
+        }
+        if(ropeForces.ropeMassForce != null) {
+            origin.addForce(BCDForceGroups.ROPE_MASS_FORCE, ropeForces.ropeMassForce);
+        }
+    }
+
+    public RopeForces calculateForces(Forces origin, Forces toAttach, SubLevelDependenciesData subLevelDependenciesData) {
         //double sizeWithoutFirst = (clientRopeStrand.getPoints().size() - 2) * ServerRopeStrand.SEGMENT_LENGTH;
 
         var ropeStat = calcRopeStat(clientRopeStrand);
@@ -64,19 +92,27 @@ public class RopeForceMapper extends AbstractForceMapper {
             originSegment.negate();
             toAttachSegment.negate();
         }
+
+        QueuedForceGroup.PointForce ropeForce = null;
         if(lastI == ropeStat.equalySpacedIndexFromStart) {
-            applyRopeForce(origin, originSegment, toAttach, toAttachSegment, points);
+            ropeForce = applyRopeForce(origin, originSegment, toAttach, toAttachSegment, points);
         }
-        applyRopeMass(originSubLevel, originSegment, origin, segmentDirections, firstSegmentI, lastSegmentI, segmentStep, points);
-        /**Считать верёвку как балку, при её максимальнос растяжении, то есть при макс растяжении, превращять в rotary
-         *
-         * Но что делать, если она например запуталась
-         *
-         * Может попробоать всётаки сделать через native На сервере, типо забират ьсилу если верёвка её выдаёт, думаю это реализуемо
-         * */
+
+        QueuedForceGroup.PointForce ropeMassForce = applyRopeMass(originSubLevel, originSegment, origin, segmentDirections, firstSegmentI, lastSegmentI, segmentStep, points);
+        return new RopeForces(
+            ropeForce,
+            ropeMassForce
+        );
     }
 
-    private void applyRopeMass(SubLevel originSubLevel, Vector3d originSegment, Forces origin, List<Vector3d> segmentDirections, int firstSegmentI, int lastSegmentI, int segmentStep, ProjectedStrandPoints points) {
+    public record RopeForces(
+        @Nullable
+        QueuedForceGroup.PointForce ropeForce,
+        @Nullable
+        QueuedForceGroup.PointForce ropeMassForce
+    ) {}
+
+    private QueuedForceGroup.PointForce applyRopeMass(SubLevel originSubLevel, Vector3d originSegment, Forces origin, List<Vector3d> segmentDirections, int firstSegmentI, int lastSegmentI, int segmentStep, ProjectedStrandPoints points) {
         Vector3dc GRAVITY = SomeConstants.gravityVector(originSubLevel.getLevel());
         Vector3d singlePointGravityForce = GRAVITY.mul(SomeConstants.ropePointMass, new Vector3d());
         if(!startIsOrigin()) singlePointGravityForce.negate();
@@ -88,14 +124,16 @@ public class RopeForceMapper extends AbstractForceMapper {
 
             totalPointMass += Math.max(0, singlePointGravityForce.dot(current));
         }
+        totalPointMass += Math.max(0, singlePointGravityForce.dot(segmentDirections.get(firstSegmentI)));
+        if(CenterMassCalculator.equals3(totalPointMass, 0)) return null;
         Vector3d mul = originSegment.mul(totalPointMass);
         //origin point
         if(!startIsOrigin()) singlePointGravityForce.negate();
-        mul.add(VecUtil.unprojectDirectionToLocal(originSubLevel.logicalPose(), singlePointGravityForce));
-        origin.addForce(BCDForceGroups.ROPE_MASS_FORCE, new QueuedForceGroup.PointForce(points.origin, mul));
+        //mul.add(VecUtil.unprojectDirectionToLocal(originSubLevel.logicalPose(), singlePointGravityForce));
+        return new QueuedForceGroup.PointForce(points.origin, mul);
     }
 
-    private void applyRopeForce(Forces origin, Vector3d originSegment, Forces toAttach, Vector3d toAttachSegment, ProjectedStrandPoints points) {
+    private QueuedForceGroup.PointForce applyRopeForce(Forces origin, Vector3d originSegment, Forces toAttach, Vector3d toAttachSegment, ProjectedStrandPoints points) {
         double sumOfProjected = 0;
         for(var forces : toAttach.values()) {
             for(QueuedForceGroup.PointForce force : forces) {
@@ -103,8 +141,10 @@ public class RopeForceMapper extends AbstractForceMapper {
             }
         }
         if(sumOfProjected > CenterMassCalculator.DELTA) {
-            origin.addForce(BCDForceGroups.ROPE_FORCE, new QueuedForceGroup.PointForce(new Vector3d(points.origin), originSegment.mul(sumOfProjected, new Vector3d())));
+            QueuedForceGroup.PointForce pointForce = new QueuedForceGroup.PointForce(new Vector3d(points.origin), originSegment.mul(sumOfProjected, new Vector3d()));
+            return pointForce;
         }
+        return null;
     }
 
     private static RopeStat calcRopeStat(ClientRopeStrand clientRopeStrand1) {
@@ -125,7 +165,7 @@ public class RopeForceMapper extends AbstractForceMapper {
             double cos = tmp.set(next).sub(cur).normalize().dot(prev);
             directions.add(new Vector3d(tmp));
             if(i == 0) {
-            } else if(!Runtime.equals(1, cos, COS_DELTA)) {
+            } else if(!Runtime.equals(0, cos, COS_DELTA)) {
                 singleDirected = false;
             }
             prev.set(tmp);

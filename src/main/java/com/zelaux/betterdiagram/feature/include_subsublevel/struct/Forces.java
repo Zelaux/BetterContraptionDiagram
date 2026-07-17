@@ -6,6 +6,7 @@ import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -38,15 +39,15 @@ public class Forces extends Object2ObjectOpenHashMap<ForceGroup, List<QueuedForc
         return new ObjectArrayList<>(List.of(pointForce));
     }
 
-    public void addForce(BCDForceGroup forceGroup, QueuedForceGroup.PointForce pointForce) {
+    public void addForce(BCDForceGroup forceGroup, @NotNull QueuedForceGroup.PointForce pointForce) {
         addForce(forceGroup.group(), pointForce);
     }
 
-    public void addForce(ForceGroup forceGroup, QueuedForceGroup.PointForce pointForce) {
+    public void addForce(ForceGroup forceGroup,@NotNull QueuedForceGroup.PointForce pointForce) {
         forcesForGroup(forceGroup).add(pointForce);
     }
 
-    public void addProjectedForce(ForceGroup forceGroup, Pose3dc from, Pose3dc to, QueuedForceGroup.PointForce pointForce) {
+    public void addProjectedForce(ForceGroup forceGroup, Pose3dc from, Pose3dc to,@NotNull QueuedForceGroup.PointForce pointForce) {
         forcesForGroup(forceGroup).add(pointForce);
     }
 }
