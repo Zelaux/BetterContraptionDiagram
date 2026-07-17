@@ -3,6 +3,7 @@ package com.zelaux.betterdiagram.gui.tooltip;
 import com.demonwav.mcdev.annotations.Translatable;
 import com.zelaux.betterdiagram.DebugRuntime;
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
+import com.zelaux.betterdiagram.feature.balance.BalanceModel;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.max_speed.WithLiftProviders;
@@ -91,7 +92,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
             Component.translatable("better_contraption_diagram.extra-info.gravity", "---").withColor(tooltipColor)
         );
 
-        mergedForce.begin(CenterMassCalculator.getMergedBalancePointOrCOM(diagramScreeen));
+        mergedForce.begin(BalanceModel.getMergedBalancePointOrCOM(diagramScreeen).displacement());
 
         Set<ForceGroup> blackList = new ObjectOpenCustomHashSet<>(Set.of(
             ForceGroups.DRAG.get(),

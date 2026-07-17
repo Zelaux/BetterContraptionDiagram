@@ -29,6 +29,10 @@ public interface BCDTextures {
         BCDTexture ICON_TOTAL_DISPLACEMENT_TINY = gridCell(atlas, 1, 13);
         BCDTexture ICON_TOTAL_DISPLACEMENT_ARROW = gridCell(atlas, 2, 13);
 
+        BCDTexture ICON_BALANCE_CENTER = gridCell(atlas, 0+3, 13);
+        BCDTexture ICON_BALANCE_CENTER_TINY = gridCell(atlas, 1+3, 13);
+        BCDTexture ICON_BALANCE_CENTER_ARROW = gridCell(atlas, 2+3, 13);
+
 
         BCDTexture DIAGRAM_BACKGROUND_64_24 = texture(atlas, 64, 32, 64, 24);
         BCDTexture DIAGRAM_BACKGROUND_16_20 = texture(atlas, 64, 0, 16, 20);

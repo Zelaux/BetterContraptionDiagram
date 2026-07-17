@@ -13,6 +13,7 @@ import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
 import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
+import com.zelaux.betterdiagram.feature.balance.BalanceModel;
 import com.zelaux.betterdiagram.func.DoubleSetter;
 import com.zelaux.betterdiagram.gui.comp.FormattedTextAsComponent;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
@@ -732,7 +733,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
     }
 
     private void positionUpdated() {
-        CenterMassCalculator.recalculateStacks(diagramScreen);
+        BalanceModel.recalculateStacks(diagramScreen);
     }
 
     @Override

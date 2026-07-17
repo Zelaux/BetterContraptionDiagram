@@ -18,6 +18,7 @@
 
   "__COMMENT__": "--- DIAGRAM SECTION ---",
   "better_contraption_diagram.center_of_mass": "Center of Mass",
+  "better_contraption_diagram.balance-center": "Balance Center",
   "better_contraption_diagram.eCOM": "Target Center of Mass",
   "better_contraption_diagram.center_of_mass.tooltip": "%s %s",
   "better_contraption_diagram.eCOM.tooltip": "%s %s",

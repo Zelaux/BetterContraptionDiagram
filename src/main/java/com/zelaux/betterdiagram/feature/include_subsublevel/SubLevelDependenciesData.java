@@ -95,7 +95,7 @@ public class SubLevelDependenciesData {
         return mergedForces = new DiagramDataPacket(forces, forces.mass);
     }
 
-    private @Nullable Forces collectAllForces(ConstraintTree tree) {
+    public @Nullable Forces collectAllForces(ConstraintTree tree) {
         SubLevelGroup subLevelGroup = tree.subLevelGroup;
         var forces = collectFixedForces(subLevelGroup);
         if(forces == null) return null;
@@ -132,10 +132,10 @@ public class SubLevelDependenciesData {
             if(entry.data == null) continue;
             Vector3d com =VecUtil.unprojectPosToLocal(mainSubLevel.logicalPose(), innerSublevelCOM.set(subLevel.logicalPose().position()));
             double mass = entry.data.mass();
-            forces.putSingle(BCDForceGroups.CONTRAPTION_GRAVITY, new QueuedForceGroup.PointForce(
-                new Vector3d(com),
-                localGravity.mul(mass,new Vector3d()))
-            );
+            //forces.putSingle(BCDForceGroups.CONTRAPTION_GRAVITY, new QueuedForceGroup.PointForce(
+            //    new Vector3d(com),
+            //    localGravity.mul(mass,new Vector3d()))
+            //);
 
             mergedGravity.displacement.fma(mass,com);
             sumOfMass+= mass;
@@ -160,7 +160,7 @@ public class SubLevelDependenciesData {
                         VecUtil.projectPos(mainSubLevel.logicalPose(), subLevel.logicalPose(), contraptionGravityDisplacement),
                         VecUtil.projectDirection(mainSubLevel.logicalPose(), subLevel.logicalPose(), contraptionGravityForce)
                     );*/
-                    forces.putSingle(BCDForceGroups.CONTRAPTION_GRAVITY, new QueuedForceGroup.PointForce(new Vector3d(contraptionGravityDisplacement), new Vector3d(contraptionGravityForce)));
+                    //forces.putSingle(BCDForceGroups.CONTRAPTION_GRAVITY, new QueuedForceGroup.PointForce(new Vector3d(contraptionGravityDisplacement), new Vector3d(contraptionGravityForce)));
                 }
             }
         }

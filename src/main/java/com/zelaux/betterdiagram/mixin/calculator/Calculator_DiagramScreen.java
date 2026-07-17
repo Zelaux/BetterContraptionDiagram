@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
+import com.zelaux.betterdiagram.feature.balance.BalanceModel;
 import com.zelaux.betterdiagram.gui.CenterMassMovingScreen;
 import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
 import com.zelaux.betterdiagram.gui.tooltip.DiagramInfoTooltip;
@@ -184,7 +185,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
 
 
         var mergedForce = new MergedPointForceCalculator();
-        mergedForce.begin(new Vector3d(CenterMassCalculator.getMergedBalancePointOrCOM((DiagramScreen) (Object) this)));
+        mergedForce.begin(new Vector3d(BalanceModel.getMergedBalancePointOrCOM((DiagramScreen) (Object) this).displacement()));
 
         Map<ForceGroup, List<QueuedForceGroup.PointForce>> forces = serverData.forces();
         for(var entry : forces.entrySet()) {
@@ -205,7 +206,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
     @Inject(method = "renderArrows", at = @At(value = "TAIL"))
     private void renderWeightAfterArrows(GuiGraphics graphics, int mouseX, int mouseY, int areaOriginX, int areaOriginY, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight, CallbackInfo ci) {
         //var stacks = ((WithClientData) diagram).betterContraptionDiagram$getClientData(DataKeys.MASS_STACKS, null);
-        var stacks = CenterMassCalculator.recalculateStacks(self());
+        var stacks = BalanceModel.recalculateStacks(self());
         boolean shouldClipWeights = !this.bcd$isDiagramScreen;
 
         ProjectionAccessor accessor = shouldClipWeights ? (ProjectionAccessor) note : this;

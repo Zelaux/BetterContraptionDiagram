@@ -9,6 +9,8 @@ import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.data.OffCenteredBlock;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
+import com.zelaux.betterdiagram.feature.balance.BalanceForce;
+import com.zelaux.betterdiagram.feature.balance.BalanceModel;
 import com.zelaux.betterdiagram.gui.comp.InTextBlockRenderer;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
@@ -206,7 +208,8 @@ public class MixinCalculatorUtil {
         double dst2 = originCoords.distanceSquared(mouseX - accessor.bcd$originX(), mouseY - accessor.bcd$originY());
 
         if(dst2 < 8 * 8) {
-            tooltipList.add(Component.translatable("force-group.merged-force.displacement", VecFormat.Presets.displacement(new Vector3d(displacement).sub(CenterMassCalculator.getMergedBalancePointOrCOM(self)))));
+            BalanceForce mergedBalancePointOrCOM = BalanceModel.getMergedBalancePointOrCOM(self);
+            tooltipList.add(Component.translatable("force-group.merged-force.displacement", VecFormat.Presets.displacement(new Vector3d(displacement).sub(mergedBalancePointOrCOM.displacement()))));
         }
     }
 
