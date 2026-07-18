@@ -8,6 +8,7 @@ import com.zelaux.betterdiagram.feature.leveldata.LevelDatas;
 import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
 import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
 import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
+import com.zelaux.betterdiagram.gui.tooltip.AbstractTooltipHandler;
 import com.zelaux.betterdiagram.network.features.ModFeaturesPacket;
 import com.zelaux.betterdiagram.util.CenterMassCache;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
@@ -37,6 +38,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onTickPre(ClientTickEvent.Pre event) {
         OffCenteredBlockTooltipHandler.tick();
+        AbstractTooltipHandler.tick();
         LevelData data = LevelDatas.levelData();
         if(data != null) data.currentTick();
 
