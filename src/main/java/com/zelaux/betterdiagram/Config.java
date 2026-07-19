@@ -1,5 +1,7 @@
 package com.zelaux.betterdiagram;
 
+import com.zelaux.betterdiagram.annotations.DeleteInRelease;
+import com.zelaux.betterdiagram.index.SomeConstants;
 import com.zelaux.betterdiagram.struct.ComViewType;
 import net.minecraft.ChatFormatting;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -47,6 +49,14 @@ public class Config {
     public static final ModConfigSpec.BooleanValue SHOW_WARGING_WHEN_GRID = BUILDER
         .comment("Show warning(only once) when using grid mode when enabled Enhanced Diagrams ")
         .define("showWargingWhenGrid", true);
+    @DeleteInRelease
+    public static final ModConfigSpec.DoubleValue DEBUG_PLAYER_MASS = BUILDER
+        .comment("")
+        .defineInRange("playerMass", SomeConstants.ropePointMass*2.0,-Double.MAX_VALUE,Double.MAX_VALUE);
+    @DeleteInRelease
+    public static final ModConfigSpec.DoubleValue DEBUG_PLAYER_IMPULSE_SCALE = BUILDER
+        .comment("")
+        .defineInRange("debugPlayerImpulseScale", 1,0,Double.MAX_VALUE);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 

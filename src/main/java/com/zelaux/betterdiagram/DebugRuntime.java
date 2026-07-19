@@ -1,7 +1,14 @@
 package com.zelaux.betterdiagram;
 
 import com.zelaux.betterdiagram.annotations.DebugOnly;
+import com.zelaux.betterdiagram.annotations.DeleteInRelease;
+import dev.ryanhcode.sable.api.event.SablePrePhysicsTickEvent;
+import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.neoforge.event.ForgeSablePrePhysicsTickEvent;
 import lombok.SneakyThrows;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,12 +16,13 @@ import java.nio.charset.StandardCharsets;
 
 
 @DebugOnly
+@DeleteInRelease
 public class DebugRuntime {
 
     public static final File FOLDER = new File("hello_world.log").getAbsoluteFile();
     public static final File THREAD_FOLDER = new File(FOLDER,"thread").getAbsoluteFile();
     public static final File FILE = new File(FOLDER, "common.txt");
-    public static boolean disableAirflowScaling=isDebug();
+    public static boolean disableAirflowScaling=false && isDebug();
 
     static {
         System.out.println("Loaded : " + FOLDER.getAbsolutePath());
@@ -25,6 +33,7 @@ public class DebugRuntime {
     public static boolean isDebug(){
         return true;
     }
+
     @SneakyThrows
     public static boolean addThreadToFile(File file,String comment) {
         Thread thread = Thread.currentThread();
