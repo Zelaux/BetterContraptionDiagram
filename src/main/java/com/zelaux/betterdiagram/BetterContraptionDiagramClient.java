@@ -7,7 +7,9 @@ import com.zelaux.betterdiagram.gui.comp.FormattedTextAsComponent;
 import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
 import dev.simulated_team.simulated.Simulated;
 import dev.simulated_team.simulated.client.BlockPropertiesTooltip;
+import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
+import lombok.Lombok;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.api.distmarker.Dist;
@@ -23,8 +25,12 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
+import org.spongepowered.asm.mixin.throwables.*;
+import org.spongepowered.asm.mixin.transformer.*;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = BetterContraptionDiagram.MODID, dist = Dist.CLIENT)
@@ -36,6 +42,7 @@ public class BetterContraptionDiagramClient {
 
     public BetterContraptionDiagramClient(ModContainer container) {
         container.registerConfig(ModConfig.Type.CLIENT, Config.SPEC);
+        loadDiagramScreen();
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
         // Do not forget to add translations for your config options to the en_us.json file.
@@ -48,6 +55,21 @@ public class BetterContraptionDiagramClient {
 
         final IEventBus neoBus = NeoForge.EVENT_BUS;
         //subscriptions.register(RegisterClientTooltipComponentFactoriesEvent.class, this::registerType);
+    }
+
+    private void loadDiagramScreen() {
+        try {
+            int updateRequestInterval = DiagramScreen.UPDATE_REQUEST_INTERVAL;
+        } catch(MixinError | MixinException e) {
+            try {
+                Field field = ClassInfo.class.getDeclaredField("cache");
+                field.setAccessible(true);
+                Map<String, ClassInfo> map = (Map<String, ClassInfo>) field.get(null);
+                map.remove("dev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen");
+            } catch(Exception ignore) {
+                throw Lombok.sneakyThrow(e);
+            }
+        }
     }
 
     @SubscribeEvent
