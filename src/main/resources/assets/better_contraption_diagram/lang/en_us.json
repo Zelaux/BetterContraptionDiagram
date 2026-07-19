@@ -72,6 +72,8 @@
   "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.desc": "Show all blocks with a shifted Center of Mass along enabled axes",
 
   "better_contraption_diagram.diagram.offcenter-blocks-mode.hold-to-browse":  "Hold [%1$s] to Find Pair",
+  "bcd.tooltip-handler.message":  "Hold [%1$s] %2$s",
+  "bcd.tooltip-handler.balloon.message":  "to Open Balloon Volume Calculator",
 
   "better_contraption_diagram.gui.scrollInput.ctrlScrollsSlower": "Ctrl to Scroll Slower",
   "better_contraption_diagram.common.shift-scale": "Hold [Shift] to step by 0.5",
@@ -104,9 +106,11 @@
 
   "bcd.extra-info.diagram-button": "Additional Information",
   "bcd.extra-info.max-speed": "Terminal speed(approximated): %s",
-  "bcd.extra-info.inertia": "Inertia:",
+  "bcd.extra-info.inertia": "Inertia: ",
+  "bcd.extra-info.balloon-volume": "Balloon volume: %s",
   "better_contraption_diagram.extra-info.gravity": "Gravity Direction: %s",
   "better_contraption_diagram.extra-info.sum-of-forces.title": "Sum of Forces",
   "better_contraption_diagram.extra-info.sum-of-forces.displacement": "Displacement: %s",
-  "better_contraption_diagram.extra-info.sum-of-forces.direction": "Direction: %s"
+  "better_contraption_diagram.extra-info.sum-of-forces.direction": "Direction: %s",
+  "bcd.balloon-calculator.plot": "%1$s: %2$s"
 }
