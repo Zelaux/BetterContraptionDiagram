@@ -227,7 +227,9 @@ public class HorizontalLineSelector extends OnGraphWidget {
         BoundingBox2i gridDimension = background.gridDimension;
         if(!gridDimension.contains(gridDimension.centerX(), y)) return false;
 
-        currentY((int) y);
+        int newY = (int) y;
+        currentY(newY);
+        if(onChangeListener != null) onChangeListener.accept(newY);
         return true;
     }
 
