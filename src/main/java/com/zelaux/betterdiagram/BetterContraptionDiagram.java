@@ -10,6 +10,7 @@ import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandl
 import com.zelaux.betterdiagram.network.BCDPacketManager;
 import com.zelaux.betterdiagram.network.HelloMessage;
 import com.zelaux.betterdiagram.network.features.ModFeaturesPacket;
+import com.zelaux.betterdiagram.network.rope.RopeDataPacket;
 import dev.simulated_team.simulated.content.blocks.docking_connector.DockingConnectorBlockEntity;
 import dev.simulated_team.simulated.content.blocks.rope.rope_connector.RopeConnectorBlockEntity;
 import dev.simulated_team.simulated.content.blocks.rope.rope_winch.RopeWinchBlockEntity;
@@ -23,6 +24,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -72,6 +74,11 @@ public class BetterContraptionDiagram {
         if(event.getPlayer() == null) return;
         HelloMessage.INSTANCE.trySend(event.getPlayer());
         ModFeaturesPacket.SERVER_TO_CLIENT.trySend(event.getPlayer());
+    }
+
+    @SubscribeEvent
+    void tick(ServerTickEvent.Pre event) {
+        RopeDataPacket.tick();
     }
 
 

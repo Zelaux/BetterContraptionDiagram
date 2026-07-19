@@ -29,8 +29,12 @@ public interface OptionalPacketPayload {
 
     default void trySendServer() {
         if(isServerSupports()) {
-            Minecraft.getInstance().getConnection().send(new ServerboundCustomPayloadPacket((CustomPacketPayload) this));
+            sendServerWithoutCheck();
         }
+    }
+
+     default void sendServerWithoutCheck() {
+        Minecraft.getInstance().getConnection().send(new ServerboundCustomPayloadPacket((CustomPacketPayload) this));
     }
 
     default boolean isServerSupports() {

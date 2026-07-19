@@ -32,6 +32,7 @@
     "feature.max_speed.Sail_LevelPlot",
     "feature.max_speed.Sail_PlotChunkHolder_Acc",
     "feature.max_speed.Sail_ServerLevelPlot",
+    "feature.rope_data.RopeData_ClientRopeStrand",
     "fix.DiagramOpenPacketMixin",
     "server.DiagramEntityMixin"
   ],

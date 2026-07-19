@@ -3,6 +3,7 @@ package com.zelaux.betterdiagram.network.features;
 import com.google.common.collect.ImmutableSet;
 import com.zelaux.betterdiagram.network.OptionalPacketPayload;
 import com.zelaux.betterdiagram.network.extradata.DiagramExtraDataPacket;
+import com.zelaux.betterdiagram.network.rope.RopeDataPacket;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -23,6 +24,7 @@ public enum ModFeature {
     SHARE_CLUSTERS("clusters", DiagramExtraDataPacket.TYPE),
     SHARE_MASS_TRACKER("mass_tracker"),
     SHARE_LIFT_BLOCK("lift_block"),
+    SHARE_ROPE_EXTENSION_GOAL("rope_extension_goal", RopeDataPacket.TYPE)
     ;
     private static final Object2ObjectMap<String,ModFeature> idMap=new Object2ObjectOpenHashMap<>();
     public final static ModFeature[] all = values();

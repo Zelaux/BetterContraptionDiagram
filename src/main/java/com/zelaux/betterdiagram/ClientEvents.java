@@ -10,6 +10,7 @@ import com.zelaux.betterdiagram.gui.comp.WrappedTooltipComponent;
 import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
 import com.zelaux.betterdiagram.gui.tooltip.AbstractTooltipHandler;
 import com.zelaux.betterdiagram.network.features.ModFeaturesPacket;
+import com.zelaux.betterdiagram.network.rope.RopeDataRequest;
 import com.zelaux.betterdiagram.util.CenterMassCache;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -39,6 +40,7 @@ public class ClientEvents {
     public static void onTickPre(ClientTickEvent.Pre event) {
         OffCenteredBlockTooltipHandler.tick();
         AbstractTooltipHandler.tick();
+        RopeDataRequest.tick();
         LevelData data = LevelDatas.levelData();
         if(data != null) data.currentTick();
 

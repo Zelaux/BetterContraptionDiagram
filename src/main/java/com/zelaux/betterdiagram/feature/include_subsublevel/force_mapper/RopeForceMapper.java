@@ -6,6 +6,7 @@ import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
 import com.zelaux.betterdiagram.feature.rope_data.IRopeData;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.SomeConstants;
+import com.zelaux.betterdiagram.network.rope.RopeDataRequest;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
@@ -73,6 +74,7 @@ public class RopeForceMapper extends AbstractForceMapper {
     public RopeForces calculateForces(Forces origin, Forces toAttach, SubLevelDependenciesData subLevelDependenciesData) {
         //double sizeWithoutFirst = (clientRopeStrand.getPoints().size() - 2) * ServerRopeStrand.SEGMENT_LENGTH;
 
+        RopeDataRequest.requestRope(clientRopeStrand);
         var ropeStat = calcRopeStat(clientRopeStrand);
         ProjectedStrandPoints points = projectedStrandPoints();
         List<Vector3d> segmentDirections = ropeStat.segmentDirections;
@@ -161,8 +163,10 @@ public class RopeForceMapper extends AbstractForceMapper {
         double minDistance = Double.MAX_VALUE, maxDistance = 0;
         boolean wasEqualy = true;
         double extensionGoal = ((IRopeData) clientRopeStrand1).bcd$extension_goal();
-        if(extensionGoal>=0){
-            minDistance=tmp.set(points.get(1).position()).sub(points.get(0).position()).length()/extensionGoal;
+        if(extensionGoal >= 0) {
+            double length = tmp.set(points.get(1).position()).sub(points.get(0).position()).length();
+            totalExtension = 0;
+            minDistance = length / extensionGoal;
         }
         for(int i = 0; i < lastI; i++) {
             Vector3d next = points.get(i + 1).position();
@@ -176,8 +180,12 @@ public class RopeForceMapper extends AbstractForceMapper {
             prev.set(tmp);
             double distance = next.distance(cur);
             lenStat[i] = distance;
-            if(i > 0) {minDistance = Math.min(distance, minDistance);}
-            maxDistance = Math.max(distance, maxDistance);
+            if(i > 0) {minDistance = Math.min(distance, minDistance);
+                maxDistance = Math.max(distance, maxDistance);
+            }else if(extensionGoal>0){
+                maxDistance = Math.max(distance/extensionGoal, maxDistance);
+
+            }
 
             totalExtension += distance;
 
