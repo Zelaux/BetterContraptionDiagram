@@ -24,6 +24,8 @@
     "feature.clientside_forces.DiagramScreenMixin",
     "feature.create_contraption_mass.AbstractContraptionEntityMixin",
     "feature.create_contraption_mass.ClientLevelPlotMixin",
+    "feature.easy_balloon_access.IStoreBlockEntityLiftingGasProvider",
+    "feature.easy_balloon_access.StoreBlockEntityLiftingGasProvider_LevelPlot",
     "feature.extra_info_deliver.DiagramEntityMixin",
     "feature.extra_info_deliver.FloatingBlockControllerExt",
     "feature.force_to_mass.DiagramScreenMixin",

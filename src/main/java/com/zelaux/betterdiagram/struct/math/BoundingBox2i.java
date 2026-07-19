@@ -242,6 +242,16 @@ public final class BoundingBox2i implements BoundingBox2ic {
     public BoundingBox2i move(final int amountX, final int amountY) {
         return this.move(amountX, amountY, this);
     }
+    /**
+     * Moves this box by the given amount on all sides
+     *
+     * @param amount The amount to move by
+     * @return this
+     */
+    @Contract(value = "_->this", mutates = "this")
+    public BoundingBox2i move(Vector2ic amount) {
+        return this.move(amount.x(),amount.y(), this);
+    }
 
     /**
      * Calculates the bounding box intersect between this box and the specified box.

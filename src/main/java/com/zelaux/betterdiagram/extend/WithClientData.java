@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public interface WithClientData {
     default int axisStatesInt(int i) {
@@ -59,4 +60,9 @@ public interface WithClientData {
 
     @Nullable
     BCDData bcdiagram$updateData(BCDData data);
+    default BCDData bcdiagram$updateData(Function<BCDData,BCDData> updater){
+        BCDData data1 = bcdDataOrTryDefault();
+        if(data1==null)return null;
+        return bcdiagram$updateData(updater.apply(data1));
+    }
 }

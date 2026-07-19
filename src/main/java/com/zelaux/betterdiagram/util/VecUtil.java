@@ -225,4 +225,11 @@ public class VecUtil {
         return forceInA
             .rotate(orientationA);
     }
+
+    public static Vector3d center(BoundingBox3ic box, Vector3d dest) {
+        return dest.set((box.minX() + box.maxX()) / 2.0, (box.minY() + box.maxY()) / 2.0, (box.minZ() + box.maxZ()) / 2.0);
+    }
+    public static Vector3d centerRound(BoundingBox3ic box, Vector3d dest) {
+        return dest.set((box.minX() + box.maxX()) / 2, (box.minY() + box.maxY()) / 2, (box.minZ() + box.maxZ()) / 2);
+    }
 }

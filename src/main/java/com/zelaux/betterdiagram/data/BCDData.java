@@ -22,6 +22,7 @@ import org.joml.Vector3dc;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  * Better Contraption Diagram Data
@@ -44,7 +45,8 @@ public class BCDData {
         (byte) 7,
         OffCenterBlocksShowState.none,
         false,
-        EnabledForces.empty()
+        EnabledForces.empty(),
+        OptionalInt.empty()
     );
     public static final StreamCodec<? super RegistryFriendlyByteBuf, Optional<BCDData>> STREAM_OPTIONAL_CODEC =
         ByteBufCodecs.TAG.map(
@@ -118,6 +120,9 @@ public class BCDData {
     public boolean shouldMergedForcesWithConnectedSublevels;
     public EnabledForces enabledForces;
 
+    @NonNull
+    public OptionalInt selectedBalloonY;
+
 
     public int axisStateInt(int i) {return (axisStatesMask >> i) & 1;}
 
@@ -171,5 +176,6 @@ public class BCDData {
         }
         return builder == null ? newValue : builder.build();
     }
+
 
 }

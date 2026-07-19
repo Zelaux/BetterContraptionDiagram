@@ -4,6 +4,7 @@ import com.demonwav.mcdev.annotations.Translatable;
 import com.zelaux.betterdiagram.DebugRuntime;
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.feature.balance.BalanceModel;
+import com.zelaux.betterdiagram.feature.balloon_volume_calculator.BalloonVolumeCalculatorScreen;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.max_speed.WithLiftProviders;
@@ -40,6 +41,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.common.util.strategy.IdentityStrategy;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +54,6 @@ import java.util.Map;
 import java.util.Set;
 
 
-@Slf4j
 public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
 
     private static final MergedPointForceCalculator mergedForce = new MergedPointForceCalculator();
@@ -62,6 +63,24 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
     private final @NotNull DiagramScreenAccessors diagramScreeenAcc;
     private final int tooltipColor = Colors.TOOLTIP_COLOR.getRGB();
     private static float debugScale = -1;
+    public static final AbstractTooltipHandler<DiagramInfoTooltip> OPEN_BALLOON_SCREEN_TOOLTIP_HANDLER =new AbstractTooltipHandler<>() {
+        protected @NotNull MutableComponent getActionName() {
+            return Component.translatable("bcd.tooltip-handler.balloon.message");
+        }
+
+        @Override
+        public boolean isSamePayload(@NotNull DiagramInfoTooltip newHovered, DiagramInfoTooltip oldHover) {
+            return true;
+        }
+
+        @Override
+        public void onActive(DiagramInfoTooltip lastPayload) {
+            var accessors = lastPayload.diagramScreeenAcc;
+            SubLevelDependenciesData dependenciesData = accessors.bcd$subLevelDependencies();
+            if(dependenciesData==null)return;
+            BalloonVolumeCalculatorScreen.show(dependenciesData,accessors.betterContraptionDiagram$clientData(),lastPayload.diagramScreeen);
+        }
+    };
 
     public DiagramInfoTooltip(@NotNull DiagramScreen self, ClientSubLevel subLevel, DiagramDataPacket serverData) {
         this.diagramScreeen = self;
@@ -79,7 +98,10 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
             prevUpdateTicks = ticks;
             calculatedTooltips = calculate();
         }
-        return calculatedTooltips;
+        ObjectArrayList<Component> list = new ObjectArrayList<>(calculatedTooltips);
+
+        OPEN_BALLOON_SCREEN_TOOLTIP_HANDLER.addTooltip(this, list.size()-1,(List)list);
+        return list;
 
     }
 
@@ -197,7 +219,7 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
                 list.add(Component.literal("SAVED"));
             }
         }
-        if(DebugRuntime.isDebug()) {
+        if(DebugRuntime.isDebug() && false) {
             list.add(Component.translatable("bcd.extra-info.inertia").withColor(tooltipColor));
 
             DiagramExtraDataPacket extraData = dependenciesData.get(mainSubLevel).extraData;

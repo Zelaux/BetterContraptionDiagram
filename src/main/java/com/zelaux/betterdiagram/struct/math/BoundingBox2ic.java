@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram.struct.math;
 
 
 import org.jetbrains.annotations.Contract;
+import org.joml.Vector2d;
 import org.joml.Vector2i;
 import org.joml.Vector2ic;
 
@@ -243,6 +244,38 @@ public sealed interface BoundingBox2ic permits BoundingBox2i {
         int min = minX();
 
         return (int) (((long) max + min) / 2);
+    }
+
+    default Vector2i minCorner(Vector2i dest){
+        return dest.set(minX(),minY());
+    }
+    default Vector2i maxCorner(Vector2i dest){
+        return dest.set(maxX(),maxY());
+    }
+    default Vector2d minCorner(Vector2d dest){
+        return dest.set(minX(),minY());
+    }
+    default Vector2d maxCorner(Vector2d dest){
+        return dest.set(maxX(),maxY());
+    }
+
+    default int left(){return minX();}
+    default int right(){return maxX();}
+    default int bottom(){return maxY();}
+    default int top(){return minY();}
+
+    default Vector2i left(int y, Vector2i dest){return dest.set(minX(),y);}
+    default Vector2i right(int y, Vector2i dest){return dest.set(maxX(),y);}
+    default Vector2i bottom(int x,Vector2i dest){return dest.set(x,maxY());}
+    default Vector2i top(int x,Vector2i dest){return dest.set(x,minY());}
+
+    default Vector2d left(double y, Vector2d dest){return dest.set(minX(),y);}
+    default Vector2d right(double y, Vector2d dest){return dest.set(maxX(),y);}
+    default Vector2d bottom(double x,Vector2d dest){return dest.set(x,maxY());}
+    default Vector2d top(double x,Vector2d dest){return dest.set(x,minY());}
+
+    default boolean contains(BoundingBox2ic other){
+        return contains(other.minX(),other.minY()) && contains(other.maxX(),other.maxY());
     }
 }
 
