@@ -107,7 +107,12 @@
   "bcd.extra-info.diagram-button": "Additional Information",
   "bcd.extra-info.max-speed": "Terminal speed(approximated): %s",
   "bcd.extra-info.inertia": "Inertia: ",
-  "bcd.extra-info.balloon-volume": "Balloon volume: %s",
+  "bcd.extra-info.balloon-volume.server-waiting": "Balloon Calculator: Loading saved data from server",
+  "bcd.extra-info.balloon-volume.not-selected": "Select target height to view required volume",
+  "bcd.extra-info.balloon-volume.not-selected.tip": "Use Balloon Calculator",
+  "bcd.extra-info.balloon-volume.title": "Balloon volume required to reach %s height.",
+  "bcd.extra-info.balloon-volume.entry": "When using %s: %s",
+
   "better_contraption_diagram.extra-info.gravity": "Gravity Direction: %s",
   "better_contraption_diagram.extra-info.sum-of-forces.title": "Sum of Forces",
   "better_contraption_diagram.extra-info.sum-of-forces.displacement": "Displacement: %s",

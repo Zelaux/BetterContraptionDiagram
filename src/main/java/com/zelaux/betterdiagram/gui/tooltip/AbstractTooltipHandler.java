@@ -14,10 +14,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
+import org.apache.commons.lang3.function.ToBooleanBiFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class AbstractTooltipHandler<PayloadType> {
     public static final ObjectArrayList<AbstractTooltipHandler<?>> handlers = new ObjectArrayList<>();
@@ -30,13 +32,37 @@ public abstract class AbstractTooltipHandler<PayloadType> {
         handlers.add(this);
     }
 
+    public static <PayloadType> AbstractTooltipHandler<PayloadType> create(
+        Component name,
+        ToBooleanBiFunction<PayloadType, PayloadType> equalizer,
+        Consumer<PayloadType> onActive
+        ) {
+
+        return new AbstractTooltipHandler<PayloadType>() {
+            @Override
+            public boolean isSamePayload(@NotNull PayloadType newHovered, PayloadType oldHover) {
+                return equalizer.applyAsBoolean(newHovered,oldHover);
+            }
+
+            @Override
+            public void onActive(PayloadType lastPayload) {
+                onActive.accept(lastPayload);
+            }
+
+            @Override
+            protected Component getActionName() {
+                return name;
+            }
+        };
+    }
+
     public static void tick() {
         for(AbstractTooltipHandler<?> handler : handlers) {
             handler.shouldTick = true;
         }
     }
 
-    public void addTooltip(@Nullable PayloadType newHovered, int tooltipInsertBeforeIndex, List<FormattedText> tooltipList) {
+    public void addTooltip(@Nullable PayloadType newHovered, int tooltipInsertAfterIndex, List<? super Component> tooltipList) {
         if(shouldTick) delayedTick();
 
 
@@ -47,7 +73,7 @@ public abstract class AbstractTooltipHandler<PayloadType> {
             lastPayload = newHovered;
             float renderPartialTicks = AnimationTickHolder.getPartialTicksUI();
             Component component = makeProgressBar(Math.min(1, progress.getValue(renderPartialTicks) * 8 / 7f));
-            tooltipList.add(tooltipInsertBeforeIndex, component);
+            tooltipList.add(tooltipInsertAfterIndex+1, component);
         }
     }
 
