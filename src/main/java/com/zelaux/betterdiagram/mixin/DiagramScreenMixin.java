@@ -18,6 +18,7 @@ import dev.simulated_team.simulated.content.entities.diagram.screen.ForceCluster
 import dev.simulated_team.simulated.data.SimLang;
 import dev.simulated_team.simulated.index.SimGUITextures;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
@@ -134,7 +135,7 @@ public abstract class DiagramScreenMixin {
         Vector3d force = pointForce.force();
         var e = VecFormat.Presets.forceCords(force);
 
-        if(tooltipLines instanceof BlackHoleList<FormattedText>) return;
+        if(tooltipLines instanceof BlackHoleList<FormattedText> || !Screen.hasShiftDown()) return;
         FormattedText last = tooltipLines.getLast();
 
         tooltipLines.set(
