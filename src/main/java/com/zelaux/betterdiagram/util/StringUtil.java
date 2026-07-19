@@ -7,13 +7,13 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public class StringUtil {
-    public static final DecimalFormat ZERO_WITH_SOME_DIGITS = makeFormat("#.###");
+    public static final DecimalFormat ZERO_WITH_SOME_DIGITS = makeFormat("#.##");
     public static final DecimalFormat PARSABLE_FORMAT_5 = makeFormat("#.#####", true);
     private static final DecimalFormat ZERO_WITH_ZERO = makeFormat("#.#");
     private static final DecimalFormat[] formats = {
         null,
-        makeFormat("#.###"),
-        makeFormat("#.###"),
+        makeFormat("#.##"),
+        makeFormat("#.##"),
         makeFormat("#.##"),
         ZERO_WITH_ZERO,
     };
