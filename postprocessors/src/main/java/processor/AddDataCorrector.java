@@ -10,7 +10,9 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 public class AddDataCorrector extends AbstractClassFileTransformer {
 
@@ -36,7 +38,7 @@ public class AddDataCorrector extends AbstractClassFileTransformer {
             for(FieldNode field : node.fields) {
                 if((Opcodes.ACC_STATIC & field.access) != 0) continue;
                 String name = field.name;
-                methodsToProcess.add(withMethod(name));
+                methodsToProcess.addAll(withMethod(name));
             }
             for(MethodNode method : node.methods) {
                 if(!methodsToProcess.contains(method.name)) continue;
@@ -59,7 +61,11 @@ public class AddDataCorrector extends AbstractClassFileTransformer {
         });
     }
 
-    private @NotNull String withMethod(String name) {
-        return "with" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+    private @NotNull Collection<String> withMethod(String name) {
+        return List.of(
+            "with" + Character.toUpperCase(name.charAt(0)) + name.substring(1),
+            "with" + Character.toUpperCase(name.charAt(0)) + name.substring(1)+"By"
+
+        );
     }
 }
