@@ -15,6 +15,8 @@ import org.joml.Matrix3x2d;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class Plotter extends OnGraphWidget {
@@ -23,6 +25,8 @@ public class Plotter extends OnGraphWidget {
     final Float2FloatFunction plotFunction;
     public int resolution = 200;
     public boolean flipAxis = false;
+    public boolean doHover = true;
+
     public Consumer<Component> tooltipSink;
     Color plotColor;
     Formatter tooltipFormatter;
@@ -42,9 +46,18 @@ public class Plotter extends OnGraphWidget {
         this.tooltipFormatter = formatter;
         return this;
     }
+    public Plotter formatter(SingleFormatter formatter) {
+        this.tooltipFormatter = formatter;
+        return this;
+    }
 
     public Plotter flipAxis(boolean flipAxis) {
         this.flipAxis = flipAxis;
+        return this;
+    }
+
+    public Plotter doHover(boolean doHover) {
+        this.doHover = doHover;
         return this;
     }
 
@@ -89,7 +102,7 @@ public class Plotter extends OnGraphWidget {
             );
         }
 
-        if(tooltipFormatter == null || tooltipSink == null) return;
+        if(tooltipFormatter == null || tooltipSink == null || !doHover) return;
         if(nearest1.index == -1) {
             if(nearest0.index == -1) return;
 
@@ -130,7 +143,8 @@ public class Plotter extends OnGraphWidget {
 
     public void hovered(GuiGraphics guiGraphics, PointEntry nearest0) {
         if(nearest0.dst2 >= HOVER_RADIUS2) return;
-        tooltipSink.accept(tooltipFormatter.format(nearest0.input, nearest0.output));
+        tooltipFormatter.format(nearest0.input, nearest0.output).forEach(tooltipSink);
+
         BCDTextures.BalloonScreen.ICON_CIRCLE.render(guiGraphics, (int) nearest0.screenPoint.x - 8, (int) nearest0.screenPoint.y - 8, plotColor);
     }
 
@@ -145,7 +159,15 @@ public class Plotter extends OnGraphWidget {
     }
 
     public interface Formatter {
-        Component format(float input, float output);
+        Collection<Component> format(float input, float output);
+    }
+    public interface SingleFormatter extends Formatter {
+        Component formatSingle(float input, float output);
+
+        @Override
+        default Collection<Component> format(float input, float output){
+            return List.of(formatSingle(input,output));
+        }
     }
 
     @Getter
