@@ -25,7 +25,7 @@ import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.index.Colors;
 import com.zelaux.betterdiagram.mixin.accessors.EditBoxAccessors;
 import com.zelaux.betterdiagram.struct.BCDForceGroup;
-import com.zelaux.betterdiagram.struct.BCDTexture;
+import com.zelaux.betterdiagram.struct.BTexture;
 import com.zelaux.betterdiagram.struct.TransformedAxes;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
@@ -457,11 +457,11 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         return makeButton(title, 64, 24, BCDTextures.Diagram.DIAGRAM_BACKGROUND_64_24, onclicl, diagramTooltip);
     }
 
-    private @NotNull ExtendedButton makeButton(MutableComponent title, int width, int height, BCDTexture texture, Runnable onclicl, Supplier<Component> diagramTooltip) {
+    private @NotNull ExtendedButton makeButton(MutableComponent title, int width, int height, BTexture texture, Runnable onclicl, Supplier<Component> diagramTooltip) {
         return makeButton0(title, width, height, texture, onclicl, () -> List.of(diagramTooltip.get()));
     }
 
-    private @NotNull ExtendedButton makeButton0(MutableComponent title, int width, int height, BCDTexture texture, Runnable onclicl, Supplier<List<Component>> diagramTooltip) {
+    private @NotNull ExtendedButton makeButton0(MutableComponent title, int width, int height, BTexture texture, Runnable onclicl, Supplier<List<Component>> diagramTooltip) {
 
         return new ExtendedButton(0, 0, width, height, title, self -> onclicl.run()) {
 

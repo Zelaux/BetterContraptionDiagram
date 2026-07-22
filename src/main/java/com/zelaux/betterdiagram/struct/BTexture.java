@@ -9,7 +9,7 @@ import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
-public class BCDTexture implements ScreenElement {
+public class BTexture implements ScreenElement {
     @NonNull
     public final ResourceLocation location;
 
@@ -20,20 +20,20 @@ public class BCDTexture implements ScreenElement {
     public final int texWidth, texHeight;
 
 
-    public BCDTexture(final String location, final int width, final int height) {
+    public BTexture(final String location, final int width, final int height) {
         this(location, 0, 0, width, height);
     }
 
-    public BCDTexture(final String location, final int startX, final int startY, final int width, final int height) {
+    public BTexture(final String location, final int startX, final int startY, final int width, final int height) {
         this(BetterContraptionDiagram.MODID, location, startX, startY, width, height);
     }
 
-    public BCDTexture(final String namespace, final String location, final int startX, final int startY, final int width, final int height) {
+    public BTexture(final String namespace, final String location, final int startX, final int startY, final int width, final int height) {
         this(namespace, location, startX, startY, width, height, 256, 256);
     }
 
 
-    public BCDTexture(final String namespace, final String location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {
+    public BTexture(final String namespace, final String location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {
         this.location = ResourceLocation.fromNamespaceAndPath(namespace, "textures/" + location + ".png");
         this.width = width;
         this.height = height;
@@ -48,15 +48,15 @@ public class BCDTexture implements ScreenElement {
         this.startY_grid = startY;
     }
 
-    public BCDTexture(final int startX, final int startY) {
+    public BTexture(final int startX, final int startY) {
         this("icons", startX * 16, startY * 16, 16, 16);
     }
 
-    public BCDTexture(final String location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {
+    public BTexture(final String location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {
         this(BetterContraptionDiagram.MODID, location, startX, startY, width, height, texWidth, texHeight);
     }
 
-    public BCDTexture(@NonNull final ResourceLocation location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {
+    public BTexture(@NonNull final ResourceLocation location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {
         this(
             location,
             startX,
@@ -71,17 +71,17 @@ public class BCDTexture implements ScreenElement {
             height
         );
     }
-    public BCDTexture(@NonNull final ResourceLocation location,
-                      final int startX,
-                      final int startY,
-                      final int width,
-                      final int height,
-                      final int texWidth,
-                      final int texHeight,
-                      int startX_grid,
-                      int startY_grid,
-                      int width_grid,
-                      int height_grid
+    public BTexture(@NonNull final ResourceLocation location,
+                    final int startX,
+                    final int startY,
+                    final int width,
+                    final int height,
+                    final int texWidth,
+                    final int texHeight,
+                    int startX_grid,
+                    int startY_grid,
+                    int width_grid,
+                    int height_grid
     ) {
         this.location = location;
         this.width = width;
@@ -97,11 +97,11 @@ public class BCDTexture implements ScreenElement {
     }
 
 
-    public static BCDTexture texture(final BCDTexture owner, final int startX, final int startY, final int width, final int height) {
-        return new BCDTexture(owner.location, startX, startY, width, height, owner.texWidth, owner.texHeight);
+    public static BTexture texture(final BTexture owner, final int startX, final int startY, final int width, final int height) {
+        return new BTexture(owner.location, startX, startY, width, height, owner.texWidth, owner.texHeight);
     }
-    public static BCDTexture textureGrid(final AtlasTexture owner, final int startX_grid, final int startY_grid, final int width_grid, final int height_grid) {
-        return new BCDTexture(owner.location,
+    public static BTexture textureGrid(final AtlasTexture owner, final int startX_grid, final int startY_grid, final int width_grid, final int height_grid) {
+        return new BTexture(owner.location,
             startX_grid*owner.gridCellWidth,
             startY_grid*owner.gridCellHeight,
             width_grid*owner.gridCellWidth,
@@ -115,34 +115,34 @@ public class BCDTexture implements ScreenElement {
         );
     }
 
-    public static BCDTexture gridCell(final AtlasTexture owner, final int startX, final int startY) {
+    public static BTexture gridCell(final AtlasTexture owner, final int startX, final int startY) {
         return gridCell(owner, startX, startY, owner.gridCellWidth, owner.gridCellHeight);
     }
 
-    public static BCDTexture gridCell(final BCDTexture owner, final int startX, final int startY, final int size) {
+    public static BTexture gridCell(final BTexture owner, final int startX, final int startY, final int size) {
         return gridCell(owner, startX, startY, size, size);
     }
 
-    public static BCDTexture gridCell(final BCDTexture owner, final int startX, final int startY, final int w, final int h) {
+    public static BTexture gridCell(final BTexture owner, final int startX, final int startY, final int w, final int h) {
         return texture(owner, startX * w, startY * h, w, h);
     }
 
-    public static BCDTexture texture(final String location, final int width, final int height) {return new BCDTexture(location, width, height);}
+    public static BTexture texture(final String location, final int width, final int height) {return new BTexture(location, width, height);}
 
     public static AtlasTexture atlas(final String location, final int width, final int height, int cellWidth, int cellHeight) {return new AtlasTexture(location, width, height, cellWidth, cellHeight);}
 
-    public static BCDTexture texture(final int startX, final int startY) {return new BCDTexture(startX, startY);}
+    public static BTexture texture(final int startX, final int startY) {return new BTexture(startX, startY);}
 
-    public static BCDTexture texture(final String location, final int startX, final int startY, final int width, final int height) {return new BCDTexture(location, startX, startY, width, height);}
+    public static BTexture texture(final String location, final int startX, final int startY, final int width, final int height) {return new BTexture(location, startX, startY, width, height);}
 
 
-    public static BCDTexture texture(final String location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {return new BCDTexture(location, startX, startY, width, height, texWidth, texHeight);}
+    public static BTexture texture(final String location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {return new BTexture(location, startX, startY, width, height, texWidth, texHeight);}
 
-    public static BCDTexture texture(final String namespace, final String location, final int startX, final int startY, final int width, final int height) {return new BCDTexture(namespace, location, startX, startY, width, height);}
+    public static BTexture texture(final String namespace, final String location, final int startX, final int startY, final int width, final int height) {return new BTexture(namespace, location, startX, startY, width, height);}
 
-    public static BCDTexture texture(final ResourceLocation location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {return new BCDTexture(location, startX, startY, width, height, texWidth, texHeight);}
+    public static BTexture texture(final ResourceLocation location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {return new BTexture(location, startX, startY, width, height, texWidth, texHeight);}
 
-    public static BCDTexture texture(final String namespace, final String location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {return new BCDTexture(namespace, location, startX, startY, width, height, texWidth, texHeight);}
+    public static BTexture texture(final String namespace, final String location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {return new BTexture(namespace, location, startX, startY, width, height, texWidth, texHeight);}
 
     public void render(final GuiGraphics graphics, final int x, final int y) {
         graphics.blit(this.location, x, y, this.startX, this.startY, this.width, this.height, this.texWidth, this.texHeight);

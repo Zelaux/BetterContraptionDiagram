@@ -7,7 +7,7 @@ import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.feature.clientside_forces.DiagramBCDForceGroupToggle;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.BCDTextures;
-import com.zelaux.betterdiagram.struct.BCDTexture;
+import com.zelaux.betterdiagram.struct.BTexture;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramForceGroupToggle;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
@@ -56,7 +56,7 @@ public abstract class DiagramForceGroupToggleMixin extends AbstractWidget {
     @Inject(method = "renderWidget", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V"))
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         boolean usedInBalance = bcd$clientData.bcdDataNotNull_readOnly().enabledForces.balance.contains(group);
-        BCDTexture texture = usedInBalance ? BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT : BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT_CROSS;
+        BTexture texture = usedInBalance ? BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT : BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT_CROSS;
 
         int dx = SimGUITextures.DIAGRAM_PAPER.width - texture.width - 8;
         int dy = -4;

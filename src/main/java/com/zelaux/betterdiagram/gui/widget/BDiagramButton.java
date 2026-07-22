@@ -3,7 +3,7 @@ package com.zelaux.betterdiagram.gui.widget;
 import com.zelaux.betterdiagram.gui.user.ButtonKind;
 import com.zelaux.betterdiagram.gui.user.ClickHandler;
 import com.zelaux.betterdiagram.index.BCDTextures;
-import com.zelaux.betterdiagram.struct.BCDTexture;
+import com.zelaux.betterdiagram.struct.BTexture;
 import com.zelaux.betterdiagram.util.UIUtil;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.index.SimSoundEvents;
@@ -28,13 +28,13 @@ public class BDiagramButton extends AbstractWidget {
 
     public static final Color[] DEFAULT_COLORS = {DiagramScreen.DULL_BUTTON_COLOR, DiagramScreen.BUTTON_COLOR};
     public static final int[] DEFAULT_INDEX_MAP = {0, 1, 2, 3, 4, 5, 6, 7};
-    private BCDTexture[] textures;
+    private BTexture[] textures;
     private int[] textureIndexMap = DEFAULT_INDEX_MAP;
     private final ClickHandler onClick;
     private TooltipListProvider diagramTooltip;
     @Getter
     @Setter
-    public BCDTexture background = BCDTextures.Diagram.DIAGRAM_ICON_BTN_BACKGROUND;
+    public BTexture background = BCDTextures.Diagram.DIAGRAM_ICON_BTN_BACKGROUND;
 
     private IndexSelector iconSwitch;
     private ColorSelector colorSwitch;
@@ -86,19 +86,19 @@ public class BDiagramButton extends AbstractWidget {
         return false;
     }
 
-    public BDiagramButton(final BCDTexture textures, final int x, final int y, final Component message, final ClickHandler onClick) {
-        this(new BCDTexture[]{textures, textures}, x, y, message, onClick);
+    public BDiagramButton(final BTexture textures, final int x, final int y, final Component message, final ClickHandler onClick) {
+        this(new BTexture[]{textures, textures}, x, y, message, onClick);
     }
 
-    public BDiagramButton(final BCDTexture textures, final int x, final int y, final Component message, final Runnable onClick) {
-        this(new BCDTexture[]{textures, textures}, x, y, message, ClickHandler.run(onClick));
+    public BDiagramButton(final BTexture textures, final int x, final int y, final Component message, final Runnable onClick) {
+        this(new BTexture[]{textures, textures}, x, y, message, ClickHandler.run(onClick));
     }
 
-    public BDiagramButton(final BCDTexture[] textures, final int x, final int y, final Component message, final Runnable onClick) {
+    public BDiagramButton(final BTexture[] textures, final int x, final int y, final Component message, final Runnable onClick) {
         this(textures, x, y, message, ClickHandler.run(onClick));
     }
 
-    public BDiagramButton(final BCDTexture[] textures, final int x, final int y, final Component message, final ClickHandler onClick) {
+    public BDiagramButton(final BTexture[] textures, final int x, final int y, final Component message, final ClickHandler onClick) {
         super(x, y, textures[0].width, textures[0].height, message);
         this.textures = textures;
         this.onClick = onClick;
@@ -111,11 +111,11 @@ public class BDiagramButton extends AbstractWidget {
         this.onClick.handle(this, mouseX, mouseY, button);
     }
 
-    public void setTextures(final BCDTexture textures, boolean active) {
+    public void setTextures(final BTexture textures, boolean active) {
         this.textures[active ? 1 : 0] = textures;
     }
 
-    public BCDTexture getTexture(boolean active) {
+    public BTexture getTexture(boolean active) {
         return this.textures[active ? 1 : 0];
     }
 

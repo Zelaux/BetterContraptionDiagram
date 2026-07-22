@@ -1,7 +1,7 @@
 package com.zelaux.betterdiagram.feature.balloon_volume_calculator.widget;
 
 import com.zelaux.betterdiagram.feature.balloon_volume_calculator.BalloonVolumeCalculatorScreen;
-import com.zelaux.betterdiagram.struct.BCDTexture;
+import com.zelaux.betterdiagram.struct.BTexture;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2ic;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,10 +16,10 @@ public class GraphBackground extends AbstractWidget {
     public final BoundingBox2i gridDimension;
     public final Vector2i gridSpacing = new Vector2i(16, 16);
 
-    private final BCDTexture texture;
+    private final BTexture texture;
     public static int gridColor = BalloonVolumeCalculatorScreen.gridColor.getRGB();
 
-    public GraphBackground(BCDTexture texture, BoundingBox2ic rawDrawableRegion, BoundingBox2i gridDimension) {
+    public GraphBackground(BTexture texture, BoundingBox2ic rawDrawableRegion, BoundingBox2i gridDimension) {
         super(0, 0, 0, 0, Component.literal("message"));
         this.rawDrawableRegion = rawDrawableRegion;
         this.texture = texture;

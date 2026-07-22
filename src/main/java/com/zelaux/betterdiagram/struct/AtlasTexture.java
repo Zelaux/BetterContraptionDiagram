@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.struct;
 
-public class AtlasTexture extends BCDTexture {
+public class AtlasTexture extends BTexture {
     public final int gridCellWidth, gridCellHeight;
 
     public AtlasTexture(String location, int width, int height, int gridCellWidth, int gridCellHeight) {

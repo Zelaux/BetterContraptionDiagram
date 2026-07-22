@@ -5,7 +5,7 @@ import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.extend.accessors.AbstractContainerScreenAccessors;
 import com.zelaux.betterdiagram.gui.widget.PartialInteration;
 import com.zelaux.betterdiagram.index.BCDTextures;
-import com.zelaux.betterdiagram.struct.BCDTexture;
+import com.zelaux.betterdiagram.struct.BTexture;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import com.zelaux.betterdiagram.util.*;
 import com.zelaux.betterdiagram.util.ui.InplaceBlockRenderer;
@@ -71,7 +71,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
     private final LocalPlayer player;
     private MyScrollBar scrollWidget;
     public final AbstractContainerScreenAccessors accessors = (AbstractContainerScreenAccessors) this;
-    public BCDTexture inventoryBG = BCDTextures.COMScreen.inventory;
+    public BTexture inventoryBG = BCDTextures.COMScreen.inventory;
     private float partialTick;
     private final AtomicReference<SearchEntry[]> savedSearchEntries = new AtomicReference<>();
 

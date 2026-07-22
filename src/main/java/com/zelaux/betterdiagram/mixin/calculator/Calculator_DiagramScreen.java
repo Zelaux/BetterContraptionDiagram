@@ -12,7 +12,7 @@ import com.zelaux.betterdiagram.gui.user.ButtonKind;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.BCDTextures;
-import com.zelaux.betterdiagram.struct.BCDTexture;
+import com.zelaux.betterdiagram.struct.BTexture;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.util.*;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
@@ -293,8 +293,8 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                                   Vector3d tmp,
                                   Vector3d offset,
                                   int color, int shadowColor,
-                                  BCDTexture diagramIconWeight,
-                                  BCDTexture diagramIconWeightShadow,
+                                  BTexture diagramIconWeight,
+                                  BTexture diagramIconWeightShadow,
                                   MixinCalculatorUtil.TooltipAdder componentMutableComponentFunction,
                                   boolean shouldClipWeights, ProjectionAccessor accessor
     ) {
@@ -318,7 +318,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                                  Vector3d tmp,
                                  Vector3d offset,
                                  int color, int shadowColor,
-                                 BCDTexture icon, BCDTexture shadowIcon,
+                                 BTexture icon, BTexture shadowIcon,
                                  MixinCalculatorUtil.TooltipAdder tooltip,
                                  boolean shouldClipWeights,
                                  ProjectionAccessor accessor) {

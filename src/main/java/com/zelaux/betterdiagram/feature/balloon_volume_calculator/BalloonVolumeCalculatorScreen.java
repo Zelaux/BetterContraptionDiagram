@@ -9,7 +9,7 @@ import com.zelaux.betterdiagram.feature.balloon_volume_calculator.widget.Plotter
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.index.SomeConstants;
-import com.zelaux.betterdiagram.struct.BCDTexture;
+import com.zelaux.betterdiagram.struct.BTexture;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import com.zelaux.betterdiagram.util.StringUtil;
 import dev.eriksonn.aeronautics.content.blocks.hot_air.lifting_gas.LiftingGasType;
@@ -44,7 +44,7 @@ public class BalloonVolumeCalculatorScreen extends AbstractSimiScreen {
     public ClientSubLevel subLevel;
     SubLevelDependenciesData dependenciesData;
 
-    BCDTexture background = BCDTextures.BalloonScreen.BACKGROUND;
+    BTexture background = BCDTextures.BalloonScreen.BACKGROUND;
     GraphBackground graphBackground;
     private static RandomSource random = RandomSource.create(0);
     private Plotter[] plotters;

@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.gui.widget;
 
-import com.zelaux.betterdiagram.struct.BCDTexture;
+import com.zelaux.betterdiagram.struct.BTexture;
 import net.createmod.catnip.gui.TickableGuiEventListener;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
@@ -19,12 +19,12 @@ import java.util.List;
 public class CompositeWidgetLayouted extends AbstractContainerWidget implements NarratableEntry, Renderable, TickableGuiEventListener {
     private final List<GuiEventListener> children = new ArrayList<>();
     private final List<Renderable> renderables = new ArrayList<>();
-    public BCDTexture background;
+    public BTexture background;
     private GuiEventListener hovered;
     protected boolean dirtyLayout = true;
     public final LinearLayout layout;
 
-    public CompositeWidgetLayouted background(BCDTexture background) {
+    public CompositeWidgetLayouted background(BTexture background) {
         this.background = background;
         return this;
     }
