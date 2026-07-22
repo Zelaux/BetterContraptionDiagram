@@ -132,37 +132,8 @@ public class SubLevelDependenciesData {
             if(entry.data == null) continue;
             Vector3d com = VecUtil.unprojectPosToLocal(mainSubLevel.logicalPose(), innerSublevelCOM.set(subLevel.logicalPose().position()));
             double mass = entry.data.mass();
-            //forces.putSingle(BCDForceGroups.CONTRAPTION_GRAVITY, new QueuedForceGroup.PointForce(
-            //    new Vector3d(com),
-            //    localGravity.mul(mass,new Vector3d()))
-            //);
-
             mergedGravity.displacement.fma(mass, com);
             sumOfMass += mass;
-
-            if(true) continue;
-            List<QueuedForceGroup.PointForce> pointForces = entry.data.forces().get(ForceGroups.GRAVITY.get());
-            if(pointForces == null) {
-                updated = true;
-                continue;
-            }
-            QueuedForceGroup.PointForce first = pointForces.getFirst();
-            LevelPlot plot = subLevel.getPlot();
-            Collection<KinematicContraption> contraptions = plot instanceof ServerLevelPlot serverLevelPlot ? serverLevelPlot.getContraptions() : plot instanceof ClientLevelPlotExt levelPlot ? levelPlot.bcd$getContraptions() : null;
-            mergedGravity.add(VecUtil.projectForce(mainSubLevel.logicalPose(), subLevel.logicalPose(), first));
-            if(contraptions != null) {
-                for(KinematicContraption contraption : contraptions) {
-                    MassTracker massTracker = contraption.sable$getMassTracker();
-                    contraptionGravityDisplacement.set(contraption.sable$getPosition());
-
-                    gravityVector.mul(massTracker.getMass(), contraptionGravityForce);
-                    /*mergedGravity.add(
-                        VecUtil.projectPos(mainSubLevel.logicalPose(), subLevel.logicalPose(), contraptionGravityDisplacement),
-                        VecUtil.projectDirection(mainSubLevel.logicalPose(), subLevel.logicalPose(), contraptionGravityForce)
-                    );*/
-                    //forces.putSingle(BCDForceGroups.CONTRAPTION_GRAVITY, new QueuedForceGroup.PointForce(new Vector3d(contraptionGravityDisplacement), new Vector3d(contraptionGravityForce)));
-                }
-            }
         }
         mergedGravity.displacement.div(sumOfMass);
         mergedGravity.totalForce.set(localGravity).mul(sumOfMass);
