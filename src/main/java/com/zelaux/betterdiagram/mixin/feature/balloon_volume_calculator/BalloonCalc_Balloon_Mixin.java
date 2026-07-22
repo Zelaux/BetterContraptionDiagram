@@ -27,10 +27,17 @@ public class BalloonCalc_Balloon_Mixin {
     void on_move(BlockPos newControllerPos, CallbackInfo ci) {
         if(this.controllerPos.equals(newControllerPos)) return;
         BalloonIndexUpdate.ticket((Balloon) (Object) this, controllerPos);
+        if(this instanceof IBalloonCalc_ClientBalloon clientBalloon) {
+            clientBalloon.bcd$handle_moveController(newControllerPos);
+        }
+
     }
     @Inject(method = "setAssembling", at = @At("HEAD"))
     void on_assemble(SubLevelAssemblyHelper.AssemblyTransform transform, CallbackInfo ci) {
         BalloonIndexUpdate.ticket((Balloon) (Object) this, controllerPos);
+        if(this instanceof IBalloonCalc_ClientBalloon clientBalloon) {
+            clientBalloon.bcd$handle_setAssembling_Tail(transform,transform.apply(controllerPos));
+        }
     }
 
 }
