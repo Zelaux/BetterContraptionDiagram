@@ -56,6 +56,7 @@ public class TerminalSpeedModule implements DiagramInfoModule {
     private final @NotNull DiagramScreenAccessors diagramScreeenAcc;
     private static float debugScale = -1;
     private Vector3d predictedSpeed;
+    private static boolean showComparing=false;
 
     public TerminalSpeedModule(@NotNull DiagramScreen self, ClientSubLevel subLevel) {
         this.diagramScreeen = self;
@@ -76,7 +77,7 @@ public class TerminalSpeedModule implements DiagramInfoModule {
             Component.translatable("bcd.extra-info.max-speed", predictedSpeed == null ? "---" : VecFormat.Presets.lightGray(predictedSpeed)).withColor(tooltipColor)
         );
 
-        if(DebugRuntime.isDebug()) {
+        if(DebugRuntime.isDebug() && showComparing) {
             DecimalFormat format = new DecimalFormat("0.######");
             String message = format.format(predictedSpeed.length()) + " | " + format.format(realSpeed(mySubLevel).length());
             list.add(Component.literal(message));
