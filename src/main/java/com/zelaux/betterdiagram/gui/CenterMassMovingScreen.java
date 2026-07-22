@@ -455,7 +455,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
     }
 
     private AbstractWidget makeButton(MutableComponent title, Runnable onclicl, Supplier<Component> diagramTooltip) {
-        return makeButton(title, 64, 24, BCDTextures.Diagram.DIAGRAM_BACKGROUND_64_24, onclicl, diagramTooltip);
+        return makeButton(title, 64, 24, BCDTextures.Diagram.BACKGROUND_64_24, onclicl, diagramTooltip);
     }
 
     private @NotNull ExtendedButton makeButton(MutableComponent title, int width, int height, BTexture texture, Runnable onclicl, Supplier<Component> diagramTooltip) {
@@ -530,24 +530,24 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         final var tmp = new Vector3d();
         final var tmp2 = new Vector3d();
         final var bb = diagramScreen.subLevel.getPlot().getBoundingBox();
-        final var incBtn = makeButton0(Component.literal("+"), 12, 10, BCDTextures.Diagram.DIAGRAM_BACKGROUND_12_10, () -> {
+        final var incBtn = makeButton0(Component.literal("+"), 12, 10, BCDTextures.Diagram.BACKGROUND_12_10, () -> {
             tmp.set(expectedCenterOfMass()).sub(minVec3d(bb, tmp2));
             setter.set(tmp, getter.get(tmp) + getOffset());
             expectedCenterOfMass(tmp.add(tmp2));
             positionUpdatedNotFromEditBox(tmp.sub(tmp2));
         }, () -> shiftCtrlScale);
-        final var decBtn = makeButton0(Component.literal("-"), 12, 10, BCDTextures.Diagram.DIAGRAM_BACKGROUND_12_10, () -> {
+        final var decBtn = makeButton0(Component.literal("-"), 12, 10, BCDTextures.Diagram.BACKGROUND_12_10, () -> {
             tmp.set(expectedCenterOfMass()).sub(minVec3d(bb, tmp2));
             setter.set(tmp, getter.get(tmp) - getOffset());
             expectedCenterOfMass(tmp.add(tmp2));
             positionUpdatedNotFromEditBox(tmp.sub(tmp2));
         }, () -> shiftCtrlScale);
-        final var center = makeButton(Component.literal("C"), 16, 20, BCDTextures.Diagram.DIAGRAM_BACKGROUND_16_20, () -> {
+        final var center = makeButton(Component.literal("C"), 16, 20, BCDTextures.Diagram.BACKGROUND_16_20, () -> {
             setter.set(tmp.set(expectedCenterOfMass()), getter.get(centerOfSubLevel()));
             expectedCenterOfMass(tmp);
             positionUpdatedNotFromEditBox(tmp.sub(minVec3d(bb, tmp2)));
         }, () -> Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"));
-        final var choose = makeButton(Component.literal("D"), 16, 20, BCDTextures.Diagram.DIAGRAM_BACKGROUND_16_20, () -> {
+        final var choose = makeButton(Component.literal("D"), 16, 20, BCDTextures.Diagram.BACKGROUND_16_20, () -> {
             selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
                 gridToNormalVector(grid, gridPos, tmp);
                 tmp.add(minVec3d(bb, tmp2));
@@ -556,7 +556,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
                 positionUpdatedNotFromEditBox(tmp.sub(tmp2));
             });
         }, () -> Component.translatable("better_contraption_diagram.calculator.select_block"));
-        final var reset = makeButton(Component.literal("R"), 16, 20, BCDTextures.Diagram.DIAGRAM_BACKGROUND_16_20, () -> {
+        final var reset = makeButton(Component.literal("R"), 16, 20, BCDTextures.Diagram.BACKGROUND_16_20, () -> {
             setter.set(tmp.set(expectedCenterOfMass()), getter.get(currentCenterOfMass()));
             expectedCenterOfMass(tmp);
             positionUpdatedNotFromEditBox(tmp.sub(minVec3d(bb, tmp2)));

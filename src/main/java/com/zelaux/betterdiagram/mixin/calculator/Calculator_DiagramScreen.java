@@ -105,7 +105,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
         WithClientData clientData = (WithClientData) diagram;
         var layout = UIUtil.vertical(4,
-            new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_CALCULATOR, 0, 0, Component.translatable("better_contraption_diagram.diagram-button"), () -> CenterMassMovingScreen.toggle(self()))
+            new BDiagramButton(BCDTextures.Diagram.ICON_CALCULATOR, 0, 0, Component.translatable("better_contraption_diagram.diagram-button"), () -> CenterMassMovingScreen.toggle(self()))
                 .setColorSelector((active, hover, texture) -> hover | Minecraft.getInstance().screen instanceof CenterMassMovingScreen ? 1 : 0)
                 .withTooltip(() -> Component.translatable("better_contraption_diagram.diagram-button"))
             ,
@@ -127,7 +127,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                              )
                 )
             ,
-            new BDiagramButton(BCDTextures.Diagram.DIAGRAM_ICON_INFO, 0, 0,
+            new BDiagramButton(BCDTextures.Diagram.ICON_INFO, 0, 0,
                 Component.translatable("better_contraption_diagram.extra-info.diagram-button"), (Runnable) null)
                 .supportedButtons(ButtonKind.EMPTY_ARRAY)
                 .withTooltip(new DiagramInfoTooltip(self(), this.subLevel, this.serverData))
@@ -240,8 +240,8 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                     //addForceArrowTooltip(forceGroup, pointForce.groupSize().getValue(), forceMagnitude, color, tooltipLines);
                 }
 
-                BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT_SHADOW.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
-                BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(color));
+                BCDTextures.Diagram.ICON_WEIGHT_SHADOW.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
+                BCDTextures.Diagram.ICON_WEIGHT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(color));
                 continue;
             }
             renderMassStacks(graphics,
@@ -250,7 +250,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 tmp,
                 offset,
                 color, shadowColor,
-                BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT, BCDTextures.Diagram.DIAGRAM_ICON_WEIGHT_SHADOW,
+                BCDTextures.Diagram.ICON_WEIGHT, BCDTextures.Diagram.ICON_WEIGHT_SHADOW,
                 (list, m, v) -> list.add(Component.translatable("better_contraption_diagram.weight.tooltip", v)),
                 shouldClipWeights, accessor);
             renderMassStacks(graphics,
@@ -259,7 +259,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 tmp,
                 offset,
                 color, shadowColor,
-                BCDTextures.Diagram.DIAGRAM_ICON_SMALL_WEIGHT, BCDTextures.Diagram.DIAGRAM_ICON_SMALL_WEIGHT_SHADOW,
+                BCDTextures.Diagram.ICON_SMALL_WEIGHT, BCDTextures.Diagram.ICON_SMALL_WEIGHT_SHADOW,
                 (list, mass, v) -> list.add(//TODO maybe multi line with tab?
                     Component.translatable("better_contraption_diagram.small-weight.tooltip", v,
                         Component.translatable("better_contraption_diagram.small-weight.distance.tooltip",
@@ -345,7 +345,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final Vector2d screenCoords = MixinCalculatorUtil.screenPositionOfExpectedCOM(self(), LOCAL_ORIENTATION, LOCAL_CAMERA_POSITION, PROJECTION_MAT, DIAGRAM_TEXTURE.width, DIAGRAM_TEXTURE.height);
         if(screenCoords == null) return;
 
-        final var tex = BCDTextures.Diagram.DIAGRAM_ICON_EXPECTED_COM;
+        final var tex = BCDTextures.Diagram.ICON_EXPECTED_COM;
 
         final PoseStack pose = graphics.pose();
         pose.pushPose();

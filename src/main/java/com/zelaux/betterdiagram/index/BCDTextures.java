@@ -21,9 +21,9 @@ public interface BCDTextures {
     interface Diagram {
         AtlasTexture atlas = atlas("gui/diagram", 512, 256, 16, 16);
 
-        BTexture DIAGRAM_ICON_EXPECTED_COM = gridCell(atlas, 0, 0);
-        BTexture DIAGRAM_ICON_EXPECTED_COM_TINY = gridCell(atlas, 1, 0);
-        BTexture DIAGRAM_ICON_EXPECTED_COM_ARROW = gridCell(atlas, 2, 0);
+        BTexture ICON_EXPECTED_COM = gridCell(atlas, 0, 0);
+        BTexture ICON_EXPECTED_COM_TINY = gridCell(atlas, 1, 0);
+        BTexture ICON_EXPECTED_COM_ARROW = gridCell(atlas, 2, 0);
 
         BTexture ICON_TOTAL_DISPLACEMENT = gridCell(atlas, 0, 13);
         BTexture ICON_TOTAL_DISPLACEMENT_TINY = gridCell(atlas, 1, 13);
@@ -34,20 +34,20 @@ public interface BCDTextures {
         BTexture ICON_BALANCE_CENTER_ARROW = gridCell(atlas, 2 + 3, 13);
 
 
-        BTexture DIAGRAM_BACKGROUND_64_24 = texture(atlas, 64, 32, 64, 24);
-        BTexture DIAGRAM_BACKGROUND_16_20 = texture(atlas, 64, 0, 16, 20);
-        BTexture DIAGRAM_BACKGROUND_16_10 = texture(atlas, 96, 0, 16, 10);
-        BTexture DIAGRAM_BACKGROUND_12_10 = texture(atlas, 112, 0, 12, 10);
+        BTexture BACKGROUND_64_24 = texture(atlas, 64, 32, 64, 24);
+        BTexture BACKGROUND_16_20 = texture(atlas, 64, 0, 16, 20);
+        BTexture BACKGROUND_16_10 = texture(atlas, 96, 0, 16, 10);
+        BTexture BACKGROUND_12_10 = texture(atlas, 112, 0, 12, 10);
 
         BTexture SINGLE_POINT_FORCE = gridCell(atlas, 0, 1);
         BTexture MULTIPLE_POINT_FORCE = gridCell(atlas, 1, 1);
 
-        BTexture DIAGRAM_ICON_WEIGHT = gridCell(atlas, 0, 2);
-        BTexture DIAGRAM_ICON_WEIGHT_SHADOW = gridCell(atlas, 1, 2);
-        BTexture DIAGRAM_ICON_WEIGHT_CROSS = gridCell(atlas, 2, 4);
+        BTexture ICON_WEIGHT = gridCell(atlas, 0, 2);
+        BTexture ICON_WEIGHT_SHADOW = gridCell(atlas, 1, 2);
+        BTexture ICON_WEIGHT_CROSS = gridCell(atlas, 2, 4);
 
-        BTexture DIAGRAM_ICON_SMALL_WEIGHT = gridCell(atlas, 2, 2);
-        BTexture DIAGRAM_ICON_SMALL_WEIGHT_SHADOW = gridCell(atlas, 3, 2);
+        BTexture ICON_SMALL_WEIGHT = gridCell(atlas, 2, 2);
+        BTexture ICON_SMALL_WEIGHT_SHADOW = gridCell(atlas, 3, 2);
 
 
         BTexture ICON_COLORED_OFF_CENTERED_BLOCK = gridCell(atlas, 0, 11);
@@ -61,8 +61,8 @@ public interface BCDTextures {
         BTexture[] ICONS_OFF_CENTERED_BLOCK = {ICON_OFF_CENTERED_BLOCK_CROSS, ICON_OFF_CENTERED_BLOCK, ICON_OFF_CENTERED_BLOCK_PLUS};
 
 
-        BTexture DIAGRAM_ICON_CALCULATOR = gridCell(atlas, 0, 3);
-        BTexture DIAGRAM_ICON_INFO = gridCell(atlas, 0, 4);
+        BTexture ICON_CALCULATOR = gridCell(atlas, 0, 3);
+        BTexture ICON_INFO = gridCell(atlas, 0, 4);
         BTexture ICON_SINGLE_SHIP = gridCell(atlas, 0, 14);
         BTexture ICON_MANY_SHIPS = gridCell(atlas, 1, 14);
         BTexture[] ICONS_SHIPS = {ICON_SINGLE_SHIP,ICON_MANY_SHIPS};
@@ -79,7 +79,7 @@ public interface BCDTextures {
 
         BTexture BACKGROUND_XYZ = texture(atlas, 0, 128, 72, 24);
 
-        BTexture DIAGRAM_ICON_BTN_BACKGROUND = gridCell(atlas, 1, 3);
+        BTexture ICON_BTN_BACKGROUND = gridCell(atlas, 1, 3);
     }
 
     interface BalloonScreen{

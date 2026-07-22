@@ -34,7 +34,7 @@ public class BDiagramButton extends AbstractWidget {
     private TooltipListProvider diagramTooltip;
     @Getter
     @Setter
-    public BTexture background = BCDTextures.Diagram.DIAGRAM_ICON_BTN_BACKGROUND;
+    public BTexture background = BCDTextures.Diagram.ICON_BTN_BACKGROUND;
 
     private IndexSelector iconSwitch;
     private ColorSelector colorSwitch;
