@@ -3,6 +3,7 @@ package com.zelaux.betterdiagram.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.zelaux.betterdiagram.gui.screen.COM.COMScreen;
+import com.zelaux.betterdiagram.gui.screen.pressure.PressureScreen;
 import com.zelaux.betterdiagram.util.StringUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandBuildContext;
@@ -17,25 +18,27 @@ public class BCDCommand {
     public static final MutableComponent OBFUSCATED = Component.literal("~~").withStyle(it -> it.withObfuscated(true));
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
-        final LiteralArgumentBuilder<CommandSourceStack> bcdCommand = Commands.literal("better-component-diagram");
+        final LiteralArgumentBuilder<CommandSourceStack> bcdCommand = Commands.literal("bcd");
         bcdCommand
-            .executes(context -> {
-                Minecraft minecraft = Minecraft.getInstance();
-                minecraft.setScreen(new COMScreen(COMScreen.GLOBAL_CONTEXT, minecraft.player));
-                return 1;
-            })
+            .then(Commands
+                .literal("com")
+                .executes(context -> {
+                    Minecraft minecraft = Minecraft.getInstance();
+                    minecraft.setScreen(new COMScreen(COMScreen.GLOBAL_CONTEXT, minecraft.player));
+                    return 1;
+                })
+            )
+            .then(Commands
+                .literal("pressure")
+                .executes(context -> {
+                    Minecraft minecraft = Minecraft.getInstance();
+                    PressureScreen.show(minecraft.player.level());
+                    return 1;
+                })
+            )
         ;
 
-        dispatcher.register(Commands.literal("bcd").redirect(
-            dispatcher.register(bcdCommand)
-        ));
-        dispatcher.register(Commands.literal("bcdresp")
-                                    .executes(x -> {
-                                        Minecraft.getInstance().player.respawn();
-                                        x.getSource().sendSuccess(() -> Component.literal("Ok."), true);
-                                        return 1;
-                                    }));
-
+        dispatcher.register(bcdCommand);
     }
 
     private static MutableComponent toVecCompoent(double value, Direction.Axis axis) {
