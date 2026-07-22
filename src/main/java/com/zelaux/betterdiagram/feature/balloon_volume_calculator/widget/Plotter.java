@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.feature.balloon_volume_calculator.widget;
 
-import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import com.zelaux.betterdiagram.util.ui.GuiGraphicsUtil;
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
@@ -145,7 +145,7 @@ public class Plotter extends OnGraphWidget {
         if(nearest0.dst2 >= HOVER_RADIUS2) return;
         tooltipFormatter.format(nearest0.input, nearest0.output).forEach(tooltipSink);
 
-        BCDTextures.BalloonScreen.ICON_CIRCLE.render(guiGraphics, (int) nearest0.screenPoint.x - 8, (int) nearest0.screenPoint.y - 8, plotColor);
+        BTextures.BalloonScreen.ICON_CIRCLE.render(guiGraphics, (int) nearest0.screenPoint.x - 8, (int) nearest0.screenPoint.y - 8, plotColor);
     }
 
     @Override

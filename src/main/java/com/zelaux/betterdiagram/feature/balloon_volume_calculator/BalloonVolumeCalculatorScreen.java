@@ -7,7 +7,7 @@ import com.zelaux.betterdiagram.feature.balloon_volume_calculator.widget.Horizon
 import com.zelaux.betterdiagram.feature.balloon_volume_calculator.widget.ModeSelector;
 import com.zelaux.betterdiagram.feature.balloon_volume_calculator.widget.Plotter;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
-import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.index.SomeConstants;
 import com.zelaux.betterdiagram.struct.BTexture;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 
 public class BalloonVolumeCalculatorScreen extends AbstractSimiScreen {
     public static final Color gridColor = new Color(0x91918f | 0xff000000);
-    public static final BoundingBox2i DEFAULT_BACKGROUND_PADDING = new BoundingBox2i(5, 5, BCDTextures.BalloonScreen.BACKGROUND.width - 3, BCDTextures.BalloonScreen.BACKGROUND.height - 3);
+    public static final BoundingBox2i DEFAULT_BACKGROUND_PADDING = new BoundingBox2i(5, 5, BTextures.BalloonScreen.BACKGROUND.width - 3, BTextures.BalloonScreen.BACKGROUND.height - 3);
     public final ObjectArrayList<FormattedText> tooltipList = new ObjectArrayList<>();
     private final BalloonVolumeCalculator calculator;
     private final WithClientData clientData;
@@ -44,7 +44,7 @@ public class BalloonVolumeCalculatorScreen extends AbstractSimiScreen {
     public ClientSubLevel subLevel;
     SubLevelDependenciesData dependenciesData;
 
-    BTexture background = BCDTextures.BalloonScreen.BACKGROUND;
+    BTexture background = BTextures.BalloonScreen.BACKGROUND;
     GraphBackground graphBackground;
     private static RandomSource random = RandomSource.create(0);
     private Plotter[] plotters;

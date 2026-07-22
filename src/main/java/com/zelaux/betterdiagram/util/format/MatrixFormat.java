@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.util;
+package com.zelaux.betterdiagram.util.format;
 
 import com.zelaux.betterdiagram.index.Colors;
 import net.createmod.catnip.theme.Color;

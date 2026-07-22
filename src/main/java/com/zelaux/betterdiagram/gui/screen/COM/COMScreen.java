@@ -4,11 +4,13 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.extend.accessors.AbstractContainerScreenAccessors;
 import com.zelaux.betterdiagram.gui.widget.PartialInteration;
-import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.struct.BTexture;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import com.zelaux.betterdiagram.util.*;
+import com.zelaux.betterdiagram.util.format.VecFormat;
 import com.zelaux.betterdiagram.util.ui.InplaceBlockRenderer;
+import com.zelaux.betterdiagram.util.ui.UIUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -42,8 +44,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.zelaux.betterdiagram.util.UIUtil.horizontal;
-import static com.zelaux.betterdiagram.util.UIUtil.vertical;
+import static com.zelaux.betterdiagram.util.ui.UIUtil.horizontal;
+import static com.zelaux.betterdiagram.util.ui.UIUtil.vertical;
 
 public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
     static final ItemStackHandler CONTAINER = new ItemStackHandler(45);
@@ -63,7 +65,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
     public static final int PREVIEW_PANEL_OFFSET_X = 200;
     public static final int PREVIEW_PANEL_OFFSET_Y = 44;
     public static final int PREVIEW_PANEL_PER_ROW = 3;
-    public static final int PREVIEW_PANEL_CELL_SIZE = BCDTextures.COMScreen.previewSlot.width;
+    public static final int PREVIEW_PANEL_CELL_SIZE = BTextures.COMScreen.previewSlot.width;
     public static final int PREVIEW_PANEL_CELL_HALF_SIZE = PREVIEW_PANEL_CELL_SIZE / 2;
     public final Context context;
 
@@ -71,7 +73,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
     private final LocalPlayer player;
     private MyScrollBar scrollWidget;
     public final AbstractContainerScreenAccessors accessors = (AbstractContainerScreenAccessors) this;
-    public BTexture inventoryBG = BCDTextures.COMScreen.inventory;
+    public BTexture inventoryBG = BTextures.COMScreen.inventory;
     private float partialTick;
     private final AtomicReference<SearchEntry[]> savedSearchEntries = new AtomicReference<>();
 
@@ -356,7 +358,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
             boolean isHovered = false;
 
             worldContainer.updateBlockstateIfMatch(blockState);
-            BCDTextures.COMScreen.choosePreviewSlotTexture(isHovered, isSelected).render(
+            BTextures.COMScreen.choosePreviewSlotTexture(isHovered, isSelected).render(
                 guiGraphics, x, y
             );
             renderBlockState(guiGraphics, blockState, x, y, partialTick, PREVIEW_PANEL_CELL_HALF_SIZE, 12, worldContainer);
@@ -397,7 +399,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
                         boolean isHovered =
                             x <= mouseX && mouseX <= x + size &&
                             y <= mouseY && mouseY <= y + size;
-                        BCDTextures.COMScreen.choosePreviewSlotTexture(isHovered, isSelected).render(
+                        BTextures.COMScreen.choosePreviewSlotTexture(isHovered, isSelected).render(
                             guiGraphics, x, y
                         );
                         BlockState state = pair.states().getFirst();

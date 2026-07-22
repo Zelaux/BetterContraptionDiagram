@@ -9,7 +9,7 @@ import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependencies
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ConstraintTree;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.index.BForceGroups;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.struct.Weights;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
@@ -130,8 +130,8 @@ public class BalanceModel {
 
 
         EnabledForces enabledForces = data.enabledForces.addBalance(ForceGroups.GRAVITY.get());
-        enabledForces = enabledForces.addBalance(BCDForceGroups.ROPE_FORCE.group);
-        enabledForces = enabledForces.addBalance(BCDForceGroups.ROPE_MASS_FORCE.group);
+        enabledForces = enabledForces.addBalance(BForceGroups.ROPE_FORCE.group);
+        enabledForces = enabledForces.addBalance(BForceGroups.ROPE_MASS_FORCE.group);
         if(enabledForces.balance.size() == 1)//only gravity
         {
             CenterMassMerger centerMassMerger = new CenterMassMerger();

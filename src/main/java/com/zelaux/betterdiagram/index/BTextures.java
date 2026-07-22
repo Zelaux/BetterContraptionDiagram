@@ -5,7 +5,7 @@ import com.zelaux.betterdiagram.struct.BTexture;
 
 import static com.zelaux.betterdiagram.struct.BTexture.*;
 
-public interface BCDTextures {
+public interface BTextures {
     interface COMScreen {
         AtlasTexture atlas = atlas("gui/com_screen", 256, 256, 161, 16);
         BTexture inventory = texture(atlas, 0, 0, 226, 136);

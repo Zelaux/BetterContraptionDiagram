@@ -10,11 +10,12 @@ import com.zelaux.betterdiagram.gui.OffCenteredBlockTooltipHandler;
 import com.zelaux.betterdiagram.gui.tooltip.DiagramInfoTooltip;
 import com.zelaux.betterdiagram.gui.user.ButtonKind;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
-import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.BForceGroups;
+import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.struct.BTexture;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.util.*;
+import com.zelaux.betterdiagram.util.ui.UIUtil;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
@@ -105,11 +106,11 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
         WithClientData clientData = (WithClientData) diagram;
         var layout = UIUtil.vertical(4,
-            new BDiagramButton(BCDTextures.Diagram.ICON_CALCULATOR, 0, 0, Component.translatable("better_contraption_diagram.diagram-button"), () -> CenterMassMovingScreen.toggle(self()))
+            new BDiagramButton(BTextures.Diagram.ICON_CALCULATOR, 0, 0, Component.translatable("better_contraption_diagram.diagram-button"), () -> CenterMassMovingScreen.toggle(self()))
                 .setColorSelector((active, hover, texture) -> hover | Minecraft.getInstance().screen instanceof CenterMassMovingScreen ? 1 : 0)
                 .withTooltip(() -> Component.translatable("better_contraption_diagram.diagram-button"))
             ,
-            new BDiagramButton(BCDTextures.Diagram.ICONS_SHIPS, 0, 0,
+            new BDiagramButton(BTextures.Diagram.ICONS_SHIPS, 0, 0,
                 Component.translatable("bcd.contraption_diagram.join-forces"), () -> {
                 BCDData data = clientData.bcdDataOrTryDefault();
                 if(data == null) return;
@@ -127,7 +128,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                              )
                 )
             ,
-            new BDiagramButton(BCDTextures.Diagram.ICON_INFO, 0, 0,
+            new BDiagramButton(BTextures.Diagram.ICON_INFO, 0, 0,
                 Component.translatable("better_contraption_diagram.extra-info.diagram-button"), (Runnable) null)
                 .supportedButtons(ButtonKind.EMPTY_ARRAY)
                 .withTooltip(new DiagramInfoTooltip(self(), this.subLevel, this.serverData))
@@ -180,7 +181,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                          int areaHeight,
                          CallbackInfo ci
     ) {
-        if(serverData == null || !((WithClientData) diagram).bcdDataNotNull_readOnly().enabledForces.display(BCDForceGroups.MERGED_FORCE_GROUP))
+        if(serverData == null || !((WithClientData) diagram).bcdDataNotNull_readOnly().enabledForces.display(BForceGroups.MERGED_FORCE_GROUP))
             return;
 
 
@@ -198,7 +199,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         }
 
         mergedForce.endPlusCOM();
-        forces.put(BCDForceGroups.MERGED_FORCE_GROUP.group, List.of(new QueuedForceGroup.PointForce(
+        forces.put(BForceGroups.MERGED_FORCE_GROUP.group, List.of(new QueuedForceGroup.PointForce(
             mergedForce.displacement, mergedForce.totalForce
         )));
     }
@@ -226,7 +227,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         for(int i = 0; i < stacks.length; i++) {
             var weights = stacks[i];
             if(weights.isEmpty() || !clientData.axisStates(i)) continue;
-            var group = BCDForceGroups.AXIS_GROUPS[i];
+            var group = BForceGroups.AXIS_GROUPS[i];
             int color = group.color() | (0xff << 24);
             Vector3d AXIS = DIRECTIONS[i];
             projectedAxis.set(orientation.transformInverse(tmp.set(AXIS)));
@@ -240,8 +241,8 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                     //addForceArrowTooltip(forceGroup, pointForce.groupSize().getValue(), forceMagnitude, color, tooltipLines);
                 }
 
-                BCDTextures.Diagram.ICON_WEIGHT_SHADOW.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
-                BCDTextures.Diagram.ICON_WEIGHT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(color));
+                BTextures.Diagram.ICON_WEIGHT_SHADOW.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
+                BTextures.Diagram.ICON_WEIGHT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(color));
                 continue;
             }
             renderMassStacks(graphics,
@@ -250,7 +251,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 tmp,
                 offset,
                 color, shadowColor,
-                BCDTextures.Diagram.ICON_WEIGHT, BCDTextures.Diagram.ICON_WEIGHT_SHADOW,
+                BTextures.Diagram.ICON_WEIGHT, BTextures.Diagram.ICON_WEIGHT_SHADOW,
                 (list, m, v) -> list.add(Component.translatable("better_contraption_diagram.weight.tooltip", v)),
                 shouldClipWeights, accessor);
             renderMassStacks(graphics,
@@ -259,7 +260,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 tmp,
                 offset,
                 color, shadowColor,
-                BCDTextures.Diagram.ICON_SMALL_WEIGHT, BCDTextures.Diagram.ICON_SMALL_WEIGHT_SHADOW,
+                BTextures.Diagram.ICON_SMALL_WEIGHT, BTextures.Diagram.ICON_SMALL_WEIGHT_SHADOW,
                 (list, mass, v) -> list.add(//TODO maybe multi line with tab?
                     Component.translatable("better_contraption_diagram.small-weight.tooltip", v,
                         Component.translatable("better_contraption_diagram.small-weight.distance.tooltip",
@@ -345,7 +346,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final Vector2d screenCoords = MixinCalculatorUtil.screenPositionOfExpectedCOM(self(), LOCAL_ORIENTATION, LOCAL_CAMERA_POSITION, PROJECTION_MAT, DIAGRAM_TEXTURE.width, DIAGRAM_TEXTURE.height);
         if(screenCoords == null) return;
 
-        final var tex = BCDTextures.Diagram.ICON_EXPECTED_COM;
+        final var tex = BTextures.Diagram.ICON_EXPECTED_COM;
 
         final PoseStack pose = graphics.pose();
         pose.pushPose();

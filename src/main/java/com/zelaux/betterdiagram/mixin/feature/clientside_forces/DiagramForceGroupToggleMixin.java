@@ -5,8 +5,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.zelaux.betterdiagram.extend.BAccessors;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.feature.clientside_forces.DiagramBCDForceGroupToggle;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
-import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.BForceGroups;
+import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.struct.BTexture;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramForceGroupToggle;
@@ -56,7 +56,7 @@ public abstract class DiagramForceGroupToggleMixin extends AbstractWidget {
     @Inject(method = "renderWidget", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V"))
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         boolean usedInBalance = bcd$clientData.bcdDataNotNull_readOnly().enabledForces.balance.contains(group);
-        BTexture texture = usedInBalance ? BCDTextures.Diagram.ICON_WEIGHT : BCDTextures.Diagram.ICON_WEIGHT_CROSS;
+        BTexture texture = usedInBalance ? BTextures.Diagram.ICON_WEIGHT : BTextures.Diagram.ICON_WEIGHT_CROSS;
 
         int dx = SimGUITextures.DIAGRAM_PAPER.width - texture.width - 8;
         int dy = -4;
@@ -75,7 +75,7 @@ public abstract class DiagramForceGroupToggleMixin extends AbstractWidget {
 
     @Inject(method = "updateForceState", at = @At("RETURN"))
     void updateForceState(DiagramDataPacket serverData, CallbackInfo ci) {
-        if(this.group == BCDForceGroups.MERGED_FORCE_GROUP.group) {
+        if(this.group == BForceGroups.MERGED_FORCE_GROUP.group) {
             forceCount = 1;
         }
     }

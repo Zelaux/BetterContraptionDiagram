@@ -7,9 +7,9 @@ import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.feature.balance.BalanceModel;
 import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDependencies;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
-import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
-import com.zelaux.betterdiagram.util.VecFormat;
+import com.zelaux.betterdiagram.util.format.VecFormat;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
@@ -56,7 +56,7 @@ public abstract class BalanceCenter_DiagramScreen implements ProjectionAccessor,
         final Vector2d screenCoords = bcd$getScreenCoords(new Vector3d(point));
         if(screenCoords == null) return;
 
-        final var tex = BCDTextures.Diagram.ICON_BALANCE_CENTER;
+        final var tex = BTextures.Diagram.ICON_BALANCE_CENTER;
 
         final PoseStack pose = graphics.pose();
         pose.pushPose();

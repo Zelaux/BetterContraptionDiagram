@@ -3,7 +3,7 @@ package com.zelaux.betterdiagram.data;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.index.BForceGroups;
 import com.zelaux.betterdiagram.struct.BCDForceGroup;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -24,11 +24,11 @@ public class EnabledForces {
     ImmutableSet<ForceGroup> balance;
 
     public static final Codec<EnabledForces> CODEC = RecordCodecBuilder.create(i -> i.group(
-            ResourceLocation.CODEC.listOf().optionalFieldOf("display", List.of()).forGetter(x -> getResourceLocations(x.display, BCDForceGroups::getPath)),
-            ResourceLocation.CODEC.listOf().optionalFieldOf("balance", List.of()).forGetter(x -> getResourceLocations(x.balance, BCDForceGroups::getPathAny))
+            ResourceLocation.CODEC.listOf().optionalFieldOf("display", List.of()).forGetter(x -> getResourceLocations(x.display, BForceGroups::getPath)),
+            ResourceLocation.CODEC.listOf().optionalFieldOf("balance", List.of()).forGetter(x -> getResourceLocations(x.balance, BForceGroups::getPathAny))
         ).apply(i, (display, balance) -> new EnabledForces(
-            getValues(display, BCDForceGroups::byPath),
-            getValues(balance, BCDForceGroups::byPathAny)
+            getValues(display, BForceGroups::byPath),
+            getValues(balance, BForceGroups::byPathAny)
         ))
     );
 

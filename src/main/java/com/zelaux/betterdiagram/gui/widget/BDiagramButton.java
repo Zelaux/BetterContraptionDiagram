@@ -2,9 +2,9 @@ package com.zelaux.betterdiagram.gui.widget;
 
 import com.zelaux.betterdiagram.gui.user.ButtonKind;
 import com.zelaux.betterdiagram.gui.user.ClickHandler;
-import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.struct.BTexture;
-import com.zelaux.betterdiagram.util.UIUtil;
+import com.zelaux.betterdiagram.util.ui.UIUtil;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.index.SimSoundEvents;
 import lombok.Getter;
@@ -34,7 +34,7 @@ public class BDiagramButton extends AbstractWidget {
     private TooltipListProvider diagramTooltip;
     @Getter
     @Setter
-    public BTexture background = BCDTextures.Diagram.ICON_BTN_BACKGROUND;
+    public BTexture background = BTextures.Diagram.ICON_BTN_BACKGROUND;
 
     private IndexSelector iconSwitch;
     private ColorSelector colorSwitch;

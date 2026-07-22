@@ -3,7 +3,7 @@ package com.zelaux.betterdiagram.feature.clientside_forces;
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.extend.BAccessors;
 import com.zelaux.betterdiagram.extend.WithClientData;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.index.BForceGroups;
 import com.zelaux.betterdiagram.struct.BCDForceGroup;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramForceGroupToggle;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
@@ -18,7 +18,7 @@ public class DiagramBCDForceGroupToggle extends DiagramForceGroupToggle {
     public DiagramBCDForceGroupToggle(DiagramScreen diagramScreen, BCDForceGroup forceGroup, int x, int y) {
         super(diagramScreen, forceGroup.group(), x, y);
         this.diagramScreen = diagramScreen;
-        groupId = BCDForceGroups.getPath(forceGroup);
+        groupId = BForceGroups.getPath(forceGroup);
         this.forceGroup = forceGroup;
         this.clientData = (WithClientData) BAccessors.accessors(diagramScreen).bcd$diagram();
 

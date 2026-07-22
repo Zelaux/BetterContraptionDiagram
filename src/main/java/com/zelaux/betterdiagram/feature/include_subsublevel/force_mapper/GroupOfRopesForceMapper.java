@@ -2,7 +2,7 @@ package com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper;
 
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.index.BForceGroups;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.simulated_team.simulated.content.blocks.rope.strand.client.ClientRopeStrand;
 import dev.simulated_team.simulated.content.blocks.rope.strand.server.ServerRopeStrand;
@@ -47,12 +47,12 @@ public class GroupOfRopesForceMapper extends AbstractForceMapper {
                 pointForces.add(ropeForces.ropeForce());
             }
             if(ropeForces.ropeMassForce() != null) {
-                origin.addForce(BCDForceGroups.ROPE_MASS_FORCE, ropeForces.ropeMassForce());
+                origin.addForce(BForceGroups.ROPE_MASS_FORCE, ropeForces.ropeMassForce());
             }
         }
         for(QueuedForceGroup.PointForce pointForce : pointForces) {
             ((Vector3d) pointForce.force()).div(pointForces.size());
-            origin.addForce(BCDForceGroups.ROPE_FORCE, pointForce);
+            origin.addForce(BForceGroups.ROPE_FORCE, pointForce);
         }
     }
 }

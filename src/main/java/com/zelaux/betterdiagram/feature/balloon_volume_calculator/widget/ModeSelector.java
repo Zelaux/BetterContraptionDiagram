@@ -3,9 +3,8 @@ package com.zelaux.betterdiagram.feature.balloon_volume_calculator.widget;
 import com.simibubi.create.foundation.gui.widget.CompositeWidget;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.gui.widget.SelectionScrollInput;
-import com.simibubi.create.foundation.utility.CreateLang;
 import com.zelaux.betterdiagram.feature.balloon_volume_calculator.BalloonCalculationMode;
-import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.BTextures;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -22,8 +21,8 @@ public class ModeSelector extends CompositeWidget {
 
     public ModeSelector(int x, int y,BalloonCalculationMode current) {
 
-        int width = BCDTextures.BalloonScreen.MODE_BACKGROUND.width;
-        int height = BCDTextures.BalloonScreen.MODE_BACKGROUND.height;
+        int width = BTextures.BalloonScreen.MODE_BACKGROUND.width;
+        int height = BTextures.BalloonScreen.MODE_BACKGROUND.height;
 
         var list = new ObjectArrayList<Component>();
         for(var mode : BalloonCalculationMode.all) {
@@ -47,7 +46,7 @@ public class ModeSelector extends CompositeWidget {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        BCDTextures.BalloonScreen.MODE_BACKGROUND.render(graphics,input.getX(),input.getY());
+        BTextures.BalloonScreen.MODE_BACKGROUND.render(graphics,input.getX(),input.getY());
         Font font = Minecraft.getInstance().font;
         int width = font.width(label.text);
         label.setX(input.getX() + (input.getWidth()-8)/2-width/2 + 4);

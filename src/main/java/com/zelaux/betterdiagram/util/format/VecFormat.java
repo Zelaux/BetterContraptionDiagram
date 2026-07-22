@@ -1,7 +1,8 @@
-package com.zelaux.betterdiagram.util;
+package com.zelaux.betterdiagram.util.format;
 
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.index.Colors;
+import com.zelaux.betterdiagram.util.StringUtil;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;

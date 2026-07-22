@@ -4,7 +4,7 @@ import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependencies
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
 import com.zelaux.betterdiagram.feature.rope_data.IRopeData;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.index.BForceGroups;
 import com.zelaux.betterdiagram.index.SomeConstants;
 import com.zelaux.betterdiagram.network.rope.RopeDataRequest;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
@@ -64,10 +64,10 @@ public class RopeForceMapper extends AbstractForceMapper {
     public void mergeForces(Forces origin, Forces toAttach, SubLevelDependenciesData subLevelDependenciesData) {
         RopeForces ropeForces = calculateForces(origin, toAttach, subLevelDependenciesData);
         if(ropeForces.ropeForce != null) {
-            origin.addForce(BCDForceGroups.ROPE_FORCE, ropeForces.ropeForce);
+            origin.addForce(BForceGroups.ROPE_FORCE, ropeForces.ropeForce);
         }
         if(ropeForces.ropeMassForce != null) {
-            origin.addForce(BCDForceGroups.ROPE_MASS_FORCE, ropeForces.ropeMassForce);
+            origin.addForce(BForceGroups.ROPE_MASS_FORCE, ropeForces.ropeMassForce);
         }
     }
 

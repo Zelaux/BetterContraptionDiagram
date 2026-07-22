@@ -3,11 +3,11 @@ package com.zelaux.betterdiagram.mixin;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.index.BForceGroups;
 import com.zelaux.betterdiagram.struct.BlackHoleList;
 import com.zelaux.betterdiagram.struct.CounterBlackHoleList;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
-import com.zelaux.betterdiagram.util.VecFormat;
+import com.zelaux.betterdiagram.util.format.VecFormat;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
@@ -99,7 +99,7 @@ public abstract class DiagramScreenMixin {
             0, 1, 0, boundingBox.height(),
             0, 0, 1, boundingBox.length()
         };
-        var groups = BCDForceGroups.AXIS_GROUPS;
+        var groups = BForceGroups.AXIS_GROUPS;
         Vector3d force = tmpCluster.force();
 
         var counterBlackHoleList = new CounterBlackHoleList<FormattedText>();

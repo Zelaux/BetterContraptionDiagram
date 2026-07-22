@@ -2,7 +2,7 @@ package com.zelaux.betterdiagram.mixin.calculator;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zelaux.betterdiagram.extend.BAccessors;
-import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
 import com.zelaux.betterdiagram.util.VecUtil;
@@ -69,7 +69,7 @@ public class Calculator_DiagramStickyNote {
 
         stack.pushPose();
 
-        var tex = BCDTextures.Diagram.ICON_EXPECTED_COM_TINY;
+        var tex = BTextures.Diagram.ICON_EXPECTED_COM_TINY;
         final double comOffsetX = (screenCoords.x) - 8;
         final double comOffsetY = (screenCoords.y) - 8;
         var self = (DiagramStickyNote) (Object) this;
@@ -101,7 +101,7 @@ public class Calculator_DiagramStickyNote {
                           .translate(-8, -8, 0)
                           .translate(0, -40, 0);
 
-            tex = BCDTextures.Diagram.ICON_EXPECTED_COM_ARROW;
+            tex = BTextures.Diagram.ICON_EXPECTED_COM_ARROW;
             guiGraphics.blit(tex.location, 0, 0, 5, tex.startX, tex.startY, tex.width, tex.height, tex.texWidth, tex.texHeight);
         }
         stack.popPose();

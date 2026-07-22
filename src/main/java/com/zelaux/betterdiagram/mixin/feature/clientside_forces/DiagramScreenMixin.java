@@ -10,7 +10,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.feature.clientside_forces.DiagramBCDForceGroupToggle;
 import com.zelaux.betterdiagram.feature.clientside_forces.DiagramForceGroupToggleList;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.index.BForceGroups;
 import com.zelaux.betterdiagram.struct.BCDForceGroup;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
@@ -73,12 +73,12 @@ public abstract class DiagramScreenMixin extends AbstractSimiScreen {
 
     @ModifyVariable(method = "addForceToggleWidgets", at = @At(value = "STORE", ordinal = 0))
     protected Iterable<ForceGroup> addForceToggleWidgets_addBCDForces(Iterable<ForceGroup> forceGroups) {
-        return Iterables.concat(forceGroups, Iterables.transform(BCDForceGroups.CUSTOM_FORCES, BCDForceGroup::group));
+        return Iterables.concat(forceGroups, Iterables.transform(BForceGroups.CUSTOM_FORCES, BCDForceGroup::group));
     }
 
     @WrapOperation(method = "addForceToggleWidgets", at = @At(value = "NEW", target = "(Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;Ldev/ryanhcode/sable/api/physics/force/ForceGroup;II)Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramForceGroupToggle;"))
     protected DiagramForceGroupToggle addForceToggleWidgets_makeBCDForcesToggle(DiagramScreen diagramScreen, ForceGroup forceGroup, int x, int y, Operation<DiagramForceGroupToggle> original) {
-        BCDForceGroup group = BCDForceGroups.wrappedMap.get(forceGroup);
+        BCDForceGroup group = BForceGroups.wrappedMap.get(forceGroup);
         if(group != null) return new DiagramBCDForceGroupToggle(diagramScreen, group, x, y);
 
         return original.call(diagramScreen, forceGroup, x, y);

@@ -1,30 +1,15 @@
 package com.zelaux.betterdiagram.gui.tooltip;
 
-import com.demonwav.mcdev.annotations.Translatable;
-import com.zelaux.betterdiagram.DebugRuntime;
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.gui.tooltip.diagram_info_tooltip.*;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.Colors;
-import com.zelaux.betterdiagram.util.CenterMassCalculator;
-import com.zelaux.betterdiagram.util.VecFormat;
-import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
-import dev.ryanhcode.sable.physics.floating_block.FloatingBlockMaterial;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
-import dev.ryanhcode.sable.sublevel.ServerSubLevel;
-import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix3d;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
-import org.joml.Vector3dc;
 
 import java.util.List;
 

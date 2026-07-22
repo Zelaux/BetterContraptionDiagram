@@ -1,6 +1,6 @@
 package com.zelaux.betterdiagram.gui.tooltip.diagram_info_tooltip;
 
-import com.zelaux.betterdiagram.util.VecFormat;
+import com.zelaux.betterdiagram.util.format.VecFormat;
 import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysicsData;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.network.chat.Component;

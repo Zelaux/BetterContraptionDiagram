@@ -3,7 +3,7 @@ package com.zelaux.betterdiagram.gui.screen.pressure;
 import com.zelaux.betterdiagram.feature.balloon_volume_calculator.BalloonVolumeCalculatorScreen;
 import com.zelaux.betterdiagram.feature.balloon_volume_calculator.widget.GraphBackground;
 import com.zelaux.betterdiagram.feature.balloon_volume_calculator.widget.Plotter;
-import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.index.Colors;
 import com.zelaux.betterdiagram.index.SomeConstants;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
@@ -60,7 +60,7 @@ public class PressureScreen extends AbstractSimiScreen {
 
             }
         }
-        GraphBackground graphBackground = new GraphBackground(BCDTextures.BalloonScreen.BACKGROUND, BalloonVolumeCalculatorScreen.DEFAULT_BACKGROUND_PADDING, gridDimension);
+        GraphBackground graphBackground = new GraphBackground(BTextures.BalloonScreen.BACKGROUND, BalloonVolumeCalculatorScreen.DEFAULT_BACKGROUND_PADDING, gridDimension);
         addRenderableOnly(graphBackground);
         graphBackground.setPosition(
             width/2- graphBackground.getWidth()/2,

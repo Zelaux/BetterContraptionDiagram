@@ -1,10 +1,9 @@
 package com.zelaux.betterdiagram.gui.tooltip.diagram_info_tooltip;
 
-import com.zelaux.betterdiagram.DebugRuntime;
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.network.extradata.DiagramExtraDataPacket;
-import com.zelaux.betterdiagram.util.MatrixFormat;
+import com.zelaux.betterdiagram.util.format.MatrixFormat;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.minecraft.network.chat.Component;
 

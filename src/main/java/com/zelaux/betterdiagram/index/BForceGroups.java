@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public interface BCDForceGroups {
+public interface BForceGroups {
 
     Object2ObjectOpenHashMap<ResourceLocation, BCDForceGroup> REGISTRY = new Object2ObjectOpenHashMap<>();
     Map<ForceGroup, BCDForceGroup> wrappedMap = new Object2ObjectOpenCustomHashMap<>(IdentityStrategy.IDENTITY);

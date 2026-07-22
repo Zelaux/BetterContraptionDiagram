@@ -6,7 +6,7 @@ import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
-import com.zelaux.betterdiagram.util.VecFormat;
+import com.zelaux.betterdiagram.util.format.VecFormat;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;

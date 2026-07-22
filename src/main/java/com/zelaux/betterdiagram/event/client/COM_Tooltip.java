@@ -3,7 +3,7 @@ package com.zelaux.betterdiagram.event.client;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.util.CenterMassCache;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
-import com.zelaux.betterdiagram.util.VecFormat;
+import com.zelaux.betterdiagram.util.format.VecFormat;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.mixinterface.block_properties.BlockStateExtension;

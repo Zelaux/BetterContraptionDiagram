@@ -7,13 +7,13 @@ import com.zelaux.betterdiagram.feature.balance.BalanceModel;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.max_speed.WithLiftProviders;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.index.BForceGroups;
 import com.zelaux.betterdiagram.index.SomeConstants;
 import com.zelaux.betterdiagram.mixin.feature.extra_info_deliver.FloatingBlockControllerExt;
 import com.zelaux.betterdiagram.network.extradata.ClusterInfo;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.MergedPointForceCalculator;
-import com.zelaux.betterdiagram.util.VecFormat;
+import com.zelaux.betterdiagram.util.format.VecFormat;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.api.block.BlockSubLevelLiftProvider;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
@@ -102,10 +102,10 @@ public class TerminalSpeedModule implements DiagramInfoModule {
 
         Set<ForceGroup> blackList = new ObjectOpenCustomHashSet<>(Set.of(
             ForceGroups.DRAG.get(),
-            BCDForceGroups.MERGED_FORCE_GROUP.group,
-            BCDForceGroups.CONTRAPTION_GRAVITY.group,
-            BCDForceGroups.ROPE_FORCE.group,
-            BCDForceGroups.ROPE_MASS_FORCE.group
+            BForceGroups.MERGED_FORCE_GROUP.group,
+            BForceGroups.CONTRAPTION_GRAVITY.group,
+            BForceGroups.ROPE_FORCE.group,
+            BForceGroups.ROPE_MASS_FORCE.group
         ), IdentityStrategy.IDENTITY);
 
         for(var entry : serverData.forces().entrySet()) {

@@ -8,7 +8,7 @@ import com.zelaux.betterdiagram.feature.balance.BalanceForce;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.index.BForceGroups;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
@@ -37,8 +37,8 @@ public class CenterMassCalculator {
     static {
         var forceGroupBlacklist = new ObjectOpenCustomHashSet<ForceGroup>(IdentityStrategy.IDENTITY);
         //forceGroupBlacklist.add(ForceGroups.GRAVITY.get());
-        forceGroupBlacklist.add(BCDForceGroups.MERGED_FORCE_GROUP.group);
-        forceGroupBlacklist.add(BCDForceGroups.CONTRAPTION_GRAVITY.group);
+        forceGroupBlacklist.add(BForceGroups.MERGED_FORCE_GROUP.group);
+        forceGroupBlacklist.add(BForceGroups.CONTRAPTION_GRAVITY.group);
 
         FORCE_GROUP_BLACKLIST = forceGroupBlacklist;
     }

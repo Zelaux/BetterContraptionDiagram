@@ -2,7 +2,7 @@ package com.zelaux.betterdiagram.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
+import com.zelaux.betterdiagram.index.BForceGroups;
 import com.zelaux.betterdiagram.struct.Weights;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import dev.ryanhcode.sable.companion.impl.SableCompanionUtil;
@@ -84,7 +84,7 @@ public class BCDData {
                               .cache(null)
                               .axisStatesMask(axisStates)
                               .offCenterBlocksShowState(offCenterBlocksShowState)
-                              .enabledForces(shouldRenderMergedForces ? BCDData.DEFAULT().enabledForces.addDisplay(BCDForceGroups.MERGED_FORCE_GROUP) : enabledForces)
+                              .enabledForces(shouldRenderMergedForces ? BCDData.DEFAULT().enabledForces.addDisplay(BForceGroups.MERGED_FORCE_GROUP) : enabledForces)
                               .shouldMergedForcesWithConnectedSublevels(shouldMergedForcesWithConnectedSublevels)
                               .balloonCalc(balloonCalculatorSettings)
                               .build()

@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.zelaux.betterdiagram.extend.accessors.SubLevelStorageAccessors;
 import com.zelaux.betterdiagram.index.Colors;
 import com.zelaux.betterdiagram.mixin.accessors.server_helpers.SubLevelStorageFileAccessors;
-import com.zelaux.betterdiagram.util.VecFormat;
+import com.zelaux.betterdiagram.util.format.VecFormat;
 import dev.ryanhcode.sable.api.command.SableCommandHelper;
 import dev.ryanhcode.sable.api.physics.PhysicsPipeline;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;

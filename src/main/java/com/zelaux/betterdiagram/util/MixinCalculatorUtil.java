@@ -14,9 +14,10 @@ import com.zelaux.betterdiagram.feature.balance.BalanceModel;
 import com.zelaux.betterdiagram.feature.balance.UncenteredBlockCalculator;
 import com.zelaux.betterdiagram.gui.comp.InTextBlockRenderer;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
-import com.zelaux.betterdiagram.index.BCDTextures;
+import com.zelaux.betterdiagram.index.BForceGroups;
+import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.struct.MassStack;
+import com.zelaux.betterdiagram.util.format.VecFormat;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
@@ -198,14 +199,14 @@ public class MixinCalculatorUtil {
                                           GuiGraphics graphics,
                                           int mouseX,
                                           int mouseY, boolean shouldClipWeights) {
-        if(serverData == null || !withClientData.bcdDataNotNull_readOnly().enabledForces.display.contains(BCDForceGroups.MERGED_FORCE_GROUP))
+        if(serverData == null || !withClientData.bcdDataNotNull_readOnly().enabledForces.display.contains(BForceGroups.MERGED_FORCE_GROUP))
             return;
-        List<QueuedForceGroup.PointForce> pointForces = serverData.forces().get(BCDForceGroups.MERGED_FORCE_GROUP.group);
+        List<QueuedForceGroup.PointForce> pointForces = serverData.forces().get(BForceGroups.MERGED_FORCE_GROUP.group);
         if(pointForces == null) return;
         Vector3dc displacement = pointForces.get(0).point();
         Vector2d originCoords = accessor.bcd$getScreenCoords(new Vector3d(displacement));
         if(!accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.y)) return;
-        BCDTextures.Diagram.ICON_TOTAL_DISPLACEMENT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
+        BTextures.Diagram.ICON_TOTAL_DISPLACEMENT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
         double dst2 = originCoords.distanceSquared(mouseX - accessor.bcd$originX(), mouseY - accessor.bcd$originY());
 
         if(dst2 < 8 * 8) {
@@ -258,8 +259,8 @@ public class MixinCalculatorUtil {
                 tooltipList.add(new InTextBlockRenderer(block.state()).wrap());
                 wasAnyOne = true;
             }
-            BCDTextures.Diagram.ICON_OFF_CENTERED_BLOCK_SHADOW.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
-            BCDTextures.Diagram.ICON_COLORED_OFF_CENTERED_BLOCK.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
+            BTextures.Diagram.ICON_OFF_CENTERED_BLOCK_SHADOW.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, new Color(shadowColor));
+            BTextures.Diagram.ICON_COLORED_OFF_CENTERED_BLOCK.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
         }
         return hovered == null ? null : new HoveredOffCenteredBlock(hoveredDistance2, hoveredIndex, hovered);
     }

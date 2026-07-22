@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.util;
+package com.zelaux.betterdiagram.util.ui;
 
 import com.simibubi.create.foundation.gui.widget.Label;
 import net.minecraft.client.gui.layouts.FrameLayout;
