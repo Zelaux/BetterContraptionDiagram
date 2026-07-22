@@ -1,14 +1,11 @@
 package com.zelaux.betterdiagram;
 
+import com.mojang.logging.LogUtils;
 import com.zelaux.betterdiagram.annotations.DebugOnly;
 import com.zelaux.betterdiagram.annotations.DeleteInRelease;
-import dev.ryanhcode.sable.api.event.SablePrePhysicsTickEvent;
-import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
-import dev.ryanhcode.sable.neoforge.event.ForgeSablePrePhysicsTickEvent;
 import lombok.SneakyThrows;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,6 +21,8 @@ public class DebugRuntime {
     public static final File FILE = new File(FOLDER, "common.txt");
     public static boolean disableAirflowScaling=false && isDebug();
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(BetterContraptionDiagram.class.getSimpleName()+"#"+DebugRuntime.class.getSimpleName());
+    //public static final Logger LOGGER = BetterContraptionDiagram.LOGGER;
     static {
         System.out.println("Loaded : " + FOLDER.getAbsolutePath());
     }

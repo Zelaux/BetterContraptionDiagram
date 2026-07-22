@@ -1,10 +1,10 @@
 package com.zelaux.betterdiagram.feature.include_subsublevel;
 
+import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.feature.create_contraption_mass.ClientLevelPlotExt;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ConstraintTree;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
-import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.SomeConstants;
 import com.zelaux.betterdiagram.network.extradata.DiagramExtraDataPacket;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
@@ -120,27 +120,27 @@ public class SubLevelDependenciesData {
 
         var forces = new Forces(0);
 
-        Vector3dc localGravity=VecUtil.unprojectDirectionToLocal(mainSubLevel.logicalPose(),new Vector3d(
+        Vector3dc localGravity = VecUtil.unprojectDirectionToLocal(mainSubLevel.logicalPose(), new Vector3d(
             SomeConstants.gravityVector(mainSubLevel.getLevel())
         ));
-        Vector3d innerSublevelDirection=new Vector3d();
-        Vector3d innerSublevelCOM=new Vector3d();
-        double sumOfMass=0;
+        Vector3d innerSublevelDirection = new Vector3d();
+        Vector3d innerSublevelCOM = new Vector3d();
+        double sumOfMass = 0;
         for(SubLevel subLevel : subLevelGroup) {
             Entry entry = get(subLevel);
 
             if(entry.data == null) continue;
-            Vector3d com =VecUtil.unprojectPosToLocal(mainSubLevel.logicalPose(), innerSublevelCOM.set(subLevel.logicalPose().position()));
+            Vector3d com = VecUtil.unprojectPosToLocal(mainSubLevel.logicalPose(), innerSublevelCOM.set(subLevel.logicalPose().position()));
             double mass = entry.data.mass();
             //forces.putSingle(BCDForceGroups.CONTRAPTION_GRAVITY, new QueuedForceGroup.PointForce(
             //    new Vector3d(com),
             //    localGravity.mul(mass,new Vector3d()))
             //);
 
-            mergedGravity.displacement.fma(mass,com);
-            sumOfMass+= mass;
+            mergedGravity.displacement.fma(mass, com);
+            sumOfMass += mass;
 
-            if(true)continue;
+            if(true) continue;
             List<QueuedForceGroup.PointForce> pointForces = entry.data.forces().get(ForceGroups.GRAVITY.get());
             if(pointForces == null) {
                 updated = true;
@@ -164,7 +164,7 @@ public class SubLevelDependenciesData {
                 }
             }
         }
-mergedGravity.displacement.div(sumOfMass);
+        mergedGravity.displacement.div(sumOfMass);
         mergedGravity.totalForce.set(localGravity).mul(sumOfMass);
         //mergedGravity.endPlusCOM();
 
