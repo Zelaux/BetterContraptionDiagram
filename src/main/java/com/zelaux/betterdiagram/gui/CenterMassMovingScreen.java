@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.gui.widget.Label;
 import com.zelaux.betterdiagram.ClientEvents;
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.data.OffCenterBlocksShowState;
+import com.zelaux.betterdiagram.extend.BAccessors;
 import com.zelaux.betterdiagram.extend.ClientData;
 import com.zelaux.betterdiagram.extend.IDiagramScreen;
 import com.zelaux.betterdiagram.extend.WithClientData;
@@ -108,9 +109,9 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
 
     public CenterMassMovingScreen(DiagramScreen diagramScreen) {
         this.diagramScreen = diagramScreen;
-        diagramScreenAccessors = CenterMassCalculator.accessors(diagramScreen);
+        diagramScreenAccessors = BAccessors.accessors(diagramScreen);
 
-        clientData = new ClientData(((WithClientData) diagramScreenAccessors.betterContraptionDiagram$diagram()));
+        clientData = new ClientData(((WithClientData) diagramScreenAccessors.bcd$diagram()));
         expectedCenterOfMass()
         ;
     }
@@ -142,8 +143,8 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
     @Override
     protected void init() {
         super.init();
-        diagramStickyNote = diagramScreenAccessors.betterContraptionDiagram$note();
-        noteAccessors = CenterMassCalculator.accessors(diagramStickyNote);
+        diagramStickyNote = diagramScreenAccessors.bcd$note();
+        noteAccessors = BAccessors.accessors(diagramStickyNote);
         LinearLayout mainLayout = LinearLayout.vertical().spacing(5);
 
 
@@ -360,17 +361,17 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         sizeInBlocks.add(projectedAxes.zInt.x * bb.length(), projectedAxes.zInt.y * bb.length());
 
         Vector2d minScreen = projectionAccessor
-            .betterContraptionDiagram$getScreenCoords(minVec3d(bb), null)
+            .bcd$getScreenCoords(minVec3d(bb), null)
             .add(diaX, diaY);
         Vector2d maxScreen = projectionAccessor
-            .betterContraptionDiagram$getScreenCoords(maxVec3d(bb).add(1, 1, 1), null)
+            .bcd$getScreenCoords(maxVec3d(bb).add(1, 1, 1), null)
             .add(diaX, diaY);
 
         return new MyGridClicker(minScreen.x, minScreen.y, maxScreen.x, maxScreen.y, sizeInBlocks, projectedAxes, new Vector3d()).gridColor(GridClicker.INACTIVE_COLOR);
     }
 
     private MyGridClicker addSubGrid(BoundingBox3ic bb, int diaX, int diaY) {
-        DiagramConfig.NoteConfigs noteConfigs = diagramScreenAccessors.betterContraptionDiagram$config().getNoteConfigs();
+        DiagramConfig.NoteConfigs noteConfigs = diagramScreenAccessors.bcd$config().getNoteConfigs();
         if(!noteConfigs.isActive()) return null;
 
         var grid = makeGrid(
@@ -738,11 +739,11 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
 
     @Override
     public void tick() {
-        wasDirty |= diagramScreenAccessors.betterContraptionDiagram$configDirty();
+        wasDirty |= diagramScreenAccessors.bcd$configDirty();
 
         super.tick();
 
-        if(diagramScreen.subLevel.isRemoved() || diagramScreenAccessors.betterContraptionDiagram$diagram().isRemoved()) {
+        if(diagramScreen.subLevel.isRemoved() || diagramScreenAccessors.bcd$diagram().isRemoved()) {
             super.onClose();
             //minecraft.scfreen = diagramScreen;
             diagramScreen.onClose();

@@ -62,7 +62,7 @@ public abstract class DiagramScreenMixin {
         final Vector3d centerOfMass = CenterMassCalculator.locateMergedCenterOfMass(
             new Vector3d(this.subLevel.logicalPose().rotationPoint()),
             accessors.bcd$subLevelDependencies(),
-            ((WithClientData) accessors.betterContraptionDiagram$diagram()).bcdDataNotNull_readOnly()
+            ((WithClientData) accessors.bcd$diagram()).bcdDataNotNull_readOnly()
         );
         Vector3d plotSpacePoint = new Vector3d(centerOfMass);
         final Vector2d screenCoords = DiagramScreen.getScreenCoords(plotSpacePoint, orientation, cameraPos, projMatrix, areaWidth, areaHeight);

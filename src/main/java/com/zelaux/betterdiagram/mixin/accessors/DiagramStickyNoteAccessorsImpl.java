@@ -49,7 +49,7 @@ public abstract class DiagramStickyNoteAccessorsImpl implements DiagramStickyNot
 
 
     @Override
-    public Vector2d betterContraptionDiagram$getScreenCoords(Vector3d point, Vector3d cameraPos) {
+    public Vector2d bcd$getScreenCoords(Vector3d point, Vector3d cameraPos) {
         //NOTE_ORIENTATION, NOTE_LOCAL_CAM_POS, NOTE_PROJ_MAT, SUBLEVEL_RENDER_WIDTH_PIXELS, SUBLEVEL_RENDER_HEIGHT_PIXELS
         return DiagramScreen.getScreenCoords(point,
             NOTE_ORIENTATION,
@@ -67,7 +67,7 @@ public abstract class DiagramStickyNoteAccessorsImpl implements DiagramStickyNot
     }
 
     @Override
-    public Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point, Vector3d cameraPos) {
+    public Vector3d bcd$getPlotCoords(Vector2d point, Vector3d cameraPos) {
         return DiagramScreen.getPlotCoords(point,
             NOTE_ORIENTATION,
             Objects.requireNonNullElse(cameraPos, NOTE_LOCAL_CAM_POS),

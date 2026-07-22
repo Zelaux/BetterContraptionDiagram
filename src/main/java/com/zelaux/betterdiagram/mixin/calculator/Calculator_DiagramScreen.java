@@ -113,7 +113,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 Component.translatable("bcd.contraption_diagram.join-forces"), () -> {
                 BCDData data = clientData.bcdDataOrTryDefault();
                 if(data == null) return;
-                clientData.bcdiagram$updateData(data.withShouldMergedForcesWithConnectedSublevels(!data.shouldMergedForcesWithConnectedSublevels()));
+                clientData.bcd$updateData(data.withShouldMergedForcesWithConnectedSublevels(!data.shouldMergedForcesWithConnectedSublevels()));
             })
                 .setColorSelector((active, hovered, textureIndex) -> hovered ? 1 : 0)
                 .setIconSwitch((active, hover) -> ((WithClientData) diagram).bcdDataNotNull_readOnly().shouldMergedForcesWithConnectedSublevels() ? 1 : 0)
@@ -205,7 +205,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
 
     @Inject(method = "renderArrows", at = @At(value = "TAIL"))
     private void renderWeightAfterArrows(GuiGraphics graphics, int mouseX, int mouseY, int areaOriginX, int areaOriginY, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight, CallbackInfo ci) {
-        //var stacks = ((WithClientData) diagram).betterContraptionDiagram$getClientData(DataKeys.MASS_STACKS, null);
+        //var stacks = ((WithClientData) diagram).bcd$getClientData(DataKeys.MASS_STACKS, null);
         var stacks = BalanceModel.recalculateStacks(self());
         boolean shouldClipWeights = !this.bcd$isDiagramScreen;
 
@@ -322,7 +322,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                                  MixinCalculatorUtil.TooltipAdder tooltip,
                                  boolean shouldClipWeights,
                                  ProjectionAccessor accessor) {
-        Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(tmp.set(stack.position()));
+        Vector2d originCoords = accessor.bcd$getScreenCoords(tmp.set(stack.position()));
         if(shouldClipWeights && !accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.y))
             return;
         //if(!this.canDrawArrowAt((int) originCoords.x, (int) originCoords.y, areaWidth, areaHeight)) continue;

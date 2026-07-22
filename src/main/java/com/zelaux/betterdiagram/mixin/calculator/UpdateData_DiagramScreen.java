@@ -23,9 +23,9 @@ public abstract class UpdateData_DiagramScreen {
     @Inject(method = "updateData", at = @At("HEAD"))
     private void updateData(DiagramDataPacket packet, CallbackInfo ci) {
         WithClientData clientData = (WithClientData) diagram;
-        BCDData data = clientData.bcdiagram$dataOrNull();
+        BCDData data = clientData.bcd$dataOrNull();
         if(data == null || serverData != null && serverData.mass() == packet.mass()) return;
-        clientData.bcdiagram$updateData(data.withCache(null));
+        clientData.bcd$updateData(data.withCache(null));
     }
 
 }

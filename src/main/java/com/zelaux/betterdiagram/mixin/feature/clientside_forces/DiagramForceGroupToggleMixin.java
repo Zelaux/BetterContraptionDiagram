@@ -2,8 +2,8 @@ package com.zelaux.betterdiagram.mixin.feature.clientside_forces;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.zelaux.betterdiagram.extend.BAccessors;
 import com.zelaux.betterdiagram.extend.WithClientData;
-import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.feature.clientside_forces.DiagramBCDForceGroupToggle;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.index.BCDTextures;
@@ -69,7 +69,7 @@ public abstract class DiagramForceGroupToggleMixin extends AbstractWidget {
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
     private void _init_(DiagramScreen diagramScreen, ForceGroup forceGroup, int x, int y, CallbackInfo ci) {
-        bcd$clientData = ((WithClientData) DiagramScreenAccessors.of(diagramScreen).betterContraptionDiagram$diagram());
+        bcd$clientData = ((WithClientData) BAccessors.accessors(diagramScreen).bcd$diagram());
     }
 
 

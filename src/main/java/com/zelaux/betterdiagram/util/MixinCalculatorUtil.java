@@ -11,6 +11,7 @@ import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.feature.balance.BalanceForce;
 import com.zelaux.betterdiagram.feature.balance.BalanceModel;
+import com.zelaux.betterdiagram.feature.balance.UncenteredBlockCalculator;
 import com.zelaux.betterdiagram.gui.comp.InTextBlockRenderer;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
 import com.zelaux.betterdiagram.index.BCDForceGroups;
@@ -202,7 +203,7 @@ public class MixinCalculatorUtil {
         List<QueuedForceGroup.PointForce> pointForces = serverData.forces().get(BCDForceGroups.MERGED_FORCE_GROUP.group);
         if(pointForces == null) return;
         Vector3dc displacement = pointForces.get(0).point();
-        Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(new Vector3d(displacement));
+        Vector2d originCoords = accessor.bcd$getScreenCoords(new Vector3d(displacement));
         if(!accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.y)) return;
         BCDTextures.Diagram.ICON_TOTAL_DISPLACEMENT.render(graphics, (int) originCoords.x - 8, (int) originCoords.y - 8, Color.WHITE);
         double dst2 = originCoords.distanceSquared(mouseX - accessor.bcd$originX(), mouseY - accessor.bcd$originY());
@@ -222,7 +223,7 @@ public class MixinCalculatorUtil {
                                                             GuiGraphics graphics,
                                                             int mouseX,
                                                             int mouseY, boolean shouldClipWeights) {
-        ArrayList<OffCenteredBlock> blocks = CenterMassCalculator.getOrCreateOffCenteredBlocks(self);
+        ArrayList<OffCenteredBlock> blocks = UncenteredBlockCalculator.getOrCreateOffCenteredBlocks(self);
         if(blocks == null || blocks.isEmpty()) return null;
         final int shadowColor = 0xfff9f2de;
         Vector3d tmp = new Vector3d();
@@ -233,7 +234,7 @@ public class MixinCalculatorUtil {
         for(OffCenteredBlock block : blocks) {
             MutableComponent localBlockPos = VecFormat.Presets.gray(tmp);
 
-            Vector2d originCoords = accessor.betterContraptionDiagram$getScreenCoords(JOMLConversion.toJOML(block.pos().getCenter(), tmp));
+            Vector2d originCoords = accessor.bcd$getScreenCoords(JOMLConversion.toJOML(block.pos().getCenter(), tmp));
             if(shouldClipWeights && !accessor.bcd$canDrawAt((int) originCoords.x, (int) originCoords.y)) continue;
             double dst2 = originCoords.distanceSquared(mouseX - accessor.bcd$originX(), mouseY - accessor.bcd$originY());
             if(dst2 < 8 * 8) {

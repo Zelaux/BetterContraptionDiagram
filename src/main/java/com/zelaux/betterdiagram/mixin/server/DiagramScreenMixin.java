@@ -26,7 +26,7 @@ public abstract class DiagramScreenMixin implements IDiagramScreen {
     @Override
     public void bcd$applyBCDDATA(BCDData data) {
         if(diagram == null) return;
-        ((WithClientData) diagram).bcdiagram$updateData(data);
+        ((WithClientData) diagram).bcd$updateData(data);
         bcd$prevData = data;
 
     }
@@ -37,7 +37,7 @@ public abstract class DiagramScreenMixin implements IDiagramScreen {
     )
     private static void resetData(DiagramEntity diagramEntity, ClientSubLevel subLevel, CallbackInfo ci) {
         if(!BetterContraptionDiagramClient.isServerSideInstalled) return;
-        ((WithClientData) diagramEntity).bcdiagram$setDataSilent(null);
+        ((WithClientData) diagramEntity).bcd$setDataSilent(null);
     }
 
     @Inject(method = "tick",
@@ -45,7 +45,7 @@ public abstract class DiagramScreenMixin implements IDiagramScreen {
     )
     public void tick(CallbackInfo ci) {
         WithClientData clientData = (WithClientData) diagram;
-        BCDData data = clientData.bcdiagram$dataOrNull();
+        BCDData data = clientData.bcd$dataOrNull();
         if(!Objects.equals(data, bcd$prevData)) {
             if(BetterContraptionDiagramClient.isServerSideInstalled) {
                 BCDDataTransfer.whenSave(diagram.getId(), data)
@@ -60,7 +60,7 @@ public abstract class DiagramScreenMixin implements IDiagramScreen {
     public void onClose(CallbackInfo ci) {
         if(!BetterContraptionDiagramClient.isServerSideInstalled) return;
         WithClientData withClientData = (WithClientData) diagram;
-        withClientData.bcdiagram$setDataSilent(null);
+        withClientData.bcd$setDataSilent(null);
     }
 
 }

@@ -28,7 +28,7 @@ public class DiagramEntityMixin implements WithClientData {
     BCDData bcd$data;
 
     @Override
-    public @Nullable BCDData bcdiagram$dataOrNull() {
+    public @Nullable BCDData bcd$dataOrNull() {
         DiagramEntity self = (DiagramEntity) ((Object) this);
         if(bcd$data == null && !BetterContraptionDiagramClient.isServerSideInstalled) {
             bcd$data = DiagramEntityData.get(self.level()).locateDataOrNull(self.getUUID());
@@ -37,12 +37,12 @@ public class DiagramEntityMixin implements WithClientData {
     }
 
     @Override
-    public BCDData bcdiagram$setDataSilent(BCDData data) {
+    public BCDData bcd$setDataSilent(BCDData data) {
         return bcd$data = data;
     }
 
     @Override
-    public BCDData bcdiagram$updateData(BCDData data) {
+    public BCDData bcd$updateData(BCDData data) {
         bcd$data = data;
         DiagramEntity self = (DiagramEntity) ((Object) this);
         DiagramEntityData.get(self.level()).saveData(self.getUUID(), data);

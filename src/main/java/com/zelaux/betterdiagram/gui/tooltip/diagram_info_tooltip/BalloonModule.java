@@ -30,7 +30,7 @@ public record BalloonModule(
 ) implements DiagramInfoModule {
 
     public BalloonModule(DiagramScreenAccessors diagramScreenAcc, DiagramScreen diagramScreen) {
-        this(diagramScreenAcc, diagramScreen, new BalloonVolumeCalculator(diagramScreenAcc.bcd$subLevelDependencies(), diagramScreenAcc.betterContraptionDiagram$diagram()));
+        this(diagramScreenAcc, diagramScreen, new BalloonVolumeCalculator(diagramScreenAcc.bcd$subLevelDependencies(), diagramScreenAcc.bcd$diagram()));
     }
 
     public static final AbstractTooltipHandler<BalloonModule> OPEN_BALLOON_SCREEN_TOOLTIP_HANDLER = AbstractTooltipHandler.create(
@@ -40,15 +40,15 @@ public record BalloonModule(
             var accessors = lastPayload.diagramScreenAcc;
             SubLevelDependenciesData dependenciesData = accessors.bcd$subLevelDependencies();
             if(dependenciesData == null) return;
-            BalloonVolumeCalculatorScreen.show(dependenciesData, accessors.betterContraptionDiagram$clientData(), lastPayload.diagramScreen);
+            BalloonVolumeCalculatorScreen.show(dependenciesData, accessors.bcd$clientData(), lastPayload.diagramScreen);
         }
     );
 
     @Override
     public void appendInto(List<Component> list, int tooltipColor) {
-        WithClientData clientData = diagramScreenAcc.betterContraptionDiagram$clientData();
+        WithClientData clientData = diagramScreenAcc.bcd$clientData();
         BCDData data = clientData.bcdDataOrTryDefault();
-        DiagramDataPacket originalPacket = diagramScreenAcc.betterContraptionDiagram$serverData();
+        DiagramDataPacket originalPacket = diagramScreenAcc.bcd$serverData();
         if(data == null || originalPacket == null) {
             list.add(translatable("bcd.extra-info.balloon-volume.server-waiting").withColor(tooltipColor));
             return;

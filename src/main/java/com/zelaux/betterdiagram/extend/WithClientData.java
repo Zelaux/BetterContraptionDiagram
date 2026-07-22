@@ -1,5 +1,5 @@
 package com.zelaux.betterdiagram.extend;
-
+1
 import com.zelaux.betterdiagram.BetterContraptionDiagramClient;
 import com.zelaux.betterdiagram.data.BCDData;
 import org.jetbrains.annotations.Contract;
@@ -21,7 +21,7 @@ public interface WithClientData {
     default boolean axisStates(int i, boolean value) {
         BCDData data = bcdDataOrTryDefault();
         if(data == null) return value;
-        bcdiagram$updateData(data.withAxisStateInt(i, value ? 1 : 0));
+        bcd$updateData(data.withAxisStateInt(i, value ? 1 : 0));
         return value;
     }
 
@@ -31,7 +31,7 @@ public interface WithClientData {
 
     @Nullable
     @Contract(pure = true)
-    BCDData bcdiagram$dataOrNull();
+    BCDData bcd$dataOrNull();
 
     /**
      * @return bcdData - if exists<br>
@@ -42,7 +42,7 @@ public interface WithClientData {
      */
     @Nullable
     default BCDData bcdDataOrTryDefault() {
-        BCDData obj = bcdiagram$dataOrNull();
+        BCDData obj = bcd$dataOrNull();
         //waiting for server packat
         if(obj == null && BetterContraptionDiagramClient.isServerSideInstalled) return null;
         return Objects.requireNonNullElse(obj, BCDData.DEFAULT_VALUE);
@@ -50,19 +50,19 @@ public interface WithClientData {
 
     @NotNull
     default BCDData bcdDataNotNull_readOnly() {
-        BCDData obj = bcdiagram$dataOrNull();
+        BCDData obj = bcd$dataOrNull();
         return Objects.requireNonNullElse(obj, BCDData.DEFAULT_VALUE);
     }
 
 
     @Contract("_ -> param1")
-    BCDData bcdiagram$setDataSilent(BCDData data);
+    BCDData bcd$setDataSilent(BCDData data);
 
     @Nullable
-    BCDData bcdiagram$updateData(BCDData data);
-    default BCDData bcdiagram$updateData(Function<BCDData,BCDData> updater){
+    BCDData bcd$updateData(BCDData data);
+    default BCDData bcd$updateData(Function<BCDData,BCDData> updater){
         BCDData data1 = bcdDataOrTryDefault();
         if(data1==null)return null;
-        return bcdiagram$updateData(updater.apply(data1));
+        return bcd$updateData(updater.apply(data1));
     }
 }

@@ -2,39 +2,33 @@ package com.zelaux.betterdiagram.extend.accessors;
 
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDependencies;
-import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
-import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 
 public interface DiagramScreenAccessors extends ProjectionAccessor, IDiagramScreenWithDependencies {
-    static @NotNull DiagramScreenAccessors of(@NotNull DiagramScreen self) {
-        return CenterMassCalculator.accessors(self);
-    }
 
     int TOOLTIP_LABEL_COLOR();
 
-    DiagramStickyNote betterContraptionDiagram$note();
+    DiagramStickyNote bcd$note();
 
-    boolean betterContraptionDiagram$configDirty();
+    boolean bcd$configDirty();
 
-    DiagramConfig betterContraptionDiagram$config();
+    DiagramConfig bcd$config();
 
     Matrix4f PROJECTION_MAT();
 
     Vector3d LOCAL_CAMERA_POSITION();
 
-    @Nullable DiagramDataPacket betterContraptionDiagram$serverData();
+    @Nullable DiagramDataPacket bcd$serverData();
 
-    DiagramEntity betterContraptionDiagram$diagram();
+    DiagramEntity bcd$diagram();
 
-    default WithClientData betterContraptionDiagram$clientData() {
-        return (WithClientData) betterContraptionDiagram$diagram();
+    default WithClientData bcd$clientData() {
+        return (WithClientData) bcd$diagram();
     }
 }

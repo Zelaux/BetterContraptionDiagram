@@ -18,19 +18,19 @@ public class ClientData implements WithClientData {
     }
 
     @Override
-    public BCDData bcdiagram$setDataSilent(BCDData data) {
-        return this.data.bcdiagram$setDataSilent(data);
+    public BCDData bcd$setDataSilent(BCDData data) {
+        return this.data.bcd$setDataSilent(data);
     }
 
     @Override
     @Nullable
-    public BCDData bcdiagram$dataOrNull() {
-        return data.bcdiagram$dataOrNull();
+    public BCDData bcd$dataOrNull() {
+        return data.bcd$dataOrNull();
     }
 
     @Override
-    public BCDData bcdiagram$updateData(BCDData data) {
-        return this.data.bcdiagram$updateData(data);
+    public BCDData bcd$updateData(BCDData data) {
+        return this.data.bcd$updateData(data);
     }
 
     @NotNull
@@ -41,7 +41,7 @@ public class ClientData implements WithClientData {
     public void nextOffCenteredView() {
         BCDData data = this.data.bcdDataOrTryDefault();
         if(data == null) return;
-        bcdiagram$updateData(
+        bcd$updateData(
             data.withOffCenterBlocksShowState(data.offCenterBlocksShowState.next())
         );
     }
@@ -49,7 +49,7 @@ public class ClientData implements WithClientData {
     public void prevOffCenteredView() {
         BCDData data = this.data.bcdDataOrTryDefault();
         if(data == null) return;
-        bcdiagram$updateData(
+        bcd$updateData(
             data.withOffCenterBlocksShowState(data.offCenterBlocksShowState.prev())
         );
     }

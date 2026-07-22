@@ -1,6 +1,7 @@
 package com.zelaux.betterdiagram.gui.tooltip.diagram_info_tooltip;
 
 import com.zelaux.betterdiagram.DebugRuntime;
+import com.zelaux.betterdiagram.extend.BAccessors;
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.feature.balance.BalanceModel;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
@@ -60,7 +61,7 @@ public class TerminalSpeedModule implements DiagramInfoModule {
 
     public TerminalSpeedModule(@NotNull DiagramScreen self, ClientSubLevel subLevel) {
         this.diagramScreeen = self;
-        diagramScreeenAcc = DiagramScreenAccessors.of(self);
+        diagramScreeenAcc = BAccessors.accessors(self);
         this.mySubLevel = subLevel;
     }
 
@@ -90,7 +91,7 @@ public class TerminalSpeedModule implements DiagramInfoModule {
     }
 
     public void calculate() {
-        DiagramDataPacket serverData = diagramScreeenAcc.betterContraptionDiagram$serverData();
+        DiagramDataPacket serverData = diagramScreeenAcc.bcd$serverData();
         SubLevelDependenciesData dependenciesData = diagramScreeenAcc.bcd$subLevelDependencies();
         if(serverData == null || dependenciesData == null) {
             predictedSpeed=null;

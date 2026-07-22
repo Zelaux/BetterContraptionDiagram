@@ -70,12 +70,12 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
     public int TOOLTIP_LABEL_COLOR() {return TOOLTIP_LABEL_COLOR;}
 
     @Override
-    public DiagramStickyNote betterContraptionDiagram$note() {
+    public DiagramStickyNote bcd$note() {
         return note;
     }
 
     @Override
-    public Vector2d betterContraptionDiagram$getScreenCoords(Vector3d point, Vector3d cameraPos) {
+    public Vector2d bcd$getScreenCoords(Vector3d point, Vector3d cameraPos) {
         return getScreenCoords(point,
             LOCAL_ORIENTATION,
             Objects.requireNonNullElse(cameraPos, LOCAL_CAMERA_POSITION),
@@ -105,7 +105,7 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
     }
 
     @Override
-    public Vector3d betterContraptionDiagram$getPlotCoords(Vector2d point, Vector3d cameraPos) {
+    public Vector3d bcd$getPlotCoords(Vector2d point, Vector3d cameraPos) {
         return getPlotCoords(point,
             LOCAL_ORIENTATION,
             Objects.requireNonNullElse(cameraPos, LOCAL_CAMERA_POSITION),
@@ -116,10 +116,10 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
     }
 
     @Override
-    public boolean betterContraptionDiagram$configDirty() {return configDirty;}
+    public boolean bcd$configDirty() {return configDirty;}
 
     @Override
-    public DiagramConfig betterContraptionDiagram$config() {return config;}
+    public DiagramConfig bcd$config() {return config;}
 
     @Override
     public Matrix4f PROJECTION_MAT() {return PROJECTION_MAT;}
@@ -129,10 +129,10 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
 
 
     @Override
-    public @Nullable DiagramDataPacket betterContraptionDiagram$serverData() {return serverData;}
+    public @Nullable DiagramDataPacket bcd$serverData() {return serverData;}
 
     @Override
-    public DiagramEntity betterContraptionDiagram$diagram() {return diagram;}
+    public DiagramEntity bcd$diagram() {return diagram;}
 
 
 }

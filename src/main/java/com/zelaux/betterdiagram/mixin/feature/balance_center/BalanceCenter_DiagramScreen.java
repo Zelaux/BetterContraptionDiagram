@@ -53,7 +53,7 @@ public abstract class BalanceCenter_DiagramScreen implements ProjectionAccessor,
     private void renderExpectedCenterOfMass(GuiGraphics graphics, CallbackInfo ci) {
         var point = bcd$mergedBalancePoint();
         if(point == null) return;
-        final Vector2d screenCoords = betterContraptionDiagram$getScreenCoords(new Vector3d(point));
+        final Vector2d screenCoords = bcd$getScreenCoords(new Vector3d(point));
         if(screenCoords == null) return;
 
         final var tex = BCDTextures.Diagram.ICON_BALANCE_CENTER;
@@ -82,7 +82,7 @@ public abstract class BalanceCenter_DiagramScreen implements ProjectionAccessor,
 
 
         Vector3d eCOM = subMinVec3d(new Vector3d(point), subLevel.getPlot().getBoundingBox());
-        Vector2d screenCoords = betterContraptionDiagram$getScreenCoords(new Vector3d(point));
+        Vector2d screenCoords = bcd$getScreenCoords(new Vector3d(point));
         if(screenCoords.distanceSquared(mouseX - (float) areaOriginX, mouseY - (float) areaOriginY) >= 8.0 * 8.0) return;
         int color = (0xff00_0000) | Config.BALANCE_CENTER_COLOR.getAsInt();
         MutableComponent title = Component.translatable("better_contraption_diagram.balance-center");

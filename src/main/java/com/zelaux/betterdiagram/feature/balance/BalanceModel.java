@@ -3,6 +3,7 @@ package com.zelaux.betterdiagram.feature.balance;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.data.EnabledForces;
+import com.zelaux.betterdiagram.extend.BAccessors;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ConstraintTree;
@@ -12,7 +13,6 @@ import com.zelaux.betterdiagram.index.BCDForceGroups;
 import com.zelaux.betterdiagram.struct.MassStack;
 import com.zelaux.betterdiagram.struct.Weights;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
-import com.zelaux.betterdiagram.util.MergedPointForceCalculator;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
@@ -41,7 +41,7 @@ public class BalanceModel {
         var expectedCOM = CenterMassCalculator.expectedCenterOfMass(clientData, subLevel);
         if(balanceForce.mass() == 0 || expectedCOM.equals(balanceForce.displacement(), CenterMassCalculator.DELTA)) {
 
-            clientData.bcdiagram$updateData(data
+            clientData.bcd$updateData(data
                 .withWeightStacksByAxis(null)
             );
             return null;
@@ -65,7 +65,7 @@ public class BalanceModel {
         addStacks(stacks[1], VecUtil.Y_V, expectedCOM, diff.y);
         addStacks(stacks[2], VecUtil.Z_V, expectedCOM, diff.z);
 
-        clientData.bcdiagram$updateData(
+        clientData.bcd$updateData(
             data = data.withWeightStacksByAxis(stacks)
         );
         return stacks;
@@ -114,11 +114,11 @@ public class BalanceModel {
     }
 
     public static @NotNull BalanceForce getMergedBalancePointOrCOM(DiagramScreen screen) {
-        var accessors = CenterMassCalculator.accessors(screen);
+        var accessors = BAccessors.accessors(screen);
         SubLevelDependenciesData dependenciesData = accessors.bcd$subLevelDependencies();
-        WithClientData clientData = accessors.betterContraptionDiagram$clientData();
+        WithClientData clientData = accessors.bcd$clientData();
         var balanceForce = calculateMergedBalancePoint(dependenciesData, clientData.bcdDataNotNull_readOnly());
-        DiagramDataPacket diagramDataPacket = accessors.betterContraptionDiagram$serverData();
+        DiagramDataPacket diagramDataPacket = accessors.bcd$serverData();
         return Objects.requireNonNullElse(balanceForce, new BalanceForce(CenterMassCalculator.centerOfMass(screen.subLevel), diagramDataPacket != null ? diagramDataPacket.mass() : 0));
     }
 
@@ -170,10 +170,11 @@ public class BalanceModel {
     }
 
     public static Weights[] recalculateStacks(DiagramScreen screen) {
-        var accessors = CenterMassCalculator.accessors(screen);
-        DiagramDataPacket diagramDataPacket = accessors.betterContraptionDiagram$serverData();
+        var accessors = BAccessors.accessors(screen);
+        DiagramDataPacket diagramDataPacket = accessors.bcd$serverData();
         if(diagramDataPacket == null) return null;
-        WithClientData clientData = accessors.betterContraptionDiagram$clientData();
+        WithClientData clientData = accessors.bcd$clientData();
         return recalculateStacks(clientData, screen.subLevel, getMergedBalancePointOrCOM(screen));
     }
+
 }

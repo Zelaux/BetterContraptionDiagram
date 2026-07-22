@@ -1,6 +1,7 @@
 package com.zelaux.betterdiagram.mixin.calculator;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.zelaux.betterdiagram.extend.BAccessors;
 import com.zelaux.betterdiagram.index.BCDTextures;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
@@ -59,7 +60,7 @@ public class Calculator_DiagramStickyNote {
 
     @Inject(at = @At("HEAD"), method = "renderCustomCOM")
     private void XX(GuiGraphics guiGraphics, PoseStack stack, CallbackInfo ci) {
-        if(!(CenterMassCalculator.accessors(parent)).betterContraptionDiagram$config().displayCenterOfMass()) return;
+        if(!(BAccessors.accessors(parent)).bcd$config().displayCenterOfMass()) return;
 
         final var centerOfMass = CenterMassCalculator.expectedCenterOfMass(parent);
         if(CenterMassCalculator.equals(centerOfMass, CenterMassCalculator.centerOfMass(parent.subLevel))) return;

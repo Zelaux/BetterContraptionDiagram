@@ -59,7 +59,7 @@ public class BalloonVolumeCalculatorScreen extends AbstractSimiScreen {
         this.calculator = new BalloonVolumeCalculator(
             dependenciesData,
             new Balloons(dependenciesData),
-            ((DiagramScreenAccessors) diagramScreen).betterContraptionDiagram$diagram()
+            ((DiagramScreenAccessors) diagramScreen).bcd$diagram()
         );
     }
 
@@ -95,7 +95,7 @@ public class BalloonVolumeCalculatorScreen extends AbstractSimiScreen {
             new ModeSelector(graphBackground.getRight(), graphBackground.getY(), clientData.bcdDataNotNull_readOnly().balloonCalc.calculationMode())
                 .calling(mode -> {
                     graphBackground.gridDimension.set(originalGridDimention);
-                    clientData.bcdiagram$updateData(data -> data.withBalloonCalc(data.balloonCalc.withCalculationMode(mode)));
+                    clientData.bcd$updateData(data -> data.withBalloonCalc(data.balloonCalc.withCalculationMode(mode)));
                 })
 
         );
@@ -166,7 +166,7 @@ public class BalloonVolumeCalculatorScreen extends AbstractSimiScreen {
             currentY = player.getBlockY();
         }
         line.currentY(currentY);
-        line.onYChanges(value -> clientData.bcdiagram$updateData(data ->
+        line.onYChanges(value -> clientData.bcd$updateData(data ->
             data.withBalloonCalc(data.balloonCalc().withSelectedBalloonY(OptionalInt.of(value)))
         ));
     }
