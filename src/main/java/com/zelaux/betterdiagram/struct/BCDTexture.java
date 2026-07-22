@@ -15,6 +15,8 @@ public class BCDTexture implements ScreenElement {
 
     public final int width, height;
     public final int startX, startY;
+    public final int width_grid, height_grid;
+    public final int startX_grid, startY_grid;
     public final int texWidth, texHeight;
 
 
@@ -39,6 +41,11 @@ public class BCDTexture implements ScreenElement {
         this.startY = startY;
         this.texWidth = texWidth;
         this.texHeight = texHeight;
+
+        this.width_grid = width;
+        this.height_grid = height;
+        this.startX_grid = startX;
+        this.startY_grid = startY;
     }
 
     public BCDTexture(final int startX, final int startY) {
@@ -50,11 +57,41 @@ public class BCDTexture implements ScreenElement {
     }
 
     public BCDTexture(@NonNull final ResourceLocation location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {
+        this(
+            location,
+            startX,
+            startY,
+            width,
+            height,
+            texWidth,
+            texHeight,
+            startX,
+            startY,
+            width,
+            height
+        );
+    }
+    public BCDTexture(@NonNull final ResourceLocation location,
+                      final int startX,
+                      final int startY,
+                      final int width,
+                      final int height,
+                      final int texWidth,
+                      final int texHeight,
+                      int startX_grid,
+                      int startY_grid,
+                      int width_grid,
+                      int height_grid
+    ) {
         this.location = location;
         this.width = width;
         this.height = height;
         this.startX = startX;
         this.startY = startY;
+        this.width_grid = width_grid;
+        this.height_grid = height_grid;
+        this.startX_grid = startX_grid;
+        this.startY_grid = startY_grid;
         this.texWidth = texWidth;
         this.texHeight = texHeight;
     }
@@ -62,6 +99,20 @@ public class BCDTexture implements ScreenElement {
 
     public static BCDTexture texture(final BCDTexture owner, final int startX, final int startY, final int width, final int height) {
         return new BCDTexture(owner.location, startX, startY, width, height, owner.texWidth, owner.texHeight);
+    }
+    public static BCDTexture textureGrid(final AtlasTexture owner, final int startX_grid, final int startY_grid, final int width_grid, final int height_grid) {
+        return new BCDTexture(owner.location,
+            startX_grid*owner.gridCellWidth,
+            startY_grid*owner.gridCellHeight,
+            width_grid*owner.gridCellWidth,
+            height_grid*owner.gridCellHeight,
+            owner.texWidth,
+            owner.texHeight,
+            startX_grid,
+            startY_grid,
+            width_grid,
+            height_grid
+        );
     }
 
     public static BCDTexture gridCell(final AtlasTexture owner, final int startX, final int startY) {

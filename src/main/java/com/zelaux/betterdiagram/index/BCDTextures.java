@@ -85,7 +85,7 @@ public interface BCDTextures {
     interface BalloonScreen{
         AtlasTexture atlas = atlas("gui/balloon_graph", 512, 256, 16, 16);
 
-        BCDTexture BACKGROUND = texture(atlas,0,0,16*atlas.gridCellWidth,12*atlas.gridCellHeight);
+        BCDTexture BACKGROUND = textureGrid(atlas,0,0,16,12);
         BCDTexture ICON_CIRCLE = gridCell(atlas,0,12);
     }
 }
