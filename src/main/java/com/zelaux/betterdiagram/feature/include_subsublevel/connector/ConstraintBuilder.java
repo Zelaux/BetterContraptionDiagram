@@ -99,8 +99,8 @@ public class ConstraintBuilder {
                         SubLevel b = mapper.toAttachSubLevel();
                         if(mapper.fixed()) {
                             Ref<SubLevelGroup> bMergedRef = subLevel2Merged.computeIfAbsent(b, DEFAULT_REF);
-                            var cMerged = currentMergedRef.value;
-                            var bMerged = bMergedRef.value;
+                            var cMerged = currentMergedRef.value();
+                            var bMerged = bMergedRef.value();
                             SubLevelGroup mergedMerged = cMerged.with(bMerged);
                             bMergedRef.setRef(currentMergedRef);
                             bMergedRef.setValue(mergedMerged);
@@ -147,13 +147,13 @@ public class ConstraintBuilder {
 
     @AllArgsConstructor
     @NoArgsConstructor
-    static class Ref<T> {
+    public static class Ref<T> {
         Ref<T> wrapped;
-        private T value;
+        private T value_$0;
 
         public static <T> Ref<T> with(T single) {
             Ref<T> ref = new Ref<>();
-            ref.value = single;
+            ref.value_$0 = single;
             return ref;
         }
 
@@ -164,6 +164,7 @@ public class ConstraintBuilder {
         public Ref<T> setRef(Ref<T> ref) {
             Ref<T> selfRef = asRef();
             ref = ref.asRef();
+            value_$0=null;
             if(ref == selfRef) {
                 if(selfRef != this) wrapped = selfRef;
                 return this;
@@ -174,7 +175,7 @@ public class ConstraintBuilder {
         }
 
         public T value() {
-            return asRef().value;
+            return asRef().value_$0;
         }
 
         public Ref<T> asRef() {
@@ -186,7 +187,7 @@ public class ConstraintBuilder {
         }
 
         public void setValue(T value) {
-            asRef().value = value;
+            asRef().value_$0 = value;
         }
     }
 }

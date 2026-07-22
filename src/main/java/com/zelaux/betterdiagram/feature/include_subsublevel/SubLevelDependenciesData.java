@@ -225,6 +225,26 @@ mergedGravity.displacement.div(sumOfMass);
         return true;
     }
 
+    public SubLevel mainSubLevel() {
+        return constraintTree.subLevelGroup.first();
+    }
+
+    public SubLevelGroup mergedMainGroup(BCDData bcdData) {
+        if(!bcdData.shouldMergedForcesWithConnectedSublevels) {
+            return SubLevelGroup.single(mainSubLevel());
+        }
+        return constraintTree.subLevelGroup;
+    }
+
+    public @Nullable DiagramDataPacket mergedForces(BCDData bcdData) {
+        var dataPacket = get(mainSubLevel()).data;
+        if(bcdData.shouldMergedForcesWithConnectedSublevels) {
+            DiagramDataPacket merged = mergedForces();
+            if(merged!=null)dataPacket=merged;
+        }
+        return dataPacket;
+    }
+
     @ToString
     @FieldDefaults(level = AccessLevel.PUBLIC)
     @Getter

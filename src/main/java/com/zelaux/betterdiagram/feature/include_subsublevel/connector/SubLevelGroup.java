@@ -41,16 +41,20 @@ public abstract sealed class SubLevelGroup implements Iterable<SubLevel> {
         }
         if(builder == null) return this;
 
-        return new Many(builder.build());
+        ImmutableList<SubLevel> build = builder.build();
+        if(build.size()==1)return new Single(build.getFirst());
+        return new Many(build);
     }
 
     public boolean single() {
-        return this instanceof Single;
+        return amount()==1;
     }
 
     public SubLevel first() {
         return all().getFirst();
     }
+
+    public abstract int amount();
 
     @AllArgsConstructor
     public static non-sealed class Single extends SubLevelGroup {
@@ -59,6 +63,11 @@ public abstract sealed class SubLevelGroup implements Iterable<SubLevel> {
         @Override
         public List<SubLevel> all() {
             return List.of(subLevel);
+        }
+
+        @Override
+        public int amount() {
+            return 1;
         }
 
     }
@@ -70,6 +79,11 @@ public abstract sealed class SubLevelGroup implements Iterable<SubLevel> {
         @Override
         public List<SubLevel> all() {
             return subLevels;
+        }
+
+        @Override
+        public int amount() {
+            return subLevels.size();
         }
     }
 }
