@@ -110,12 +110,22 @@
   "bcd.extra-info.balloon-volume.server-waiting": "Balloon Calculator: Loading saved data from server",
   "bcd.extra-info.balloon-volume.not-selected": "Select target height to view required volume",
   "bcd.extra-info.balloon-volume.not-selected.tip": "Use Balloon Calculator",
-  "bcd.extra-info.balloon-volume.title": "Balloon volume required to reach %s height.",
+  "bcd.extra-info.balloon-volume.title": "Balloon volume required to reach %s at %s height.",
   "bcd.extra-info.balloon-volume.entry": "When using %s: %s",
 
   "better_contraption_diagram.extra-info.gravity": "Gravity Direction: %s",
   "better_contraption_diagram.extra-info.sum-of-forces.title": "Sum of Forces",
   "better_contraption_diagram.extra-info.sum-of-forces.displacement": "Displacement: %s",
   "better_contraption_diagram.extra-info.sum-of-forces.direction": "Direction: %s",
-  "bcd.balloon-calculator.plot": "%1$s: %2$s"
+  "bcd.balloon-calculator.plot": "%1$s: %2$s",
+
+
+  "balloon_calculation_mode.bottom_of_sublevel": "Bottom of sublevel(s)",
+  "balloon_calculation_mode.top_of_sublevel": "Top of sublevel(s)",
+  "balloon_calculation_mode.com_of_sublevel":  "COM of sublevel(s)",
+  "balloon_calculation_mode.center_of_sublevel": "Center of sublevel(s)",
+  "balloon_calculation_mode.diagram_position":  "Diagram position",
+  "balloon_calculation_mode.player_position": "Player position",
+  "balloon_calculation_mode.center_of_balloons":  "Center of balloons",
+  "bcd.gui.balloon-calculator.mode": "Y level anchor"
 }

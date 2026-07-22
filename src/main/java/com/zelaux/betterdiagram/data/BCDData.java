@@ -22,7 +22,6 @@ import org.joml.Vector3dc;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 /**
  * Better Contraption Diagram Data
@@ -30,6 +29,7 @@ import java.util.OptionalInt;
  */
 @AllArgsConstructor
 @With()
+//@WithBy
 @Getter
 @FieldDefaults(level = AccessLevel.PUBLIC, makeFinal = true)
 @Builder(toBuilder = true)
@@ -46,7 +46,7 @@ public class BCDData {
         OffCenterBlocksShowState.none,
         false,
         EnabledForces.empty(),
-        OptionalInt.empty()
+        BalloonCalculatorSettings.DEFAULT
     );
     public static final StreamCodec<? super RegistryFriendlyByteBuf, Optional<BCDData>> STREAM_OPTIONAL_CODEC =
         ByteBufCodecs.TAG.map(
@@ -65,7 +65,8 @@ public class BCDData {
             OffCenterBlocksShowState.CODEC.optionalFieldOf("offcenterShowState", OffCenterBlocksShowState.none).forGetter(BCDData::offCenterBlocksShowState),
             Codec.BOOL.optionalFieldOf("shouldRenderMergedForces", false).forGetter(_i -> false),
             Codec.BOOL.optionalFieldOf("shouldMergedForcesWithConnectedSublevels", false).forGetter(BCDData::shouldMergedForcesWithConnectedSublevels),
-            EnabledForces.CODEC.optionalFieldOf("enabledForces", DEFAULT().enabledForces).forGetter(BCDData::enabledForces)
+            EnabledForces.CODEC.optionalFieldOf("enabledForces", DEFAULT().enabledForces).forGetter(BCDData::enabledForces),
+            BalloonCalculatorSettings.CODEC.optionalFieldOf("balloonCalculatorSettings", BalloonCalculatorSettings.DEFAULT).forGetter(BCDData::balloonCalc)
         ).apply(i,
             (
                 ecom,
@@ -73,7 +74,8 @@ public class BCDData {
                 offCenterBlocksShowState,
                 shouldRenderMergedForces,
                 shouldMergedForcesWithConnectedSublevels,
-                enabledForces
+                enabledForces,
+                balloonCalculatorSettings
             ) -> {
                 Vector3d x = ecom == NULL_ECOM ? null : ecom;
                 return BCDData.DEFAULT().toBuilder()
@@ -84,6 +86,7 @@ public class BCDData {
                               .offCenterBlocksShowState(offCenterBlocksShowState)
                               .enabledForces(shouldRenderMergedForces ? BCDData.DEFAULT().enabledForces.addDisplay(BCDForceGroups.MERGED_FORCE_GROUP) : enabledForces)
                               .shouldMergedForcesWithConnectedSublevels(shouldMergedForcesWithConnectedSublevels)
+                              .balloonCalc(balloonCalculatorSettings)
                               .build()
                     ;
             })
@@ -114,14 +117,13 @@ public class BCDData {
 
     public int axisStatesMask;
 
-    @NonNull
     public OffCenterBlocksShowState offCenterBlocksShowState;
 
     public boolean shouldMergedForcesWithConnectedSublevels;
     public EnabledForces enabledForces;
 
-    @NonNull
-    public OptionalInt selectedBalloonY;
+
+    BalloonCalculatorSettings balloonCalc;
 
 
     public int axisStateInt(int i) {return (axisStatesMask >> i) & 1;}

@@ -58,4 +58,15 @@ public class StringUtil {
         }
         return "~0";
     }
+
+    /**
+     * @see jdk.internal.util.ArraysSupport#utf16hashCode(int, byte[], int, int)
+     * */
+        public static long calculateLongHashCode(String string) {
+            long longHashCode = 0;
+            for(char c : string.toCharArray()) {
+                longHashCode = longHashCode * 31 + c;
+            }
+            return longHashCode;
+        }
 }

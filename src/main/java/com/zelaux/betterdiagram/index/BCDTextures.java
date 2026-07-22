@@ -87,5 +87,7 @@ public interface BCDTextures {
 
         BCDTexture BACKGROUND = textureGrid(atlas,0,0,16,12);
         BCDTexture ICON_CIRCLE = gridCell(atlas,0,12);
+        BCDTexture MODE_BACKGROUND = textureGrid(atlas,BACKGROUND.width_grid+4,0,7,2);
+        BCDTexture NUMBER_BACKGROUND = textureGrid(atlas,MODE_BACKGROUND.startX_grid,MODE_BACKGROUND.height_grid,3,1);
     }
 }
