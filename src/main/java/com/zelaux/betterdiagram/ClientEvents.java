@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram;
 
 import com.mojang.datafixers.util.Either;
 import com.zelaux.betterdiagram.command.BCDCommand;
+import com.zelaux.betterdiagram.feature.balloon_volume_calculator.BalloonIndexUpdate;
 import com.zelaux.betterdiagram.feature.leveldata.DiagramEntityData;
 import com.zelaux.betterdiagram.feature.leveldata.LevelData;
 import com.zelaux.betterdiagram.feature.leveldata.LevelDatas;

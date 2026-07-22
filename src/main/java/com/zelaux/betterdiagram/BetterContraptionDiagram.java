@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram;
 
 import com.mojang.logging.LogUtils;
 import com.zelaux.betterdiagram.command.ServerHelpers;
+import com.zelaux.betterdiagram.feature.balloon_volume_calculator.BalloonIndexUpdate;
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.DockingConnectorActor;
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.RopeActor;
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.SwivelBearingActor;
