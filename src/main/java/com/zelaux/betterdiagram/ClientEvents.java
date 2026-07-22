@@ -41,6 +41,7 @@ public class ClientEvents {
         OffCenteredBlockTooltipHandler.tick();
         AbstractTooltipHandler.tick();
         RopeDataRequest.tick();
+        BalloonIndexUpdate.clientTick();
         LevelData data = LevelDatas.levelData();
         if(data != null) data.currentTick();
 

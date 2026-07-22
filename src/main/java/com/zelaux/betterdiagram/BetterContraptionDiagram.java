@@ -79,6 +79,7 @@ public class BetterContraptionDiagram {
     @SubscribeEvent
     void tick(ServerTickEvent.Pre event) {
         RopeDataPacket.tick();
+        BalloonIndexUpdate.serverTick();
     }
 
 
