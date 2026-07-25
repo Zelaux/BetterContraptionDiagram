@@ -1,9 +1,11 @@
 package com.zelaux.betterdiagram.util.ui;
 
 import com.simibubi.create.foundation.gui.widget.Label;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.layouts.FrameLayout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
@@ -21,6 +23,10 @@ public class UIUtil {
 
     public static LinearLayout horizontal(int spacing, LayoutElement... widgets) {
         return horizontal(spacing, null, widgets);
+    }
+
+    public static LayoutElement space(int width,int height) {
+        return new SpacerElement(width,height);
     }
 
     public static LinearLayout horizontal(int spacing, Consumer<LinearLayout> config, LayoutElement... widgets) {

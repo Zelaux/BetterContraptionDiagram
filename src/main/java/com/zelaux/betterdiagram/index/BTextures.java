@@ -1,6 +1,7 @@
 package com.zelaux.betterdiagram.index;
 
 import com.zelaux.betterdiagram.struct.AtlasTexture;
+import com.zelaux.betterdiagram.struct.BAnimatedTexture;
 import com.zelaux.betterdiagram.struct.BTexture;
 
 import static com.zelaux.betterdiagram.struct.BTexture.*;
@@ -70,9 +71,21 @@ public interface BTextures {
 
         BTexture ICON_CALCULATOR = gridCell(atlas, 0, 3);
         BTexture ICON_INFO = gridCell(atlas, 0, 4);
+
         BTexture ICON_SINGLE_SHIP = gridCell(atlas, 0, 14);
         BTexture ICON_MANY_SHIPS = gridCell(atlas, 1, 14);
-        BTexture[] ICONS_SHIPS = {ICON_SINGLE_SHIP,ICON_MANY_SHIPS};
+        BTexture[] ICONS_SHIPS = {ICON_SINGLE_SHIP, ICON_MANY_SHIPS};
+
+        BTexture ICON_ROPE1 = gridCell(atlas, 0, 15);
+        BTexture ICON_ROPE1_CROSS = gridCell(atlas, 1, 15);
+        BTexture[] ICONS_ROPE1 = {ICON_ROPE1, ICON_ROPE1_CROSS};
+
+        BTexture ICON_ROPE2 = gridCell(atlas, 2, 15);
+        BTexture ICON_ROPE2_CROSS = gridCell(atlas, 3, 15);
+        BTexture[] ICONS_ROPE2 = {ICON_ROPE2, ICON_ROPE2_CROSS};
+        BTexture ICON_ROPE3 = gridCell(atlas, 4, 15);
+        BTexture ICON_ROPE3_CROSS = gridCell(atlas, 5, 15);
+        BTexture[] ICONS_ROPE3 = {ICON_ROPE3, ICON_ROPE3_CROSS};
 
         BTexture ICON_X = gridCell(atlas, 0, 5);
         BTexture ICON_X_CROSS = gridCell(atlas, 1, 5);
@@ -84,17 +97,17 @@ public interface BTextures {
         BTexture ICON_Z_CROSS = gridCell(atlas, 1, 7);
         BTexture[] ICONS_Z = {ICON_Z_CROSS, ICON_Z};
 
-        BTexture BACKGROUND_XYZ = texture(atlas, 0, 128, 72, 24);
+        BTexture BACKGROUND_XYZ = texture(atlas, 0, 128, 112, 24);
 
         BTexture ICON_BTN_BACKGROUND = gridCell(atlas, 1, 3);
     }
 
-    interface BalloonScreen{
+    interface BalloonScreen {
         AtlasTexture atlas = atlas("gui/balloon_graph", 512, 256, 16, 16);
 
-        BTexture BACKGROUND = textureGrid(atlas,0,0,16,12);
-        BTexture ICON_CIRCLE = gridCell(atlas,0,12);
-        BTexture MODE_BACKGROUND = textureGrid(atlas, BACKGROUND.width_grid + 4,0,7,2);
-        BTexture NUMBER_BACKGROUND = textureGrid(atlas,MODE_BACKGROUND.startX_grid,MODE_BACKGROUND.height_grid,3,1);
+        BTexture BACKGROUND = textureGrid(atlas, 0, 0, 16, 12);
+        BTexture ICON_CIRCLE = gridCell(atlas, 0, 12);
+        BTexture MODE_BACKGROUND = textureGrid(atlas, BACKGROUND.width_grid + 4, 0, 7, 2);
+        BTexture NUMBER_BACKGROUND = textureGrid(atlas, MODE_BACKGROUND.startX_grid, MODE_BACKGROUND.height_grid, 3, 1);
     }
 }

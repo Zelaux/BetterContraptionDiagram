@@ -1,11 +1,14 @@
 package com.zelaux.betterdiagram.gui;
 
+import com.demonwav.mcdev.annotations.Translatable;
 import com.ibm.icu.impl.Pair;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.foundation.gui.widget.Label;
 import com.zelaux.betterdiagram.ClientEvents;
 import com.zelaux.betterdiagram.data.BCDData;
+import com.zelaux.betterdiagram.data.BalanceForceFilter;
+import com.zelaux.betterdiagram.data.EnabledForces;
 import com.zelaux.betterdiagram.data.OffCenterBlocksShowState;
 import com.zelaux.betterdiagram.extend.BAccessors;
 import com.zelaux.betterdiagram.extend.ClientData;
@@ -15,6 +18,7 @@ import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
 import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.feature.balance.BalanceModel;
+import com.zelaux.betterdiagram.feature.balance.BalanceListSwitchAnimation;
 import com.zelaux.betterdiagram.func.DoubleSetter;
 import com.zelaux.betterdiagram.gui.comp.FormattedTextAsComponent;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
@@ -78,8 +82,8 @@ import java.util.function.Supplier;
 
 import static com.zelaux.betterdiagram.gui.widget.PartialInteration.boxes;
 import static com.zelaux.betterdiagram.gui.widget.PartialInteration.partialInteration;
-import static com.zelaux.betterdiagram.util.ui.UIUtil.*;
 import static com.zelaux.betterdiagram.util.VecUtil.*;
+import static com.zelaux.betterdiagram.util.ui.UIUtil.*;
 
 public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagramScreen {
     public static final DecimalFormat DECIMAL_FORMAT = StringUtil.makeFormat("#.###", true);
@@ -114,6 +118,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         clientData = new ClientData(((WithClientData) diagramScreenAccessors.bcd$diagram()));
         expectedCenterOfMass()
         ;
+        BalanceListSwitchAnimation.show();
     }
 
     private static double getOffset() {
@@ -173,25 +178,20 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
             expectedCenterOfMass(null);
             positionUpdatedNotFromEditBox(tmp.set(currentCenterOfMass()).sub(bb.minX(), bb.minY(), bb.minZ()));
         }, () -> Component.translatable("better_contraption_diagram.calculator.reset_block"));
-        int[] axisTextureMap = {0, 0, 0, 0, 1, 1, 1, 1};
         mainLayout.addChild(
             horizontal(5, centerButton, selectBlock, resetBlock,
                 new CompositeWidgetLayouted(horizontal(0, i -> {},
-
                     new BDiagramButton(BTextures.Diagram.ICONS_X, 0, 0, Component.literal("X"), () -> clientData.flipAxisStates(0))
                         .setIconSwitch(() -> clientData.axisStates(0))
-                        .withTooltip(() -> tooltipAxisOnOff[1 - clientData.axisStatesInt(0)])
-                        .textureIndexMap(axisTextureMap),
+                        .withTooltip(() -> tooltipAxisOnOff[1 - clientData.axisStatesInt(0)]),
 
                     new BDiagramButton(BTextures.Diagram.ICONS_Y, 0, 0, Component.literal("Y"), () -> clientData.flipAxisStates(1))
                         .withTooltip(() -> tooltipAxisOnOff[3 - clientData.axisStatesInt(1)])
-                        .setIconSwitch(() -> clientData.axisStates(1))
-                        .textureIndexMap(axisTextureMap),
+                        .setIconSwitch(() -> clientData.axisStates(1)),
 
                     new BDiagramButton(BTextures.Diagram.ICONS_Z, 0, 0, Component.literal("Z"), () -> clientData.flipAxisStates(2))
                         .withTooltip(() -> tooltipAxisOnOff[5 - clientData.axisStatesInt(2)])
-                        .setIconSwitch(() -> clientData.axisStates(2))
-                        .textureIndexMap(axisTextureMap),
+                        .setIconSwitch(() -> clientData.axisStates(2)),
 
                     new BDiagramButton(BTextures.Diagram.ICONS_OFF_CENTERED_BLOCK, 0, 0,
                         Component.literal("offcentered-blocks-view"),
@@ -214,6 +214,10 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
                                return list;
                            })
                            .setIconSwitch((active, hovered) -> clientData.offCenteredView().ordinal())
+                    ,
+                    space(8+2,0),
+                    forceBalanceButton(BTextures.Diagram.ICONS_ROPE1, Component.literal("rope"), BForceGroups.ROPE_FORCE, "bcd.rope-force.title"),
+                    forceBalanceButton(BTextures.Diagram.ICONS_ROPE3, Component.literal("rope_mass"), BForceGroups.ROPE_MASS_FORCE, "bcd.rope-mass-force.title")
                 ))
                     .margin(4)
                     .background(BTextures.Diagram.BACKGROUND_XYZ)
@@ -315,6 +319,38 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         for(var pair : grids) {
             addWidget(pair.second);
         }
+    }
+
+    private BDiagramButton forceBalanceButton(BTexture[] icons, MutableComponent message, BCDForceGroup ropeForce,@Translatable String key) {
+
+        BalanceForceFilter filter = BalanceForceFilter.ofGroup(ropeForce.group());
+        return new BDiagramButton(icons, 0, 0,
+            message,
+            () -> {
+                BCDData data = clientData.bcdDataOrTryDefault();
+                if(data == null) return;
+                EnabledForces forces = data.enabledForces;
+                boolean hasForce = forces.tree.contains(filter);
+                if(hasForce) {
+                    forces = forces.removeBalance(filter);
+                } else {
+                    forces = forces.addBalance(filter);
+                }
+                clientData.bcd$updateData(data.withEnabledForces(forces));
+            }).supportedButtons(ButtonKind.LEFT)
+              .withTooltip(() -> Component
+                  .translatable(
+                      key,
+                      (isForceInBalanceGroup(filter) ? Component.translatable("bcd.rope-force.enabled") : Component.translatable("bcd.rope-force.disabled"))
+                          .withColor(0xffffffff)
+                  ).withColor(Colors.TOOLTIP_COLOR.getRGB())
+              )
+              .setIconSwitch(() -> !isForceInBalanceGroup(filter));
+    }
+
+    private boolean isForceInBalanceGroup(BalanceForceFilter filter) {
+        return clientData.bcdDataNotNull_readOnly()
+            .enabledForces.tree.contains(filter);
     }
 
     private @NotNull List<FormattedText> displayOCBMode(OffCenterBlocksShowState none) {
@@ -757,6 +793,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         //ClientHooks.popGuiLayer(minecraft);
         //this.minecraft.popGuiLayer();
         removed();
+        BalanceListSwitchAnimation.hide();
         minecraft.screen = diagramScreen;
     }
 

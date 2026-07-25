@@ -159,7 +159,7 @@ public class BDiagramButton extends AbstractWidget {
     }
 
     public BDiagramButton setIconSwitch(final BooleanSupplier switcher) {
-        this.iconSwitch = ((active, hovered) -> boolToBin(hovered, active, switcher.getAsBoolean()));
+        this.iconSwitch = ((active, hovered) -> boolToBin(switcher.getAsBoolean(),hovered, active));
         return this;
     }
 
