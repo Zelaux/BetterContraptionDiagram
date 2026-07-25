@@ -1,5 +1,5 @@
 package com.zelaux.betterdiagram.extend;
-1
+
 import com.zelaux.betterdiagram.BetterContraptionDiagramClient;
 import com.zelaux.betterdiagram.data.BCDData;
 import org.jetbrains.annotations.Contract;

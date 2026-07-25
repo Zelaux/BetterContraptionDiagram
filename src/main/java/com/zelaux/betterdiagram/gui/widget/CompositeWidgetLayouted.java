@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class CompositeWidgetLayouted extends AbstractContainerWidget implements NarratableEntry, Renderable, TickableGuiEventListener {
     private final List<GuiEventListener> children = new ArrayList<>();
@@ -84,6 +85,19 @@ public class CompositeWidgetLayouted extends AbstractContainerWidget implements 
         return removed;
     }
 
+    BackgroundAlignment xBackgroundAlign = BackgroundAlignment.MIN, yBackgroundAlign = BackgroundAlignment.MIN;
+
+    public CompositeWidgetLayouted backgroundAlign(BackgroundAlignment x, BackgroundAlignment y) {
+        xBackgroundAlign = Objects.requireNonNullElse(x, xBackgroundAlign);
+        yBackgroundAlign = Objects.requireNonNullElse(y, yBackgroundAlign);
+        return this;
+    }
+
+    public enum BackgroundAlignment {
+        MIN, CENTER, MAX;
+        public final int value = ordinal() - 1;
+    }
+
     public <T extends Renderable> boolean removeRenderableOnly(T renderable) {
         return this.renderables.remove(renderable);
     }
@@ -104,11 +118,22 @@ public class CompositeWidgetLayouted extends AbstractContainerWidget implements 
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         this.getChildAt(mouseX, mouseY).ifPresent(hovered -> this.hovered = hovered);
         if(background != null) {
-            background.render(graphics, getX(), getY());
+            background.render(graphics,
+                locateCoordinate(getX(), getWidth(), background.width, xBackgroundAlign),
+                locateCoordinate(getY(), getHeight(), background.height, yBackgroundAlign)
+            );
         }
         for(Renderable renderable : this.renderables) {
             renderable.render(graphics, mouseX, mouseY, partialTicks);
         }
+    }
+
+    static int locateCoordinate(int x, int width, int innerWidth, BackgroundAlignment alignment) {
+        return switch(alignment) {
+            case MIN -> x;
+            case CENTER -> x + width / 2 - innerWidth / 2;
+            case MAX -> x + width - innerWidth;
+        };
     }
 
     @Override

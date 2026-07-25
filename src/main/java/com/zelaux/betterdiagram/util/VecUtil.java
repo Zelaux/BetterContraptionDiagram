@@ -6,15 +6,18 @@ import com.zelaux.betterdiagram.struct.TransformedAxes;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
+import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 
 import java.io.Serializable;
 import java.lang.Math;
 import java.util.Comparator;
+import java.util.Objects;
 
 public class VecUtil {
     public static final Vector3d X_V = new Vector3d(1, 0, 0);
@@ -39,6 +42,21 @@ public class VecUtil {
     public static final Comparator<? super Vector3dc> CMP_LEN = Comparator.comparingDouble(Vector3dc::lengthSquared);
     public static final Comparator<? super Vector3dc> CMP_LEN_05 = (Comparator<Vector3dc> & Serializable)
         (c1, c2) -> Double.compare(c1.distanceSquared(0.5, 0.5, 0.5), c2.distanceSquared(0.5, 0.5, 0.5));
+    public static final  Hash.Strategy<@Nullable Vector3dc> STRATEGY = new Hash.Strategy<>() {
+            @Override
+            public int hashCode(Vector3dc o) {
+                if(o==null)return 0;
+                return Objects.hash(o.x(), o.y(), o.z());
+            }
+
+            @Override
+            public boolean equals(Vector3dc a, Vector3dc b) {
+                if(a==b)return true;
+                if(a==null || b==null)return false;
+                return a.equals(b,0.00001f);
+            }
+        };
+    public static final Vector3d NAN_3 = new Vector3d(Double.NaN, Double.NaN, Double.NaN);
 
     @SafeVarargs
     private static <T> T[] genArr(T... arr) {

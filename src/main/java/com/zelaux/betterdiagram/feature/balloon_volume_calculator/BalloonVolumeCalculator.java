@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram.feature.balloon_volume_calculator;
 
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.extend.WithClientData;
+import com.zelaux.betterdiagram.feature.balance.BalanceModel;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.eriksonn.aeronautics.content.blocks.hot_air.lifting_gas.LiftingGasType;
