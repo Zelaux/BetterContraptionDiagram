@@ -5,9 +5,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDependencies;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
-import com.zelaux.betterdiagram.feature.max_speed.WithLiftProviders;
 import com.zelaux.betterdiagram.mixin.feature.extra_info_deliver.FloatingBlockControllerExt;
 import com.zelaux.betterdiagram.network.OptionalPacketPayload;
+import com.zelaux.betterdiagram.index.BCodecs;
 import dev.ryanhcode.sable.api.block.BlockSubLevelLiftProvider;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
@@ -40,8 +40,8 @@ public record DiagramExtraDataPacket(
         UUIDUtil.CODEC.fieldOf("subLevel").forGetter(DiagramExtraDataPacket::sublevel),
         CodecUtil.MATRIX3D_CODEC.fieldOf("inertiaTensor").forGetter(DiagramExtraDataPacket::inertiaTensor),
         ClusterInfo.CODEC.listOf().fieldOf("clusters").forGetter(DiagramExtraDataPacket::clusters),
-        ECodecs.LIFT_PROVIDER_CONTEXT_CODEC.listOf().optionalFieldOf("liftProviders").forGetter(DiagramExtraDataPacket::liftProviders),
-        ECodecs.MASS_TRACKER_CODEC.optionalFieldOf("massTracker").forGetter(DiagramExtraDataPacket::massTracker)
+        BCodecs.LIFT_PROVIDER_CONTEXT_CODEC.listOf().optionalFieldOf("liftProviders").forGetter(DiagramExtraDataPacket::liftProviders),
+        BCodecs.MASS_TRACKER_CODEC.optionalFieldOf("massTracker").forGetter(DiagramExtraDataPacket::massTracker)
     ).apply(i, DiagramExtraDataPacket::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DiagramExtraDataPacket> STREAM_CODEC = ByteBufCodecs.fromCodecWithRegistries(CODEC);

@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.network.extradata;
+package com.zelaux.betterdiagram.index;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -7,12 +7,36 @@ import dev.ryanhcode.sable.api.block.BlockSubLevelLiftProvider.LiftProviderConte
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import foundry.veil.api.util.CodecUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
-public interface ECodecs {
+public interface BCodecs {
+    static <T> Codec<T> wrapWithCompound(Codec<T> codec, Function<T, CompoundTag> getter, BiFunction<T,CompoundTag,T> setter){
+        return CompoundTag.CODEC.xmap(
+            nbt -> codec
+                .parse(NbtOps.INSTANCE, nbt)
+                .map(data -> setter.apply(data,nbt))
+                .getOrThrow(),
+            obj -> {
+                CompoundTag nbt = (CompoundTag) codec.encodeStart(NbtOps.INSTANCE, obj).getOrThrow();
+                CompoundTag compoundTag = getter.apply(obj);
+                if(compoundTag != null) {
+                    CompoundTag result = compoundTag.copy();
+                    result.merge(nbt);
+                    return result;
+                }
+                return nbt;
+            }
+        );
+    }
+
     Codec<LiftProviderContext> LIFT_PROVIDER_CONTEXT_CODEC = RecordCodecBuilder.create(i ->
         i.group(
             BlockPos.CODEC.fieldOf("pos").forGetter(LiftProviderContext::pos),

@@ -46,7 +46,8 @@ public class BCDData {
         OffCenterBlocksShowState.none,
         false,
         EnabledForces.empty(),
-        BalloonCalculatorSettings.DEFAULT
+        BalloonCalculatorSettings.DEFAULT,
+        new CompoundTag(0)
     );
     public static final StreamCodec<? super RegistryFriendlyByteBuf, Optional<BCDData>> STREAM_OPTIONAL_CODEC =
         ByteBufCodecs.TAG.map(
@@ -59,14 +60,14 @@ public class BCDData {
             x -> BCDData.NON_NULL_CODEC.encodeStart(NbtOps.INSTANCE, x).result().orElse(null)
         );
     private static final Vector3d NULL_ECOM = new Vector3d();
-    public static final Codec<BCDData> NON_NULL_CODEC = RecordCodecBuilder.create(i -> i.group(
-            SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", NULL_ECOM).xmap(x -> x, x -> x == null ? NULL_ECOM : x).forGetter(BCDData::eCOM_m),
-            Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask),
-            OffCenterBlocksShowState.CODEC.optionalFieldOf("offcenterShowState", OffCenterBlocksShowState.none).forGetter(BCDData::offCenterBlocksShowState),
-            Codec.BOOL.optionalFieldOf("shouldRenderMergedForces", false).forGetter(_i -> false),
-            Codec.BOOL.optionalFieldOf("shouldMergedForcesWithConnectedSublevels", false).forGetter(BCDData::shouldMergedForcesWithConnectedSublevels),
-            EnabledForces.CODEC.optionalFieldOf("enabledForces", DEFAULT().enabledForces).forGetter(BCDData::enabledForces),
-            BalloonCalculatorSettings.CODEC.optionalFieldOf("balloonCalculatorSettings", BalloonCalculatorSettings.DEFAULT).forGetter(BCDData::balloonCalc)
+    public static final Codec<BCDData> INETERNAL_CODEC = RecordCodecBuilder.create(i -> i.group(
+        SableCompanionUtil.VECTOR_3D_CODEC.optionalFieldOf("eCOM", NULL_ECOM).xmap(x -> x, x -> x == null ? NULL_ECOM : x).forGetter(BCDData::eCOM_m),
+        Codec.INT.optionalFieldOf("axisStates", 0).forGetter(BCDData::axisStatesMask),
+        OffCenterBlocksShowState.CODEC.optionalFieldOf("offcenterShowState", OffCenterBlocksShowState.none).forGetter(BCDData::offCenterBlocksShowState),
+        Codec.BOOL.optionalFieldOf("shouldRenderMergedForces", false).forGetter(_i -> false),
+        Codec.BOOL.optionalFieldOf("shouldMergedForcesWithConnectedSublevels", false).forGetter(BCDData::shouldMergedForcesWithConnectedSublevels),
+        EnabledForces.CODEC.optionalFieldOf("enabledForces", DEFAULT().enabledForces).forGetter(BCDData::enabledForces),
+        BalloonCalculatorSettings.CODEC.optionalFieldOf("balloonCalculatorSettings", BalloonCalculatorSettings.DEFAULT).forGetter(BCDData::balloonCalc)
         ).apply(i,
             (
                 ecom,
@@ -91,6 +92,7 @@ public class BCDData {
                     ;
             })
     );
+    public static final Codec<BCDData> NON_NULL_CODEC = BCodecs.wrapWithCompound(INETERNAL_CODEC,BCDData::myTag,BCDData::withMyTag);
     public static final Codec<Optional<BCDData>> SHORT_CODEC = NON_NULL_CODEC.optionalFieldOf("data").codec();
 
 
@@ -124,6 +126,8 @@ public class BCDData {
 
 
     BalloonCalculatorSettings balloonCalc;
+    @Nullable
+    CompoundTag myTag;
 
 
     public int axisStateInt(int i) {return (axisStatesMask >> i) & 1;}
