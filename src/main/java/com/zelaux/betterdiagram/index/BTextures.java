@@ -100,6 +100,7 @@ public interface BTextures {
         BTexture BACKGROUND_XYZ = texture(atlas, 0, 128, 112, 24);
 
         BTexture ICON_BTN_BACKGROUND = gridCell(atlas, 1, 3);
+        BTexture ICON_LIST_ARROW = textureGrid(atlas, 2,5,2,1);
     }
 
     interface BalloonScreen {

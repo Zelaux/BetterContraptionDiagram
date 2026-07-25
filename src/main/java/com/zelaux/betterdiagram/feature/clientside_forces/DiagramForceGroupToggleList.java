@@ -1,5 +1,10 @@
 package com.zelaux.betterdiagram.feature.clientside_forces;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import com.zelaux.betterdiagram.index.BTextures;
+import com.zelaux.betterdiagram.struct.BTexture;
+import com.zelaux.betterdiagram.util.ui.GuiGraphicsUtil;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramForceGroupToggle;
 import dev.simulated_team.simulated.index.SimGUITextures;
 import lombok.AllArgsConstructor;
@@ -9,6 +14,9 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.Component;
 
 public class DiagramForceGroupToggleList extends ObjectSelectionList<DiagramForceGroupToggleList.DiagramForceGroupToggleEntry> {
+
+    private final BTexture arrowTexture = BTextures.Diagram.ICON_LIST_ARROW;
+
     public DiagramForceGroupToggleList(Minecraft minecraft, int width, int height, int itemHeight) {
         super(minecraft, width, height, 0, itemHeight);
         headerHeight = -4;
@@ -56,9 +64,30 @@ public class DiagramForceGroupToggleList extends ObjectSelectionList<DiagramForc
         addEntry(new DiagramForceGroupToggleEntry(toggle));
     }
 
+    @Override
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        BTexture texture = this.arrowTexture;
+        int centerX = getX() + getWidth() / 2;
+        if(getRowTop(getItemCount() - 1)+itemHeight > getBottom()) {
+            texture.render(guiGraphics, centerX - texture.width / 2, getBottom());
+        }
+
+        if(getRowBottom(0)-itemHeight/2<getY()) {
+            PoseStack pose = guiGraphics.pose();
+            pose.pushPose();
+            pose.translate(getX() + getWidth() / 2f, getY() ,0);
+            pose.mulPose(Axis.ZP.rotation((float) Math.PI));
+            pose.translate(-texture.width/2f, 0,0);
+            texture.render(guiGraphics,0,0);
+            pose.popPose();
+        }
+    }
+
     public void renderTabs(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         renderTab = true;
         render(graphics, mouseX, mouseY, partialTicks);
+
         renderTab = false;
     }
 
