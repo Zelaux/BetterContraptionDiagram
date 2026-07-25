@@ -18,6 +18,13 @@ public interface BTextures {
         }
     }
 
+    interface Anim {
+        AtlasTexture atlas = atlas("gui/anim/diagonal_lines_fill", 32,32*50,32,32);
+        BAnimatedTexture linesFill = texture(atlas,0,0,32,32)
+            .asAnimation(50, 0, 32);
+
+    }
+
     interface Diagram {
         AtlasTexture atlas = atlas("gui/diagram", 512, 256, 16, 16);
 

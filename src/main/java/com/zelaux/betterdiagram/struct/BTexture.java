@@ -71,6 +71,7 @@ public class BTexture implements ScreenElement {
             height
         );
     }
+
     public BTexture(@NonNull final ResourceLocation location,
                     final int startX,
                     final int startY,
@@ -100,12 +101,13 @@ public class BTexture implements ScreenElement {
     public static BTexture texture(final BTexture owner, final int startX, final int startY, final int width, final int height) {
         return new BTexture(owner.location, startX, startY, width, height, owner.texWidth, owner.texHeight);
     }
+
     public static BTexture textureGrid(final AtlasTexture owner, final int startX_grid, final int startY_grid, final int width_grid, final int height_grid) {
         return new BTexture(owner.location,
-            startX_grid*owner.gridCellWidth,
-            startY_grid*owner.gridCellHeight,
-            width_grid*owner.gridCellWidth,
-            height_grid*owner.gridCellHeight,
+            startX_grid * owner.gridCellWidth,
+            startY_grid * owner.gridCellHeight,
+            width_grid * owner.gridCellWidth,
+            height_grid * owner.gridCellHeight,
             owner.texWidth,
             owner.texHeight,
             startX_grid,
@@ -143,6 +145,10 @@ public class BTexture implements ScreenElement {
     public static BTexture texture(final ResourceLocation location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {return new BTexture(location, startX, startY, width, height, texWidth, texHeight);}
 
     public static BTexture texture(final String namespace, final String location, final int startX, final int startY, final int width, final int height, final int texWidth, final int texHeight) {return new BTexture(namespace, location, startX, startY, width, height, texWidth, texHeight);}
+
+    public BAnimatedTexture asAnimation(int framesAmount, int deltaWidth, int deltaHeight) {
+        return new BAnimatedTexture(this, framesAmount, deltaWidth, deltaHeight);
+    }
 
     public void render(final GuiGraphics graphics, final int x, final int y) {
         graphics.blit(this.location, x, y, this.startX, this.startY, this.width, this.height, this.texWidth, this.texHeight);
