@@ -3,12 +3,14 @@ package com.zelaux.betterdiagram.data;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.zelaux.betterdiagram.data.balance_force_filter.BalanceForceFilterTree;
 import com.zelaux.betterdiagram.index.BForceGroups;
 import com.zelaux.betterdiagram.struct.BCDForceGroup;
-import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.With;
 import lombok.experimental.FieldDefaults;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -19,18 +21,21 @@ import java.util.function.Function;
 
 @FieldDefaults(makeFinal = true, level = AccessLevel.PUBLIC)
 @AllArgsConstructor
+@Getter
+@With
 public class EnabledForces {
-    ImmutableSet<BCDForceGroup> display;
-    ImmutableSet<ForceGroup> balance;
+    public final ImmutableSet<BCDForceGroup> display;
+    public final BalanceForceFilterTree tree;
 
     public static final Codec<EnabledForces> CODEC = RecordCodecBuilder.create(i -> i.group(
             ResourceLocation.CODEC.listOf().optionalFieldOf("display", List.of()).forGetter(x -> getResourceLocations(x.display, BForceGroups::getPath)),
-            ResourceLocation.CODEC.listOf().optionalFieldOf("balance", List.of()).forGetter(x -> getResourceLocations(x.balance, BForceGroups::getPathAny))
+            BalanceForceFilterTree.CODEC.optionalFieldOf("balanceForceFilterTree", BalanceForceFilterTree.NIL).forGetter(EnabledForces::tree)
         ).apply(i, (display, balance) -> new EnabledForces(
             getValues(display, BForceGroups::byPath),
-            getValues(balance, BForceGroups::byPathAny)
+            balance == BalanceForceFilterTree.NIL ? new BalanceForceFilterTree() : balance
         ))
     );
+
 
     private static <T> @NotNull ImmutableSet<T> getValues(List<ResourceLocation> locations, Function<ResourceLocation, Optional<T>> toValue) {
         var values = ImmutableSet.<T>builder();
@@ -53,27 +58,27 @@ public class EnabledForces {
     }
 
     public static EnabledForces empty() {
-        return new EnabledForces(ImmutableSet.of(), ImmutableSet.of());
+        return new EnabledForces(ImmutableSet.of(), new BalanceForceFilterTree());
     }
 
     public EnabledForces removeDisplay(BCDForceGroup group) {
         if(!display.contains(group)) return this;
-        return new EnabledForces(removeFromSet(display, group), balance);
-    }
-
-    public EnabledForces removeBalance(ForceGroup group) {
-        if(!balance.contains(group)) return this;
-        return new EnabledForces(display, removeFromSet(balance, group));
+        return withDisplay(removeFromSet(display, group));
     }
 
     public EnabledForces addDisplay(BCDForceGroup group) {
         if(display.contains(group)) return this;
-        return new EnabledForces(addToSet(display, group), balance);
+        return withDisplay(addToSet(display, group));
     }
 
-    public EnabledForces addBalance(ForceGroup group) {
-        if(balance.contains(group)) return this;
-        return new EnabledForces(display, addToSet(balance, group));
+    public EnabledForces removeBalance(BalanceForceFilter group) {
+        if(!tree.contains(group)) return this;
+        return new EnabledForces(display, tree.withoutFilters(group));
+    }
+
+    public EnabledForces addBalance(BalanceForceFilter group) {
+        if(tree.contains(group)) return this;
+        return new EnabledForces(display, tree.withFilters(group));
     }
 
     private <T> @NotNull ImmutableSet<T> addToSet(ImmutableSet<T> oldSet, T newValue) {
