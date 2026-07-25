@@ -14,6 +14,10 @@
   "force-group.merged-force": "Merged Force",
   "force-group.merged-force.displacement": "Merged Force Displacement: %s",
 
+  "bcd.rope-force.title": "Rope Forces: %s",
+  "bcd.rope-mass-force.title": "Rope Mass Forces: %s",
+  "bcd.rope-force.enabled": "Accounted",
+  "bcd.rope-force.disabled": "Not Accounted",
   "bcd.balance-point": "Balance Point",
 
   "__COMMENT__": "--- DIAGRAM SECTION ---",
@@ -30,11 +34,11 @@
 
   "__COMMENT__": "--- TOOLTIP SECTION ---",
   "better_contraption_diagram.item.tooltip.com.title": "Possible center(s) of mass:",
-  "better_contraption_diagram.item.tooltip.com.open": "Hold [%s] to view possible centers of mass",
+  "better_contraption_diagram.item.tooltip.com.open": "Hold [%s] to see possible Centers of Mass",
   "better_contraption_diagram.item.tooltip.com.trivial": "Center of mass: %s",
   "better_contraption_diagram.item.tooltip.com.loading": "Loading mass data",
   "better_contraption_diagram.item.tooltip.com.non-trivial": "%s %s",
-  "better_contraption_diagram.item.tooltip.com.amount-of-symmetric": "(%d-way  symmetric)",
+  "better_contraption_diagram.item.tooltip.com.amount-of-symmetric": "(%d-way symmetry)",
   "better_contraption_diagram.item.tooltip.com.full-rotation-symmetric": "(rotationally symmetric)",
 
 
@@ -46,9 +50,9 @@
 
 
   "__COMMENT__": "--- CALCULATOR SECTION ---",
-  "better_contraption_diagram.calculator.move_to_struct_center": "Move to Center",
+  "better_contraption_diagram.calculator.move_to_struct_center": "Structure Center",
   "better_contraption_diagram.calculator.select_block": "Choose in Diagram",
-  "better_contraption_diagram.calculator.reset_block": "Remove",
+  "better_contraption_diagram.calculator.reset_block": "Clear Target",
   "better_contraption_diagram.calculator.click-to-select": "Click to use the §lCurrent Center of Mass§r as the §lTarget§r.",
 
   "better_contraption_diagram.calculator.grid-warning.title": "WARNING",
@@ -65,8 +69,8 @@
   "better_contraption_diagram.diagram.offcenter-blocks-mode.none.name": "Hidden",
   "better_contraption_diagram.diagram.offcenter-blocks-mode.none.desc": "Do not show blocks with shifted Center of Mass",
 
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.name": "Smart",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.desc": "Show blocks with shifted Center of Mass only when the axis is uncompensated",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.name": "Dynamic",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.desc": "Show blocks with shifted CoM only when the axis is unbalanced",
 
   "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.name": "Always Show",
   "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.desc": "Show all blocks with a shifted Center of Mass along enabled axes",
@@ -108,9 +112,9 @@
   "bcd.extra-info.max-speed": "Terminal speed(approximated): %s",
   "bcd.extra-info.inertia": "Inertia: ",
   "bcd.extra-info.balloon-volume.server-waiting": "Balloon Calculator: Loading saved data from server",
-  "bcd.extra-info.balloon-volume.not-selected": "Select target height to view required volume",
+  "bcd.extra-info.balloon-volume.not-selected": "Select a target height to view required volume",
   "bcd.extra-info.balloon-volume.not-selected.tip": "Use Balloon Calculator",
-  "bcd.extra-info.balloon-volume.title": "Balloon volume required to reach %s at %s height.",
+  "bcd.extra-info.balloon-volume.title": "Volume required for %s at height %s",
   "bcd.extra-info.balloon-volume.entry": "When using %s: %s",
 
   "better_contraption_diagram.extra-info.gravity": "Gravity Direction: %s",
@@ -127,5 +131,5 @@
   "balloon_calculation_mode.diagram_position":  "Diagram position",
   "balloon_calculation_mode.player_position": "Player position",
   "balloon_calculation_mode.center_of_balloons":  "Center of balloons",
-  "bcd.gui.balloon-calculator.mode": "Y level anchor"
+  "bcd.gui.balloon-calculator.mode": "Altitude Reference"
 }
