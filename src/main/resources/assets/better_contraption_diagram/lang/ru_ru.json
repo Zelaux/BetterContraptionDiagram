@@ -1,89 +1,135 @@
 {
-  "better_contraption_diagram.diagram-button": "Расчетать массу",
+  "key.keyboard.shift": "Shift",
+
+  "better_contraption_diagram.diagram-button": "Рассчитать массу",
 
   "better_contraption_diagram.axis_value": "%s",
   "better_contraption_diagram.axis_arrow": "%s (%s)",
   "better_contraption_diagram.axis_group.x": "Ширина",
   "better_contraption_diagram.axis_group.y": "Высота",
   "better_contraption_diagram.axis_group.z": "Длина",
+  "force-group.rope": "Верёвка",
+  "force-group.rope-mass": "Масса верёвки",
+  "force-group.contraption-gravity": "Гравитация постройки",
+  "force-group.merged-force": "Суммарная сила",
+  "force-group.merged-force.displacement": "Смещение суммарной силы: %s",
 
+  "bcd.rope-force.title": "Силы верёвки: %s",
+  "bcd.rope-mass-force.title": "Силы массы верёвки: %s",
+  "bcd.rope-force.enabled": "Учитывается",
+  "bcd.rope-force.disabled": "Не учитывается",
+  "bcd.balance-point": "Точка баланса",
+
+  "__COMMENT__": "--- DIAGRAM SECTION ---",
   "better_contraption_diagram.center_of_mass": "Центр масс",
-  "better_contraption_diagram.eCOM": "Ожидаемый Центр Масс",
+  "better_contraption_diagram.balance-center": "Центр баланса",
   "better_contraption_diagram.eCOM": "Целевой центр масс",
   "better_contraption_diagram.center_of_mass.tooltip": "%s %s",
   "better_contraption_diagram.eCOM.tooltip": "%s %s",
-  "better_contraption_diagram.weight.tooltip": "Вес %s",
-
+  "better_contraption_diagram.weight.tooltip": "Вес: %s",
   "better_contraption_diagram.small-weight.distance.tooltip": "(на расстоянии %s)",
   "better_contraption_diagram.small-weight.tooltip": "Остаточный вес: %2$s %1$s",
   "better_contraption_diagram.weight.wrong-axis.tooltip": "Вес по оси %1$s: %2$s",
 
 
+  "__COMMENT__": "--- TOOLTIP SECTION ---",
   "better_contraption_diagram.item.tooltip.com.title": "Возможные центры масс:",
   "better_contraption_diagram.item.tooltip.com.open": "Зажмите [%s], чтобы увидеть возможные центры масс",
   "better_contraption_diagram.item.tooltip.com.trivial": "Центр масс: %s",
   "better_contraption_diagram.item.tooltip.com.loading": "Загрузка данных о массе...",
   "better_contraption_diagram.item.tooltip.com.non-trivial": "%s %s",
-  "better_contraption_diagram.item.tooltip.com.amount-of-symmetric": "(%d симметричных положений)",
-  "better_contraption_diagram.item.tooltip.com.full-rotation-symmetric": "(симметрично при вращении)",
+  "better_contraption_diagram.item.tooltip.com.amount-of-symmetric": "(симметрия: %d напр.)",
+  "better_contraption_diagram.item.tooltip.com.full-rotation-symmetric": "(осевая симметрия)",
 
 
+  "better_contraption_diagram.google-overlay.com-offset": "Смещение центра масс: %s",
+
+
+  "better_contraption_diagram.diagram.offenter-blocks.blockpos": "Локальная позиция блока: %s",
+
+
+
+  "__COMMENT__": "--- CALCULATOR SECTION ---",
   "better_contraption_diagram.calculator.move_to_struct_center": "В центр структуры",
-  "better_contraption_diagram.calculator.select_block": "Выбрать на Диаграмме",
-  "better_contraption_diagram.calculator.reset_block": "Убрать",
-  "better_contraption_diagram.common.shift-scale": "Нажмите <<Shift>> чтобы сдвинуть на 0.5",
-  "better_contraption_diagram.common.ctrl-scale": "Нажмите <<Ctrl>> чтобы сдвинуть на 10",
+  "better_contraption_diagram.calculator.select_block": "Выбрать на диаграмме",
+  "better_contraption_diagram.calculator.reset_block": "Сбросить цель",
+  "better_contraption_diagram.calculator.click-to-select": "Нажмите, чтобы установить §lТекущий центр масс§r как §lЦелевой§r.",
+
+  "better_contraption_diagram.calculator.grid-warning.title": "ВНИМАНИЕ",
+  "better_contraption_diagram.calculator.grid-warning.content": "Функция 'Выбрать на диаграмме' может быть неточной §lбез выравнивания вида по осям§r.",
+  "better_contraption_diagram.calculator.grid-warning.check": "Больше не показывать",
 
 
-  "better_contraption_diagram.configuration.title": "Better Contraption Diagram Configs",
-  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml": "Better Contraption Diagram Configs",
-  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml.title": "Better Contraption Diagram Configs",
+  "better_contraption_diagram.diagram.disable-axis": "Отключить ось %s",
+  "better_contraption_diagram.diagram.enable-axis": "Включить ось %s",
+
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.switch.lmb": "ЛКМ: выбрать следующий",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.switch.rmb": "ПКМ: выбрать предыдущий",
+
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.none.name": "Скрыто",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.none.desc": "Не показывать блоки со смещённым центром масс",
+
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.name": "Динамический",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.desc": "Показывать смещённые блоки только если ось не сбалансирована",
+
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.name": "Всегда показывать",
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.desc": "Показывать все блоки со смещённым центром масс по активным осям",
+
+  "better_contraption_diagram.diagram.offcenter-blocks-mode.hold-to-browse":  "Зажмите [%1$s], чтобы найти пару",
+  "bcd.tooltip-handler.message":  "Зажмите [%1$s] %2$s",
+  "bcd.tooltip-handler.balloon.message":  "для открытия калькулятора объёма шаров",
+
+  "better_contraption_diagram.gui.scrollInput.ctrlScrollsSlower": "Ctrl для медленной прокрутки",
+  "better_contraption_diagram.common.shift-scale": "Зажмите [Shift] для шага 0.5",
+  "better_contraption_diagram.common.ctrl-scale": "Зажмите [Ctrl] для шага 10",
+
+
+  "better_contraption_diagram.configuration.title": "Настройки Better Contraption Diagram",
+  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml": "Настройки Better Contraption Diagram",
+  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml.title": "Настройки Better Contraption Diagram",
 
   "better_contraption_diagram.configuration.axisScale": "Масштаб осей",
   "better_contraption_diagram.configuration.axisOffset": "Смещение осей",
 
-  "better_contraption_diagram.google-overlay.com-offset": "Сдвиг центра масс: %s",
-  "better_contraption_diagram.diagram.offenter-blocks.blockpos": "Локальная позиция блока: %s",
-  "better_contraption_diagram.diagram.disable-axis": "Отключить ось %s",
-  "better_contraption_diagram.diagram.enable-axis": "Включить ось %s",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.switch.lmb": "Левый-клик чтобы выбрать следующий",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.switch.rmb": "Правый-клик чтобы выбрать предыдущий",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.none.name": "Не показывать",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.none.desc": "Не показывает блоки со сдвинутым центром масс",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.name": "Умный",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.desc": "Показывать блоки со смещённым центром масс, только если ось не скомпенсирована",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.name": "Показывать всегда",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.desc": "Показывает блоки со сдвинутым центром масс вдоль включённых осей",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.hold-to-browse": "Зажмите [%1$s] чтобы найти пару",
-  "better_contraption_diagram.gui.scrollInput.ctrlScrollsSlower": "Удерживайте Ctrl для плавной прокрутки",
+
   "better_contraption_diagram.command.too-many-blocks": "Слишком много блоков имеют центр масс в точке 0.5",
-  "better_contraption_diagram.com-menu.field-tooltip": "Правый-клик чтобы отключить",
+
+  "better_contraption_diagram.com-menu.field-tooltip": "ПКМ, чтобы отключить",
   "better_contraption_diagram.com-menu.invert-mode.normal": "Режим: Тот же",
   "better_contraption_diagram.com-menu.invert-move.inverted": "Режим: Пара",
-  "better_contraption_diagram.com-menu.invert-move.info": "Используйте режим «Пара», чтобы найти блоки с противоположным смещением центра масс.",
-  "better_contraption_diagram.com-menu.search": "Искать блоки",
-  "better_contraption_diagram.extra-info.diagram-button": "Дополнительная информация",
-  "better_contraption_diagram.extra-info.gravity": "Текущая гравитационная константа: %s",
+  "better_contraption_diagram.com-menu.invert-move.info": "Режим 'Пара' ищет блоки с противоположным смещением центра масс.",
+  "better_contraption_diagram.com-menu.search": "Поиск блоков",
+
+
+
+
+
+  "bcd.contraption_diagram.join-forces": "Силы связанных построек: ",
+  "bcd.contraption_diagram.join-forces.enabled": "Отображаются",
+  "bcd.contraption_diagram.join-forces.disabled": "Скрыты",
+
+  "bcd.extra-info.diagram-button": "Дополнительная информация",
+  "bcd.extra-info.max-speed": "Предельная скорость (прибл.): %s",
+  "bcd.extra-info.inertia": "Инерция: ",
+  "bcd.extra-info.balloon-volume.server-waiting": "Калькулятор шаров: загрузка данных с сервера...",
+  "bcd.extra-info.balloon-volume.not-selected": "Выберите целевую высоту для расчёта объёма",
+  "bcd.extra-info.balloon-volume.not-selected.tip": "Используйте калькулятор шаров",
+  "bcd.extra-info.balloon-volume.title": "Объём шаров для %s на высоте %s.",
+  "bcd.extra-info.balloon-volume.entry": "При использовании %s: %s",
+
+  "better_contraption_diagram.extra-info.gravity": "Направление гравитации: %s",
   "better_contraption_diagram.extra-info.sum-of-forces.title": "Сумма сил",
-  "better_contraption_diagram.extra-info.sum-of-forces.displacement": "Сдвиг: %s",
+  "better_contraption_diagram.extra-info.sum-of-forces.displacement": "Смещение: %s",
   "better_contraption_diagram.extra-info.sum-of-forces.direction": "Направление: %s",
-
-  "key.keyboard.shift": "Shift",
-
-
-  "force-group.merged-force": "Объединённая сила",
-  "force-group.merged-force.displacement": "Смещение объединённой силы: %s",
+  "bcd.balloon-calculator.plot": "%1$s: %2$s",
 
 
-
-
-  "better_contraption_diagram.calculator.click-to-select": "Нажмите, чтобы использовать §lТекущий центр масс§r как §lЦелевой§r.",
-
-  "better_contraption_diagram.calculator.grid-warning.title": "ВНИМАНИЕ",
-  "better_contraption_diagram.calculator.grid-warning.content": "Функция «Выбрать на диаграмме» может быть неточной §lбез выравнивания вида по осям§r.",
-  "better_contraption_diagram.calculator.grid-warning.check": "Больше не показывать это окно"
-
-
-
-
- }
+  "balloon_calculation_mode.bottom_of_sublevel": "Низ подуровня(ей)",
+  "balloon_calculation_mode.top_of_sublevel": "Верх подуровня(ей)",
+  "balloon_calculation_mode.com_of_sublevel":  "ЦМ подуровня(ей)",
+  "balloon_calculation_mode.center_of_sublevel": "Центр подуровня(ей)",
+  "balloon_calculation_mode.diagram_position":  "Позиция диаграммы",
+  "balloon_calculation_mode.player_position": "Позиция игрока",
+  "balloon_calculation_mode.center_of_balloons":  "Центр шаров",
+  "bcd.gui.balloon-calculator.mode": "Точка отсчёта Y"
+}
