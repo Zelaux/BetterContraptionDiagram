@@ -1,10 +1,13 @@
 package com.zelaux.betterdiagram.mixin.feature.balance_center;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.feature.balance.BalanceModel;
+import com.zelaux.betterdiagram.feature.balance_center.ListSwitchOverlay;
 import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDependencies;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.index.BTextures;
@@ -13,8 +16,11 @@ import com.zelaux.betterdiagram.util.format.VecFormat;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
+import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramButton;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
+import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
@@ -37,6 +43,7 @@ public abstract class BalanceCenter_DiagramScreen extends AbstractSimiScreen imp
     @Shadow
     @Final
     public ClientSubLevel subLevel;
+    private ListSwitchOverlay bcd$listSwitchOverlay;
 
     @Shadow
     public static Vector2d getScreenCoords(Vector3d plotSpacePoint, Quaternionfc orientation, Vector3dc localPosition, Matrix4fc projMatrix, int width, int height) {throw new UnsupportedOperationException("Implemented via mixin");}
@@ -48,6 +55,19 @@ public abstract class BalanceCenter_DiagramScreen extends AbstractSimiScreen imp
     @Shadow
     @Final
     private DiagramEntity diagram;
+
+    @WrapOperation(method = "init",at = @At(value = "INVOKE", target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;addRenderableWidget(Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;",ordinal = 0))
+    GuiEventListener init(DiagramScreen instance, GuiEventListener guiEventListener, Operation<GuiEventListener> original){
+        GuiEventListener call = original.call(instance, guiEventListener);
+
+        bcd$listSwitchOverlay = new ListSwitchOverlay((DiagramButton) guiEventListener);
+        return call;
+    }
+
+    @Inject(method = "renderWindowForeground",at=@At("HEAD"))
+    void renderWindowForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci){
+        bcd$listSwitchOverlay.render(graphics,mouseX,mouseY,partialTicks);
+    }
 
     @Inject(at = @At("HEAD"), method = "renderCenterOfMass")
     private void renderExpectedCenterOfMass(GuiGraphics graphics, CallbackInfo ci) {
@@ -92,4 +112,5 @@ public abstract class BalanceCenter_DiagramScreen extends AbstractSimiScreen imp
             VecFormat.Presets.forceCords(eCOM)
         ));
     }
+
 }
