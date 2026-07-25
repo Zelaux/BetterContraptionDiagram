@@ -210,8 +210,8 @@ public class MixinCalculatorUtil {
         double dst2 = originCoords.distanceSquared(mouseX - accessor.bcd$originX(), mouseY - accessor.bcd$originY());
 
         if(dst2 < 8 * 8) {
-            BalanceForce mergedBalancePointOrCOM = BalanceModel.getMergedBalancePointOrCOM(self);
-            tooltipList.add(Component.translatable("force-group.merged-force.displacement", VecFormat.Presets.displacement(new Vector3d(displacement).sub(mergedBalancePointOrCOM.displacement()))));
+            Vector3dc it = CenterMassCalculator.centerOfMass(self.subLevel);
+            tooltipList.add(Component.translatable("force-group.merged-force.displacement", VecFormat.Presets.displacement(new Vector3d(displacement).sub(it))));
         }
     }
 

@@ -186,7 +186,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
 
 
         var mergedForce = new MergedPointForceCalculator();
-        mergedForce.begin(new Vector3d(BalanceModel.getMergedBalancePointOrCOM((DiagramScreen) (Object) this).displacement()));
+        mergedForce.begin(new Vector3d(BalanceModel.mergedBalancePointOrCOM((DiagramScreen) (Object) this).displacement()));
 
         Map<ForceGroup, List<QueuedForceGroup.PointForce>> forces = serverData.forces();
         for(var entry : forces.entrySet()) {

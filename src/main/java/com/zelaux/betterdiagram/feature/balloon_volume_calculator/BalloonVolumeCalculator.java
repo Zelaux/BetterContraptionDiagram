@@ -41,8 +41,8 @@ public class BalloonVolumeCalculator {
         BCDData bcdData = clientData.bcdDataNotNull_readOnly();
         float searchY = bcdData.balloonCalc.calculationMode().locateWorldY(Minecraft.getInstance().player, dependenciesData, balloons, diagram);
         float balloonY = (float) tryLocateBalloonsCenter(balloons);
-        DiagramDataPacket packet = dependenciesData.mergedForces(bcdData);
-        double mass = packet == null ? 0 : packet.mass();
+        //double mass = packet == null ? 0 : packet.mass();
+        double mass = BalanceModel.mergedBalancePointOrCOM(dependenciesData,clientData).mass();
         if(Double.isNaN(balloonY)) return calculateVolumeRaw(level, gasType, y, mass);
         return calculateVolumeRaw(level, gasType, y + (balloonY - searchY), mass);
 

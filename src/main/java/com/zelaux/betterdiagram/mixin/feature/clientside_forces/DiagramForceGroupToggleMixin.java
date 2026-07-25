@@ -55,11 +55,11 @@ public abstract class DiagramForceGroupToggleMixin extends AbstractWidget {
 
     @Inject(method = "renderWidget", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V"))
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        boolean usedInBalance = bcd$clientData.bcdDataNotNull_readOnly().enabledForces.balance.contains(group);
-        BTexture texture = usedInBalance ? BTextures.Diagram.ICON_WEIGHT : BTextures.Diagram.ICON_WEIGHT_CROSS;
+        //boolean usedInBalance = bcd$clientData.bcdDataNotNull_readOnly().enabledForces.balance.contains(group);
+        //BTexture texture = usedInBalance ? BTextures.Diagram.ICON_WEIGHT : BTextures.Diagram.ICON_WEIGHT_CROSS;
 
-        int dx = SimGUITextures.DIAGRAM_PAPER.width - texture.width - 8;
-        int dy = -4;
+        //int dx = SimGUITextures.DIAGRAM_PAPER.width - texture.width - 8;
+        //int dy = -4;
 
         //texture.render(guiGraphics, dx,dy, usedInBalance ? ENABLED_TEXT : DISABLED_TEXT);
     }

@@ -98,7 +98,7 @@ public class TerminalSpeedModule implements DiagramInfoModule {
             return;
         };
 
-        mergedForce.begin(BalanceModel.getMergedBalancePointOrCOM(diagramScreeen).displacement());
+        mergedForce.begin(BalanceModel.mergedBalancePointOrCOM(diagramScreeen).displacement());
 
         Set<ForceGroup> blackList = new ObjectOpenCustomHashSet<>(Set.of(
             ForceGroups.DRAG.get(),

@@ -85,7 +85,7 @@ public class UncenteredBlockCalculator {
             return null;
         }
         boolean[] shouldUpdate = {false};
-        data = CenterMassCalculator.checkCache(data, BalanceModel.getMergedBalancePointOrCOM(self), shouldUpdate);
+        data = CenterMassCalculator.checkCache(data, BalanceModel.mergedBalancePointOrCOM(self), shouldUpdate);
         if(data.offCenteredBlocks != null && !shouldUpdate[0]) return data.offCenteredBlocks;
         ArrayList<OffCenteredBlock> offCenteredBlocks = findOffCenteredBlocks(
             clientData,

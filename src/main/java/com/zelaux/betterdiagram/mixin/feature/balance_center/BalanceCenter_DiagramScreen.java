@@ -29,7 +29,7 @@ import java.util.List;
 import static com.zelaux.betterdiagram.util.VecUtil.subMinVec3d;
 
 @Mixin(DiagramScreen.class)
-public abstract class BalanceCenter_DiagramScreen implements ProjectionAccessor, IDiagramScreenWithDependencies {
+public abstract class BalanceCenter_DiagramScreen extends AbstractSimiScreen implements ProjectionAccessor, IDiagramScreenWithDependencies {
 
     @Shadow
     protected DiagramConfig config;
@@ -69,7 +69,7 @@ public abstract class BalanceCenter_DiagramScreen implements ProjectionAccessor,
     private @Nullable Vector3dc bcd$mergedBalancePoint() {
         SubLevelDependenciesData dependenciesData = this.bcd$subLevelDependencies();
         var point = BalanceModel.calculateMergedBalancePoint(dependenciesData,((WithClientData) diagram).bcdDataNotNull_readOnly());
-        if(point == null || CenterMassCalculator.equals(point.displacement(),CenterMassCalculator.centerOfMass(subLevel))) return null;
+        if(point == null || point.justGravity() || CenterMassCalculator.equals(point.displacement(),CenterMassCalculator.centerOfMass(subLevel))) return null;
         return point.displacement();
     }
 
