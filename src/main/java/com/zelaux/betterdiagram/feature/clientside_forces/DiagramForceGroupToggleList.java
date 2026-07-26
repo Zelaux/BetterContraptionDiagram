@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.struct.BTexture;
-import com.zelaux.betterdiagram.util.ui.GuiGraphicsUtil;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramForceGroupToggle;
+import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.index.SimGUITextures;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
@@ -16,10 +16,12 @@ import net.minecraft.network.chat.Component;
 public class DiagramForceGroupToggleList extends ObjectSelectionList<DiagramForceGroupToggleList.DiagramForceGroupToggleEntry> {
 
     private final BTexture arrowTexture = BTextures.Diagram.ICON_LIST_ARROW;
+    private final DiagramScreen screen;
 
-    public DiagramForceGroupToggleList(Minecraft minecraft, int width, int height, int itemHeight) {
+    public DiagramForceGroupToggleList(Minecraft minecraft, int width, int height, int itemHeight, DiagramScreen screen) {
         super(minecraft, width, height, 0, itemHeight);
         headerHeight = -4;
+        this.screen=screen;
     }
 
     public boolean renderTab = false;
@@ -67,21 +69,27 @@ public class DiagramForceGroupToggleList extends ObjectSelectionList<DiagramForc
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        PoseStack ps = guiGraphics.pose();
+        ps.pushPose();
+
         BTexture texture = this.arrowTexture;
+        final float paperOffset = screen.getPaperOffset(partialTick);
+
+        ps.translate(DiagramScreen.MAX_PAPER_OFFSET - paperOffset, 0, 0);
         int centerX = getX() + getWidth() / 2;
         if(getRowTop(getItemCount() - 1)+itemHeight > getBottom()) {
             texture.render(guiGraphics, centerX - texture.width / 2, getBottom());
         }
 
         if(getRowBottom(0)-itemHeight/2<getY()) {
-            PoseStack pose = guiGraphics.pose();
-            pose.pushPose();
-            pose.translate(getX() + getWidth() / 2f, getY() ,0);
-            pose.mulPose(Axis.ZP.rotation((float) Math.PI));
-            pose.translate(-texture.width/2f, 0,0);
+            ps.pushPose();
+            ps.translate(getX() + getWidth() / 2f, getY() ,0);
+            ps.mulPose(Axis.ZP.rotation((float) Math.PI));
+            ps.translate(-texture.width/2f, 0,0);
             texture.render(guiGraphics,0,0);
-            pose.popPose();
+            ps.popPose();
         }
+        ps.popPose();
     }
 
     public void renderTabs(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {

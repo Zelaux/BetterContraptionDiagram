@@ -87,7 +87,7 @@ public abstract class DiagramScreenMixin extends AbstractSimiScreen {
     @Inject(method = "addForceToggleWidgets", at = @At("TAIL"))
     protected void addForceToggleWidgets_scroll(int diagramX, int diagramY, CallbackInfo ci) {
         var list = forceToggleWidgets;
-        bcd$forceToggleList = new DiagramForceGroupToggleList(Minecraft.getInstance(), SimGUITextures.DIAGRAM_PAPER.width, 11 * 8, 11);
+        bcd$forceToggleList = new DiagramForceGroupToggleList(Minecraft.getInstance(), SimGUITextures.DIAGRAM_PAPER.width, 11 * 8, 11,(DiagramScreen)(Object)this);
         bcd$forceToggleList.setPosition(list.get(0).getX(), list.get(0).getY());
         for(DiagramForceGroupToggle toggle : list) {
             bcd$forceToggleList.addEntry(toggle);
