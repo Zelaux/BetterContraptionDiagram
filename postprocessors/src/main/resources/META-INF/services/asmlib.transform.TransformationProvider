@@ -1,4 +1,4 @@
 processor.AddDataCorrector
-processor.debugOnly.RemovedFromBuild_Transformer
+processor.debugOnly.NoDebugOnlyInRelease_Transformer
 processor.SubstituteIsDebug_Transformer
 processor.DeleteIfNotDebug_Transformer

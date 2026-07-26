@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram.mixin.debug.fun;
 
+import com.zelaux.betterdiagram.annotations.EmptyInRelease;
 import com.zelaux.betterdiagram.fun.PlayerWeightJFF;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -11,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
 @Mixin(Entity.class)
+@EmptyInRelease
 public abstract class JFF_Entity {
     @Shadow
     public abstract Vec3 getDeltaMovement();

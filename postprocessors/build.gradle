@@ -9,7 +9,7 @@ repositories {
 
 static String asmExt(String module) {
     if (module.startsWith(':')) module = module.substring(1);
-    return "com.github.Zelaux.asm-ext:${module.replace(':', '-')}:1.0.5"
+    return "com.github.Zelaux.asm-ext:${module.replace(':', '-')}:1.0.6"
 }
 
 dependencies {

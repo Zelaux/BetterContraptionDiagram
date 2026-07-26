@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import com.zelaux.betterdiagram.annotations.EmptyInRelease;
 import com.zelaux.betterdiagram.fun.PlayerWeightJFF;
 import dev.ryanhcode.sable.api.math.LevelReusedVectors;
 import dev.ryanhcode.sable.sublevel.SubLevel;
@@ -17,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
 @Mixin(SubLevelEntityCollision.class)
+@EmptyInRelease
 public class JFF_SubLevelEntityCollision {
     @WrapOperation(method = "collide", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setDeltaMovement(Lnet/minecraft/world/phys/Vec3;)V", ordinal = 0))
     private static void collide(Entity instance, Vec3 deltaMovement, Operation<Void> original, @Local(name = "collisionInfo") SubLevelEntityCollision.CollisionInfo collisionInfo) {
