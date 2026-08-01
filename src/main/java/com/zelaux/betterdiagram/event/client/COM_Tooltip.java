@@ -1,6 +1,7 @@
 package com.zelaux.betterdiagram.event.client;
 
 import com.zelaux.betterdiagram.Config;
+import com.zelaux.betterdiagram.util.async.BlockTo_CenterMass2State;
 import com.zelaux.betterdiagram.util.CenterMassCache;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import com.zelaux.betterdiagram.util.format.VecFormat;
@@ -95,7 +96,7 @@ public class COM_Tooltip {
         }
         boolean shouldShow = Config.COM_Goggles_tooltip.get().shouldShow(Screen.hasShiftDown());
 
-        CenterMassCache.BlockTo_CenterMass2State map = CenterMassCache.getBlock2Pairs(level).left().orElse(null);
+        BlockTo_CenterMass2State map = CenterMassCache.getBlock2Pairs(level).left().orElse(null);
         if(map == null) {
             toolTips.set(indexOf, translatable("better_contraption_diagram.item.tooltip.com.loading").withStyle(ChatFormatting.DARK_GRAY));
             return;

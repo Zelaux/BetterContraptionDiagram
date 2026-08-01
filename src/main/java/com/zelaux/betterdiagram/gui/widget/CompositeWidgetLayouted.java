@@ -1,13 +1,15 @@
 package com.zelaux.betterdiagram.gui.widget;
 
 import com.zelaux.betterdiagram.struct.BTexture;
+import lombok.AllArgsConstructor;
+import lombok.experimental.Delegate;
 import net.createmod.catnip.gui.TickableGuiEventListener;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.layouts.*;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 public class CompositeWidgetLayouted extends AbstractContainerWidget implements NarratableEntry, Renderable, TickableGuiEventListener {
     private final List<GuiEventListener> children = new ArrayList<>();
@@ -23,29 +26,37 @@ public class CompositeWidgetLayouted extends AbstractContainerWidget implements 
     public BTexture background;
     private GuiEventListener hovered;
     protected boolean dirtyLayout = true;
-    public final LinearLayout layout;
+    public final WrappedLayout layout;
 
     public CompositeWidgetLayouted background(BTexture background) {
         this.background = background;
         return this;
     }
 
-    public CompositeWidgetLayouted(int x, int y, int width, int height, Component message, LinearLayout layout) {
-        super(x, y, width, height, message);
-        this.layout = layout;
-        layout.visitWidgets(this::addWithoutLayout);
-
+    public CompositeWidgetLayouted(Component message, LinearLayout layout) {
+        this(message, layout, LinearLayout::addChild);
     }
 
-    public CompositeWidgetLayouted(Component message, LinearLayout layout) {
-        this(0, 0, 0, 0, message, layout);
+    public CompositeWidgetLayouted(Component message, FrameLayout layout) {
+        this(message, layout, FrameLayout::addChild);
+    }
+
+    public <T extends Layout> CompositeWidgetLayouted(Component message, T layout, BiConsumer<T, LayoutElement> addChild) {
+        super(0, 0, 0, 0, message);
+        layout.visitWidgets(this::addWithoutLayout);
+        this.layout = WrappedLayout.wrap(layout, addChild);
+    }
+
+    public CompositeWidgetLayouted(Component message, EqualSpacingLayout layout) {
+        this(message, layout, EqualSpacingLayout::addChild);
     }
 
     public CompositeWidgetLayouted(LinearLayout layout) {
         this(null, layout);
     }
 
-    public <T extends AbstractWidget> T add(T child) {
+
+    public <T extends LayoutElement> T add(T child) {
         addWithoutLayout(child);
         layout.addChild(child);
 
@@ -53,14 +64,17 @@ public class CompositeWidgetLayouted extends AbstractContainerWidget implements 
         return child;
     }
 
-    public <T extends AbstractWidget> T addWithoutLayout(T child) {
-        this.children.add(child);
+    public <T extends LayoutElement> T addWithoutLayout(T child) {
+        child.visitWidgets(widget -> {
+            children.add(widget);
+            if(widget instanceof Renderable renderable) {
+                renderables.add(renderable);
+            }
+        });
 
-        if(child instanceof Renderable renderable) {
-            this.renderables.add(renderable);
-        }
         return child;
     }
+
 
     @SafeVarargs
     public final <T extends AbstractWidget> CompositeWidgetLayouted add(T child0, T child1, T... children) {
@@ -194,8 +208,8 @@ public class CompositeWidgetLayouted extends AbstractContainerWidget implements 
 
         layout.setPosition(getX() + margin, getY() + margin);
         layout.arrangeElements();
-        width = layout.getWidth() + margin;
-        width = layout.getHeight() + margin;
+        width = layout.getWidth() + margin * 2;
+        height = layout.getHeight() + margin * 2;
         dirtyLayout = false;
     }
 
@@ -213,5 +227,22 @@ public class CompositeWidgetLayouted extends AbstractContainerWidget implements 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
         return this.getChildAt(mouseX, mouseY).isPresent();
+    }
+
+    @AllArgsConstructor
+    public static abstract class WrappedLayout implements Layout {
+        public static <T extends Layout> WrappedLayout wrap(T layout, BiConsumer<T, LayoutElement> addChild) {
+            return new WrappedLayout(layout) {
+                @Override
+                void addChild(LayoutElement element) {
+                    addChild.accept(layout, element);
+                }
+            };
+        }
+
+        @Delegate
+        public Layout x;
+
+        abstract void addChild(LayoutElement element);
     }
 }

@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.util;
+package com.zelaux.betterdiagram.util.async;
 
 import com.mojang.datafixers.util.Either;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;

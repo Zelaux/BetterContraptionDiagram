@@ -8,6 +8,8 @@ import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.struct.BTexture;
 import com.zelaux.betterdiagram.struct.math.BoundingBox2i;
 import com.zelaux.betterdiagram.util.*;
+import com.zelaux.betterdiagram.util.CenterMassCache;
+import com.zelaux.betterdiagram.util.async.CenterMassTo_Block2States;
 import com.zelaux.betterdiagram.util.format.VecFormat;
 import com.zelaux.betterdiagram.util.ui.InplaceBlockRenderer;
 import com.zelaux.betterdiagram.util.ui.UIUtil;
@@ -273,7 +275,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
         //this.menu.scrollTo(this.scrollOffs);
     }
 
-    private void loadSearchResults(SearchEntry[] entries, CenterMassCache.CenterMassTo_Block2States comStats, ArrayList<CenterOfMassMenu.ItemEntry> items) {
+    private void loadSearchResults(SearchEntry[] entries, CenterMassTo_Block2States comStats, ArrayList<CenterOfMassMenu.ItemEntry> items) {
         long nano = System.nanoTime();
         forLoop:
         for(var comStat : comStats.entrySet()) {
