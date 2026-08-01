@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Either;
 import com.zelaux.betterdiagram.extend.accessors.BlockPropertiesComputers;
 import com.zelaux.betterdiagram.util.async.*;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Lombok;
 import lombok.SneakyThrows;
 import net.minecraft.core.BlockPos;
@@ -119,8 +120,8 @@ public class CenterMassCache {
         return true;
     }
 
-   public static <T> @NotNull ArrayList<T> getSaved(ArrayList<ArrayList<T>> allocatedLists) {
-        ArrayList<T> e = new ArrayList<>();
+   public static <T> @NotNull ObjectArrayList<T> getSaved(ObjectArrayList<ObjectArrayList<T>> allocatedLists) {
+        ObjectArrayList<T> e = new ObjectArrayList<>();
         allocatedLists.add(e);
         return e;
     }

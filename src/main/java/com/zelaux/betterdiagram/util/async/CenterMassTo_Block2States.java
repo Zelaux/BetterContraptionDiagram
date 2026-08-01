@@ -3,6 +3,7 @@ package com.zelaux.betterdiagram.util.async;
 import com.mojang.datafixers.util.Either;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.util.CenterMassCache;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.Level;
@@ -21,7 +22,7 @@ public class CenterMassTo_Block2States extends HashMap<@NotNull Vector3dc, Map<@
     public static @NotNull CenterMassTo_Block2States calc(HolderLookup.RegistryLookup<Block> blocks, Level level, ConcurrentLinkedQueue<Part> x) {
         long nano = System.nanoTime();
         var resultMap = new CenterMassTo_Block2States();
-        var lists = new ArrayList<ArrayList<BlockState>>();
+        var lists = new ObjectArrayList<ObjectArrayList<BlockState>>();
 
         Either<BlockTo_CenterMass2State, CompletableFuture<BlockTo_CenterMass2State>> block2Pairs = CenterMassCache.getBlock2Pairs(blocks, level);
         Optional<BlockTo_CenterMass2State> left = block2Pairs.left();
@@ -35,7 +36,7 @@ public class CenterMassTo_Block2States extends HashMap<@NotNull Vector3dc, Map<@
         if(blockToCenterMass2State != null)
             for(var blockListEntry : blockToCenterMass2State.entrySet()) {
                 Block block = blockListEntry.getKey();
-                Map<Vector3dc, ArrayList<BlockState>> value = blockListEntry.getValue();
+                var value = blockListEntry.getValue();
 
                 for(var COMAndBlockStates : value.entrySet()) {
                     var COM = COMAndBlockStates.getKey();
@@ -49,8 +50,8 @@ public class CenterMassTo_Block2States extends HashMap<@NotNull Vector3dc, Map<@
                         COM, block, blockStates, false
                     ));
                 }
-                for(ArrayList<BlockState> list : lists) {
-                    list.trimToSize();
+                for(var list : lists) {
+                    list.trim(list.size());
                 }
                 lists.clear();
 

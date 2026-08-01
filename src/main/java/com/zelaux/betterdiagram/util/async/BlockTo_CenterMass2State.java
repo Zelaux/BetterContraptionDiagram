@@ -6,6 +6,7 @@ import com.zelaux.betterdiagram.BetterContraptionDiagramClient;
 import com.zelaux.betterdiagram.util.CenterMassCache;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleRBTreeMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -14,18 +15,17 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.zelaux.betterdiagram.util.CenterMassCache.getSaved;
 
-public class BlockTo_CenterMass2State extends HashMap<@NotNull Block, Map<@NotNull Vector3dc, ArrayList<BlockState>>> {
+public class BlockTo_CenterMass2State extends HashMap<@NotNull Block, Map<@NotNull Vector3dc, ObjectArrayList<BlockState>>> {
     public static @NotNull BlockTo_CenterMass2State calc(HolderLookup.RegistryLookup<Block> blocks, Level level, ConcurrentLinkedQueue<Part> x) {
         long nano = System.nanoTime();
         var map = new BlockTo_CenterMass2State();
-        var allocatedLists = new ArrayList<ArrayList<BlockState>>();
+        var allocatedLists = new ObjectArrayList<ObjectArrayList<BlockState>>();
 
         var cordsMap = new Double2DoubleRBTreeMap((f1, f2) -> CenterMassCalculator.equals(f1, f2) ? 0 : Double.compare(f1, f2));
         for(int i = 0; i < 8; i++) {
@@ -36,10 +36,10 @@ public class BlockTo_CenterMass2State extends HashMap<@NotNull Block, Map<@NotNu
             .sequential()
             .forEach(ref -> {
                 Block block = ref.value();
-                var collectorTree = new HashMap<Vector3dc, ArrayList<BlockState>>();
+                var collectorTree = new HashMap<Vector3dc, ObjectArrayList<BlockState>>();
                 CenterMassCache.forEachCOM(level, block, false, (state, centerOfMass) -> collectorTree.computeIfAbsent(internVec3(centerOfMass, cordsMap), it -> getSaved(allocatedLists)).add(state));
-                for(ArrayList<BlockState> list : allocatedLists) {
-                    list.trimToSize();
+                for(ObjectArrayList<BlockState> list : allocatedLists) {
+                    list.trim(list.size());
                 }
                 allocatedLists.clear();
                 //x.add(new BlockTo_CenterMass2State.Part(block, pairs, false));
@@ -71,16 +71,16 @@ public class BlockTo_CenterMass2State extends HashMap<@NotNull Block, Map<@NotNu
      * @param block unique per queue
      *
      */
-    public record Part(Block block, Map<@NotNull Vector3dc, ArrayList<BlockState>> COM2BLockState,
+    public record Part(Block block, Map<@NotNull Vector3dc, ObjectArrayList<BlockState>> COM2BLockState,
                        boolean finish) {}
 
 
-    public Map<@NotNull Vector3dc, ArrayList<BlockState>> get(Block key) {
+    public Map<@NotNull Vector3dc, ObjectArrayList<BlockState>> get(Block key) {
         return get((Object) key);
     }
 
     @Override
-    public Map<@NotNull Vector3dc, ArrayList<BlockState>> get(Object key) {
+    public Map<@NotNull Vector3dc, ObjectArrayList<BlockState>> get(Object key) {
         var map = super.get(key);
 
         //Somehow? Idk

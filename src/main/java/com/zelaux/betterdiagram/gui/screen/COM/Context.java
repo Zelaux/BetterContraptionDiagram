@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram.gui.screen.COM;
 
 import com.zelaux.betterdiagram.util.CenterMassCache;
 import com.zelaux.betterdiagram.util.VecUtil;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -151,10 +152,10 @@ public class Context {
         }
     }
 
-    public record COMPair(Vector3dc center, ArrayList<BlockState> states) {
+    public record COMPair(Vector3dc center, ObjectArrayList<BlockState> states) {
         public static final COMPair[] EMPTY_ARRAY = new COMPair[0];
 
-        public static COMPair make(Map.Entry<Vector3dc, ArrayList<BlockState>> pair) {
+        public static COMPair make(Map.Entry<Vector3dc, ObjectArrayList<BlockState>> pair) {
             return new COMPair(pair.getKey(), pair.getValue());
         }
     }

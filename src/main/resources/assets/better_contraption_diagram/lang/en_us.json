@@ -76,6 +76,7 @@
   "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.desc": "Show all blocks with a shifted Center of Mass along enabled axes",
 
   "better_contraption_diagram.diagram.offcenter-blocks-mode.hold-to-browse":  "Hold [%1$s] to Find Pair",
+  "bcd.mass-tooltip.error":  "Error occurred while searching symmetries",
   "bcd.tooltip-handler.message":  "Hold [%1$s] %2$s",
   "bcd.tooltip-handler.balloon.message":  "to Open Balloon Volume Calculator",
 

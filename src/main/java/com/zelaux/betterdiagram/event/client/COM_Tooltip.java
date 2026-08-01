@@ -1,15 +1,17 @@
 package com.zelaux.betterdiagram.event.client;
 
+import com.zelaux.betterdiagram.BetterContraptionDiagram;
 import com.zelaux.betterdiagram.Config;
-import com.zelaux.betterdiagram.util.async.BlockTo_CenterMass2State;
 import com.zelaux.betterdiagram.util.CenterMassCache;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
-import com.zelaux.betterdiagram.util.format.VecFormat;
 import com.zelaux.betterdiagram.util.VecUtil;
+import com.zelaux.betterdiagram.util.async.BlockTo_CenterMass2State;
+import com.zelaux.betterdiagram.util.format.VecFormat;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.mixinterface.block_properties.BlockStateExtension;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyTypes;
 import dev.simulated_team.simulated.mixin.accessor.BlockBehaviourAccessor;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.ToString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -21,6 +23,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -29,6 +32,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,13 +115,40 @@ public class COM_Tooltip {
         toolTips.set(indexOf++, translatable("better_contraption_diagram.item.tooltip.com.title").withStyle(ChatFormatting.DARK_GRAY));
 
 
+        ObjectArrayList<SymmetryEntry> added = null;
+        try {
+            added = findSymmetryEntries(size, list);
+        } catch(Exception e) {
+            ItemStack itemStack = event.getItemStack();
+
+            BetterContraptionDiagram.LOGGER.error("Cannot find symmetries for item '{}'", itemStack.getItem(), e);
+            added = new ObjectArrayList<>();
+            for(var entry : list) {
+                added.add(new SymmetryEntry(entry.getKey()));
+            }
+            toolTips.add(indexOf + 1,
+                Component.translatable("bcd.mass-tooltip.error").withStyle(
+                    FMLLoader.isProduction() ?
+                        ChatFormatting.DARK_GRAY :
+                        ChatFormatting.DARK_RED
+                )
+            );
+        }
+        for(int i = 0; i < added.size(); i++) {
+            SymmetryEntry entry = added.get(i);
+
+            Vector3dc blockCenterOfMass = entry.com;
+            toolTips.add(indexOf++, comTooltip(blockCenterOfMass, i == added.size() - 1, entry));
+        }
+    }
+
+    private static @NotNull ObjectArrayList<SymmetryEntry> findSymmetryEntries(int size, List<Map.Entry<@NotNull Vector3dc, ObjectArrayList<BlockState>>> list) throws Exception {
         var visited = new HashMap<BlockState, SymmetryEntry>();
-        var added = new ArrayList<SymmetryEntry>();
+        var added = new ObjectArrayList<SymmetryEntry>();
         Mirror[] mirrors = Mirror.values();
         Rotation[] rotations = Rotation.values();
         Vector3d tmp = new Vector3d();
         BiFunction<BlockState, SymmetryEntry, SymmetryEntry> putIfAbsent = visited::putIfAbsent;
-        BiFunction<BlockState, SymmetryEntry, SymmetryEntry> get = (a, b) -> visited.get(a);
         outer:
         for(int i = 0; i < size; i++) {
             var entry = list.get(i);
@@ -145,12 +176,7 @@ public class COM_Tooltip {
             }
             added.add(symmetryEntry);
         }
-        for(int i = 0; i < added.size(); i++) {
-            SymmetryEntry entry = added.get(i);
-
-            Vector3dc blockCenterOfMass = entry.com;
-            toolTips.add(indexOf++, comTooltip(blockCenterOfMass, i == added.size() - 1, entry));
-        }
+        return added;
     }
 
     @ToString
@@ -178,7 +204,7 @@ public class COM_Tooltip {
         }
     }
 
-    record TransformationPair(Mirror mirror, Rotation rotation) {
+    public record TransformationPair(Mirror mirror, Rotation rotation) {
         public static final int fullRotationFlag = 0b1110;
 
         public int rotationFlag() {
