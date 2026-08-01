@@ -12,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class GridModeWarningScreen extends WarningScreen {
     private final Runnable onConfirm; // Обратный вызов (true если чекбокс нажат)
-    public static final Component TITLE = Component.translatable("better_contraption_diagram.calculator.grid-warning.title");
-    public static final Component CONTENT = Component.translatable("better_contraption_diagram.calculator.grid-warning.content");
-    public static final Component CHECK = Component.translatable("better_contraption_diagram.calculator.grid-warning.check");
+    public static final Component TITLE = Component.translatable("bcd.calculator.grid-warning.title");
+    public static final Component CONTENT = Component.translatable("bcd.calculator.grid-warning.content");
+    public static final Component CHECK = Component.translatable("bcd.calculator.grid-warning.check");
 
     public GridModeWarningScreen(Runnable onConfirm) {
         super(TITLE, CONTENT, CHECK, TITLE); // Используем title как narration по умолчанию

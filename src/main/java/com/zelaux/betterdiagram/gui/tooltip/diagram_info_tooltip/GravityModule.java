@@ -13,7 +13,7 @@ public record GravityModule(SubLevel subLevel) implements DiagramInfoModule {
     @Override
     public void appendInto(List<Component> list, int tooltipColor) {
         Vector3dc gravity = DimensionPhysicsData.getGravity(subLevel.getLevel(), subLevel.logicalPose().position());
-        list.add(Component.translatable("better_contraption_diagram.extra-info.gravity",
+        list.add(Component.translatable("bcd.extra-info.gravity",
             VecFormat.Presets.lightGray(gravity)
         ).withColor(tooltipColor));
     }

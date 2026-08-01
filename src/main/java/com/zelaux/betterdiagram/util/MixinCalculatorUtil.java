@@ -166,9 +166,9 @@ public class MixinCalculatorUtil {
     public static void displayECOMTooltip(int mouseX, int mouseY, float areaOriginX, float areaOriginY, Vector2d screenCoords, List<FormattedText> tooltipList1, Vector3d eCOM) {
         if(screenCoords.distanceSquared(mouseX - areaOriginX, mouseY - areaOriginY) >= 8.0 * 8.0) return;
         int color = (0xff00_0000) | Config.EXPECTED_CENTER_OF_MASS_COLOR.getAsInt();
-        MutableComponent centerOfMassTitle = Component.translatable("better_contraption_diagram.eCOM");
+        MutableComponent centerOfMassTitle = Component.translatable("bcd.eCOM");
         tooltipList1.add(Component.translatable(
-            "better_contraption_diagram.eCOM.tooltip",
+            "bcd.eCOM.tooltip",
             centerOfMassTitle.withColor(color),
             VecFormat.Presets.forceCords(eCOM)
         ));
@@ -249,11 +249,11 @@ public class MixinCalculatorUtil {
                     hoveredIndex = tooltipList.size();
                 }
                 tooltipList.add(Component.translatable(
-                    "better_contraption_diagram.google-overlay.com-offset",
+                    "bcd.google-overlay.com-offset",
                     VecFormat.Presets.gray(block.COM())
                 ));
                 tooltipList.add(Component.translatable(
-                    "better_contraption_diagram.diagram.offenter-blocks.blockpos",
+                    "bcd.diagram.offenter-blocks.blockpos",
                     localBlockPos
                 ));
                 tooltipList.add(new InTextBlockRenderer(block.state()).wrap());

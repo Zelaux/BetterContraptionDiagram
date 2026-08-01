@@ -1,13 +1,13 @@
 {
   "key.keyboard.shift": "Shift",
 
-  "better_contraption_diagram.diagram-button": "Calculate Mass",
+  "bcd.diagram-button": "Calculate Mass",
 
-  "better_contraption_diagram.axis_value": "%s",
-  "better_contraption_diagram.axis_arrow": "%s (%s)",
-  "better_contraption_diagram.axis_group.x": "Width",
-  "better_contraption_diagram.axis_group.y": "Height",
-  "better_contraption_diagram.axis_group.z": "Length",
+  "bcd.axis_value": "%s",
+  "bcd.axis_arrow": "%s (%s)",
+  "bcd.axis_group.x": "Width",
+  "bcd.axis_group.y": "Height",
+  "bcd.axis_group.z": "Length",
   "force-group.rope": "Rope",
   "force-group.rope-mass": "Rope Mass",
   "force-group.contraption-gravity": "Contraption Gravity",
@@ -21,85 +21,85 @@
   "bcd.balance-point": "Balance Point",
 
   "__COMMENT__": "--- DIAGRAM SECTION ---",
-  "better_contraption_diagram.center_of_mass": "Center of Mass",
-  "better_contraption_diagram.balance-center": "Balance Center",
-  "better_contraption_diagram.eCOM": "Target Center of Mass",
-  "better_contraption_diagram.center_of_mass.tooltip": "%s %s",
-  "better_contraption_diagram.eCOM.tooltip": "%s %s",
-  "better_contraption_diagram.weight.tooltip": "Weight: %s",
-  "better_contraption_diagram.small-weight.distance.tooltip": "(at distance %s)",
-  "better_contraption_diagram.small-weight.tooltip": "Residual weight: %2$s %1$s",
-  "better_contraption_diagram.weight.wrong-axis.tooltip": "Weight along axis %1$s: %2$s",
+  "bcd.center_of_mass": "Center of Mass",
+  "bcd.balance-center": "Balance Center",
+  "bcd.eCOM": "Target Center of Mass",
+  "bcd.center_of_mass.tooltip": "%s %s",
+  "bcd.eCOM.tooltip": "%s %s",
+  "bcd.weight.tooltip": "Weight: %s",
+  "bcd.small-weight.distance.tooltip": "(at distance %s)",
+  "bcd.small-weight.tooltip": "Residual weight: %2$s %1$s",
+  "bcd.weight.wrong-axis.tooltip": "Weight along axis %1$s: %2$s",
 
 
   "__COMMENT__": "--- TOOLTIP SECTION ---",
-  "better_contraption_diagram.item.tooltip.com.title": "Possible center(s) of mass:",
-  "better_contraption_diagram.item.tooltip.com.open": "Hold [%s] to see possible Centers of Mass",
-  "better_contraption_diagram.item.tooltip.com.trivial": "Center of mass: %s",
-  "better_contraption_diagram.item.tooltip.com.loading": "Loading mass data",
-  "better_contraption_diagram.item.tooltip.com.non-trivial": "%s %s",
-  "better_contraption_diagram.item.tooltip.com.amount-of-symmetric": "(%d-way symmetry)",
-  "better_contraption_diagram.item.tooltip.com.full-rotation-symmetric": "(rotationally symmetric)",
+  "bcd.item.tooltip.com.title": "Possible center(s) of mass:",
+  "bcd.item.tooltip.com.open": "Hold [%s] to see possible Centers of Mass",
+  "bcd.item.tooltip.com.trivial": "Center of mass: %s",
+  "bcd.item.tooltip.com.loading": "Loading mass data",
+  "bcd.item.tooltip.com.non-trivial": "%s %s",
+  "bcd.item.tooltip.com.amount-of-symmetric": "(%d-way symmetry)",
+  "bcd.item.tooltip.com.full-rotation-symmetric": "(rotationally symmetric)",
 
 
-  "better_contraption_diagram.google-overlay.com-offset": "Center of mass offset: %s",
+  "bcd.google-overlay.com-offset": "Center of mass offset: %s",
 
 
-  "better_contraption_diagram.diagram.offenter-blocks.blockpos": "Local Block Position: %s",
+  "bcd.diagram.offenter-blocks.blockpos": "Local Block Position: %s",
 
 
 
   "__COMMENT__": "--- CALCULATOR SECTION ---",
-  "better_contraption_diagram.calculator.move_to_struct_center": "Structure Center",
-  "better_contraption_diagram.calculator.select_block": "Choose in Diagram",
-  "better_contraption_diagram.calculator.reset_block": "Clear Target",
-  "better_contraption_diagram.calculator.click-to-select": "Click to use the §lCurrent Center of Mass§r as the §lTarget§r.",
+  "bcd.calculator.move_to_struct_center": "Structure Center",
+  "bcd.calculator.select_block": "Choose in Diagram",
+  "bcd.calculator.reset_block": "Clear Target",
+  "bcd.calculator.click-to-select": "Click to use the §lCurrent Center of Mass§r as the §lTarget§r.",
 
-  "better_contraption_diagram.calculator.grid-warning.title": "WARNING",
-  "better_contraption_diagram.calculator.grid-warning.content": "'Choose in Diagram' may be inaccurate §lwithout an axis-aligned view§r.",
-  "better_contraption_diagram.calculator.grid-warning.check": "Do not show this screen again",
+  "bcd.calculator.grid-warning.title": "WARNING",
+  "bcd.calculator.grid-warning.content": "'Choose in Diagram' may be inaccurate §lwithout an axis-aligned view§r.",
+  "bcd.calculator.grid-warning.check": "Do not show this screen again",
 
 
-  "better_contraption_diagram.diagram.disable-axis": "Disable axis %s",
-  "better_contraption_diagram.diagram.enable-axis": "Enable axis %s",
+  "bcd.diagram.disable-axis": "Disable axis %s",
+  "bcd.diagram.enable-axis": "Enable axis %s",
 
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.switch.lmb": "Left-click to select next",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.switch.rmb": "Right-click to select previous",
+  "bcd.diagram.offcenter-blocks-mode.switch.lmb": "Left-click to select next",
+  "bcd.diagram.offcenter-blocks-mode.switch.rmb": "Right-click to select previous",
 
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.none.name": "Hidden",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.none.desc": "Do not show blocks with shifted Center of Mass",
+  "bcd.diagram.offcenter-blocks-mode.none.name": "Hidden",
+  "bcd.diagram.offcenter-blocks-mode.none.desc": "Do not show blocks with shifted Center of Mass",
 
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.name": "Dynamic",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.show.desc": "Show blocks with shifted CoM only when the axis is unbalanced",
+  "bcd.diagram.offcenter-blocks-mode.show.name": "Dynamic",
+  "bcd.diagram.offcenter-blocks-mode.show.desc": "Show blocks with shifted CoM only when the axis is unbalanced",
 
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.name": "Always Show",
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.showAll.desc": "Show all blocks with a shifted Center of Mass along enabled axes",
+  "bcd.diagram.offcenter-blocks-mode.showAll.name": "Always Show",
+  "bcd.diagram.offcenter-blocks-mode.showAll.desc": "Show all blocks with a shifted Center of Mass along enabled axes",
 
-  "better_contraption_diagram.diagram.offcenter-blocks-mode.hold-to-browse":  "Hold [%1$s] to Find Pair",
+  "bcd.diagram.offcenter-blocks-mode.hold-to-browse":  "Hold [%1$s] to Find Pair",
   "bcd.mass-tooltip.error":  "Error occurred while searching symmetries",
   "bcd.tooltip-handler.message":  "Hold [%1$s] %2$s",
   "bcd.tooltip-handler.balloon.message":  "to Open Balloon Volume Calculator",
 
-  "better_contraption_diagram.gui.scrollInput.ctrlScrollsSlower": "Ctrl to Scroll Slower",
-  "better_contraption_diagram.common.shift-scale": "Hold [Shift] to step by 0.5",
-  "better_contraption_diagram.common.ctrl-scale": "Hold [Ctrl] to step by 10",
+  "bcd.gui.scrollInput.ctrlScrollsSlower": "Ctrl to Scroll Slower",
+  "bcd.common.shift-scale": "Hold [Shift] to step by 0.5",
+  "bcd.common.ctrl-scale": "Hold [Ctrl] to step by 10",
 
 
-  "better_contraption_diagram.configuration.title": "Better Contraption Diagram Settings",
-  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml": "Better Contraption Diagram Settings",
-  "better_contraption_diagram.configuration.section.better_contraption_diagram.common.toml.title": "Better Contraption Diagram Settings",
+  "bcd.configuration.title": "Better Contraption Diagram Settings",
+  "bcd.configuration.section.bcd.common.toml": "Better Contraption Diagram Settings",
+  "bcd.configuration.section.bcd.common.toml.title": "Better Contraption Diagram Settings",
 
-  "better_contraption_diagram.configuration.axisScale": "Axis Scale",
-  "better_contraption_diagram.configuration.axisOffset": "Axis Offset",
+  "bcd.configuration.axisScale": "Axis Scale",
+  "bcd.configuration.axisOffset": "Axis Offset",
 
 
-  "better_contraption_diagram.command.too-many-blocks": "Too many blocks have a center of mass at 0.5",
+  "bcd.command.too-many-blocks": "Too many blocks have a center of mass at 0.5",
 
-  "better_contraption_diagram.com-menu.field-tooltip": "Right-click to disable",
-  "better_contraption_diagram.com-menu.invert-mode.normal": "Mode: Same",
-  "better_contraption_diagram.com-menu.invert-move.inverted": "Mode: Pair",
-  "better_contraption_diagram.com-menu.invert-move.info": "Use 'Pair' to find blocks with the opposite center of mass offset.",
-  "better_contraption_diagram.com-menu.search": "Search Blocks",
+  "bcd.com-menu.field-tooltip": "Right-click to disable",
+  "bcd.com-menu.invert-mode.normal": "Mode: Same",
+  "bcd.com-menu.invert-move.inverted": "Mode: Pair",
+  "bcd.com-menu.invert-move.info": "Use 'Pair' to find blocks with the opposite center of mass offset.",
+  "bcd.com-menu.search": "Search Blocks",
 
 
 
@@ -118,10 +118,10 @@
   "bcd.extra-info.balloon-volume.title": "Volume required for %s at height %s",
   "bcd.extra-info.balloon-volume.entry": "When using %s: %s",
 
-  "better_contraption_diagram.extra-info.gravity": "Gravity Direction: %s",
-  "better_contraption_diagram.extra-info.sum-of-forces.title": "Sum of Forces",
-  "better_contraption_diagram.extra-info.sum-of-forces.displacement": "Displacement: %s",
-  "better_contraption_diagram.extra-info.sum-of-forces.direction": "Direction: %s",
+  "bcd.extra-info.gravity": "Gravity Direction: %s",
+  "bcd.extra-info.sum-of-forces.title": "Sum of Forces",
+  "bcd.extra-info.sum-of-forces.displacement": "Displacement: %s",
+  "bcd.extra-info.sum-of-forces.direction": "Direction: %s",
   "bcd.balloon-calculator.plot": "%1$s: %2$s",
 
 

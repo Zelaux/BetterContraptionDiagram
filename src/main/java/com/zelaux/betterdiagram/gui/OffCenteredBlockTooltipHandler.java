@@ -106,7 +106,7 @@ public class OffCenteredBlockTooltipHandler {
     }
 
     private static Component makeProgressBar(float progress) {
-        MutableComponent holdW = Component.translatable("better_contraption_diagram.diagram.offcenter-blocks-mode.hold-to-browse",
+        MutableComponent holdW = Component.translatable("bcd.diagram.offcenter-blocks-mode.hold-to-browse",
                                               PonderKeybinds.PONDER.message().copy().withStyle(ChatFormatting.GRAY))
                                           .withStyle(ChatFormatting.DARK_GRAY);
 

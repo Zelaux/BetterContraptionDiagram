@@ -169,9 +169,9 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
                       this.context.inverted = !context.inverted;
                       button.setMessage(invertedTitle());
                   })
-                  .tooltip(Tooltip.create(Component.translatable("better_contraption_diagram.com-menu.invert-move.info")))
+                  .tooltip(Tooltip.create(Component.translatable("bcd.com-menu.invert-move.info")))
                   .build(),
-            Button.builder(Component.translatable("better_contraption_diagram.com-menu.search"), button -> performSearch()).build()
+            Button.builder(Component.translatable("bcd.com-menu.search"), button -> performSearch()).build()
         ));
 
         layout.arrangeElements();
@@ -245,7 +245,7 @@ public class COMScreen extends AbstractContainerScreen<CenterOfMassMenu> {
     }
 
     private Component invertedTitle() {
-        return context.inverted ? Component.translatable("better_contraption_diagram.com-menu.invert-move.inverted") : Component.translatable("better_contraption_diagram.com-menu.invert-mode.normal");
+        return context.inverted ? Component.translatable("bcd.com-menu.invert-move.inverted") : Component.translatable("bcd.com-menu.invert-mode.normal");
     }
 
     record SearchEntry(Direction.Axis axis, float value) {}

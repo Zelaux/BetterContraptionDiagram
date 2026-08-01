@@ -105,9 +105,9 @@ public abstract class BalanceCenter_DiagramScreen extends AbstractSimiScreen imp
         Vector2d screenCoords = bcd$getScreenCoords(new Vector3d(point));
         if(screenCoords.distanceSquared(mouseX - (float) areaOriginX, mouseY - (float) areaOriginY) >= 8.0 * 8.0) return;
         int color = (0xff00_0000) | Config.BALANCE_CENTER_COLOR.getAsInt();
-        MutableComponent title = Component.translatable("better_contraption_diagram.balance-center");
+        MutableComponent title = Component.translatable("bcd.balance-center");
         tooltipList.add(Component.translatable(
-            "better_contraption_diagram.eCOM.tooltip",
+            "bcd.eCOM.tooltip",
             title.withColor(color),
             VecFormat.Presets.forceCords(eCOM)
         ));

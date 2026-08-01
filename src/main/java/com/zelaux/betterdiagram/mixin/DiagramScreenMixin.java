@@ -73,9 +73,9 @@ public abstract class DiagramScreenMixin {
         BoundingBox3ic box = subLevel.getPlot().getBoundingBox();
         centerOfMass.sub(box.minX(), box.minY(), box.minZ());
 
-        MutableComponent centerOfMassTitle = Component.translatable("better_contraption_diagram.center_of_mass");
+        MutableComponent centerOfMassTitle = Component.translatable("bcd.center_of_mass");
         tooltipList.add(Component.translatable(
-            "better_contraption_diagram.center_of_mass.tooltip", centerOfMassTitle, VecFormat.Presets.centerOfMass(centerOfMass)
+            "bcd.center_of_mass.tooltip", centerOfMassTitle, VecFormat.Presets.centerOfMass(centerOfMass)
         ));
     }
 
@@ -120,10 +120,10 @@ public abstract class DiagramScreenMixin {
             if(counterBlackHoleList.counter > 0) {
                 counterBlackHoleList.counter = 0;
                 final var nameText = SimLang.builder().add(group.name()).color((255 << 24) | group.color()).component();
-                final var axisValue = Component.translatable("better_contraption_diagram.axis_value", String.format("%,d", (int) forces[off + 3])).withColor(0xffffffff);
+                final var axisValue = Component.translatable("bcd.axis_value", String.format("%,d", (int) forces[off + 3])).withColor(0xffffffff);
 
                 tooltipList.add(
-                    Component.translatable("better_contraption_diagram.axis_arrow", nameText, axisValue).withColor(TOOLTIP_LABEL_COLOR)
+                    Component.translatable("bcd.axis_arrow", nameText, axisValue).withColor(TOOLTIP_LABEL_COLOR)
                 );
             }
         }

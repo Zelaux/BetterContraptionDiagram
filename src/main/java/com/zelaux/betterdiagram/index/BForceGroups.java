@@ -23,9 +23,9 @@ public interface BForceGroups {
     Map<ForceGroup, BCDForceGroup> wrappedMap = new Object2ObjectOpenCustomHashMap<>(IdentityStrategy.IDENTITY);
 
 
-    BCDForceGroup AXIS_X_GROUP = registerGroup("axis_group_x", Component.translatable("better_contraption_diagram.axis_group.x"), 0xE65751, false, Component.literal("X"));
-    BCDForceGroup AXIS_Y_GROUP = registerGroup("axis_group_y", Component.translatable("better_contraption_diagram.axis_group.y"), 0x88E661, false, Component.literal("Y"));
-    BCDForceGroup AXIS_Z_GROUP = registerGroup("axis_group_z", Component.translatable("better_contraption_diagram.axis_group.z"), 0x8E88E6, false, Component.literal("Z"));
+    BCDForceGroup AXIS_X_GROUP = registerGroup("axis_group_x", Component.translatable("bcd.axis_group.x"), 0xE65751, false, Component.literal("X"));
+    BCDForceGroup AXIS_Y_GROUP = registerGroup("axis_group_y", Component.translatable("bcd.axis_group.y"), 0x88E661, false, Component.literal("Y"));
+    BCDForceGroup AXIS_Z_GROUP = registerGroup("axis_group_z", Component.translatable("bcd.axis_group.z"), 0x8E88E6, false, Component.literal("Z"));
     BCDForceGroup ROPE_FORCE = registerGroup("rope", Component.translatable("force-group.rope"), 0xe6ab56, false);
     BCDForceGroup ROPE_MASS_FORCE = registerGroup("rope-mass", Component.translatable("force-group.rope-mass"), 0x946F3A, false);
     BCDForceGroup MERGED_FORCE_GROUP = registerGroup("merged-force", Component.translatable("force-group.merged-force"), Colors.DISPLACEMENT_GREEN_COLORS[3].getRGB(), false);

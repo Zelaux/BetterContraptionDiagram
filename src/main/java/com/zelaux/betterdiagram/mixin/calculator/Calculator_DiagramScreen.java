@@ -106,9 +106,9 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
         WithClientData clientData = (WithClientData) diagram;
         var layout = UIUtil.vertical(4,
-            new BDiagramButton(BTextures.Diagram.ICON_CALCULATOR, 0, 0, Component.translatable("better_contraption_diagram.diagram-button"), () -> CenterMassMovingScreen.toggle(self()))
+            new BDiagramButton(BTextures.Diagram.ICON_CALCULATOR, 0, 0, Component.translatable("bcd.diagram-button"), () -> CenterMassMovingScreen.toggle(self()))
                 .setColorSelector((active, hover, texture) -> hover | Minecraft.getInstance().screen instanceof CenterMassMovingScreen ? 1 : 0)
-                .withTooltip(() -> Component.translatable("better_contraption_diagram.diagram-button"))
+                .withTooltip(() -> Component.translatable("bcd.diagram-button"))
             ,
             new BDiagramButton(BTextures.Diagram.ICONS_SHIPS, 0, 0,
                 Component.translatable("bcd.contraption_diagram.join-forces"), () -> {
@@ -129,7 +129,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 )
             ,
             new BDiagramButton(BTextures.Diagram.ICON_INFO, 0, 0,
-                Component.translatable("better_contraption_diagram.extra-info.diagram-button"), (Runnable) null)
+                Component.translatable("bcd.extra-info.diagram-button"), (Runnable) null)
                 .supportedButtons(ButtonKind.EMPTY_ARRAY)
                 .withTooltip(new DiagramInfoTooltip(self(), this.subLevel, this.serverData))
 
@@ -237,7 +237,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                     continue;
                 if(originCoords.distanceSquared(mouseX, mouseY) < 8.0 * 8.0) {
                     var value = Component.literal(StringUtil.plainDouble(weights.totalWeight())).withColor(color);
-                    tooltipList.add(Component.translatable("better_contraption_diagram.weight.wrong-axis.tooltip", group.axisName().copy().withColor(color), value));
+                    tooltipList.add(Component.translatable("bcd.weight.wrong-axis.tooltip", group.axisName().copy().withColor(color), value));
                     //addForceArrowTooltip(forceGroup, pointForce.groupSize().getValue(), forceMagnitude, color, tooltipLines);
                 }
 
@@ -252,7 +252,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 offset,
                 color, shadowColor,
                 BTextures.Diagram.ICON_WEIGHT, BTextures.Diagram.ICON_WEIGHT_SHADOW,
-                (list, m, v) -> list.add(Component.translatable("better_contraption_diagram.weight.tooltip", v)),
+                (list, m, v) -> list.add(Component.translatable("bcd.weight.tooltip", v)),
                 shouldClipWeights, accessor);
             renderMassStacks(graphics,
                 weights.smallStacks,
@@ -262,8 +262,8 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 color, shadowColor,
                 BTextures.Diagram.ICON_SMALL_WEIGHT, BTextures.Diagram.ICON_SMALL_WEIGHT_SHADOW,
                 (list, mass, v) -> list.add(//TODO maybe multi line with tab?
-                    Component.translatable("better_contraption_diagram.small-weight.tooltip", v,
-                        Component.translatable("better_contraption_diagram.small-weight.distance.tooltip",
+                    Component.translatable("bcd.small-weight.tooltip", v,
+                        Component.translatable("bcd.small-weight.distance.tooltip",
                                      Component.literal(StringUtil.plainDouble(Math.abs(mass.position().dot(AXIS) - eCOM.dot(AXIS))))
                                               .withColor(ChatFormatting.GRAY.getColor())
                                  )

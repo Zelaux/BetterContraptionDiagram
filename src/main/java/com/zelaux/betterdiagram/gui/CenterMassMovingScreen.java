@@ -102,12 +102,12 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
     private boolean wasDirty;
     private final ArrayList<Pair<MyGridClicker, PartialInteration>> grids = new ArrayList<>();
     private static final MutableComponent[] tooltipAxisOnOff = {
-        Component.translatable("better_contraption_diagram.diagram.disable-axis", "X"),
-        Component.translatable("better_contraption_diagram.diagram.enable-axis", "X"),
-        Component.translatable("better_contraption_diagram.diagram.disable-axis", "Y"),
-        Component.translatable("better_contraption_diagram.diagram.enable-axis", "Y"),
-        Component.translatable("better_contraption_diagram.diagram.disable-axis", "Z"),
-        Component.translatable("better_contraption_diagram.diagram.enable-axis", "Z"),
+        Component.translatable("bcd.diagram.disable-axis", "X"),
+        Component.translatable("bcd.diagram.enable-axis", "X"),
+        Component.translatable("bcd.diagram.disable-axis", "Y"),
+        Component.translatable("bcd.diagram.enable-axis", "Y"),
+        Component.translatable("bcd.diagram.disable-axis", "Z"),
+        Component.translatable("bcd.diagram.enable-axis", "Z"),
     };
 
 
@@ -163,21 +163,21 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         );
 
         final var tmp = new Vector3d();
-        final var centerButton = makeButton(Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"), () -> {
+        final var centerButton = makeButton(Component.translatable("bcd.calculator.move_to_struct_center"), () -> {
             Vector3d newValue = centerOfSubLevel();
             expectedCenterOfMass(newValue);
             positionUpdatedNotFromEditBox(VecUtil.subMinVec3d(tmp.set(newValue), bb));
-        }, () -> Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"));
-        final var selectBlock = makeButton(Component.translatable("better_contraption_diagram.calculator.select_block"), () -> selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
+        }, () -> Component.translatable("bcd.calculator.move_to_struct_center"));
+        final var selectBlock = makeButton(Component.translatable("bcd.calculator.select_block"), () -> selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
             Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox());
             gridToNormalVector(grid, gridPos, tmp.set(expectedCenterOfMass()).sub(offset));
             expectedCenterOfMass(tmp.add(offset));
             positionUpdatedNotFromEditBox(tmp.sub(offset));
-        }), () -> Component.translatable("better_contraption_diagram.calculator.select_block"));
-        final var resetBlock = makeButton(Component.translatable("better_contraption_diagram.calculator.reset_block"), () -> {
+        }), () -> Component.translatable("bcd.calculator.select_block"));
+        final var resetBlock = makeButton(Component.translatable("bcd.calculator.reset_block"), () -> {
             expectedCenterOfMass(null);
             positionUpdatedNotFromEditBox(tmp.set(currentCenterOfMass()).sub(bb.minX(), bb.minY(), bb.minZ()));
-        }, () -> Component.translatable("better_contraption_diagram.calculator.reset_block"));
+        }, () -> Component.translatable("bcd.calculator.reset_block"));
         mainLayout.addChild(
             horizontal(5, centerButton, selectBlock, resetBlock,
                 new CompositeWidgetLayouted(horizontal(0, i -> {},
@@ -203,8 +203,8 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
                         })).supportedButtons(ButtonKind.LEFT, ButtonKind.RIGHT)
                            .withTooltip(() -> {
                                var list = new ArrayList<FormattedText>(10);
-                               list.add(Component.translatable("better_contraption_diagram.diagram.offcenter-blocks-mode.switch.lmb"));
-                               list.add(Component.translatable("better_contraption_diagram.diagram.offcenter-blocks-mode.switch.rmb"));
+                               list.add(Component.translatable("bcd.diagram.offcenter-blocks-mode.switch.lmb"));
+                               list.add(Component.translatable("bcd.diagram.offcenter-blocks-mode.switch.rmb"));
                                list.add(new SeparatorTooltipComponent().wrap());
                                list.addAll(displayOCBMode(OffCenterBlocksShowState.none));
                                list.add(new SeparatorTooltipComponent().wrap());
@@ -356,10 +356,10 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
     private @NotNull List<FormattedText> displayOCBMode(OffCenterBlocksShowState none) {
         boolean selected = clientData.offCenteredView() == none;
         MutableComponent nameComp = Component
-            .translatable("better_contraption_diagram.diagram.offcenter-blocks-mode." + none.name() + ".name")
+            .translatable("bcd.diagram.offcenter-blocks-mode." + none.name() + ".name")
             .withStyle(s -> s.withColor(Colors.TOOLTIP_COLOR.getRGB()).withUnderlined(selected));
 
-        MutableComponent descComp = Component.translatable("better_contraption_diagram.diagram.offcenter-blocks-mode." + none.name() + ".desc");
+        MutableComponent descComp = Component.translatable("bcd.diagram.offcenter-blocks-mode." + none.name() + ".desc");
         ArrayList<FormattedText> texts = new ArrayList<>();
         texts.add(nameComp);
         texts.addAll(font.getSplitter().splitLines(
@@ -560,8 +560,8 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         final var editBox = initEditBox(boxName, setter, boxConsumer);
 
         List<Component> shiftCtrlScale = List.of(
-            Component.translatable("better_contraption_diagram.common.shift-scale"),
-            Component.translatable("better_contraption_diagram.common.ctrl-scale")
+            Component.translatable("bcd.common.shift-scale"),
+            Component.translatable("bcd.common.ctrl-scale")
         );
         final var tmp = new Vector3d();
         final var tmp2 = new Vector3d();
@@ -582,7 +582,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
             setter.set(tmp.set(expectedCenterOfMass()), getter.get(centerOfSubLevel()));
             expectedCenterOfMass(tmp);
             positionUpdatedNotFromEditBox(tmp.sub(minVec3d(bb, tmp2)));
-        }, () -> Component.translatable("better_contraption_diagram.calculator.move_to_struct_center"));
+        }, () -> Component.translatable("bcd.calculator.move_to_struct_center"));
         final var choose = makeButton(Component.literal("D"), 16, 20, BTextures.Diagram.BACKGROUND_16_20, () -> {
             selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
                 gridToNormalVector(grid, gridPos, tmp);
@@ -591,12 +591,12 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
                 expectedCenterOfMass(tmp);
                 positionUpdatedNotFromEditBox(tmp.sub(tmp2));
             });
-        }, () -> Component.translatable("better_contraption_diagram.calculator.select_block"));
+        }, () -> Component.translatable("bcd.calculator.select_block"));
         final var reset = makeButton(Component.literal("R"), 16, 20, BTextures.Diagram.BACKGROUND_16_20, () -> {
             setter.set(tmp.set(expectedCenterOfMass()), getter.get(currentCenterOfMass()));
             expectedCenterOfMass(tmp);
             positionUpdatedNotFromEditBox(tmp.sub(minVec3d(bb, tmp2)));
-        }, () -> Component.translatable("better_contraption_diagram.calculator.reset_block"));
+        }, () -> Component.translatable("bcd.calculator.reset_block"));
 
         MutableComponent append = boxName.append(":");
         Label label = label(append)

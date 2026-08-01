@@ -64,7 +64,7 @@ public class com_view_GoggleOverlayRenderer {
 
         tooltip.add(
             MixinCalculatorUtil.indented(0,
-                Component.translatable("better_contraption_diagram.google-overlay.com-offset", VecFormat.Presets.gray(blockCenterOfMass))
+                Component.translatable("bcd.google-overlay.com-offset", VecFormat.Presets.gray(blockCenterOfMass))
             )
         );
     }

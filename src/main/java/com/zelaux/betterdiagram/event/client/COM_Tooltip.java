@@ -52,7 +52,7 @@ import static net.minecraft.network.chat.Component.translatable;
 public class COM_Tooltip {
 
 
-    public static final MutableComponent WRAPPED_OPEN = translatable("better_contraption_diagram.item.tooltip.com.open",
+    public static final MutableComponent WRAPPED_OPEN = translatable("bcd.item.tooltip.com.open",
         translatable("key.keyboard.shift").withStyle(ChatFormatting.GRAY)
     )
         .withStyle(ChatFormatting.DARK_GRAY);
@@ -79,7 +79,7 @@ public class COM_Tooltip {
         }
     };
     public static final MutableComponent TRIVIAL_COM =
-        translatable("better_contraption_diagram.item.tooltip.com.trivial",
+        translatable("bcd.item.tooltip.com.trivial",
             VecFormat.Presets.trivialCenterOfMass(JOMLConversion.HALF))
             .withStyle(ChatFormatting.DARK_GRAY);
 
@@ -102,7 +102,7 @@ public class COM_Tooltip {
 
         BlockTo_CenterMass2State map = CenterMassCache.getBlock2Pairs(level).left().orElse(null);
         if(map == null) {
-            toolTips.set(indexOf, translatable("better_contraption_diagram.item.tooltip.com.loading").withStyle(ChatFormatting.DARK_GRAY));
+            toolTips.set(indexOf, translatable("bcd.item.tooltip.com.loading").withStyle(ChatFormatting.DARK_GRAY));
             return;
         }
         var list = map.get(block).entrySet().stream().sorted(Map.Entry.comparingByKey(VecUtil.CMP_AS_ARR)).toList();
@@ -112,7 +112,7 @@ public class COM_Tooltip {
             return;
         }
         if(!shouldShow) return;
-        toolTips.set(indexOf++, translatable("better_contraption_diagram.item.tooltip.com.title").withStyle(ChatFormatting.DARK_GRAY));
+        toolTips.set(indexOf++, translatable("bcd.item.tooltip.com.title").withStyle(ChatFormatting.DARK_GRAY));
 
 
         ObjectArrayList<SymmetryEntry> added = null;
@@ -217,16 +217,16 @@ public class COM_Tooltip {
 
         MutableComponent symmetryComponent;
         if(entry.rotationSymmetryMask == TransformationPair.fullRotationFlag) {
-            symmetryComponent = translatable("better_contraption_diagram.item.tooltip.com.full-rotation-symmetric");
+            symmetryComponent = translatable("bcd.item.tooltip.com.full-rotation-symmetric");
         } else if(entry.symmetricPairs.size() > 0) {
-            symmetryComponent = translatable("better_contraption_diagram.item.tooltip.com.amount-of-symmetric", entry.symmetricPairs.size());
+            symmetryComponent = translatable("bcd.item.tooltip.com.amount-of-symmetric", entry.symmetricPairs.size());
         } else {
             symmetryComponent = literal("");
         }
         symmetryComponent = symmetryComponent.withStyle(ChatFormatting.DARK_GRAY);
         return literal("   ")
             .append(
-                translatable("better_contraption_diagram.item.tooltip.com.non-trivial", position, symmetryComponent)
+                translatable("bcd.item.tooltip.com.non-trivial", position, symmetryComponent)
                     .withStyle(ChatFormatting.DARK_GRAY)
             );
     }
