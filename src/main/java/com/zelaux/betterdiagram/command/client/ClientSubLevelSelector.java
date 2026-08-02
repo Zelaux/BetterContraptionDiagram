@@ -1,14 +1,12 @@
-package com.zelaux.betterdiagram.command;
+package com.zelaux.betterdiagram.command.client;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.ryanhcode.sable.ActiveSableCompanion;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.sublevel.ClientSubLevelContainer;
 import dev.ryanhcode.sable.command.argument.SubLevelSelector;
-import dev.ryanhcode.sable.command.argument.SubLevelSelectorModifierType;
 import dev.ryanhcode.sable.command.argument.SubLevelSelectorType;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
-import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.SneakyThrows;
 import net.minecraft.client.multiplayer.ClientLevel;

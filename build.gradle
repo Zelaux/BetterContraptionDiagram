@@ -341,7 +341,7 @@ idea {
         downloadJavadoc = true
     }
 }
-def isReleaseRequested = gradle.startParameter.taskNames.any { it.toLowerCase().contains("build") }
+def isReleaseRequested = true || gradle.startParameter.taskNames.any { it.toLowerCase().contains("build") }
 
 tasks.named("runPostprocessors", asmext.plugin.RunPostProcessors) {
     if(isReleaseRequested){

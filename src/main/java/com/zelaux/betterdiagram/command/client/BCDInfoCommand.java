@@ -1,17 +1,13 @@
-package com.zelaux.betterdiagram.command;
+package com.zelaux.betterdiagram.command.client;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.zelaux.betterdiagram.feature.client_mass_tracker.MassTrackerLevelPlotI;
 import dev.ryanhcode.sable.api.command.SableCommandHelper;
-import dev.ryanhcode.sable.api.physics.mass.MassTracker;
-import dev.ryanhcode.sable.api.sublevel.ClientSubLevelContainer;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.*;
-import org.joml.Quaterniondc;
 import org.joml.Vector3dc;
 
 import java.util.Collection;

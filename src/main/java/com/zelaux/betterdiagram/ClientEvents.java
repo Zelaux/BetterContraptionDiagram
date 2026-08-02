@@ -1,7 +1,7 @@
 package com.zelaux.betterdiagram;
 
 import com.mojang.datafixers.util.Either;
-import com.zelaux.betterdiagram.command.BCDCommand;
+import com.zelaux.betterdiagram.command.client.BCDCommand;
 import com.zelaux.betterdiagram.feature.balance.BalanceListSwitchAnimation;
 import com.zelaux.betterdiagram.feature.balloon_volume_calculator.BalloonIndexUpdate;
 import com.zelaux.betterdiagram.feature.leveldata.DiagramEntityData;

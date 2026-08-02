@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.command;
+package com.zelaux.betterdiagram.command.server;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -46,7 +46,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ServerHelpers {
+public class BCDCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
 
         dispatcher.register(Commands
@@ -229,7 +229,7 @@ public class ServerHelpers {
             .map(x -> new ChunkPos(Integer.parseInt(x[0]) << 5, Integer.parseInt(x[1]) << 5));
     }
 
-    private static @NotNull ServerHelpers.SubLevelStorageEntry of(ChunkPos x, SubLevelStorageAccessors accessors) {
+    private static @NotNull BCDCommand.SubLevelStorageEntry of(ChunkPos x, SubLevelStorageAccessors accessors) {
         SubLevelRegionFile file = accessors.bcd$getRegionFile(x);
         return new SubLevelStorageEntry(x, file, ((SubLevelStorageFileAccessors) file));
     }

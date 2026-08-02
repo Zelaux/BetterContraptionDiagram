@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.command;
+package com.zelaux.betterdiagram.command.client;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;

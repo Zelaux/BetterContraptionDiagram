@@ -1,7 +1,7 @@
 package com.zelaux.betterdiagram;
 
 import com.mojang.logging.LogUtils;
-import com.zelaux.betterdiagram.command.ServerHelpers;
+import com.zelaux.betterdiagram.command.server.BCDCommand;
 import com.zelaux.betterdiagram.feature.balloon_volume_calculator.BalloonIndexUpdate;
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.DockingConnectorActor;
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.RopeActor;
@@ -86,6 +86,6 @@ public class BetterContraptionDiagram {
 
     @SubscribeEvent
     private void registerResqueCommand(RegisterCommandsEvent event) {
-        ServerHelpers.register(event.getDispatcher(), event.getBuildContext());
+        BCDCommand.register(event.getDispatcher(), event.getBuildContext());
     }
 }

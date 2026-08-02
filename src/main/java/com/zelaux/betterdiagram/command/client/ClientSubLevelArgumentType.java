@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.command;
+package com.zelaux.betterdiagram.command.client;
 
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.Message;
@@ -10,7 +10,6 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.ryanhcode.sable.api.command.SableCommandHelper;
-import dev.ryanhcode.sable.command.argument.SubLevelSelector;
 import dev.ryanhcode.sable.command.argument.SubLevelSelectorModifierType;
 import dev.ryanhcode.sable.command.argument.SubLevelSelectorType;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
