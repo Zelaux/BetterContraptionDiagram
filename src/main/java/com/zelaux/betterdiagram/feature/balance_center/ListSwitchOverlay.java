@@ -15,14 +15,16 @@ import net.minecraft.client.gui.components.Renderable;
 
 public class ListSwitchOverlay implements Renderable {
     private final DiagramButton button;
-static{
-    String x="Spoilers";
-}
+
+    static {
+        String x = "Spoilers";
+    }
+
     public ListSwitchOverlay(DiagramButton button) {this.button = button;}
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if(!DebugRuntime.isDebug())return;
+        if(!DebugRuntime.isDebug()) return;
 
         float progress = BalanceListSwitchAnimation.textureProgress();
         if(progress < 0) return;
@@ -46,7 +48,7 @@ static{
         float scale = 3 - progress * 3 + 1;
         pose.scale(scale, scale, scale);
         pose.translate(-8, -8, 0);
-        final float grayValue = 0x41/255f;
+        final float grayValue = 0x41 / 255f;
         SimGUITextures.DIAGRAM_ICON_FORCES.render(
             guiGraphics, 0, 0, new Color(grayValue, grayValue, grayValue, progress * hidingAlpha)
         );
