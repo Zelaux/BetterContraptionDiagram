@@ -350,3 +350,9 @@ tasks.named("runPostprocessors", asmext.plugin.RunPostProcessors) {
         args("-debug")
     }
 }
+tasks.named('jar') {
+    // Говорим jar-нику, что он не может начаться, пока не отработает ваш таск
+    dependsOn(tasks.named("runPostprocessors"))
+//    dependsOn(tasks.named("runPostprocessors").outputs)
+    outputs.upToDateWhen{true}
+}
