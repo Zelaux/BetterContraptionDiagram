@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram.command.server;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.zelaux.betterdiagram.extend.accessors.SubLevelStorageAccessors;
 import com.zelaux.betterdiagram.index.Colors;
@@ -49,9 +50,12 @@ import java.util.stream.Stream;
 public class BCDCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
 
-        dispatcher.register(Commands
+        LiteralArgumentBuilder<CommandSourceStack> server = Commands
+            .literal("bcd_server")
+            .requires(x -> x.hasPermission(2));
+
+        server.then(Commands
             .literal("sublevel")
-            .requires(x -> x.hasPermission(2))
             .then(Commands
                 .literal("resque")
                 .executes(context -> checkLoaded(context) + checkSaved(context))
@@ -60,8 +64,10 @@ public class BCDCommand {
                     .executes(context -> checkLoaded(context) + checkSaved(context))
                 )
             )
-
         );
+        BCDDebugCommand.register(server);
+
+        dispatcher.register(server);
     }
 
     @SneakyThrows
