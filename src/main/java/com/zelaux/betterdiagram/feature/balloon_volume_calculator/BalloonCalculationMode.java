@@ -27,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
@@ -43,14 +44,19 @@ public enum BalloonCalculationMode {
         }
         return sink.worldY(y);
     }),
-    topOfSublevel("top_of_sublevel", (player, dependenciesData, balloons, diagram, sink) -> {
-        BCDData data = ((WithClientData) diagram).bcdDataNotNull_readOnly();
-        double y = -Double.MAX_VALUE;
-        for(SubLevel level : dependenciesData.mergedMainGroup(data)) {
-            y = Math.max(y, level.boundingBox().maxY());
-        }
-        return sink.worldY(y);
+    diagramPosition("diagram_position", (player, dependenciesData, balloons, diagram, sink) -> {
+        SubLevel subLevel = Sable.HELPER.getContaining(diagram);
+        Vector3d pos = JOMLConversion.toJOML(diagram.getPosition(AnimationTickHolder.getPartialTicks()), sink.tmp);
+        return sink.subLevel(pos, subLevel);
     }),
+    playerPosition("player_position", (player, dependenciesData, balloons, diagram, sink) ->
+        sink.worldY(player.getY())),
+    aboveTheGround("above_the_ground", (player, dependenciesData, balloons, diagram, sink) ->
+        hitBellow(dependenciesData, diagram, sink, false)
+    ),
+    aboveTheGroundOrLiquid("above_the_ground_or_liquid", (player, dependenciesData, balloons, diagram, sink) ->
+        hitBellow(dependenciesData, diagram, sink, true)
+    ),
     COMOfSublevel("com_of_sublevel", (player, dependenciesData, balloons, diagram, sink) -> {
         BCDData data = ((WithClientData) diagram).bcdDataNotNull_readOnly();
         DiagramDataPacket forces = dependenciesData.mergedForces(data);
@@ -74,6 +80,14 @@ public enum BalloonCalculationMode {
         merger.finish();
         return sink.worldY(merger.centerOfMass.y);
     }),
+    topOfSublevel("top_of_sublevel", (player, dependenciesData, balloons, diagram, sink) -> {
+        BCDData data = ((WithClientData) diagram).bcdDataNotNull_readOnly();
+        double y = -Double.MAX_VALUE;
+        for(SubLevel level : dependenciesData.mergedMainGroup(data)) {
+            y = Math.max(y, level.boundingBox().maxY());
+        }
+        return sink.worldY(y);
+    }),
     centerOfSublevel("center_of_sublevel", (player, dependenciesData, balloons, diagram, sink) -> {
         BCDData data = ((WithClientData) diagram).bcdDataNotNull_readOnly();
         SubLevelGroup subLevels = dependenciesData.mergedMainGroup(data);
@@ -84,44 +98,31 @@ public enum BalloonCalculationMode {
 
         return sink.worldY(sum.y / subLevels.amount());
     }),
-
-    diagramPosition("diagram_position", (player, dependenciesData, balloons, diagram, sink) -> {
-        SubLevel subLevel = Sable.HELPER.getContaining(diagram);
-        Vector3d pos = JOMLConversion.toJOML(diagram.getPosition(AnimationTickHolder.getPartialTicks()), sink.tmp);
-        return sink.subLevel(pos, subLevel);
-    }),
-    playerPosition("player_position", (player, dependenciesData, balloons, diagram, sink) ->
-        sink.worldY(player.getY())),
-
-    centerOfBalloons("center_of_balloons",
-        (player, dependenciesData, balloons, diagram, sink) ->
-            sink.worldY(BalloonVolumeCalculator.tryLocateBalloonsCenter(balloons))),
-    aboveTheGround("above_the_ground",
-        (player, dependenciesData, balloons, diagram, sink) ->
-            hit(diagram, sink,VecUtil.NY_V, false, dependenciesData, bottomOfSublevel, diagram.level().getMinBuildHeight())
-    ),
-    aboveTheGroundOrLiquid("above_the_ground_or_liquid",
-        (player, dependenciesData, balloons, diagram, sink) ->
-            hit(diagram, sink,VecUtil.NY_V, true, dependenciesData, bottomOfSublevel, diagram.level().getMinBuildHeight())),
+    centerOfBalloons("center_of_balloons", (player, dependenciesData, balloons, diagram, sink) ->
+        sink.worldY(BalloonVolumeCalculator.tryLocateBalloonsCenter(balloons))),
 
     ;
 
-    private static YValue hit(DiagramEntity diagram, CalcSink sink, Vector3d set, boolean hitLiquid, SubLevelDependenciesData dependenciesData, BalloonCalculationMode edgeOfSublevel, int onMiss) {
+    private static @NotNull YValue hitBellow(SubLevelDependenciesData dependenciesData, DiagramEntity diagram, CalcSink sink, boolean hitLiquid) {
+        return hit(diagram, sink, VecUtil.NY_V, hitLiquid, dependenciesData, bottomOfSublevel, diagram.level().getMinBuildHeight());
+    }
+
+    private static YValue hit(DiagramEntity diagram, CalcSink sink, Vector3dc direction, boolean hitLiquid, SubLevelDependenciesData dependenciesData, BalloonCalculationMode edgeOfSublevel, int onMiss) {
         Level level = diagram.level();
         HitResult hitResult = RaycastHelper.getHitResult(
             level,
-            Sable.HELPER.projectOutOfSubLevel(level,diagram.position()),
-            set,
+            Sable.HELPER.projectOutOfSubLevel(level, diagram.position()),
+            direction,
             (float) Math.max(Math.abs(diagram.getY() - level.getMinBuildHeight()), diagram.getY() - level.getMaxBuildHeight()),
             diagram,
             hitLiquid,
             false,
             false);
 
-        double v = hitResult.getType() == HitResult.Type.MISS ? onMiss : hitResult.getLocation().y+Math.copySign(1,set.y);
+        double v = hitResult.getType() == HitResult.Type.MISS ? onMiss : hitResult.getLocation().y + Math.copySign(1, direction.y);
 
-        var worldY = edgeOfSublevel.locate.locateY(null, dependenciesData, null, diagram,sink);
-        worldY.y-=v;
+        var worldY = edgeOfSublevel.locate.locateY(null, dependenciesData, null, diagram, sink);
+        worldY.y -= v;
         return worldY;
     }
 
