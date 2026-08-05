@@ -3,6 +3,7 @@ package com.zelaux.betterdiagram.mixin.debug;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.zelaux.betterdiagram.BetterContraptionDiagram;
+import com.zelaux.betterdiagram.annotations.EmptyInRelease;
 import net.neoforged.neoforge.network.negotiation.NegotiableNetworkComponent;
 import net.neoforged.neoforge.network.negotiation.NetworkComponentNegotiator;
 import org.spongepowered.asm.mixin.*;
@@ -15,6 +16,7 @@ import static com.zelaux.betterdiagram.debug.ServerTestWithoutTwoInstances.kind;
 
 @SuppressWarnings("UnstableApiUsage")
 @Mixin(NetworkComponentNegotiator.class)
+@EmptyInRelease
 public class NetworkComponentNegotiatorMixin {
     @WrapOperation(
         method = "negotiate",

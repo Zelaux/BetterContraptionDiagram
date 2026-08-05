@@ -11,6 +11,8 @@ class ErrorMarker extends ClassVisitor {
     private final NoDebugOnlyInRelease_Transformer removedFromBuild;
     private String className;
     private String source;
+    private Type classType;
+    private boolean isDebug;
 
     protected ErrorMarker(HashSet<DebugEntry> debugEntries, NoDebugOnlyInRelease_Transformer removedFromBuild) {
         super(Opcodes.ASM9);
@@ -21,6 +23,8 @@ class ErrorMarker extends ClassVisitor {
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         this.className = name;
+        classType = Type.getObjectType(name);
+        this.isDebug = debugEntries.contains(DebugEntry.classEntry(classType));
     }
 
     @Override
@@ -30,7 +34,9 @@ class ErrorMarker extends ClassVisitor {
 
     @Override
     public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
+        if(isDebug) return null;
         Type type = Type.getType(descriptor);
+        if(debugEntries.contains(DebugEntry.fieldEntry(classType, type, name))) return null;
         DebugEntry debugEntry = DebugEntry.classEntry(type);
         if(debugEntries.contains(debugEntry)) {
             removedFromBuild.hasErrors = true;
@@ -45,6 +51,9 @@ class ErrorMarker extends ClassVisitor {
 
     @Override
     public MethodVisitor visitMethod(int access, String methodName, String descriptor, String signature, String[] exceptions) {
+        if(isDebug) return null;
+        if(debugEntries.contains(DebugEntry.methodEntry(classType, Type.getMethodType(descriptor), methodName)))
+            return null;
         return new MethodVisitor(api) {
             private int line;
 
@@ -72,7 +81,6 @@ class ErrorMarker extends ClassVisitor {
 
             @Override
             public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
-
                 Type ownerType = Type.getObjectType(owner);
                 Type descType = Type.getType(descriptor);
                 var debugEntry = DebugEntry.fieldEntry(ownerType, descType, name);

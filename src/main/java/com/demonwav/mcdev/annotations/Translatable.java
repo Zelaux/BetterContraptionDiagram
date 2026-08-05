@@ -10,6 +10,8 @@
 
 package com.demonwav.mcdev.annotations;
 
+import com.zelaux.betterdiagram.annotations.DeleteInRelease;
+
 import java.lang.annotation.*;
 
 /**
@@ -29,6 +31,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.PARAMETER)
 @Documented
+@DeleteInRelease
 public @interface Translatable {
     /**
      * Defaults to {@code true}. If this value is {@code false}, MinecraftDev will not create a warning if the

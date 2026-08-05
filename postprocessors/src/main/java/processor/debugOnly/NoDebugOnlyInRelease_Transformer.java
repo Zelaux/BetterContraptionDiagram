@@ -24,7 +24,7 @@ public   static   final HashSet<DebugEntry> debugEntries = new HashSet<>();
 
 
     public NoDebugOnlyInRelease_Transformer(TransformationContext context) {
-        super(3);
+        super(5);
         isDebug = context.extraArguments().isDebug();
     }
 
@@ -50,7 +50,7 @@ public   static   final HashSet<DebugEntry> debugEntries = new HashSet<>();
         ClassFileMetaData metaData = new ClassFileMetaData(byteCodeProvider.getCloned());
         if(!metaData.usesAnnotation(ANNOTATION_TYPE_DESCRIPTOR) && roundIndex == 0) return null;
 
-        ClassVisitor classVisitor = roundIndex == 1 ? ERROR_MARKER : null;
+        ClassVisitor classVisitor = roundIndex == 3 ? ERROR_MARKER : null;
         AnnotatedElementsCollector debugCollector = new AnnotatedElementsCollector(classVisitor, ANNOTATION_TYPE_DESCRIPTOR);
         byteCodeProvider
             .createReader()
@@ -67,7 +67,7 @@ public   static   final HashSet<DebugEntry> debugEntries = new HashSet<>();
         for(var node : debugCollector.annotatedMethods()) {
             debugEntries.add(DebugEntry.methodEntry(dataClassName, node.node));
         }
-        if(roundIndex == 2 && hasErrors) {
+        if(roundIndex == 4 && hasErrors) {
             System.err.println("You cannot use things marked as @DebugOnly in release build");
             System.exit(1);
             RuntimeException exception = new RuntimeException("This code has errors");
