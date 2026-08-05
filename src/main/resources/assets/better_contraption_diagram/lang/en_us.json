@@ -94,6 +94,13 @@
 
 
   "bcd.command.too-many-blocks": "Too many blocks have a center of mass at 0.5",
+  "bcd.command.raycast.nothing": "No collision found within max distance.",
+  "bcd.command.raycast.pos": "Coords: %s",
+  "bcd.command.raycast.block.name": "Block: %s",
+  "bcd.command.raycast.block.side": "Side: %s",
+  "bcd.command.raycast.block.pos": "Block pos: %s",
+  "bcd.command.raycast.entity.name": "Entity: %s",
+  "bcd.command.raycast.entity.uuid": "UUID: %s",
 
   "bcd.com-menu.field-tooltip": "Right-click to disable",
   "bcd.com-menu.invert-mode.normal": "Mode: Same",
@@ -132,5 +139,7 @@
   "balloon_calculation_mode.diagram_position":  "Diagram position",
   "balloon_calculation_mode.player_position": "Player position",
   "balloon_calculation_mode.center_of_balloons":  "Center of balloons",
-  "bcd.gui.balloon-calculator.mode": "Altitude Reference"
+  "bcd.gui.balloon-calculator.mode": "Altitude Reference",
+
+  "__DYMMY__": ""
 }

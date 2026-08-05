@@ -58,6 +58,7 @@ public class BCDCommand {
         ;
 
         BCDInfoCommand.register(bcdCommand);
+        BCDRaycastCommand.register(bcdCommand);
 
         dispatcher.register(bcdCommand);
     }
