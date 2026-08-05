@@ -139,6 +139,8 @@
   "balloon_calculation_mode.diagram_position":  "Diagram position",
   "balloon_calculation_mode.player_position": "Player position",
   "balloon_calculation_mode.center_of_balloons":  "Center of balloons",
+  "balloon_calculation_mode.above_the_ground": "Above the ground",
+  "balloon_calculation_mode.above_the_ground_or_liquid":  "Above the ground or liquid",
   "bcd.gui.balloon-calculator.mode": "Altitude Reference",
 
   "__DYMMY__": ""

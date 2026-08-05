@@ -154,16 +154,19 @@ public class BalloonVolumeCalculatorScreen extends AbstractSimiScreen {
 
 
         int currentY;
+        LocalPlayer player = Minecraft.getInstance().player;
         if(selectedBalloonY.isPresent()) {
             currentY = selectedBalloonY.getAsInt();
         } else else_:{
-            double commonY = calculator.balloonsY();
+            currentY = (int) clientData.bcdDataNotNull_readOnly().balloonCalc().calculationMode().locateWorldY(
+                player, dependenciesData, calculator.balloons, calculator.diagram
+            );
+            /*double commonY = calculator.balloonsY();
             if(!Double.isNaN(commonY)) {
                 currentY = (int) commonY;
                 break else_;
             }
-            LocalPlayer player = Minecraft.getInstance().player;
-            currentY = player.getBlockY();
+            currentY = player.getBlockY();*/
         }
         line.currentY(currentY);
         line.onYChanges(value -> clientData.bcd$updateData(data ->

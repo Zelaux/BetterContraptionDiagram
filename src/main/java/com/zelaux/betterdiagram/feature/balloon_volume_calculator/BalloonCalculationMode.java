@@ -8,6 +8,7 @@ import com.zelaux.betterdiagram.feature.client_mass_tracker.MassTrackerLevelPlot
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.network.features.ModFeature;
+import com.zelaux.betterdiagram.util.RaycastHelper;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
@@ -24,6 +25,8 @@ import lombok.experimental.FieldDefaults;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
@@ -87,12 +90,40 @@ public enum BalloonCalculationMode {
         Vector3d pos = JOMLConversion.toJOML(diagram.getPosition(AnimationTickHolder.getPartialTicks()), sink.tmp);
         return sink.subLevel(pos, subLevel);
     }),
-    playerPosition("player_position", (player, dependenciesData, balloons, diagram, sink) -> sink.worldY(player.getY())),
+    playerPosition("player_position", (player, dependenciesData, balloons, diagram, sink) ->
+        sink.worldY(player.getY())),
 
     centerOfBalloons("center_of_balloons",
         (player, dependenciesData, balloons, diagram, sink) ->
             sink.worldY(BalloonVolumeCalculator.tryLocateBalloonsCenter(balloons))),
+    aboveTheGround("above_the_ground",
+        (player, dependenciesData, balloons, diagram, sink) ->
+            hit(diagram, sink,VecUtil.NY_V, false, dependenciesData, bottomOfSublevel, diagram.level().getMinBuildHeight())
+    ),
+    aboveTheGroundOrLiquid("above_the_ground_or_liquid",
+        (player, dependenciesData, balloons, diagram, sink) ->
+            hit(diagram, sink,VecUtil.NY_V, true, dependenciesData, bottomOfSublevel, diagram.level().getMinBuildHeight())),
+
     ;
+
+    private static YValue hit(DiagramEntity diagram, CalcSink sink, Vector3d set, boolean hitLiquid, SubLevelDependenciesData dependenciesData, BalloonCalculationMode edgeOfSublevel, int onMiss) {
+        Level level = diagram.level();
+        HitResult hitResult = RaycastHelper.getHitResult(
+            level,
+            Sable.HELPER.projectOutOfSubLevel(level,diagram.position()),
+            set,
+            (float) Math.max(Math.abs(diagram.getY() - level.getMinBuildHeight()), diagram.getY() - level.getMaxBuildHeight()),
+            diagram,
+            hitLiquid,
+            false,
+            false);
+
+        double v = hitResult.getType() == HitResult.Type.MISS ? onMiss : hitResult.getLocation().y+Math.copySign(1,set.y);
+
+        var worldY = edgeOfSublevel.locate.locateY(null, dependenciesData, null, diagram,sink);
+        worldY.y-=v;
+        return worldY;
+    }
 
 
     public static final Codec<Optional<BalloonCalculationMode>> CODEC = Codec.STRING.xmap(
@@ -152,6 +183,7 @@ public enum BalloonCalculationMode {
         YValue worldY(double y) {
             return tmpYValue.set(y);
         }
+
     }
 }
 
