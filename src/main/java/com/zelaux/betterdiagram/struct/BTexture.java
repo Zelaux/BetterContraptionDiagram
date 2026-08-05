@@ -15,8 +15,8 @@ public class BTexture implements ScreenElement {
 
     public final int width, height;
     public final int startX, startY;
-    public final int width_grid, height_grid;
-    public final int startX_grid, startY_grid;
+    public final double width_grid, height_grid;
+    public final double startX_grid, startY_grid;
     public final int texWidth, texHeight;
 
 
@@ -79,10 +79,10 @@ public class BTexture implements ScreenElement {
                     final int height,
                     final int texWidth,
                     final int texHeight,
-                    int startX_grid,
-                    int startY_grid,
-                    int width_grid,
-                    int height_grid
+                    double startX_grid,
+                    double startY_grid,
+                    double width_grid,
+                    double height_grid
     ) {
         this.location = location;
         this.width = width;
@@ -102,6 +102,20 @@ public class BTexture implements ScreenElement {
         return new BTexture(owner.location, startX, startY, width, height, owner.texWidth, owner.texHeight);
     }
 
+    public static BTexture textureGrid(final AtlasTexture owner, final double startX_grid, final double startY_grid, final double width_grid, final double height_grid) {
+        return new BTexture(owner.location,
+            (int)(startX_grid * owner.gridCellWidth),
+            (int)(startY_grid * owner.gridCellHeight),
+            (int)(width_grid * owner.gridCellWidth),
+            (int)(height_grid * owner.gridCellHeight),
+            owner.texWidth,
+            owner.texHeight,
+            startX_grid,
+            startY_grid,
+            width_grid,
+            height_grid
+        );
+    }
     public static BTexture textureGrid(final AtlasTexture owner, final int startX_grid, final int startY_grid, final int width_grid, final int height_grid) {
         return new BTexture(owner.location,
             startX_grid * owner.gridCellWidth,
