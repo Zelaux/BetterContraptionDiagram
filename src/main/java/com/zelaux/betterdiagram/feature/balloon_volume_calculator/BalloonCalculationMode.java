@@ -119,7 +119,7 @@ public enum BalloonCalculationMode {
             false,
             false);
 
-        double v = hitResult.getType() == HitResult.Type.MISS ? onMiss : hitResult.getLocation().y + Math.copySign(1, direction.y);
+        double v = hitResult.getType() == HitResult.Type.MISS ? onMiss : hitResult.getLocation().y + Math.copySign(1, direction.y());
 
         var worldY = edgeOfSublevel.locate.locateY(null, dependenciesData, null, diagram, sink);
         worldY.y -= v;

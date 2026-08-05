@@ -229,7 +229,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
             if(weights.isEmpty() || !clientData.axisStates(i)) continue;
             var group = BForceGroups.AXIS_GROUPS[i];
             int color = group.color() | (0xff << 24);
-            Vector3d AXIS = DIRECTIONS[i];
+            Vector3dc AXIS = DIRECTIONS[i];
             projectedAxis.set(orientation.transformInverse(tmp.set(AXIS)));
             if(Runtime.equals(maxAbsXY(projectedAxis), 0, 0.1f)) {
                 Vector2d originCoords = DiagramScreen.getScreenCoords(tmp.set(weights.position()), orientation, cameraPos, projMatrix, areaWidth, areaHeight);

@@ -20,14 +20,14 @@ import java.util.Comparator;
 import java.util.Objects;
 
 public class VecUtil {
-    public static final Vector3d X_V = new Vector3d(1, 0, 0);
-    public static final Vector3d Y_V = new Vector3d(0, 1, 0);
-    public static final Vector3d Z_V = new Vector3d(0, 0, 1);
-    public static final Vector3d NX_V = new Vector3d(-1, 0, 0);
-    public static final Vector3d NY_V = new Vector3d(0, -1, 0);
-    public static final Vector3d NZ_V = new Vector3d(0, 0, -1);
-    public static final Vector3d[] DIRECTIONS = {X_V, Y_V, Z_V};
-    public static final Vector3d ZERO_V = new Vector3d(0, 0, 0);
+    public static final Vector3dc X_V = new Vector3d(1, 0, 0);
+    public static final Vector3dc Y_V = new Vector3d(0, 1, 0);
+    public static final Vector3dc Z_V = new Vector3d(0, 0, 1);
+    public static final Vector3dc NX_V = new Vector3d(-1, 0, 0);
+    public static final Vector3dc NY_V = new Vector3d(0, -1, 0);
+    public static final Vector3dc NZ_V = new Vector3d(0, 0, -1);
+    public static final Vector3dc[] DIRECTIONS = {X_V, Y_V, Z_V};
+    public static final Vector3dc ZERO_V = new Vector3d(0, 0, 0);
     public static final DoubleGetter<Vector3dc>[] GETTERS_3d = genArr(Vector3dc::x, Vector3dc::y, Vector3dc::z);
     public static final DoubleSetter<Vector3d>[] SETTERS_3d = genArr((t, v) -> t.x = v, (t, v) -> t.y = v, (t, v) -> t.z = v);
 

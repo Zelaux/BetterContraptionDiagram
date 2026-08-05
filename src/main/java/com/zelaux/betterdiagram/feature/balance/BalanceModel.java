@@ -73,7 +73,7 @@ public class BalanceModel {
         return CenterMassCalculator.equals2(v1, v2);
     }
 
-    private static void addStacks(Weights weights, Vector3d uni, Vector3dc expectedCOM, double value0) {
+    private static void addStacks(Weights weights, Vector3dc uni, Vector3dc expectedCOM, double value0) {
         if(CenterMassCalculator.equals2(value0, 0)) return;
         weights.totalWeight = value0;
 
