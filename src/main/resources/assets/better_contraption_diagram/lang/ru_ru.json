@@ -76,6 +76,7 @@
   "bcd.diagram.offcenter-blocks-mode.showAll.desc": "Показывать все блоки со смещённым центром масс по активным осям",
 
   "bcd.diagram.offcenter-blocks-mode.hold-to-browse":  "Зажмите [%1$s], чтобы найти пару",
+  "bcd.mass-tooltip.error": "Произошла ошибка при поиске симметрий",
   "bcd.tooltip-handler.message":  "Зажмите [%1$s] %2$s",
   "bcd.tooltip-handler.balloon.message":  "для открытия калькулятора объёма шаров",
 
@@ -93,6 +94,14 @@
 
 
   "bcd.command.too-many-blocks": "Слишком много блоков имеют центр масс в точке 0.5",
+
+  "bcd.command.raycast.nothing": "Не найдено блоков в пределах заданной дистанции",
+  "bcd.command.raycast.pos": "Позиция: %s",
+  "bcd.command.raycast.block.name": "Блок: %s",
+  "bcd.command.raycast.block.side": "Сторона: %s",
+  "bcd.command.raycast.block.pos": "Позиция блока: %s",
+  "bcd.command.raycast.entity.name": "Сущность: %s",
+  "bcd.command.raycast.entity.uuid": "UUID: %s",
 
   "bcd.com-menu.field-tooltip": "ПКМ, чтобы отключить",
   "bcd.com-menu.invert-mode.normal": "Режим: Тот же",
@@ -131,5 +140,9 @@
   "balloon_calculation_mode.diagram_position":  "Позиция диаграммы",
   "balloon_calculation_mode.player_position": "Позиция игрока",
   "balloon_calculation_mode.center_of_balloons":  "Центр шаров",
-  "bcd.gui.balloon-calculator.mode": "Точка отсчёта Y"
+  "balloon_calculation_mode.above_the_ground": "Над землёй",
+  "balloon_calculation_mode.above_the_ground_or_liquid": "Над землёй или жидкостью",
+  "bcd.gui.balloon-calculator.mode": "Точка отсчёта Y",
+
+  "__DUMMY__": ""
 }
