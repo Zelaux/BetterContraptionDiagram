@@ -87,6 +87,18 @@ public record BalloonModule(
                 })
                 .forEach(list::add);
         }
-        OPEN_BALLOON_SCREEN_TOOLTIP_HANDLER.addTooltip(this, list.size() - 1, list);
+        list.add(Component.translatable("bcd.tooltip-handler.balloon.open-message").withStyle(ChatFormatting.DARK_GRAY));
+        //OPEN_BALLOON_SCREEN_TOOLTIP_HANDLER.addTooltip(this, list.size() - 1, list);
+    }
+
+    @Override
+    public boolean canClick() {
+        return true;
+    }
+
+    @Override
+    public boolean onClick() {
+        OPEN_BALLOON_SCREEN_TOOLTIP_HANDLER.onActive(this);
+        return true;
     }
 }

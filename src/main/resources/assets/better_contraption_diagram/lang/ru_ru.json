@@ -79,6 +79,7 @@
   "bcd.mass-tooltip.error": "Произошла ошибка при поиске симметрий",
   "bcd.tooltip-handler.message":  "Зажмите [%1$s] %2$s",
   "bcd.tooltip-handler.balloon.message":  "для открытия калькулятора объёма шаров",
+  "bcd.tooltip-handler.balloon.open-message":  "Кликните для открытия калькулятора объёма шаров",
 
   "bcd.gui.scrollInput.ctrlScrollsSlower": "Ctrl для медленной прокрутки",
   "bcd.common.shift-scale": "Зажмите [Shift] для шага 0.5",

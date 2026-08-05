@@ -14,7 +14,10 @@ import com.zelaux.betterdiagram.index.BForceGroups;
 import com.zelaux.betterdiagram.index.BTextures;
 import com.zelaux.betterdiagram.struct.BTexture;
 import com.zelaux.betterdiagram.struct.MassStack;
-import com.zelaux.betterdiagram.util.*;
+import com.zelaux.betterdiagram.util.CenterMassCalculator;
+import com.zelaux.betterdiagram.util.MergedPointForceCalculator;
+import com.zelaux.betterdiagram.util.MixinCalculatorUtil;
+import com.zelaux.betterdiagram.util.StringUtil;
 import com.zelaux.betterdiagram.util.ui.UIUtil;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
@@ -105,6 +108,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
         final int diagramX = this.width / 2 - DIAGRAM_TEXTURE.width / 2;
         final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
         WithClientData clientData = (WithClientData) diagram;
+        DiagramInfoTooltip diagramTooltip = new DiagramInfoTooltip(self(), this.subLevel, this.serverData);
         var layout = UIUtil.vertical(4,
             new BDiagramButton(BTextures.Diagram.ICON_CALCULATOR, 0, 0, Component.translatable("bcd.diagram-button"), () -> CenterMassMovingScreen.toggle(self()))
                 .setColorSelector((active, hover, texture) -> hover | Minecraft.getInstance().screen instanceof CenterMassMovingScreen ? 1 : 0)
@@ -129,9 +133,9 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 )
             ,
             new BDiagramButton(BTextures.Diagram.ICON_INFO, 0, 0,
-                Component.translatable("bcd.extra-info.diagram-button"), (Runnable) null)
-                .supportedButtons(ButtonKind.EMPTY_ARRAY)
-                .withTooltip(new DiagramInfoTooltip(self(), this.subLevel, this.serverData))
+                Component.translatable("bcd.extra-info.diagram-button"), diagramTooltip::onClick)
+                .supportedButtons(diagramTooltip.canClick() ? ButtonKind.leftArr() : ButtonKind.EMPTY_ARRAY)
+                .withTooltip(diagramTooltip)
 
         );
         layout.setPosition(diagramX + 9, diagramY + 9 + 20 * 4);

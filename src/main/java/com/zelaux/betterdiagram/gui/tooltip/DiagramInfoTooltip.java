@@ -1,7 +1,10 @@
 package com.zelaux.betterdiagram.gui.tooltip;
 
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
-import com.zelaux.betterdiagram.gui.tooltip.diagram_info_tooltip.*;
+import com.zelaux.betterdiagram.gui.tooltip.diagram_info_tooltip.BalloonModule;
+import com.zelaux.betterdiagram.gui.tooltip.diagram_info_tooltip.DiagramInfoModule;
+import com.zelaux.betterdiagram.gui.tooltip.diagram_info_tooltip.GravityModule;
+import com.zelaux.betterdiagram.gui.tooltip.diagram_info_tooltip.TerminalSpeedModule;
 import com.zelaux.betterdiagram.gui.widget.BDiagramButton;
 import com.zelaux.betterdiagram.index.Colors;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
@@ -43,4 +46,16 @@ public class DiagramInfoTooltip implements BDiagramButton.TooltipListProvider {
 
     }
 
+    public void onClick() {
+        for(DiagramInfoModule module : modules) {
+            if(module.onClick()) break;
+        }
+    }
+
+    public boolean canClick() {
+        for(DiagramInfoModule module : modules) {
+            if(module.canClick()) return true;
+        }
+        return false;
+    }
 }

@@ -1,5 +1,7 @@
 package com.zelaux.betterdiagram.gui.user;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum ButtonKind {
     LEFT,
     RIGHT,
@@ -16,5 +18,9 @@ public enum ButtonKind {
     public static ButtonKind fromButton(int button) {
         if(button < 0 || button >= all.length) return null;
         return all[button];
+    }
+
+    public static ButtonKind @NotNull [] leftArr() {
+        return new ButtonKind[]{LEFT};
     }
 }

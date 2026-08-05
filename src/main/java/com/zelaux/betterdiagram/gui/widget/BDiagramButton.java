@@ -39,7 +39,7 @@ public class BDiagramButton extends AbstractWidget {
     private IndexSelector iconSwitch;
     private ColorSelector colorSwitch;
     public Color[] colors = DEFAULT_COLORS;
-    public ButtonKind[] supportedButtons = {ButtonKind.LEFT};
+    public ButtonKind[] supportedButtons = ButtonKind.leftArr();
 
     public BDiagramButton supportedButtons(ButtonKind... supportedButtons) {
         this.supportedButtons = supportedButtons;

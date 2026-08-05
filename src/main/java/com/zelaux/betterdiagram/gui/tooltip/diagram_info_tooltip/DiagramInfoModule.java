@@ -7,4 +7,11 @@ import java.util.List;
 public interface DiagramInfoModule {
 
     void appendInto(List<Component> list, int tooltipColor);
+
+    default boolean onClick(){
+        return false;
+    }
+    default boolean canClick(){
+        return false;
+    }
 }

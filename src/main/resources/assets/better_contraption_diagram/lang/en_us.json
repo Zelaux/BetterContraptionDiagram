@@ -79,6 +79,7 @@
   "bcd.mass-tooltip.error":  "Error occurred while searching symmetries",
   "bcd.tooltip-handler.message":  "Hold [%1$s] %2$s",
   "bcd.tooltip-handler.balloon.message":  "to Open Balloon Volume Calculator",
+  "bcd.tooltip-handler.balloon.open-message":  "Click to Open Balloon Volume Calculator",
 
   "bcd.gui.scrollInput.ctrlScrollsSlower": "Ctrl to Scroll Slower",
   "bcd.common.shift-scale": "Hold [Shift] to step by 0.5",
