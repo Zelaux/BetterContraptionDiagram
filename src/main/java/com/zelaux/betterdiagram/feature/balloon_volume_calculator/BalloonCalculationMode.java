@@ -36,6 +36,19 @@ import java.util.Optional;
 
 @Getter
 public enum BalloonCalculationMode {
+    playerPosition("player_position", (player, dependenciesData, balloons, diagram, sink) ->
+        sink.worldY(player.getY())),
+    diagramPosition("diagram_position", (player, dependenciesData, balloons, diagram, sink) -> {
+        SubLevel subLevel = Sable.HELPER.getContaining(diagram);
+        Vector3d pos = JOMLConversion.toJOML(diagram.getPosition(AnimationTickHolder.getPartialTicks()), sink.tmp);
+        return sink.subLevel(pos, subLevel);
+    }),
+    aboveTheGround("above_the_ground", (player, dependenciesData, balloons, diagram, sink) ->
+        hitBellow(dependenciesData, diagram, sink, false)
+    ),
+    aboveTheGroundOrLiquid("above_the_ground_or_liquid", (player, dependenciesData, balloons, diagram, sink) ->
+        hitBellow(dependenciesData, diagram, sink, true)
+    ),
     bottomOfSublevel("bottom_of_sublevel", (player, dependenciesData, balloons, diagram, sink) -> {
         BCDData data = ((WithClientData) diagram).bcdDataNotNull_readOnly();
         double y = Double.MAX_VALUE;
@@ -44,19 +57,14 @@ public enum BalloonCalculationMode {
         }
         return sink.worldY(y);
     }),
-    diagramPosition("diagram_position", (player, dependenciesData, balloons, diagram, sink) -> {
-        SubLevel subLevel = Sable.HELPER.getContaining(diagram);
-        Vector3d pos = JOMLConversion.toJOML(diagram.getPosition(AnimationTickHolder.getPartialTicks()), sink.tmp);
-        return sink.subLevel(pos, subLevel);
+    topOfSublevel("top_of_sublevel", (player, dependenciesData, balloons, diagram, sink) -> {
+        BCDData data = ((WithClientData) diagram).bcdDataNotNull_readOnly();
+        double y = -Double.MAX_VALUE;
+        for(SubLevel level : dependenciesData.mergedMainGroup(data)) {
+            y = Math.max(y, level.boundingBox().maxY());
+        }
+        return sink.worldY(y);
     }),
-    playerPosition("player_position", (player, dependenciesData, balloons, diagram, sink) ->
-        sink.worldY(player.getY())),
-    aboveTheGround("above_the_ground", (player, dependenciesData, balloons, diagram, sink) ->
-        hitBellow(dependenciesData, diagram, sink, false)
-    ),
-    aboveTheGroundOrLiquid("above_the_ground_or_liquid", (player, dependenciesData, balloons, diagram, sink) ->
-        hitBellow(dependenciesData, diagram, sink, true)
-    ),
     COMOfSublevel("com_of_sublevel", (player, dependenciesData, balloons, diagram, sink) -> {
         BCDData data = ((WithClientData) diagram).bcdDataNotNull_readOnly();
         DiagramDataPacket forces = dependenciesData.mergedForces(data);
@@ -79,14 +87,6 @@ public enum BalloonCalculationMode {
         }
         merger.finish();
         return sink.worldY(merger.centerOfMass.y);
-    }),
-    topOfSublevel("top_of_sublevel", (player, dependenciesData, balloons, diagram, sink) -> {
-        BCDData data = ((WithClientData) diagram).bcdDataNotNull_readOnly();
-        double y = -Double.MAX_VALUE;
-        for(SubLevel level : dependenciesData.mergedMainGroup(data)) {
-            y = Math.max(y, level.boundingBox().maxY());
-        }
-        return sink.worldY(y);
     }),
     centerOfSublevel("center_of_sublevel", (player, dependenciesData, balloons, diagram, sink) -> {
         BCDData data = ((WithClientData) diagram).bcdDataNotNull_readOnly();
