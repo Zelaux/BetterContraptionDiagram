@@ -1,9 +1,11 @@
 {
   "required": true,
   "package": "com.zelaux.betterdiagram.mixin",
+  "plugin": "com.zelaux.betterdiagram.mixin_plugin.BetterContraptionDiagramCompatMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "RemovedGuiUtilsMixin",
+    "RunAutoGenMixin",
     "accessors.BalloonAccessors",
     "accessors.FloatingBlockDataAccessors",
     "accessors.IDockingConnectorBlockEntity",
@@ -19,6 +21,7 @@
     "accessors.server_helpers.SubLevelStorageMixin",
     "calculator.Calculator_DiagramDataPacket",
     "COM_view.com_view_GoggleOverlayRenderer",
+    "compat.gadgets.Mixin_PhysicsGantryShaftBlockEntity",
     "debug.Debug_BlockEntityPropeller",
     "debug.fun.JFF_Entity",
     "debug.fun.JFF_SubLevelEntityCollision",

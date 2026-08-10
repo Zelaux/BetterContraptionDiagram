@@ -11,6 +11,10 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
+    public static final ModConfigSpec.IntValue SUBLEVEL_TREE_DEPTH = BUILDER
+        .comment("max connected sublevel depth search")
+        .defineInRange("maxSublevelTreeDepth", 20, 3, 1000);
+
     public static final ModConfigSpec.IntValue CENTER_OF_MASS_COLOR = BUILDER
         .comment("color of center of mass")
         .defineInRange("centerOfMassColor", 0x76614D, 0, Integer.MAX_VALUE);

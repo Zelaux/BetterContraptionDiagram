@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler;
 
+import com.zelaux.betterdiagram.extend.IRopeStrandHolderBlockEntity;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.AbstractForceMapper;
@@ -26,8 +27,8 @@ public class RopeActor implements ActorHandler {
     RopeStrandHolderBlockEntity ropeStrandHolderBlockEntity;
 
     @Override
-    public @Nullable Iterable<? extends AbstractForceMapper> mapToConstraint(SubLevel a, Map<SubLevel, SubLevelGroup> subLevel2Group) {
-        ObjectArrayList<SubLevel> list = (ObjectArrayList<SubLevel>) ropeStrandHolderBlockEntity.sable$getConnectionDependencies();
+    public @Nullable List<AbstractForceMapper> mapToConstraint(SubLevel a, Map<SubLevel, SubLevelGroup> subLevel2Group) {
+        ObjectArrayList<SubLevel> list = getConnectionDependencies();
 
         RopeStrandHolderBehavior behavior = ropeStrandHolderBlockEntity.getBehavior();
         ClientRopeStrand clientStrand = behavior.getClientStrand();
@@ -59,7 +60,19 @@ public class RopeActor implements ActorHandler {
         ));
     }
 
-    private @NotNull ObjectArrayList<SubLevel> collectDependencies(Level level, ClientRopeStrand clientStrand) {
+    protected @Nullable ObjectArrayList<@NotNull SubLevel> getConnectionDependencies() {
+        return getConnectionDependencies(ropeStrandHolderBlockEntity);
+    }
+
+    protected static @Nullable ObjectArrayList<@NotNull SubLevel> getConnectionDependencies(RopeStrandHolderBlockEntity entity) {
+        if(entity instanceof IRopeStrandHolderBlockEntity iEntity) {
+            Iterable<@NotNull SubLevel> levels = iEntity.bcd$sable$getConnectionDependencies();
+            return levels == null ? null : new ObjectArrayList<>(levels.iterator());
+        }
+        return null;
+    }
+
+    protected @NotNull ObjectArrayList<SubLevel> collectDependencies(Level level, ClientRopeStrand clientStrand) {
         final var dependencies = new ObjectArrayList<SubLevel>();
 
         final SubLevel subLevelA = Sable.HELPER.getContaining(level, clientStrand.startAttachment);

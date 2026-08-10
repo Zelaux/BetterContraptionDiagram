@@ -51,6 +51,15 @@ public class DebugRuntime {
             stream.write(message.getBytes(StandardCharsets.UTF_8));
         }
     }
+    @SneakyThrows
+    public static void saveInFile(String fileName, byte[] bytes){
+        var file=new File(FOLDER,fileName);
+        file.getParentFile().mkdirs();
+        System.out.println(file.getAbsolutePath());
+        try(FileOutputStream stream = new FileOutputStream(file, false)) {
+            stream.write(bytes);
+        }
+    }
 
     public static boolean removeAll(String message) {
         return addThreadToFile(FILE,"removeAll | "+message);

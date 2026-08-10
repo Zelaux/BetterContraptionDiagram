@@ -1,6 +1,7 @@
 package com.zelaux.betterdiagram.mixin.feature.include_subsublevel;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDependencies;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
@@ -69,7 +70,7 @@ public abstract class DiagramScreenMixin implements IDiagramScreenWithDependenci
     ) {
         IDiagramScreenWithDependencies dependencies = (IDiagramScreenWithDependencies) screen;
 
-        var data = SubLevelDependenciesData.tryConstruct(subLevel, 3);
+        var data = SubLevelDependenciesData.tryConstruct(subLevel, Config.SUBLEVEL_TREE_DEPTH.getAsInt());
         if(data != null) {
             dependencies.bcd$subLevelDependencies(data);
         }

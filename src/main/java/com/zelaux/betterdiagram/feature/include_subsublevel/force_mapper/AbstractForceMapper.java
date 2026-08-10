@@ -4,10 +4,7 @@ import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependencies
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.struct.Forces;
 import dev.ryanhcode.sable.sublevel.SubLevel;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Lombok;
-import lombok.SneakyThrows;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,12 +47,19 @@ public abstract class AbstractForceMapper {
         return isMergable;
     }
 
+    @With
     public record SubLevelInfo(
         SubLevel sourceSubLevel,
         SubLevelGroup sourceGroup,
         SubLevel targetSubLevel,
         SubLevelGroup targetGroup
-    ) {}
+    ) {
+        public SubLevelInfo withTarget(SubLevel subLevel, SubLevelGroup group){
+            return new SubLevelInfo(
+                sourceSubLevel,sourceGroup,subLevel,group
+            );
+        }
+    }
 
     SubLevel originSubLevel;
     SubLevelGroup originGroup;

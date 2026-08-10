@@ -165,7 +165,7 @@ public class RopeForceMapper extends AbstractForceMapper {
         double extensionGoal = ((IRopeData) clientRopeStrand1).bcd$extension_goal();
         if(extensionGoal >= 0) {
             double length = tmp.set(points.get(1).position()).sub(points.get(0).position()).length();
-            totalExtension = 0;
+            totalExtension = length;
             minDistance = length / extensionGoal;
         }
         for(int i = 0; i < lastI; i++) {
@@ -174,7 +174,7 @@ public class RopeForceMapper extends AbstractForceMapper {
             double cos = tmp.set(next).sub(cur).normalize().dot(prev);
             directions.add(new Vector3d(tmp));
             if(i == 0) {
-            } else if(!Runtime.equals(0, cos, COS_DELTA)) {
+            } else if(!Runtime.equals(1, cos, COS_DELTA)) {
                 singleDirected = false;
             }
             prev.set(tmp);
@@ -189,7 +189,7 @@ public class RopeForceMapper extends AbstractForceMapper {
 
             totalExtension += distance;
 
-            boolean equaly = minDistance == Double.MAX_VALUE || maxDistance > 0 && Runtime.equals(maxDistance / minDistance, 1, 0.2);
+            boolean equaly = minDistance == Double.MAX_VALUE || maxDistance > 0 && minDistance>=1-0.02f;
             if(!equaly && wasEqualy && equalySpacedIndex == -1) {
                 equalySpacedIndex = i;
             }
