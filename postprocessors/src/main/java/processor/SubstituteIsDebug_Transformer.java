@@ -28,7 +28,7 @@ public class SubstituteIsDebug_Transformer extends AbstractClassFileTransformer 
 
 
     public SubstituteIsDebug_Transformer(TransformationContext context) {
-        super(3);
+        super(Vars.currentMaxRounds);
         isDebug = context.extraArguments().isDebug();
     }
 

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Type;
+import processor.Vars;
 import processor.util.AnnotatedElementsCollector;
 import processor.util.CodeEntry;
 
@@ -26,7 +27,7 @@ public   static   final HashSet<CodeEntry> debugEntries = new HashSet<>();
 
 
     public NoDebugOnlyInRelease_Transformer(TransformationContext context) {
-        super(5);
+        super(Vars.currentMaxRounds+1);
         isDebug = context.extraArguments().isDebug();
     }
 
@@ -52,7 +53,7 @@ public   static   final HashSet<CodeEntry> debugEntries = new HashSet<>();
         ClassFileMetaData metaData = new ClassFileMetaData(byteCodeProvider.getCloned());
         if(!metaData.usesAnnotation(ANNOTATION_TYPE_DESCRIPTOR) && roundIndex == 0) return null;
 
-        ClassVisitor classVisitor = roundIndex == 3 ? ERROR_MARKER : null;
+        ClassVisitor classVisitor = roundLeft == 2 ? ERROR_MARKER : null;
         AnnotatedElementsCollector debugCollector = new AnnotatedElementsCollector(classVisitor, ANNOTATION_TYPE_DESCRIPTOR, false);
         byteCodeProvider
             .createReader()
@@ -69,7 +70,7 @@ public   static   final HashSet<CodeEntry> debugEntries = new HashSet<>();
         for(var node : debugCollector.annotatedMethods()) {
             debugEntries.add(CodeEntry.methodEntry(dataClassName, node.node));
         }
-        if(roundIndex == 4 && hasErrors) {
+        if(roundLeft == 1 && hasErrors) {
             System.err.println("You cannot use things marked as @DebugOnly in release build");
             System.exit(1);
             RuntimeException exception = new RuntimeException("This code has errors");
