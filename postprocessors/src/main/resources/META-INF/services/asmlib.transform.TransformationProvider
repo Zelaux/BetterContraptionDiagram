@@ -2,3 +2,4 @@ processor.AddDataCorrector
 processor.debugOnly.NoDebugOnlyInRelease_Transformer
 processor.SubstituteIsDebug_Transformer
 processor.DeleteIfNotDebug_Transformer
+processor.SilentDelete_Transformer

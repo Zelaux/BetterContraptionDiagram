@@ -1,20 +1,21 @@
 package processor.debugOnly;
 
 import org.objectweb.asm.*;
+import processor.util.CodeEntry;
 
 import java.io.PrintStream;
 import java.util.HashSet;
 
 class ErrorMarker extends ClassVisitor {
 
-    private final HashSet<DebugEntry> debugEntries;
+    private final HashSet<CodeEntry> debugEntries;
     private final NoDebugOnlyInRelease_Transformer removedFromBuild;
     private String className;
     private String source;
     private Type classType;
     private boolean isDebug;
 
-    protected ErrorMarker(HashSet<DebugEntry> debugEntries, NoDebugOnlyInRelease_Transformer removedFromBuild) {
+    protected ErrorMarker(HashSet<CodeEntry> debugEntries, NoDebugOnlyInRelease_Transformer removedFromBuild) {
         super(Opcodes.ASM9);
         this.debugEntries = debugEntries;
         this.removedFromBuild = removedFromBuild;
@@ -24,7 +25,7 @@ class ErrorMarker extends ClassVisitor {
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         this.className = name;
         classType = Type.getObjectType(name);
-        this.isDebug = debugEntries.contains(DebugEntry.classEntry(classType));
+        this.isDebug = debugEntries.contains(CodeEntry.classEntry(classType));
     }
 
     @Override
@@ -36,8 +37,8 @@ class ErrorMarker extends ClassVisitor {
     public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
         if(isDebug) return null;
         Type type = Type.getType(descriptor);
-        if(debugEntries.contains(DebugEntry.fieldEntry(classType, type, name))) return null;
-        DebugEntry debugEntry = DebugEntry.classEntry(type);
+        if(debugEntries.contains(CodeEntry.fieldEntry(classType, type, name))) return null;
+        CodeEntry debugEntry = CodeEntry.classEntry(type);
         if(debugEntries.contains(debugEntry)) {
             removedFromBuild.hasErrors = true;
             showError(
@@ -52,7 +53,7 @@ class ErrorMarker extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String methodName, String descriptor, String signature, String[] exceptions) {
         if(isDebug) return null;
-        if(debugEntries.contains(DebugEntry.methodEntry(classType, Type.getMethodType(descriptor), methodName)))
+        if(debugEntries.contains(CodeEntry.methodEntry(classType, Type.getMethodType(descriptor), methodName)))
             return null;
         return new MethodVisitor(api) {
             private int line;
@@ -67,7 +68,7 @@ class ErrorMarker extends ClassVisitor {
             public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
                 Type ownerType = Type.getObjectType(owner);
                 Type descType = Type.getType(descriptor);
-                DebugEntry debugEntry = DebugEntry.methodEntry(ownerType, descType, name);
+                CodeEntry debugEntry = CodeEntry.methodEntry(ownerType, descType, name);
                 if(debugEntries.contains(debugEntry)) {
                     removedFromBuild.hasErrors = true;
 
@@ -83,7 +84,7 @@ class ErrorMarker extends ClassVisitor {
             public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
                 Type ownerType = Type.getObjectType(owner);
                 Type descType = Type.getType(descriptor);
-                var debugEntry = DebugEntry.fieldEntry(ownerType, descType, name);
+                var debugEntry = CodeEntry.fieldEntry(ownerType, descType, name);
                 if(debugEntries.contains(debugEntry)) {
                     removedFromBuild.hasErrors = true;
 

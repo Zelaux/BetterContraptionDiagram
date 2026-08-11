@@ -1,4 +1,4 @@
-package processor.debugOnly;
+package processor.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +8,7 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class AnnotatedElementsCollector extends ClassVisitor {
 
@@ -17,9 +18,29 @@ public class AnnotatedElementsCollector extends ClassVisitor {
     protected final ArrayList<AnnotatedElement<MethodNode>> annotatedMethods;
     @Getter
     protected boolean isAnnotated;
+    public boolean registerAllNestedIfAnnotated =false;
     protected String annotationTypeDescriptor;
     @Getter
     protected ArrayList<AnnotationNode> ownDescriptors;
+    @Getter
+    protected Type classType;
+
+    public void registerFound(Collection<CodeEntry> entries) {
+        Type type = classType;
+        if(isAnnotated()){
+            entries.add(CodeEntry.classEntry(type));
+        }
+        for(var node : annotatedFields()) {
+            entries.add(CodeEntry.fieldEntry(type, node.node));
+        }
+        for(var node : annotatedMethods()) {
+            entries.add(CodeEntry.methodEntry(type, node.node));
+        }
+    }
+
+    public boolean isEmpty() {
+        return !isAnnotated && annotatedFields.isEmpty() && annotatedMethods.isEmpty();
+    }
 
     @AllArgsConstructor
     public static class AnnotatedElement<T> {
@@ -28,12 +49,26 @@ public class AnnotatedElementsCollector extends ClassVisitor {
 
     }
 
-    public AnnotatedElementsCollector(ClassVisitor classVisitor, String annotationTypeDescriptor) {
+    public AnnotatedElementsCollector(ClassVisitor classVisitor, String annotationTypeDescriptor, boolean registerAllNestedIfAnnotated) {
         super(Opcodes.ASM9, classVisitor);
 
+        this.registerAllNestedIfAnnotated =registerAllNestedIfAnnotated;
         annotatedFields = new ArrayList<>();
         annotatedMethods = new ArrayList<>();
         this.annotationTypeDescriptor = annotationTypeDescriptor;
+    }
+
+    @Override
+    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+        isAnnotated=false;
+        ownDescriptors=null;
+        annotatedFields.clear();
+        annotatedMethods.clear();
+        annotationTypeDescriptor=null;
+
+        classType =Type.getObjectType(name);
+
+        super.visit(version, access, name, signature, superName, interfaces);
     }
 
     @Override
@@ -72,6 +107,12 @@ public class AnnotatedElementsCollector extends ClassVisitor {
             public void visitEnd() {
                 super.visitEnd();
                 if(myAnnotated!=null) return;
+                if(isAnnotated && registerAllNestedIfAnnotated){
+                    AnnotatedElement<FieldNode> e = new AnnotatedElement<>(node);
+                    e.annotations.add(AnnotatedElementsCollector.this.ownDescriptors.getFirst());
+                    annotatedFields.add(e);
+                    return;
+                }
                 if(cv != null) node.accept(cv);
             }
         };
@@ -101,6 +142,12 @@ public class AnnotatedElementsCollector extends ClassVisitor {
             public void visitEnd() {
                 super.visitEnd();
                 if(myAnnotated!=null) return;
+                if(isAnnotated && registerAllNestedIfAnnotated){
+                    var e = new AnnotatedElement<>(node);
+                    e.annotations.add(AnnotatedElementsCollector.this.ownDescriptors.getFirst());
+                    annotatedMethods.add(e);
+                    return;
+                }
                 if(cv != null) node.accept(cv);
             }
         };

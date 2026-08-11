@@ -20,10 +20,11 @@ import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
-import processor.debugOnly.AnnotatedElementsCollector;
-import processor.debugOnly.DebugEntry;
+import processor.util.AnnotatedElementsCollector;
+import processor.util.CodeEntry;
 import processor.debugOnly.NoDebugOnlyInRelease_Transformer;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class DeleteIfNotDebug_Transformer extends AbstractClassFileTransformer {
@@ -53,7 +54,7 @@ public class DeleteIfNotDebug_Transformer extends AbstractClassFileTransformer {
     }
 
     public ObjectOpenHashSet<String> nestedToDelete=new ObjectOpenHashSet<>();
-    private static final AnnotatedElementsCollector NESTED_COLLECTOR =new AnnotatedElementsCollector(null,"dummy"){{
+    private static final AnnotatedElementsCollector NESTED_COLLECTOR =new AnnotatedElementsCollector(null,"dummy", true){{
         isAnnotated=true;
     }};
     @Override
@@ -67,21 +68,18 @@ public class DeleteIfNotDebug_Transformer extends AbstractClassFileTransformer {
         ClassNode classNode = byteCodeProvider.createClassNode();
         AnnotatedElementsCollector debugCollector = getCollector(classNode);
         Type dataClassName = Type.getObjectType(classNode.name);
+
+        HashSet<CodeEntry> debugEntries = NoDebugOnlyInRelease_Transformer.debugEntries;
         if(debugCollector.isAnnotated()) {
             List<String> nestMembers = classNode.nestMembers;
             if(nestMembers != null && !nestMembers.isEmpty()) {
                 roundLeft=2;
                 nestedToDelete.addAll(nestMembers);
             }
-            NoDebugOnlyInRelease_Transformer.debugEntries.add(DebugEntry.classEntry(dataClassName));
+            debugEntries.add(CodeEntry.classEntry(dataClassName));
             addAllToDebug(classNode, dataClassName);
         } else{
-            for(var node : debugCollector.annotatedFields()) {
-                NoDebugOnlyInRelease_Transformer.debugEntries.add(DebugEntry.fieldEntry(dataClassName, node.node));
-            }
-            for(var node : debugCollector.annotatedMethods()) {
-                NoDebugOnlyInRelease_Transformer.debugEntries.add(DebugEntry.methodEntry(dataClassName, node.node));
-            }
+            debugCollector.registerFound(debugEntries);
         }
         if(!debugCollector.isAnnotated() && NodeUtil.findAnnotation(
             EMPTY_ANNOTATION_TYPE_DESCRIPTOR, classNode.invisibleAnnotations, classNode.visibleAnnotations
@@ -89,7 +87,7 @@ public class DeleteIfNotDebug_Transformer extends AbstractClassFileTransformer {
             return TransformationWriter.nodeTransformer(x -> {
                 for(FieldNode field : x.fields) {
                     NoDebugOnlyInRelease_Transformer.debugEntries.add(
-                        DebugEntry.fieldEntry(dataClassName,field)
+                        CodeEntry.fieldEntry(dataClassName,field)
                     );
                 }
                 x.fields.clear();
@@ -99,7 +97,7 @@ public class DeleteIfNotDebug_Transformer extends AbstractClassFileTransformer {
                     MethodNode methodNode = methods.get(i);
                     if(methodNode.name.endsWith("init>")) continue;
                     NoDebugOnlyInRelease_Transformer.debugEntries.add(
-                        DebugEntry.methodEntry(dataClassName,methodNode)
+                        CodeEntry.methodEntry(dataClassName,methodNode)
                     );
                     methods.remove(i--);
                 }
@@ -111,7 +109,7 @@ public class DeleteIfNotDebug_Transformer extends AbstractClassFileTransformer {
 
     private @NotNull AnnotatedElementsCollector getCollector(ClassNode classNode) {
         if(nestedToDelete.contains(classNode.name))return NESTED_COLLECTOR;
-        AnnotatedElementsCollector debugCollector = new AnnotatedElementsCollector(null, DELETE_ANNOTATION_TYPE_DESCRIPTOR);
+        AnnotatedElementsCollector debugCollector = new AnnotatedElementsCollector(null, DELETE_ANNOTATION_TYPE_DESCRIPTOR, false);
         classNode.accept(debugCollector);
         return debugCollector;
     }
@@ -119,12 +117,12 @@ public class DeleteIfNotDebug_Transformer extends AbstractClassFileTransformer {
     private void addAllToDebug(ClassNode classNode, Type dataClassName) {
         for(var field : classNode.fields) {
             NoDebugOnlyInRelease_Transformer.debugEntries.add(
-                DebugEntry.fieldEntry(dataClassName,field)
+                CodeEntry.fieldEntry(dataClassName,field)
             );
         }
         for(var method : classNode.methods) {
             NoDebugOnlyInRelease_Transformer.debugEntries.add(
-                DebugEntry.methodEntry(dataClassName,method)
+                CodeEntry.methodEntry(dataClassName,method)
             );
         }
     }

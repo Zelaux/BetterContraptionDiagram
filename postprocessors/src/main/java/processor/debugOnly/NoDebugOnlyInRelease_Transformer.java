@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Type;
+import processor.util.AnnotatedElementsCollector;
+import processor.util.CodeEntry;
 
 import java.util.HashSet;
 
@@ -18,7 +20,7 @@ public class NoDebugOnlyInRelease_Transformer extends AbstractClassFileTransform
     public static final String ANNOTATION_TYPE_DESCRIPTOR = ANNOTATION_TYPE.getDescriptor();
     public final boolean isDebug;
 
-public   static   final HashSet<DebugEntry> debugEntries = new HashSet<>();
+public   static   final HashSet<CodeEntry> debugEntries = new HashSet<>();
     final ErrorMarker ERROR_MARKER = new ErrorMarker(debugEntries, this);
     boolean hasErrors;
 
@@ -37,7 +39,7 @@ public   static   final HashSet<DebugEntry> debugEntries = new HashSet<>();
     public void finishRound(TransformationContext context) {
         if(roundIndex == 0) {
             System.out.println("debugEntries:");
-            for(DebugEntry entry : debugEntries) {
+            for(CodeEntry entry : debugEntries) {
                 System.out.print("    ");
                 System.out.println(entry);
             }
@@ -51,7 +53,7 @@ public   static   final HashSet<DebugEntry> debugEntries = new HashSet<>();
         if(!metaData.usesAnnotation(ANNOTATION_TYPE_DESCRIPTOR) && roundIndex == 0) return null;
 
         ClassVisitor classVisitor = roundIndex == 3 ? ERROR_MARKER : null;
-        AnnotatedElementsCollector debugCollector = new AnnotatedElementsCollector(classVisitor, ANNOTATION_TYPE_DESCRIPTOR);
+        AnnotatedElementsCollector debugCollector = new AnnotatedElementsCollector(classVisitor, ANNOTATION_TYPE_DESCRIPTOR, false);
         byteCodeProvider
             .createReader()
             .accept(debugCollector, roundIndex == 1 ? 0 : ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
@@ -59,13 +61,13 @@ public   static   final HashSet<DebugEntry> debugEntries = new HashSet<>();
         String typeInternalName = metaData.getClassName();
         Type dataClassName = Type.getObjectType(typeInternalName);
         if(debugCollector.isAnnotated()) {
-            debugEntries.add(DebugEntry.classEntry(dataClassName));
+            debugEntries.add(CodeEntry.classEntry(dataClassName));
         }
         for(var node : debugCollector.annotatedFields()) {
-            debugEntries.add(DebugEntry.fieldEntry(dataClassName, node.node));
+            debugEntries.add(CodeEntry.fieldEntry(dataClassName, node.node));
         }
         for(var node : debugCollector.annotatedMethods()) {
-            debugEntries.add(DebugEntry.methodEntry(dataClassName, node.node));
+            debugEntries.add(CodeEntry.methodEntry(dataClassName, node.node));
         }
         if(roundIndex == 4 && hasErrors) {
             System.err.println("You cannot use things marked as @DebugOnly in release build");

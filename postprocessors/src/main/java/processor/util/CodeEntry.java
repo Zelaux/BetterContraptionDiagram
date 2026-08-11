@@ -1,4 +1,4 @@
-package processor.debugOnly;
+package processor.util;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,7 +10,7 @@ import org.objectweb.asm.tree.MethodNode;
 @Getter
 @EqualsAndHashCode
 @FieldDefaults(level = AccessLevel.PUBLIC, makeFinal = true)
-public final class DebugEntry {
+public final class CodeEntry {
     EntryType entryType;
     Type owner;
     Type type;
@@ -25,24 +25,24 @@ public final class DebugEntry {
         };
     }
 
-    public static DebugEntry classEntry(Type type) {
-        return new DebugEntry(EntryType.CLASS, type, null, null);
+    public static CodeEntry classEntry(Type type) {
+        return new CodeEntry(EntryType.CLASS, type, null, null);
     }
 
-    public static DebugEntry fieldEntry(Type owner, FieldNode node) {
+    public static CodeEntry fieldEntry(Type owner, FieldNode node) {
         return fieldEntry(owner, Type.getType(node.desc), node.name);
     }
 
-    public static DebugEntry fieldEntry(Type owner, Type type, String name) {
-        return new DebugEntry(EntryType.FIELD, owner, type, name);
+    public static CodeEntry fieldEntry(Type owner, Type type, String name) {
+        return new CodeEntry(EntryType.FIELD, owner, type, name);
     }
 
-    public static DebugEntry methodEntry(Type owner, MethodNode node) {
+    public static CodeEntry methodEntry(Type owner, MethodNode node) {
         return methodEntry(owner, Type.getType(node.desc), node.name);
     }
 
-    public static DebugEntry methodEntry(Type owner, Type type, String name) {
-        return new DebugEntry(EntryType.METHOD, owner, type, name);
+    public static CodeEntry methodEntry(Type owner, Type type, String name) {
+        return new CodeEntry(EntryType.METHOD, owner, type, name);
     }
 
     public enum EntryType {
