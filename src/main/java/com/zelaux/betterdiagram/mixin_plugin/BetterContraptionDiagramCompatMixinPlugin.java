@@ -1,27 +1,49 @@
 package com.zelaux.betterdiagram.mixin_plugin;
 
 import com.llamalad7.mixinextras.utils.MixinInternals;
+import com.zelaux.betterdiagram.compat.CompatIndex;
+import com.zelaux.betterdiagram.mixin_plugin.postprocessors.CoasterPostprocessor;
 import com.zelaux.betterdiagram.mixin_plugin.postprocessors.GadgetsPostprocessor;
-import com.zelaux.betterdiagram.mixin_plugin.postprocessors.VanilaPostprocessor;
+import com.zelaux.betterdiagram.mixin_plugin.util.WithPostMixinTransformer;
 import foundry.veil.Veil;
+import foundry.veil.platform.VeilPlatform;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.*;
+import org.spongepowered.asm.mixin.transformer.ext.*;
 
 import java.util.List;
 import java.util.Set;
 
 public class BetterContraptionDiagramCompatMixinPlugin implements IMixinConfigPlugin {
-    private boolean gadgetsLoaded;
-    private String gadgetsPackage;
+    private final FilterEntry[] filters = {
+        filter(CompatIndex.gadgets, "gadgets", GadgetsPostprocessor.INSTANCE),
+        filter(CompatIndex.absoluteKinematics, "absolute_kinematics", null),
+        filter(CompatIndex.compactflap, "compact_flap", null),
+        filter(CompatIndex.coasters, "simulatedcoasters", CoasterPostprocessor.INSTANCE),
+    };
+    private String compatPackage;
+
+    static FilterEntry filter(String modId, String packagePath, BCDPostprocessors.Postprocessor postprocessor) {
+        return new FilterEntry(modId, packagePath, postprocessor);
+    }
 
     @Override
     public void onLoad(final String mixinPackage) {
-        this.gadgetsLoaded = Veil.platform().isModLoaded("createthrusters");
-        this.gadgetsPackage = mixinPackage + ".compat.gadgets";
-        MixinInternals.registerExtension(new BCDIExtension());
-        if(gadgetsLoaded){
-            BCDPostprocessors.postprocessor(GadgetsPostprocessor.INSTANCE);
+        BCDExtension extension = new BCDExtension();
+        MixinInternals.registerExtension(extension);
+        //MixinInternals.getExtensions().add((IClassGenerator)extension);
+
+
+        compatPackage = mixinPackage + ".compat";
+        VeilPlatform platform = Veil.platform();
+        for(FilterEntry filter : filters) {
+            filter.enabled = platform.isModLoaded(filter.modId);
+            filter.packagePath = compatPackage +"."+ filter.packagePath;
+            if(filter.enabled && filter.postprocessor != null) {
+                BCDPostprocessors.postprocessor(filter.postprocessor);
+            }
         }
+        WithPostMixinTransformer.register(extension,BCDPostprocessors::hasAnyPostprocessorFor);
     }
 
     @Override
@@ -31,11 +53,29 @@ public class BetterContraptionDiagramCompatMixinPlugin implements IMixinConfigPl
 
     @Override
     public boolean shouldApplyMixin(final String targetClassName, final String mixinClassName) {
-        if(mixinClassName.startsWith(gadgetsPackage)) {
-            return gadgetsLoaded;
+        for(FilterEntry filter : filters) {
+            if(mixinClassName.startsWith(filter.packagePath)) {
+                return filter.enabled;
+            }
         }
-
+        if(mixinClassName.startsWith(compatPackage)) {
+            System.err.println("Hmmm");
+            return false;
+        }
         return true;
+    }
+
+    static final class FilterEntry {
+        public final String modId;
+        public String packagePath;
+        public boolean enabled;
+        public final BCDPostprocessors.Postprocessor postprocessor;
+
+        public FilterEntry(String modId, String packagePath, BCDPostprocessors.Postprocessor postprocessor) {
+            this.modId = modId;
+            this.packagePath = packagePath;
+            this.postprocessor = postprocessor;
+        }
     }
 
     @Override
@@ -55,7 +95,7 @@ public class BetterContraptionDiagramCompatMixinPlugin implements IMixinConfigPl
     @Override
     public void postApply(final String targetClassName, final ClassNode targetClass, final String mixinClassName, final IMixinInfo mixinInfo) {
         //if(gadgetsLoaded && mixinClassName.startsWith(gadgetsPackage))
-            //GadgetsPostprocessor.apply(targetClassName, targetClass, mixinClassName, mixinInfo);
+        //GadgetsPostprocessor.apply(targetClassName, targetClass, mixinClassName, mixinInfo);
     }
 
 }

@@ -22,6 +22,8 @@
     "calculator.Calculator_DiagramDataPacket",
     "COM_view.com_view_GoggleOverlayRenderer",
     "compat.gadgets.Mixin_PhysicsGantryShaftBlockEntity",
+    "compat.simulatedcoasters.RivetIndex_LevelPlot",
+    "compat.simulatedcoasters.RivetIndex_RivetBlockEntity",
     "debug.Debug_BlockEntityPropeller",
     "debug.fun.JFF_Entity",
     "debug.fun.JFF_SubLevelEntityCollision",

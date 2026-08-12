@@ -1,13 +1,8 @@
 package com.zelaux.betterdiagram;
 
 import com.mojang.logging.LogUtils;
-import com.zelaux.betterdiagram.annotations.JavaClassName;
-import com.zelaux.betterdiagram.annotations.JavaClassOrInternalName;
 import com.zelaux.betterdiagram.command.server.BCDCommand;
-import com.zelaux.betterdiagram.compat.gadgetsandgizmos.AileronBearingActor;
-import com.zelaux.betterdiagram.compat.gadgetsandgizmos.ClawActor;
-import com.zelaux.betterdiagram.compat.gadgetsandgizmos.PhysicsGantryShaftActor;
-import com.zelaux.betterdiagram.compat.gadgetsandgizmos.VectorBearingActor;
+import com.zelaux.betterdiagram.compat.CompatModule;
 import com.zelaux.betterdiagram.feature.balloon_volume_calculator.BalloonIndexUpdate;
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.*;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
@@ -15,7 +10,6 @@ import com.zelaux.betterdiagram.network.BCDPacketManager;
 import com.zelaux.betterdiagram.network.HelloMessage;
 import com.zelaux.betterdiagram.network.features.ModFeaturesPacket;
 import com.zelaux.betterdiagram.network.rope.RopeDataPacket;
-import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.simulated_team.simulated.content.blocks.docking_connector.DockingConnectorBlockEntity;
 import dev.simulated_team.simulated.content.blocks.rope.rope_connector.RopeConnectorBlockEntity;
 import dev.simulated_team.simulated.content.blocks.rope.rope_winch.RopeWinchBlockEntity;
@@ -32,8 +26,6 @@ import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.slf4j.Logger;
-
-import java.util.function.Function;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(BetterContraptionDiagram.MODID)
@@ -71,42 +63,9 @@ public class BetterContraptionDiagram {
     }
 
     void afterAllMods(FMLLoadCompleteEvent event) {
-
-        Function<BlockEntitySubLevelActor, ActorHandler> actor = FixedActor::new;
-        String[] classes = {
-            tname("dev/qwxon/compactflap/content/blocks/compact_swivel_flap/CompactSwivelFlapBlockEntity"),
-            tname("dev/qwxon/compactflap/content/blocks/analog_swivel_bearing/AnalogSwivelBearingBlockEntity"),
-
-            //gadgets and gizmos
-            //tname("com/rieno/gadgetsandgizmos/content/VectorBearingBlockEntity"),//!
-            tname("com/rieno/gadgetsandgizmos/content/VectorBearingLinkBlockEntity"),
-
-            tname("com/rieno/gadgetsandgizmos/content/ScissorPistonBlockEntity"),
-            tname("com/rieno/gadgetsandgizmos/content/ScissorPistonLinkBlockEntity"),
-
-            //tname("com/rieno/gadgetsandgizmos/content/AileronBearingBlockEntity"),//!
-            tname("com/rieno/gadgetsandgizmos/content/AileronBearingLinkBlockEntity"),
-
-            tname("com/rieno/gadgetsandgizmos/content/PhysicsGantryCarriageBlockEntity"),
-            //tname("com/rieno/gadgetsandgizmos/content/PhysicsGantryShaftBlockEntity"),
-
-            tname("com/rieno/gadgetsandgizmos/content/ThrusterBearingBlockEntity"),
-            tname("com/rieno/gadgetsandgizmos/content/ThrusterBearingLinkBlockEntity"),
-
-
-        };
-        for(@JavaClassName String typeName : classes) ActorHandler.registerOptional(typeName, actor);
-        ActorHandler.registerOptional(tname("com/rieno/gadgetsandgizmos/content/VectorBearingBlockEntity"), VectorBearingActor::new);
-        ActorHandler.registerOptional(tname("com/rieno/gadgetsandgizmos/content/AileronBearingBlockEntity"), AileronBearingActor::new);
-        ActorHandler.registerOptional(tname("com/rieno/gadgetsandgizmos/content/PhysicsGantryShaftBlockEntity"), PhysicsGantryShaftActor::new);
-        ActorHandler.registerOptional(tname("com/rieno/gadgetsandgizmos/content/ClawBlockEntity"), ClawActor::new);
-
+        CompatModule.loadAll();
     }
 
-    @JavaClassName
-    private String tname(@JavaClassOrInternalName String name) {
-        return name.replace('/', '.');
-    }
 
     public static ResourceLocation resource(String location) {
         return ResourceLocation.fromNamespaceAndPath(MODID, location);

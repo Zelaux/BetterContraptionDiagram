@@ -36,8 +36,8 @@ public class ConstraintBuilder {
                 var currentMerged = tree.subLevelGroup;
                 mergableMappers.clear();
                 for(SubLevel current : currentMerged) {
-                    for(final BlockEntitySubLevelActor actor : current.getPlot().getBlockEntityActors()) {
-                        var constraints = ActorHandler.findFor(actor).mapToConstraint(current, subLevel2Group);
+                    for(final ActorHandler actor : ActorHandler.handlersFor(current)) {
+                        var constraints = actor.mapToConstraint(current, subLevel2Group);
                         if(constraints == null) continue;
                         constraintsLoop:
                         for(final var constraint : constraints) {
@@ -91,8 +91,9 @@ public class ConstraintBuilder {
             depth++;
             for(var current : frontier) {
                 Ref<SubLevelGroup> currentMergedRef = subLevel2Merged.computeIfAbsent(current, DEFAULT_REF);
-                for(final BlockEntitySubLevelActor actor : current.getPlot().getBlockEntityActors()) {
-                    var mappers = ActorHandler.findFor(actor).mapToConstraint(current, Map.of());
+                ;
+                for(final ActorHandler actor : ActorHandler.handlersFor(current)) {
+                    var mappers = actor.mapToConstraint(current, Map.of());
                     if(mappers == null) continue;
                     for(final var mapper : mappers) {
                         if(mapper.originSubLevel() != current) continue;

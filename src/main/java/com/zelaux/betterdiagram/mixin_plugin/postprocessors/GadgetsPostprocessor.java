@@ -1,6 +1,7 @@
 package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
 import com.zelaux.betterdiagram.mixin_plugin.BCDPostprocessors;
+import com.zelaux.betterdiagram.mixin_plugin.TypeIndex;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
@@ -9,22 +10,19 @@ import org.objectweb.asm.commons.GeneratorAdapter;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.*;
 
-import java.util.regex.Pattern;
-
 
 public class GadgetsPostprocessor implements BCDPostprocessors.Postprocessor {
     public static final GadgetsPostprocessor INSTANCE = new GadgetsPostprocessor();
     private static final Type physicsShaft = Type.getObjectType("com/rieno/gadgetsandgizmos/content/PhysicsGantryShaftBlockEntity");
 
-    private static final Type BlockEntitySubLevelActor = Type.getObjectType("dev/ryanhcode/sable/api/block/BlockEntitySubLevelActor");
-    public static final Method generatedMethod = new Method("bcd$hasActor", BlockEntitySubLevelActor, new Type[0]);
+    public static final Method generatedMethod = new Method("bcd$hasActor", TypeIndex.BlockEntitySubLevelActor, new Type[0]);
     public static final Method searchMethod = new Method("hasActiveAttachedCarriage", Type.BOOLEAN_TYPE, new Type[0]);
 
     @Override
-    public Pattern filter() {
-        return Pattern.compile(
-            Pattern.quote(physicsShaft.getInternalName())
-        );
+    public Type[] usedClasses() {
+        return new Type[]{
+            physicsShaft
+        };
     }
 
     public boolean process(ClassNode targetClass) {
@@ -53,7 +51,7 @@ public class GadgetsPostprocessor implements BCDPostprocessors.Postprocessor {
         return found;
     }
 
-    private static boolean matches(MethodNode method, Method searchMethod1) {
+    public static boolean matches(MethodNode method, Method searchMethod1) {
         return method.name.equals(searchMethod1.getName()) && method.desc.equals(searchMethod1.getDescriptor());
     }
 

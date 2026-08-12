@@ -6,8 +6,6 @@ import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import java.util.regex.Pattern;
-
 public enum VanilaPostprocessor implements BCDPostprocessors.Postprocessor {
     INSTANCE;
     private final ClassNode DUMMY = new ClassNode();
@@ -20,9 +18,9 @@ public enum VanilaPostprocessor implements BCDPostprocessors.Postprocessor {
     public static final Method searchMethod = new Method("sable$getConnectionDependencies", Type.getType(Iterable.class), new Type[0]);
 
     @Override
-    public Pattern filter() {
-        return BCDPostprocessors.Postprocessor.orFilter(
-            RopeStrandHolderBlockEntity.getInternalName()
+    public Type[] usedClasses() {
+        return BCDPostprocessors.Postprocessor.types(
+            RopeStrandHolderBlockEntity
         );
     }
 

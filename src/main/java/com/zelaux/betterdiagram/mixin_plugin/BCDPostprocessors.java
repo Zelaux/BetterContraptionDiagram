@@ -1,19 +1,23 @@
 package com.zelaux.betterdiagram.mixin_plugin;
 
+import com.google.common.collect.ImmutableSet;
+import com.mojang.logging.LogUtils;
 import com.zelaux.betterdiagram.DebugRuntime;
-import com.zelaux.betterdiagram.mixin_plugin.postprocessors.GadgetsPostprocessor;
 import com.zelaux.betterdiagram.mixin_plugin.postprocessors.VanilaPostprocessor;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class BCDPostprocessors {
-    private static final ObjectArrayList<Postprocessor> postprocessors = new ObjectArrayList<>();
+    private static final ObjectArrayList<Entry> postprocessors = new ObjectArrayList<>();
     private static boolean dirty = true;
-    private static Pattern globalPattern = null;
+    private static ImmutableSet<String> globalSet;
+
+    //private static Pattern globalPattern = null;
+    record Entry(Postprocessor postprocessor, ImmutableSet<String> internalNames) {}
 
 
     static {
@@ -21,26 +25,35 @@ public class BCDPostprocessors {
     }
 
     public static Stream<Postprocessor> postprocessorsFor(String internalClassName) {
-        if(globalPattern == null || dirty) {
-            dirty = false;
-            globalPattern = createGlobalPattern();
-        }
-        if(!globalPattern.matcher(internalClassName).matches()) return Stream.empty();
-        return postprocessors.stream().filter(it -> it.filter().matcher(internalClassName).matches());
+        if(!hasAnyPostprocessorFor(internalClassName)) return Stream.empty();
+        return postprocessors.stream().filter(it -> it.internalNames.contains(internalClassName)).map(Entry::postprocessor);
     }
 
-    private static Pattern createGlobalPattern() {
-        StringBuilder builder = new StringBuilder();
-        for(Postprocessor postprocessor : postprocessors) {
-            builder.append('(').append(postprocessor.filter().pattern()).append(")|");
+    public static boolean hasAnyPostprocessorFor(String internalClassName) {
+        if(globalSet == null || dirty) {
+            dirty = false;
+            globalSet = createGlobalSet();
         }
-        builder.setLength(builder.length() - 1);
-        return Pattern.compile(builder.toString());
+        return globalSet.contains(internalClassName);
+    }
+
+    private static ImmutableSet<String> createGlobalSet() {
+        var builder = ImmutableSet.<String>builder();
+        for(Entry entry : postprocessors) {
+            builder.addAll(entry.internalNames);
+        }
+        return builder.build();
     }
 
     public static void postprocessor(Postprocessor postprocessor) {
         dirty = true;
-        postprocessors.add(postprocessor);
+
+        var builder = ImmutableSet.<String>builder();
+        for(Type type : postprocessor.usedClasses()) {
+            builder.add(type.getInternalName());
+        }
+
+        postprocessors.add(new Entry(postprocessor, builder.build()));
     }
 
     public static void debugSave(ClassNode targetClass) {
@@ -55,13 +68,12 @@ public class BCDPostprocessors {
     }
 
     public interface Postprocessor {
-        Pattern filter();
 
-        static Pattern orFilter(String... parts) {
-            for(int i = 0; i < parts.length; i++) {
-                parts[i] = Pattern.quote(parts[i]);
-            }
-            return Pattern.compile(String.join("|", parts));
+
+        Type[] usedClasses();
+
+        static Type[] types(Type... types) {
+            return types;
         }
 
         boolean process(ClassNode targetClass);

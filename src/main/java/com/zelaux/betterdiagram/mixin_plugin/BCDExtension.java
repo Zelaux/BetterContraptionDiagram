@@ -1,17 +1,16 @@
 package com.zelaux.betterdiagram.mixin_plugin;
 
+import com.zelaux.betterdiagram.mixin_plugin.util.WithPostMixinTransformer;
 import lombok.SneakyThrows;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.extensibility.*;
 import org.spongepowered.asm.mixin.transformer.ext.*;
 
-import java.lang.reflect.Field;
-import java.util.SortedSet;
-
-class BCDIExtension implements IExtension {
+public class BCDExtension implements IExtension{
 
     private static final String TARGET_CONTEXT = "org.spongepowered.asm.mixin.transformer.TargetClassContext";
+
 
     @Override
     public boolean checkActive(MixinEnvironment environment) {
@@ -34,14 +33,21 @@ class BCDIExtension implements IExtension {
 
     @Override
     public void postApply(ITargetClassContext context) {
-        ClassNode classNode = context.getClassNode();
+        //postprocess(context.getClassNode());
+    }
+
+    public boolean postprocess(ClassNode classNode) {
         boolean[] any = {false};
         BCDPostprocessors.postprocessorsFor(classNode.name).forEach(postprocessor -> any[0] |= postprocessor.process(classNode));
         if(any[0]) {
             BCDPostprocessors.debugSave(classNode);
         }
+        return any[0];
     }
 
     @Override
-    public void export(MixinEnvironment env, String name, boolean force, ClassNode classNode) {}
+    public void export(MixinEnvironment env, String name, boolean force, ClassNode classNode) {
+        //postprocess(classNode);
+    }
+
 }
