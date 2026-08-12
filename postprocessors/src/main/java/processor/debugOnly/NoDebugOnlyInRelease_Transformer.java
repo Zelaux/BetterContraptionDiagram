@@ -13,6 +13,7 @@ import processor.Vars;
 import processor.util.AnnotatedElementsCollector;
 import processor.util.CodeEntry;
 
+import java.io.File;
 import java.util.HashSet;
 
 public class NoDebugOnlyInRelease_Transformer extends AbstractClassFileTransformer {
@@ -21,13 +22,13 @@ public class NoDebugOnlyInRelease_Transformer extends AbstractClassFileTransform
     public static final String ANNOTATION_TYPE_DESCRIPTOR = ANNOTATION_TYPE.getDescriptor();
     public final boolean isDebug;
 
-public   static   final HashSet<CodeEntry> debugEntries = new HashSet<>();
+    public static final HashSet<CodeEntry> debugEntries = new HashSet<>();
     final ErrorMarker ERROR_MARKER = new ErrorMarker(debugEntries, this);
     boolean hasErrors;
 
 
     public NoDebugOnlyInRelease_Transformer(TransformationContext context) {
-        super(Vars.currentMaxRounds+1);
+        super(Vars.currentMaxRounds + 1);
         isDebug = context.extraArguments().isDebug();
     }
 
@@ -46,6 +47,12 @@ public   static   final HashSet<CodeEntry> debugEntries = new HashSet<>();
             }
         }
         super.finishRound(context);
+        if(roundLeft == 0) {
+
+            File file = new File("build/classes/java/main");
+            System.out.println(file.getAbsolutePath());
+            removeEmpty(file);
+        }
     }
 
     @Override
@@ -78,6 +85,21 @@ public   static   final HashSet<CodeEntry> debugEntries = new HashSet<>();
             throw exception;
         }
         return TransformationWriter.CONTINUE_WRITER;
+    }
+
+
+    private boolean removeEmpty(File file) {
+        if(file.isFile()) return false;
+        boolean canDelete = true;
+        File[] files = file.listFiles();
+        if(files != null) {
+            for(File child : files) {
+                canDelete &= removeEmpty(child);
+            }
+        }
+
+        if(canDelete) file.delete();
+        return canDelete;
     }
 
 
