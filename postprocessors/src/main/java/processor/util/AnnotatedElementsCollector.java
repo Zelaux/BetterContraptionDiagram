@@ -64,7 +64,6 @@ public class AnnotatedElementsCollector extends ClassVisitor {
         ownDescriptors=null;
         annotatedFields.clear();
         annotatedMethods.clear();
-        annotationTypeDescriptor=null;
 
         classType =Type.getObjectType(name);
 
