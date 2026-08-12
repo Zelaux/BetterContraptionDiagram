@@ -56,11 +56,9 @@ public class SilentDelete_Transformer extends AbstractClassFileTransformer {
     @Override
     public @Nullable TransformationWriter analyze(String className, LazyByteCodeProvider byteCodeProvider, TransformationContext context) {
         ClassFileMetaData metaData = new ClassFileMetaData(byteCodeProvider.getCloned());
+        if(roundIndex != 0) return deletionRound(metaData.getClassName());
         if(!metaData.usesAnnotation(SILENT_DELETE_ANNOTATION_TYPE.getDescriptor())) return null;
-        return roundIndex == 0 ?
-            registerRound(byteCodeProvider) :
-            deletionRound(metaData.getClassName())
-            ;
+        return registerRound(byteCodeProvider);
     }
 
     private TransformationWriter deletionRound(String className) {
