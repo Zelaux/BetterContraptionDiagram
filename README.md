@@ -4,6 +4,9 @@
 
 Welcome to Better Contraption Diagram, a mod offering tools for easier aircraft building with Create: Aeronautics.
 
+## Modrinth
+
+https://modrinth.com/mod/better_contraption_diagram
 
 ## Video Preview
 
