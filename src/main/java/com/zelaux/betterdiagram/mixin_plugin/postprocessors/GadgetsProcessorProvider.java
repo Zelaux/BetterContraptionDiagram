@@ -2,7 +2,7 @@ package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
 import com.zelaux.betterdiagram.compat.CompatHandles;
 import com.zelaux.betterdiagram.mixin_plugin.TypeIndex;
-import com.zelaux.betterdiagram.mixin_plugin.system.Postprocessor;
+import com.zelaux.betterdiagram.mixin_plugin.system.ProcessorProvider;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.extensibility.*;
 import java.util.List;
 
 
-public class GadgetsPostprocessor implements Postprocessor {
-    public static final GadgetsPostprocessor INSTANCE = new GadgetsPostprocessor();
+public class GadgetsProcessorProvider implements ProcessorProvider {
+    public static final GadgetsProcessorProvider INSTANCE = new GadgetsProcessorProvider();
     private static final Type physicsShaft = Type.getObjectType("com/rieno/gadgetsandgizmos/content/PhysicsGantryShaftBlockEntity");
     private static final Type mini = TypeIndex.type("com.rieno.gadgetsandgizmos.neoforge.client.CTPhysicsGogglesClient$SimulatedDiagramMiniRenderer");
 
@@ -24,17 +24,26 @@ public class GadgetsPostprocessor implements Postprocessor {
     public static final Method searchMethod = new Method("hasActiveAttachedCarriage", Type.BOOLEAN_TYPE, new Type[0]);
 
     @Override
-    public Type[] usedClasses() {
-        return new Type[]{
-            physicsShaft,
-            mini
+    public Transformations[] transformations() {
+        return new Transformations[]{
+            Transformations.of(mini, it -> true),
+            Transformations.of(physicsShaft, targetClass -> {
+                MethodNode found = findMethod(targetClass, generatedMethod, searchMethod);
+                if(found != null) {
+                    addMethod(targetClass, found);
+                    return true;
+                }
+
+                return false;
+            }),
         };
     }
 
     /**
      * @see CompatHandles#onPackageUpdate(Object)
      * @see CompatHandles#setGadgetsScreen(Object)
-     * */
+     *
+     */
     @Override
     public void preMixin(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
         if(mixinClassName.endsWith("Stupid_Mini")) {
@@ -58,10 +67,10 @@ public class GadgetsPostprocessor implements Postprocessor {
                     InsnList nodes = new InsnList();
                     for(AbstractInsnNode node : instructions.toArray()) {
                         if(node.getOpcode() == Opcodes.RETURN) {
-                            nodes.add(new VarInsnNode(Opcodes.ALOAD,0));
-                            nodes.add(new FieldInsnNode(Opcodes.GETFIELD,targetClass.name,"screen","Ljava/lang/Object;"));
-                            nodes.add(new MethodInsnNode(Opcodes.INVOKESTATIC,TypeIndex.CompatHandles.getInternalName(),"onPackageUpdate","(Ljava/lang/Object;)V",false));
-                            instructions.insertBefore(node,nodes);
+                            nodes.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                            nodes.add(new FieldInsnNode(Opcodes.GETFIELD, targetClass.name, "screen", "Ljava/lang/Object;"));
+                            nodes.add(new MethodInsnNode(Opcodes.INVOKESTATIC, TypeIndex.CompatHandles.getInternalName(), "onPackageUpdate", "(Ljava/lang/Object;)V", false));
+                            instructions.insertBefore(node, nodes);
                         }
                     }
 
@@ -79,13 +88,13 @@ public class GadgetsPostprocessor implements Postprocessor {
             if(!isScreenField(targetClass, node)) continue;
 
             //com.zelaux.betterdiagram.compat.CompatModule.gadgetsScreen
-            instructions.insertBefore(node,new InsnNode(Opcodes.DUP));
+            instructions.insertBefore(node, new InsnNode(Opcodes.DUP));
             instructions.insertBefore(node, setGadgetsScreen);
         }
     }
 
     private boolean isScreenField(ClassNode targetClass, AbstractInsnNode node) {
-        if(!(node instanceof FieldInsnNode field) || field.getOpcode()!=Opcodes.PUTFIELD) return false;
+        if(!(node instanceof FieldInsnNode field) || field.getOpcode() != Opcodes.PUTFIELD) return false;
         if(!field.name.equals("screen")) return false;
         if(!field.owner.equals(targetClass.name)) return false;
         return true;
@@ -93,27 +102,13 @@ public class GadgetsPostprocessor implements Postprocessor {
 
     private void addPrepareHeadMethod(ClassNode targetClass, InsnList instructions) {
         String prepareHead = "prepare_head";
-        instructions.insertBefore(instructions.getFirst(),new MethodInsnNode(
-            Opcodes.INVOKEVIRTUAL, targetClass.name, prepareHead,"()V",false
+        instructions.insertBefore(instructions.getFirst(), new MethodInsnNode(
+            Opcodes.INVOKEVIRTUAL, targetClass.name, prepareHead, "()V", false
         ));
-        instructions.insertBefore(instructions.getFirst(),new VarInsnNode(Opcodes.ALOAD,0));
+        instructions.insertBefore(instructions.getFirst(), new VarInsnNode(Opcodes.ALOAD, 0));
         MethodNode e = new MethodNode(Opcodes.ACC_PUBLIC, prepareHead, "()V", null, null);
         e.instructions.add(new InsnNode(Opcodes.RETURN));
         targetClass.methods.add(e);
-    }
-
-    public boolean process(ClassNode targetClass) {
-        if(targetClass.name.equals(mini.getInternalName())) return true;
-        if(!targetClass.name.equals(physicsShaft.getInternalName())) return false;
-
-        MethodNode found = findMethod(targetClass, generatedMethod, searchMethod);
-        if(found != null) {
-            addMethod(targetClass, found);
-            return true;
-        }
-
-        return false;
-
     }
 
     static @Nullable MethodNode findMethod(ClassNode targetClass, Method generatedMethod, Method searchMethod) {

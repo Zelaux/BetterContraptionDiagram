@@ -1,62 +1,74 @@
 package com.zelaux.betterdiagram.mixin_plugin.system;
 
-import com.google.common.collect.ImmutableSet;
 import com.zelaux.betterdiagram.DebugRuntime;
-import com.zelaux.betterdiagram.mixin_plugin.postprocessors.VanilaPostprocessor;
+import com.zelaux.betterdiagram.mixin_plugin.postprocessors.VanilaProcessorProvider;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class BCDPostprocessors {
     private static final ObjectArrayList<Entry> postprocessors = new ObjectArrayList<>();
     private static boolean dirty = true;
-    private static ImmutableSet<String> globalSet;
+    private static Map<String, List<ProcessorProvider.ClassTransform>> globalMap;
 
-    public static Stream<Postprocessor> all() {
-        return postprocessors.stream().map(Entry::postprocessor);
+    public static Stream<ProcessorProvider> all() {
+        return postprocessors.stream().map(Entry::processorProvider);
     }
 
     //private static Pattern globalPattern = null;
-    record Entry(Postprocessor postprocessor, ImmutableSet<String> internalNames) {}
+    record Entry(ProcessorProvider processorProvider,
+                 Object2ObjectOpenHashMap<String, List<ProcessorProvider.ClassTransform>> providedTransformations) {}
 
 
     static {
-        postprocessor(VanilaPostprocessor.INSTANCE);
+        postprocessor(VanilaProcessorProvider.INSTANCE);
     }
 
-    public static Stream<Postprocessor> postprocessorsFor(String internalClassName) {
+    public static Stream<ProcessorProvider.ClassTransform> postprocessorsFor(String internalClassName) {
         if(!hasAnyPostprocessorFor(internalClassName)) return Stream.empty();
-        return postprocessors.stream().filter(it -> it.internalNames.contains(internalClassName)).map(Entry::postprocessor);
+
+        return globalMap.getOrDefault(internalClassName, List.of()).stream();
     }
 
     public static boolean hasAnyPostprocessorFor(String internalClassName) {
-        if(globalSet == null || dirty) {
+        if(globalMap == null || dirty) {
             dirty = false;
-            globalSet = createGlobalSet();
+            globalMap = createGlobalMap();
         }
-        return globalSet.contains(internalClassName);
+        return globalMap.containsKey(internalClassName);
     }
 
-    private static ImmutableSet<String> createGlobalSet() {
-        var builder = ImmutableSet.<String>builder();
+    private static Map<String, List<ProcessorProvider.ClassTransform>> createGlobalMap() {
+        var map = new Object2ObjectOpenHashMap<String, List<ProcessorProvider.ClassTransform>>();
+
         for(Entry entry : postprocessors) {
-            builder.addAll(entry.internalNames);
+            entry.providedTransformations.forEach((s, transforms) ->
+                map.computeIfAbsent(s, it->new ObjectArrayList<>()).addAll(transforms));
         }
-        return builder.build();
+
+        return map;
     }
 
-    public static void postprocessor(Postprocessor postprocessor) {
+    public static void postprocessor(ProcessorProvider processorProvider) {
         dirty = true;
 
-        var builder = ImmutableSet.<String>builder();
-        for(Type type : postprocessor.usedClasses()) {
-            builder.add(type.getInternalName());
+        var map = new Object2ObjectOpenHashMap<String, List<ProcessorProvider.ClassTransform>>();
+        ProcessorProvider.Transformations[] transformations = processorProvider.transformations();
+        if(transformations != null) {
+            for(var transformation : transformations) {
+                for(Type type : transformation.type()) {
+                    map.computeIfAbsent(type.getInternalName(),it->new ObjectArrayList<>()).add(transformation.transform());
+                }
+            }
         }
 
-        postprocessors.add(new Entry(postprocessor, builder.build()));
+        postprocessors.add(new Entry(processorProvider, map));
     }
 
     public static void debugSave(ClassNode targetClass) {

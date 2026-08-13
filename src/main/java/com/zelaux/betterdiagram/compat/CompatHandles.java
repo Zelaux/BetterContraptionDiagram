@@ -1,13 +1,13 @@
 package com.zelaux.betterdiagram.compat;
 
 import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
-import com.zelaux.betterdiagram.mixin_plugin.postprocessors.GadgetsPostprocessor;
+import com.zelaux.betterdiagram.mixin_plugin.postprocessors.GadgetsProcessorProvider;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.*;
 
 /**
- * @see GadgetsPostprocessor#preMixin(String, ClassNode, String, IMixinInfo)
+ * @see GadgetsProcessorProvider#preMixin(String, ClassNode, String, IMixinInfo)
  * */
 public class CompatHandles {
     public static DiagramScreen gadgetsScreen;

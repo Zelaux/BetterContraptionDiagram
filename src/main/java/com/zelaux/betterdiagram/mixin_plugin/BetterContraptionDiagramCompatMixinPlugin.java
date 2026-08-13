@@ -2,10 +2,10 @@ package com.zelaux.betterdiagram.mixin_plugin;
 
 import com.llamalad7.mixinextras.utils.MixinInternals;
 import com.zelaux.betterdiagram.compat.CompatIndex;
-import com.zelaux.betterdiagram.mixin_plugin.postprocessors.CoasterPostprocessor;
-import com.zelaux.betterdiagram.mixin_plugin.postprocessors.GadgetsPostprocessor;
+import com.zelaux.betterdiagram.mixin_plugin.postprocessors.CoasterProcessorProvider;
+import com.zelaux.betterdiagram.mixin_plugin.postprocessors.GadgetsProcessorProvider;
 import com.zelaux.betterdiagram.mixin_plugin.system.BCDPostprocessors;
-import com.zelaux.betterdiagram.mixin_plugin.system.Postprocessor;
+import com.zelaux.betterdiagram.mixin_plugin.system.ProcessorProvider;
 import com.zelaux.betterdiagram.mixin_plugin.util.WithPostMixinTransformer;
 import foundry.veil.Veil;
 import foundry.veil.platform.VeilPlatform;
@@ -17,15 +17,15 @@ import java.util.Set;
 
 public class BetterContraptionDiagramCompatMixinPlugin implements IMixinConfigPlugin {
     private final FilterEntry[] filters = {
-        filter(CompatIndex.gadgets, "gadgets", GadgetsPostprocessor.INSTANCE),
+        filter(CompatIndex.gadgets, "gadgets", GadgetsProcessorProvider.INSTANCE),
         filter(CompatIndex.absoluteKinematics, "absolute_kinematics", null),
         filter(CompatIndex.compactflap, "compact_flap", null),
-        filter(CompatIndex.coasters, "simulatedcoasters", CoasterPostprocessor.INSTANCE),
+        filter(CompatIndex.coasters, "simulatedcoasters", CoasterProcessorProvider.INSTANCE),
     };
     private String compatPackage;
 
-    static FilterEntry filter(String modId, String packagePath, Postprocessor postprocessor) {
-        return new FilterEntry(modId, packagePath, postprocessor);
+    static FilterEntry filter(String modId, String packagePath, ProcessorProvider processorProvider) {
+        return new FilterEntry(modId, packagePath, processorProvider);
     }
 
     @Override
@@ -40,8 +40,8 @@ public class BetterContraptionDiagramCompatMixinPlugin implements IMixinConfigPl
         for(FilterEntry filter : filters) {
             filter.enabled = platform.isModLoaded(filter.modId);
             filter.packagePath = compatPackage +"."+ filter.packagePath;
-            if(filter.enabled && filter.postprocessor != null) {
-                BCDPostprocessors.postprocessor(filter.postprocessor);
+            if(filter.enabled && filter.processorProvider != null) {
+                BCDPostprocessors.postprocessor(filter.processorProvider);
             }
         }
         WithPostMixinTransformer.register(extension,BCDPostprocessors::hasAnyPostprocessorFor);
@@ -70,12 +70,12 @@ public class BetterContraptionDiagramCompatMixinPlugin implements IMixinConfigPl
         public final String modId;
         public String packagePath;
         public boolean enabled;
-        public final Postprocessor postprocessor;
+        public final ProcessorProvider processorProvider;
 
-        public FilterEntry(String modId, String packagePath, Postprocessor postprocessor) {
+        public FilterEntry(String modId, String packagePath, ProcessorProvider processorProvider) {
             this.modId = modId;
             this.packagePath = packagePath;
-            this.postprocessor = postprocessor;
+            this.processorProvider = processorProvider;
         }
     }
 
