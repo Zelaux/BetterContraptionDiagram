@@ -21,6 +21,7 @@ public class LevelData {
         this.path = path;
         infoFile = path.resolve("info.txt").toFile();
         File file = infoFile;
+        DiagramEntityData.CACHE.invalidateAll();
         if(!file.exists()) return;
         try(var stream = new Scanner(new FileInputStream(file))) {
             while(stream.hasNext()) {
@@ -40,7 +41,6 @@ public class LevelData {
         if(storageFolder == path) {//overworld moment
             storageFolder = storageFolder.resolve("DIM0");
         }
-        DiagramEntityData.CACHE.invalidateAll();
 
         return storageFolder;
     }
