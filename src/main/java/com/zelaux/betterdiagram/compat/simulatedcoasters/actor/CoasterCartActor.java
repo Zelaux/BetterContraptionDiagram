@@ -28,7 +28,7 @@ public class CoasterCartActor implements ActorHandler {
         if(container == null) return null;
         ResourceKey<Level> dimension = level.dimension();
         List<CoasterCartTrainLinkSync.LinkEntry> entries = CoasterCartTrainLinkClientState.snapshot(dimension).get(a.getUniqueId());
-        if(entries.isEmpty()) return null;
+        if(entries==null || entries.isEmpty()) return null;
         ObjectArrayList<AbstractForceMapper> list = new ObjectArrayList<>();
         for(CoasterCartTrainLinkSync.LinkEntry entry : entries) {
             SubLevel b = container.getSubLevel(entry.partnerId());
