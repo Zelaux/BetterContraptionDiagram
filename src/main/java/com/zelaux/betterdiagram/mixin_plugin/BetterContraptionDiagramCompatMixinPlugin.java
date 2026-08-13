@@ -4,12 +4,13 @@ import com.llamalad7.mixinextras.utils.MixinInternals;
 import com.zelaux.betterdiagram.compat.CompatIndex;
 import com.zelaux.betterdiagram.mixin_plugin.postprocessors.CoasterPostprocessor;
 import com.zelaux.betterdiagram.mixin_plugin.postprocessors.GadgetsPostprocessor;
+import com.zelaux.betterdiagram.mixin_plugin.system.BCDPostprocessors;
+import com.zelaux.betterdiagram.mixin_plugin.system.Postprocessor;
 import com.zelaux.betterdiagram.mixin_plugin.util.WithPostMixinTransformer;
 import foundry.veil.Veil;
 import foundry.veil.platform.VeilPlatform;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.*;
-import org.spongepowered.asm.mixin.transformer.ext.*;
 
 import java.util.List;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class BetterContraptionDiagramCompatMixinPlugin implements IMixinConfigPl
     };
     private String compatPackage;
 
-    static FilterEntry filter(String modId, String packagePath, BCDPostprocessors.Postprocessor postprocessor) {
+    static FilterEntry filter(String modId, String packagePath, Postprocessor postprocessor) {
         return new FilterEntry(modId, packagePath, postprocessor);
     }
 
@@ -69,9 +70,9 @@ public class BetterContraptionDiagramCompatMixinPlugin implements IMixinConfigPl
         public final String modId;
         public String packagePath;
         public boolean enabled;
-        public final BCDPostprocessors.Postprocessor postprocessor;
+        public final Postprocessor postprocessor;
 
-        public FilterEntry(String modId, String packagePath, BCDPostprocessors.Postprocessor postprocessor) {
+        public FilterEntry(String modId, String packagePath, Postprocessor postprocessor) {
             this.modId = modId;
             this.packagePath = packagePath;
             this.postprocessor = postprocessor;

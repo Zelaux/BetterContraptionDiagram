@@ -1,4 +1,4 @@
-package com.zelaux.betterdiagram.mixin_plugin;
+package com.zelaux.betterdiagram.mixin_plugin.system;
 
 import com.google.common.collect.ImmutableSet;
 import com.zelaux.betterdiagram.DebugRuntime;
@@ -7,7 +7,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
-import org.spongepowered.asm.mixin.extensibility.*;
 
 import java.util.stream.Stream;
 
@@ -73,20 +72,4 @@ public class BCDPostprocessors {
         }
     }
 
-    public interface Postprocessor {
-default void preMixin(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo){
-
-}
-default void postMixin(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo){
-
-}
-
-        Type[] usedClasses();
-
-        static Type[] types(Type... types) {
-            return types;
-        }
-
-        boolean process(ClassNode targetClass);
-    }
 }

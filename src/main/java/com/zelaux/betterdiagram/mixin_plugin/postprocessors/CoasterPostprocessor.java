@@ -1,8 +1,13 @@
 package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
+import com.zelaux.bcd.asm_commons.BoundMethod;
+import com.zelaux.bcd.asm_commons.CodeEntry;
+import com.zelaux.bcd.asm_commons.MethodUtil;
+import com.zelaux.bcd.asm_commons.Renamer;
 import com.zelaux.betterdiagram.annotations.CompileTool;
-import com.zelaux.betterdiagram.mixin_plugin.BCDPostprocessors;
 import com.zelaux.betterdiagram.mixin_plugin.TypeIndex;
+import com.zelaux.betterdiagram.mixin_plugin.system.Postprocessor;
+import com.zelaux.betterdiagram.mixin_plugin.util.ServerToUnboundRenamer;
 import dev.silvergold.simulatedcoasters.track.cart.CoasterCartTrainLinkConstraint;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.objectweb.asm.Label;
@@ -20,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
-public enum CoasterPostprocessor implements BCDPostprocessors.Postprocessor {
+public enum CoasterPostprocessor implements Postprocessor {
     INSTANCE;
 
     static Type CoasterCartTrainLinkConstraint = CompileTool.bakeType(CoasterCartTrainLinkConstraint.class);
@@ -32,17 +37,21 @@ public enum CoasterPostprocessor implements BCDPostprocessors.Postprocessor {
     static Method generatedMethod = new Method("bcd$updateConstraint", TypeIndex.GenericConstraintConfiguration, new Type[]{
         TypeIndex.Object, TypeIndex.CoasterCartTrainLinkConstraint_ActiveLink, TypeIndex.SubLevel, TypeIndex.SubLevel,
     });
-    static Method localJointOrientation = new Method("localJointOrientation", TypeIndex.Quaterniond, new Type[]{
+    static BoundMethod localJointOrientation = BoundMethod.make(
+        CoasterCartTrainLinkConstraint,
+        "localJointOrientation", TypeIndex.Quaterniond,
         TypeIndex.ServerSubLevel, TypeIndex.Quaterniond
-    });
-    static Method localJointOrientation_2 = new Method("localJointOrientation", TypeIndex.Quaterniond, new Type[]{
+    );
+    static BoundMethod localJointOrientation_2 = BoundMethod.make(
+        CoasterCartTrainLinkConstraint,
+        "localJointOrientation", TypeIndex.Quaterniond,
         TypeIndex.SubLevel, TypeIndex.Quaterniond
-    });
+    );
     //localJointOrientation
 
     @Override
     public Type[] usedClasses() {
-        return BCDPostprocessors.Postprocessor.types(
+        return Postprocessor.types(
             CoasterCartTrainLinkConstraint,
             TypeIndex.CoasterCartTrainLinkConstraint_ActiveLink
         );
@@ -69,13 +78,9 @@ public enum CoasterPostprocessor implements BCDPostprocessors.Postprocessor {
         List<MethodNode> methods = targetClass.methods;
         for(int i = 0; i < methods.size(); i++) {
             MethodNode method = methods.get(i);
-            if(GadgetsPostprocessor.matches(method, localJointOrientation)) {
-                ClassNode classNode = new ClassNode(Opcodes.ASM9) {
-                    @Override
-                    public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-                        return new Renamer(super.visitMethod(access, name, descriptor, signature, exceptions));
-                    }
-                };
+            if(GadgetsPostprocessor.matches(method, localJointOrientation.method())) {
+                ;
+                ClassNode classNode = MethodUtil.withWrappedMethodVisitor(ServerToUnboundRenamer::make);
                 method.accept(classNode);
                 MethodNode clone = classNode.methods.getFirst();
                 clone.desc = localJointOrientation_2.getDescriptor();
@@ -108,23 +113,16 @@ public enum CoasterPostprocessor implements BCDPostprocessors.Postprocessor {
 
     private void makeActiveLinkPublic(ClassNode targetClass1) {
         transformInner(targetClass1, TypeIndex.CoasterCartTrainLinkConstraint_ActiveLink, innerClass -> {
-            innerClass.access = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC|Opcodes.ACC_FINAL;
+            innerClass.access = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL;
             return true;
         });
     }
 
 
-    private static class Renamer extends MethodVisitor {
+    private static class MyRenamer extends Renamer {
 
-        protected Renamer() {
-            super(Opcodes.ASM9);
-        }
 
-        public Renamer(int api, MethodVisitor methodVisitor) {
-            super(api, methodVisitor);
-        }
-
-        public Renamer(MethodVisitor methodVisitor) {
+        public MyRenamer(MethodVisitor methodVisitor) {
             super(Opcodes.ASM9, methodVisitor);
         }
 
@@ -149,10 +147,15 @@ public enum CoasterPostprocessor implements BCDPostprocessors.Postprocessor {
     private static class MyGenerator extends GeneratorAdapter {
 
         private final InsnList instructions;
+        private final Renamer renamer;
 
         public MyGenerator(MethodNode ownNode, MethodNode found) {
-            super(Opcodes.ASM9, new Renamer(ownNode), ownNode.access, ownNode.name, ownNode.desc);
+            super(Opcodes.ASM9, ServerToUnboundRenamer.make(ownNode), ownNode.access, ownNode.name, ownNode.desc);
             instructions = ownNode.instructions;
+            renamer = (Renamer) mv;
+            Type type = CoasterCartTrainLinkConstraint;
+            renamer.addMapping(CodeEntry.methodEntry(localJointOrientation),CodeEntry.methodEntry(localJointOrientation_2));
+
         }
 
         private final ObjectOpenHashSet<Label> visitedLabel = new ObjectOpenHashSet<>();
@@ -185,8 +188,6 @@ public enum CoasterPostprocessor implements BCDPostprocessors.Postprocessor {
 
         @Override
         public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
-            if(owner.equals(CoasterCartTrainLinkConstraint.getInternalName()) && name.equals(localJointOrientation.getName()))
-                descriptor = localJointOrientation_2.getDescriptor();
             super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
             if(opcode == Opcodes.INVOKESPECIAL && name.equals("<init>")) {
                 if(owner.equals(TypeIndex.GenericConstraintConfiguration.getInternalName())) {

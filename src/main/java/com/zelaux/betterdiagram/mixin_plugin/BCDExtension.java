@@ -1,10 +1,9 @@
 package com.zelaux.betterdiagram.mixin_plugin;
 
-import com.zelaux.betterdiagram.mixin_plugin.util.WithPostMixinTransformer;
+import com.zelaux.betterdiagram.mixin_plugin.system.BCDPostprocessors;
 import lombok.SneakyThrows;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.*;
-import org.spongepowered.asm.mixin.extensibility.*;
 import org.spongepowered.asm.mixin.transformer.ext.*;
 
 public class BCDExtension implements IExtension{

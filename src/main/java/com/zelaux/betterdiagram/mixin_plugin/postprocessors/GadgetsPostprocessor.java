@@ -1,8 +1,8 @@
 package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
 import com.zelaux.betterdiagram.compat.CompatHandles;
-import com.zelaux.betterdiagram.mixin_plugin.BCDPostprocessors;
 import com.zelaux.betterdiagram.mixin_plugin.TypeIndex;
+import com.zelaux.betterdiagram.mixin_plugin.system.Postprocessor;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.extensibility.*;
 import java.util.List;
 
 
-public class GadgetsPostprocessor implements BCDPostprocessors.Postprocessor {
+public class GadgetsPostprocessor implements Postprocessor {
     public static final GadgetsPostprocessor INSTANCE = new GadgetsPostprocessor();
     private static final Type physicsShaft = Type.getObjectType("com/rieno/gadgetsandgizmos/content/PhysicsGantryShaftBlockEntity");
     private static final Type mini = TypeIndex.type("com.rieno.gadgetsandgizmos.neoforge.client.CTPhysicsGogglesClient$SimulatedDiagramMiniRenderer");

@@ -2,14 +2,14 @@ package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
 import com.zelaux.betterdiagram.annotations.CompileTool;
 import com.zelaux.betterdiagram.extend.IRopeStrandHolderBlockEntity;
-import com.zelaux.betterdiagram.mixin_plugin.BCDPostprocessors;
+import com.zelaux.betterdiagram.mixin_plugin.system.Postprocessor;
 import dev.simulated_team.simulated.content.blocks.rope.RopeStrandHolderBlockEntity;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-public enum VanilaPostprocessor implements BCDPostprocessors.Postprocessor {
+public enum VanilaPostprocessor implements Postprocessor {
     INSTANCE;
     private final ClassNode DUMMY = new ClassNode();
     public Type RopeStrandHolderBlockEntity = CompileTool.bakeType(RopeStrandHolderBlockEntity.class);
@@ -22,7 +22,7 @@ public enum VanilaPostprocessor implements BCDPostprocessors.Postprocessor {
 
     @Override
     public Type[] usedClasses() {
-        return BCDPostprocessors.Postprocessor.types(
+        return Postprocessor.types(
             RopeStrandHolderBlockEntity
         );
     }
