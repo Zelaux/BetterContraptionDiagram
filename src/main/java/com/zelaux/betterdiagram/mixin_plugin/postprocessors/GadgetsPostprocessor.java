@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
+import com.zelaux.betterdiagram.compat.CompatHandles;
 import com.zelaux.betterdiagram.mixin_plugin.BCDPostprocessors;
 import com.zelaux.betterdiagram.mixin_plugin.TypeIndex;
 import org.jetbrains.annotations.Nullable;
@@ -9,11 +10,15 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.GeneratorAdapter;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.*;
+import org.spongepowered.asm.mixin.extensibility.*;
+
+import java.util.List;
 
 
 public class GadgetsPostprocessor implements BCDPostprocessors.Postprocessor {
     public static final GadgetsPostprocessor INSTANCE = new GadgetsPostprocessor();
     private static final Type physicsShaft = Type.getObjectType("com/rieno/gadgetsandgizmos/content/PhysicsGantryShaftBlockEntity");
+    private static final Type mini = TypeIndex.type("com.rieno.gadgetsandgizmos.neoforge.client.CTPhysicsGogglesClient$SimulatedDiagramMiniRenderer");
 
     public static final Method generatedMethod = new Method("bcd$hasActor", TypeIndex.BlockEntitySubLevelActor, new Type[0]);
     public static final Method searchMethod = new Method("hasActiveAttachedCarriage", Type.BOOLEAN_TYPE, new Type[0]);
@@ -21,11 +26,84 @@ public class GadgetsPostprocessor implements BCDPostprocessors.Postprocessor {
     @Override
     public Type[] usedClasses() {
         return new Type[]{
-            physicsShaft
+            physicsShaft,
+            mini
         };
     }
 
+    /**
+     * @see CompatHandles#onPackageUpdate(Object)
+     * @see CompatHandles#setGadgetsScreen(Object)
+     * */
+    @Override
+    public void preMixin(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+        if(mixinClassName.endsWith("Stupid_Mini")) {
+
+            MethodInsnNode setScreen = new MethodInsnNode(
+                Opcodes.INVOKESTATIC, TypeIndex.CompatHandles.getInternalName(), "setGadgetsScreen", "(Ljava/lang/Object;)V", false
+            );
+            List<MethodNode> methods = targetClass.methods;
+            for(int i = 0; i < methods.size(); i++) {
+                MethodNode method = methods.get(i);
+                if(method.name.equals("prepare")) {
+                    InsnList instructions = method.instructions;
+                    addPrepareHeadMethod(targetClass, instructions);
+                    addSetScreen(targetClass, instructions);
+                }
+                if(method.name.equals("close")) {
+                    addSetScreen(targetClass, method.instructions);
+                }
+                if(method.name.equals("updateDiagramData")) {
+                    InsnList instructions = method.instructions;
+                    InsnList nodes = new InsnList();
+                    for(AbstractInsnNode node : instructions.toArray()) {
+                        if(node.getOpcode() == Opcodes.RETURN) {
+                            nodes.add(new VarInsnNode(Opcodes.ALOAD,0));
+                            nodes.add(new FieldInsnNode(Opcodes.GETFIELD,targetClass.name,"screen","Ljava/lang/Object;"));
+                            nodes.add(new MethodInsnNode(Opcodes.INVOKESTATIC,TypeIndex.CompatHandles.getInternalName(),"onPackageUpdate","(Ljava/lang/Object;)V",false));
+                            instructions.insertBefore(node,nodes);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    private void addSetScreen(ClassNode targetClass, InsnList instructions) {
+
+        MethodInsnNode setGadgetsScreen = new MethodInsnNode(
+            Opcodes.INVOKESTATIC, TypeIndex.CompatHandles.getInternalName(), "setGadgetsScreen", "(Ljava/lang/Object;)V", false
+        );
+        for(AbstractInsnNode node : instructions.toArray()) {
+            if(!isScreenField(targetClass, node)) continue;
+
+            //com.zelaux.betterdiagram.compat.CompatModule.gadgetsScreen
+            instructions.insertBefore(node,new InsnNode(Opcodes.DUP));
+            instructions.insertBefore(node, setGadgetsScreen);
+        }
+    }
+
+    private boolean isScreenField(ClassNode targetClass, AbstractInsnNode node) {
+        if(!(node instanceof FieldInsnNode field) || field.getOpcode()!=Opcodes.PUTFIELD) return false;
+        if(!field.name.equals("screen")) return false;
+        if(!field.owner.equals(targetClass.name)) return false;
+        return true;
+    }
+
+    private void addPrepareHeadMethod(ClassNode targetClass, InsnList instructions) {
+        String prepareHead = "prepare_head";
+        instructions.insertBefore(instructions.getFirst(),new MethodInsnNode(
+            Opcodes.INVOKEVIRTUAL, targetClass.name, prepareHead,"()V",false
+        ));
+        instructions.insertBefore(instructions.getFirst(),new VarInsnNode(Opcodes.ALOAD,0));
+        MethodNode e = new MethodNode(Opcodes.ACC_PUBLIC, prepareHead, "()V", null, null);
+        e.instructions.add(new InsnNode(Opcodes.RETURN));
+        targetClass.methods.add(e);
+    }
+
     public boolean process(ClassNode targetClass) {
+        if(targetClass.name.equals(mini.getInternalName())) return true;
         if(!targetClass.name.equals(physicsShaft.getInternalName())) return false;
 
         MethodNode found = findMethod(targetClass, generatedMethod, searchMethod);

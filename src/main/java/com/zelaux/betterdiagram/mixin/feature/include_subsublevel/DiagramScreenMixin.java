@@ -1,14 +1,11 @@
 package com.zelaux.betterdiagram.mixin.feature.include_subsublevel;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.feature.include_subsublevel.IDiagramScreenWithDependencies;
 import com.zelaux.betterdiagram.feature.include_subsublevel.SubLevelDependenciesData;
 import com.zelaux.betterdiagram.util.CenterMassCalculator;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
-import dev.ryanhcode.sable.sublevel.SubLevel;
-import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
@@ -44,6 +41,11 @@ public abstract class DiagramScreenMixin implements IDiagramScreenWithDependenci
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
+        bcd$tryUpdateData();
+    }
+
+    @Override
+    public void bcd$tryUpdateData() {
         if(bcd$subLevelDependencies != null) {
             if(((WithClientData) diagram).bcdDataNotNull_readOnly().shouldMergedForcesWithConnectedSublevels){
                 serverData = bcd$subLevelDependencies.mergedForces();
@@ -64,11 +66,10 @@ public abstract class DiagramScreenMixin implements IDiagramScreenWithDependenci
     }
 
 
-    @Inject(method = "open", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;setScreen(Lnet/minecraft/client/gui/screens/Screen;)V"))
-    private static void open(DiagramEntity diagramEntity, DiagramConfig config, SubLevel subLevel, CallbackInfo ci,
-                             @Local(name = "screen") DiagramScreen screen
+    @Inject(method = "<init>", at = @At(value = "TAIL"))
+    private void open(DiagramEntity diagramEntity, ClientSubLevel subLevel, CallbackInfo ci
     ) {
-        IDiagramScreenWithDependencies dependencies = (IDiagramScreenWithDependencies) screen;
+        IDiagramScreenWithDependencies dependencies = (IDiagramScreenWithDependencies) this;
 
         var data = SubLevelDependenciesData.tryConstruct(subLevel, Config.SUBLEVEL_TREE_DEPTH.getAsInt());
         if(data != null) {

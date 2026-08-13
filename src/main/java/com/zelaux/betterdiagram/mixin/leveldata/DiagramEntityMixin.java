@@ -19,7 +19,7 @@ public class DiagramEntityMixin implements WithClientData {
     )
     private void dropItem(Entity p_110128_1_, CallbackInfo ci) {
         DiagramEntity self = (DiagramEntity) ((Object) this);
-        DiagramEntityData data = DiagramEntityData.get(self.level());
+        DiagramEntityData data = DiagramEntityData.get(self.level(), bcd$saveType);
         data.saveData(self.getUUID(), null);
     }
 
@@ -27,11 +27,24 @@ public class DiagramEntityMixin implements WithClientData {
     @Unique
     BCDData bcd$data;
 
+    @Unique
+    DiagramEntityData.SaveSubLocation bcd$saveType= DiagramEntityData.SaveSubLocation.None;
+
+    @Override
+    public DiagramEntityData.SaveSubLocation bcd$saveType() {
+        return bcd$saveType;
+    }
+
+    @Override
+    public void bcd$saveType(DiagramEntityData.SaveSubLocation saveType) {
+        this.bcd$saveType = saveType;
+    }
+
     @Override
     public @Nullable BCDData bcd$dataOrNull() {
         DiagramEntity self = (DiagramEntity) ((Object) this);
-        if(bcd$data == null && !BetterContraptionDiagramClient.isServerSideInstalled) {
-            bcd$data = DiagramEntityData.get(self.level()).locateDataOrNull(self.getUUID());
+        if(bcd$data == null && (!BetterContraptionDiagramClient.isServerSideInstalled || bcd$saveType != DiagramEntityData.SaveSubLocation.None)) {
+            bcd$data = DiagramEntityData.get(self.level(), bcd$saveType).locateDataOrNull(self.getUUID());
         }
         return bcd$data;
     }
@@ -45,7 +58,7 @@ public class DiagramEntityMixin implements WithClientData {
     public BCDData bcd$updateData(BCDData data) {
         bcd$data = data;
         DiagramEntity self = (DiagramEntity) ((Object) this);
-        DiagramEntityData.get(self.level()).saveData(self.getUUID(), data);
+        DiagramEntityData.get(self.level(), bcd$saveType).saveData(self.getUUID(), data);
         return data;
     }
 }

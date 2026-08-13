@@ -19,6 +19,7 @@ import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
 import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.feature.balance.BalanceModel;
 import com.zelaux.betterdiagram.feature.balance.BalanceListSwitchAnimation;
+import com.zelaux.betterdiagram.feature.leveldata.DiagramEntityData;
 import com.zelaux.betterdiagram.func.DoubleSetter;
 import com.zelaux.betterdiagram.gui.comp.FormattedTextAsComponent;
 import com.zelaux.betterdiagram.gui.comp.SeparatorTooltipComponent;
@@ -166,7 +167,7 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         final var centerButton = makeButton(Component.translatable("bcd.calculator.move_to_struct_center"), () -> {
             Vector3d newValue = centerOfSubLevel();
             expectedCenterOfMass(newValue);
-            positionUpdatedNotFromEditBox(VecUtil.subMinVec3d(tmp.set(newValue), bb));
+            positionUpdatedNotFromEditBox(subMinVec3d(tmp.set(newValue), bb));
         }, () -> Component.translatable("bcd.calculator.move_to_struct_center"));
         final var selectBlock = makeButton(Component.translatable("bcd.calculator.select_block"), () -> selectBlock((grid, rawMouse, gridPos, mouseX, mouseY, pointer) -> {
             Vector3d offset = minVec3d(diagramScreen.subLevel.getPlot().getBoundingBox());
@@ -239,8 +240,8 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
         //var bb = diagramScreen.subLevel.getPlot().getBoundingBox();
 
 
-        mainProjectedAxes = VecUtil.projectAxises(DiagramScreen.LOCAL_ORIENTATION);
-        subProjectedAxes = VecUtil.projectAxises(noteAccessors.NOTE_ORIENTATION());
+        mainProjectedAxes = projectAxises(DiagramScreen.LOCAL_ORIENTATION);
+        subProjectedAxes = projectAxises(noteAccessors.NOTE_ORIENTATION());
 
         int diaX = width / 2 - areaWidth / 2;
         int diaY = height / 2 - areaHeight / 2;
@@ -790,11 +791,26 @@ public class CenterMassMovingScreen extends AbstractSimiScreen implements IDiagr
 
     @Override
     public void onClose() {
-        //ClientHooks.popGuiLayer(minecraft);
-        //this.minecraft.popGuiLayer();
-        removed();
-        BalanceListSwitchAnimation.hide();
-        minecraft.screen = diagramScreen;
+        DiagramEntityData.SaveSubLocation type = clientData.bcd$saveType();
+        Void handeled= switch(type) {
+            case None -> {
+                //ClientHooks.popGuiLayer(minecraft);
+                //this.minecraft.popGuiLayer();
+                removed();
+                BalanceListSwitchAnimation.hide();
+                minecraft.screen = diagramScreen;
+                yield null;
+            }
+            case GadgetsOverlay -> {
+                super.onClose();
+                //ClientHooks.popGuiLayer(minecraft);
+
+                //removed();
+                BalanceListSwitchAnimation.hide();
+                //minecraft.screen = diagramScreen;
+                yield null;
+            }
+        };
     }
 
     @Override

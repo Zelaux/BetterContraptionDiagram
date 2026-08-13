@@ -89,11 +89,16 @@ public class BetterContraptionDiagramCompatMixinPlugin implements IMixinConfigPl
 
     @Override
     public void preApply(final String targetClassName, final ClassNode targetClass, final String mixinClassName, final IMixinInfo mixinInfo) {
-
+        BCDPostprocessors.all().forEach(postprocessor -> {
+            postprocessor.preMixin(targetClassName,targetClass,mixinClassName,mixinInfo);
+        });
     }
 
     @Override
     public void postApply(final String targetClassName, final ClassNode targetClass, final String mixinClassName, final IMixinInfo mixinInfo) {
+        BCDPostprocessors.all().forEach(postprocessor -> {
+            postprocessor.postMixin(targetClassName,targetClass,mixinClassName,mixinInfo);
+        });
         //if(gadgetsLoaded && mixinClassName.startsWith(gadgetsPackage))
         //GadgetsPostprocessor.apply(targetClassName, targetClass, mixinClassName, mixinInfo);
     }

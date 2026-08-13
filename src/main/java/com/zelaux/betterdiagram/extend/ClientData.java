@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram.extend;
 
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.data.OffCenterBlocksShowState;
+import com.zelaux.betterdiagram.feature.leveldata.DiagramEntityData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,6 +32,16 @@ public class ClientData implements WithClientData {
     @Override
     public BCDData bcd$updateData(BCDData data) {
         return this.data.bcd$updateData(data);
+    }
+
+    @Override
+    public DiagramEntityData.SaveSubLocation bcd$saveType() {
+        return data.bcd$saveType();
+    }
+
+    @Override
+    public void bcd$saveType(DiagramEntityData.SaveSubLocation bcd$saveType) {
+        data.bcd$saveType(bcd$saveType);
     }
 
     @NotNull

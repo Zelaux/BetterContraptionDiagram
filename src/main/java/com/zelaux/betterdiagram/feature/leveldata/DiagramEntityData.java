@@ -7,6 +7,7 @@ import com.mojang.serialization.Codec;
 import com.zelaux.betterdiagram.BetterContraptionDiagramClient;
 import com.zelaux.betterdiagram.Config;
 import com.zelaux.betterdiagram.data.BCDData;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.*;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -26,19 +28,25 @@ public class DiagramEntityData {
     public static final Codec<Optional<Map<UUID, DataEntry>>> MAP_CODEC =
         Codec.dispatchedMap(UUIDUtil.STRING_CODEC, k -> DataEntry.CODEC).optionalFieldOf("dataMap")
              .codec();
-    static final Cache<Level, DiagramEntityData> CACHE =
+    static final Cache<Level, Cache<SaveSubLocation, DiagramEntityData>> CACHE =
         CacheBuilder.newBuilder()
                     .weakKeys()
-                    .<Level, DiagramEntityData>removalListener(notification -> {
+                    .<Level, Cache<SaveSubLocation, DiagramEntityData>>removalListener(notification -> {
                         var value = notification.getValue();
-                        if(value == null) return;
+                        if(value == null || value.size() == 0) return;
+                        value.invalidateAll();
+                    })
+                    .build();
+    private static Callable<Cache<SaveSubLocation, DiagramEntityData>> SubCacheMaker = () ->
+        CacheBuilder.newBuilder()
+                    .<SaveSubLocation, DiagramEntityData>removalListener(it -> {
                         try {
-                            value.trySave();
+                            it.getValue().trySave();
                         } catch(Exception e) {
                             BetterContraptionDiagramClient.LOGGER.error("Failed to save diagram entity info", e);
                         }
-                    })
-                    .build();
+                    }).build();
+
     private final Object LOCK = new Object();
     private final Path path;
     private final LevelData levelData;
@@ -82,12 +90,15 @@ public class DiagramEntityData {
 
 
     @SneakyThrows
-    public static DiagramEntityData get(Level level) {
+    public static DiagramEntityData get(Level level,@Nullable DiagramEntityData.SaveSubLocation saveSubLocation) {
         LevelData levelData = LevelDatas.levelData();
         if(levelData == null) return NULL;
-        return CACHE.get(level, () -> {
+
+        return CACHE.get(level, SubCacheMaker).get(saveSubLocation, () -> {
             try {
-                return new DiagramEntityData(levelData.locateLevelDirectory(level).resolve("diagrams.dat"), levelData);
+                Path path = levelData.locateLevelDirectory(level).resolve("diagrams");
+                path = saveSubLocation.wrap(path);
+                return new DiagramEntityData(path.resolveSibling(path.getFileName()+".bat"), levelData);
             } catch(Exception e) {
                 BetterContraptionDiagramClient.LOGGER.error("Cannot create diagram entity data", e);
                 return NULL;
@@ -98,9 +109,9 @@ public class DiagramEntityData {
 
     public static void saveAll(Iterable<? extends Level> allLevels) {
         for(var level : allLevels) {
-            DiagramEntityData present = CACHE.getIfPresent(level);
+            var present = CACHE.getIfPresent(level);
             if(present == null) continue;
-            present.trySave();
+            present.asMap().values().forEach(DiagramEntityData::trySave);
         }
     }
 
@@ -161,5 +172,17 @@ public class DiagramEntityData {
             }
         }
         return unpack(compute);
+    }
+
+    @AllArgsConstructor
+    public enum SaveSubLocation {
+        None(""),
+        GadgetsOverlay("_gadgets"),
+        ;
+        public final String postfix;
+
+        public Path wrap(Path path) {
+            return path.resolveSibling(path.getFileName() + postfix);
+        }
     }
 }

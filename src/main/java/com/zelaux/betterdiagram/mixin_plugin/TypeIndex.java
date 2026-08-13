@@ -12,6 +12,8 @@ public interface TypeIndex {
     Type BlockEntitySubLevelActor = type("dev/ryanhcode/sable/api/block/BlockEntitySubLevelActor");
     Type Quaterniond = type("org.joml.Quaterniond");
     Type Object = Type.getType(Object.class);
+    Type CompatModule = type("com.zelaux.betterdiagram.compat.CompatModule");
+    Type CompatHandles = type("com.zelaux.betterdiagram.compat.CompatHandles");
 
     static Type type(String typeName) {
         return Type.getObjectType(typeName.replace('.','/'));

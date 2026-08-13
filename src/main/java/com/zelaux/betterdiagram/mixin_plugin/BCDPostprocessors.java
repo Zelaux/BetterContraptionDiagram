@@ -1,13 +1,13 @@
 package com.zelaux.betterdiagram.mixin_plugin;
 
 import com.google.common.collect.ImmutableSet;
-import com.mojang.logging.LogUtils;
 import com.zelaux.betterdiagram.DebugRuntime;
 import com.zelaux.betterdiagram.mixin_plugin.postprocessors.VanilaPostprocessor;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
+import org.spongepowered.asm.mixin.extensibility.*;
 
 import java.util.stream.Stream;
 
@@ -15,6 +15,10 @@ public class BCDPostprocessors {
     private static final ObjectArrayList<Entry> postprocessors = new ObjectArrayList<>();
     private static boolean dirty = true;
     private static ImmutableSet<String> globalSet;
+
+    public static Stream<Postprocessor> all() {
+        return postprocessors.stream().map(Entry::postprocessor);
+    }
 
     //private static Pattern globalPattern = null;
     record Entry(Postprocessor postprocessor, ImmutableSet<String> internalNames) {}
@@ -58,17 +62,24 @@ public class BCDPostprocessors {
 
     public static void debugSave(ClassNode targetClass) {
         if(DebugRuntime.isDebug()) {
+            String fileName = targetClass.name.substring(targetClass.name.lastIndexOf("/") + 1) + ".class";
+            DebugRuntime.LOGGER.info("Debug save: {}", fileName);
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
             targetClass.accept(writer);
             DebugRuntime.saveInFile(
-                targetClass.name.substring(targetClass.name.lastIndexOf("/") + 1) + ".class",
+                fileName,
                 writer.toByteArray()
             );
         }
     }
 
     public interface Postprocessor {
+default void preMixin(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo){
 
+}
+default void postMixin(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo){
+
+}
 
         Type[] usedClasses();
 

@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram.extend;
 
 import com.zelaux.betterdiagram.BetterContraptionDiagramClient;
 import com.zelaux.betterdiagram.data.BCDData;
+import com.zelaux.betterdiagram.feature.leveldata.DiagramEntityData;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +30,10 @@ public interface WithClientData {
         return axisStates(i, !axisStates(i));
     }
 
+    DiagramEntityData.SaveSubLocation bcd$saveType();
+
+    void bcd$saveType(DiagramEntityData.SaveSubLocation bcd$saveType);
+
     @Nullable
     @Contract(pure = true)
     BCDData bcd$dataOrNull();
@@ -44,7 +49,7 @@ public interface WithClientData {
     default BCDData bcdDataOrTryDefault() {
         BCDData obj = bcd$dataOrNull();
         //waiting for server packat
-        if(obj == null && BetterContraptionDiagramClient.isServerSideInstalled) return null;
+        if(obj == null && BetterContraptionDiagramClient.isServerSideInstalled && bcd$saveType() == DiagramEntityData.SaveSubLocation.None) return null;
         return Objects.requireNonNullElse(obj, BCDData.DEFAULT_VALUE);
     }
 

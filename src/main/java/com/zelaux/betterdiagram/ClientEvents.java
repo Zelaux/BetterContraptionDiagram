@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram;
 
 import com.mojang.datafixers.util.Either;
 import com.zelaux.betterdiagram.command.client.BCDCommand;
+import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.feature.balance.BalanceListSwitchAnimation;
 import com.zelaux.betterdiagram.feature.balloon_volume_calculator.BalloonIndexUpdate;
 import com.zelaux.betterdiagram.feature.leveldata.DiagramEntityData;
@@ -32,6 +33,8 @@ import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 
+import java.util.List;
+
 @EventBusSubscriber(modid = BetterContraptionDiagram.MODID, value = Dist.CLIENT)
 public class ClientEvents {
     public static float clientTime() {
@@ -59,7 +62,7 @@ public class ClientEvents {
             var reason = diagramEntity.getRemovalReason();
 
             if(reason == Entity.RemovalReason.KILLED) {
-                DiagramEntityData.get(level).saveData(diagramEntity.getUUID(), null);
+                DiagramEntityData.get(level, ((WithClientData) diagramEntity).bcd$saveType()).saveData(diagramEntity.getUUID(), null);
             }
         }
     }
@@ -102,7 +105,7 @@ public class ClientEvents {
     static void onLevelUnload(LevelEvent.Unload load) {
         if(load.getLevel() instanceof ClientLevel level) {
             CenterMassCache.resetCache(false);
-            DiagramEntityData.get(level).trySave();
+            DiagramEntityData.saveAll(List.of(level));
         }
     }
 
