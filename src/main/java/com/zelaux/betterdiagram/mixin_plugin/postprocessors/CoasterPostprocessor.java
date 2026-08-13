@@ -1,7 +1,9 @@
 package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
+import com.zelaux.betterdiagram.annotations.CompileTool;
 import com.zelaux.betterdiagram.mixin_plugin.BCDPostprocessors;
 import com.zelaux.betterdiagram.mixin_plugin.TypeIndex;
+import dev.silvergold.simulatedcoasters.track.cart.CoasterCartTrainLinkConstraint;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -21,7 +23,7 @@ import java.util.function.Predicate;
 public enum CoasterPostprocessor implements BCDPostprocessors.Postprocessor {
     INSTANCE;
 
-    static Type CoasterCartTrainLinkConstraint = TypeIndex.type("dev.silvergold.simulatedcoasters.track.cart.CoasterCartTrainLinkConstraint");
+    static Type CoasterCartTrainLinkConstraint = CompileTool.bakeType(CoasterCartTrainLinkConstraint.class);
 
     //SubLevelPhysicsSystem physics, ActiveLink link, ServerSubLevel cartA, ServerSubLevel cartB
     static Method searchMethod = new Method("updateConstraint", Type.VOID_TYPE, new Type[]{

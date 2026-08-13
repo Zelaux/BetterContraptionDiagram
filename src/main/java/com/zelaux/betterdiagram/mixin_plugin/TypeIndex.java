@@ -1,21 +1,33 @@
 package com.zelaux.betterdiagram.mixin_plugin;
 
 
+import com.zelaux.betterdiagram.compat.CompatHandles;
+import com.zelaux.betterdiagram.compat.CompatModule;
+import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
+import dev.ryanhcode.sable.api.physics.constraint.GenericConstraintConfiguration;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import dev.ryanhcode.sable.sublevel.SubLevel;
+import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
+import dev.silvergold.simulatedcoasters.track.cart.CoasterCartTrainLinkConstraint;
+import org.joml.Quaterniond;
 import org.objectweb.asm.Type;
 
+import static com.zelaux.betterdiagram.annotations.CompileTool.bakeType;
+
 public interface TypeIndex {
-     Type SubLevelPhysicsSystem=type("dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem");
-     Type CoasterCartTrainLinkConstraint_ActiveLink = type("dev.silvergold.simulatedcoasters.track.cart.CoasterCartTrainLinkConstraint$ActiveLink");
-     Type ServerSubLevel = type("dev.ryanhcode.sable.sublevel.ServerSubLevel");
-     Type SubLevel  = type("dev.ryanhcode.sable.sublevel.SubLevel");
-    Type GenericConstraintConfiguration=type("dev.ryanhcode.sable.api.physics.constraint.GenericConstraintConfiguration".replace('.','/'));
-    Type BlockEntitySubLevelActor = type("dev/ryanhcode/sable/api/block/BlockEntitySubLevelActor");
-    Type Quaterniond = type("org.joml.Quaterniond");
-    Type Object = Type.getType(Object.class);
-    Type CompatModule = type("com.zelaux.betterdiagram.compat.CompatModule");
-    Type CompatHandles = type("com.zelaux.betterdiagram.compat.CompatHandles");
+    Type CoasterCartTrainLinkConstraint_ActiveLink =bakeType(CoasterCartTrainLinkConstraint.ActiveLink.class);
+
+    Type SubLevelPhysicsSystem = bakeType(SubLevelPhysicsSystem.class);
+    Type ServerSubLevel = bakeType(ServerSubLevel.class);
+    Type SubLevel = bakeType(SubLevel.class);
+    Type GenericConstraintConfiguration = bakeType(GenericConstraintConfiguration.class);
+    Type BlockEntitySubLevelActor = bakeType(BlockEntitySubLevelActor.class);
+    Type Quaterniond = bakeType(Quaterniond.class);
+    Type Object = bakeType(Object.class);
+    Type CompatModule = bakeType(CompatModule.class);
+    Type CompatHandles = bakeType(CompatHandles.class);
 
     static Type type(String typeName) {
-        return Type.getObjectType(typeName.replace('.','/'));
+        return Type.getObjectType(typeName.replace('.', '/'));
     }
 }
