@@ -1,8 +1,9 @@
-package processor.util;
+package com.zelaux.bcd.asm_commons;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -39,6 +40,12 @@ public final class CodeEntry {
 
     public static CodeEntry methodEntry(Type owner, MethodNode node) {
         return methodEntry(owner, Type.getType(node.desc), node.name);
+    }
+    public static CodeEntry methodEntry(Type owner, Method node) {
+        return methodEntry(owner, Type.getType(node.getDescriptor()), node.getName());
+    }
+    public static CodeEntry methodEntry(BoundMethod method) {
+        return methodEntry(method.owner(), method.method());
     }
 
     public static CodeEntry methodEntry(Type owner, Type type, String name) {

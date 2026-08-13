@@ -1,4 +1,4 @@
-package processor.util;
+package com.zelaux.bcd.asm_commons;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

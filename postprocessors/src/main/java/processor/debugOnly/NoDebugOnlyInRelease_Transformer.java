@@ -10,8 +10,8 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Type;
 import processor.Vars;
-import processor.util.AnnotatedElementsCollector;
-import processor.util.CodeEntry;
+import com.zelaux.bcd.asm_commons.AnnotatedElementsCollector;
+import com.zelaux.bcd.asm_commons.CodeEntry;
 
 import java.io.File;
 import java.util.HashSet;

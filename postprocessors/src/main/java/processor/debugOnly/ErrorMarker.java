@@ -1,7 +1,7 @@
 package processor.debugOnly;
 
 import org.objectweb.asm.*;
-import processor.util.CodeEntry;
+import com.zelaux.bcd.asm_commons.CodeEntry;
 
 import java.io.PrintStream;
 import java.util.HashSet;

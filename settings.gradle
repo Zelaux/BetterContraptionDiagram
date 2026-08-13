@@ -27,6 +27,7 @@ plugins {
 
 
 include("postprocessors")
+include("asm-commons")
 
 println(file("local.properties").absolutePath)
 if (file("local.properties").exists()) {

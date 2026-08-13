@@ -1,8 +1,9 @@
-package processor.util;
+package com.zelaux.bcd.asm_commons;
 
 import lombok.With;
 import lombok.experimental.WithBy;
 import org.intellij.lang.annotations.MagicConstant;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
@@ -50,6 +51,11 @@ public record BoundMethod(Type owner, Method method) {
 
     public Type[] getArgumentTypes() {
         return method.getArgumentTypes();
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return owner.getInternalName()+" "+method.toString();
     }
 
     public void setTo(MethodInsnNode dest, @MagicConstant(intValues = {Opcodes.INVOKEVIRTUAL, Opcodes.INVOKESPECIAL, Opcodes.INVOKESTATIC, Opcodes.INVOKEINTERFACE}) int opcode) {

@@ -11,8 +11,8 @@ import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
-import processor.util.AnnotatedElementsCollector;
-import processor.util.CodeEntry;
+import com.zelaux.bcd.asm_commons.AnnotatedElementsCollector;
+import com.zelaux.bcd.asm_commons.CodeEntry;
 
 import java.util.regex.Pattern;
 

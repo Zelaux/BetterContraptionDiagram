@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.*;
-import processor.util.MethodUtil;
+import com.zelaux.bcd.asm_commons.MethodUtil;
 
 public class ClassToString extends AbstractClassFileTransformer {
     public static final Type COMPILE_TOOL_TYPE = Type.getObjectType("com.zelaux.betterdiagram.annotations.CompileTool".replace('.', '/'));

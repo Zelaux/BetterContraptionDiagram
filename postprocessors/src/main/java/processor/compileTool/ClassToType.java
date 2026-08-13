@@ -11,8 +11,8 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import processor.util.BoundMethod;
-import processor.util.MethodUtil;
+import com.zelaux.bcd.asm_commons.BoundMethod;
+import com.zelaux.bcd.asm_commons.MethodUtil;
 
 import java.util.Arrays;
 

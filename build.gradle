@@ -235,6 +235,7 @@ configurations {
 dependencies {
 //    compileOnly(project.childProjects["postprocessors"])
     postprocessor(childProjects["postprocessors"])
+    implementation(childProjects["asm-commons"])
     implementation ("maven.modrinth:enhanced-diagrams:1.0.0")
 //    implementation ("maven.modrinth:create-aeronautics:1.2.1+mc1.21.1")
 //    api files("libs/dev.eriksonn.aeronautics.aeronautics-neoforge-${minecraft_version}-${aeronautics_version}.jar")
@@ -254,7 +255,9 @@ dependencies {
     }
     compileOnly "dev.ryanhcode.sable:sable-sable_rapier-1.21.1:$sable_rapier_version"
 //    compileOnly "dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:1.6.0"
-    api("dev.engine-room.flywheel:flywheel-neoforge-1.21.1:1.0.6")
+    api("dev.engine-room.flywheel:flywheel-neoforge-1.21.1:1.0.6"){
+        exclude group: "org.ow2.asm"
+    }
     api("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") {
 //        exclude group: "foundry.veil"
     }
@@ -353,8 +356,17 @@ tasks.named("runPostprocessors", asmext.plugin.RunPostProcessors) {
         args("-debug")
     }
 }
+tasks.register("copyAsmCommonsClasses", Copy) {
+    dependsOn(childProjects["asm-commons"].tasks.named("classes"))
+
+    from(childProjects["asm-commons"].sourceSets.main.output.classesDirs)
+    into(sourceSets.main.output.classesDirs.singleFile)
+}
+
+tasks.named("classes") {
+    dependsOn(tasks.named("copyAsmCommonsClasses"))
+}
 tasks.named('jar') {
-    // Говорим jar-нику, что он не может начаться, пока не отработает ваш таск
     dependsOn(tasks.named("runPostprocessors"))
 //    dependsOn(tasks.named("runPostprocessors").outputs)
     outputs.upToDateWhen{true}

@@ -20,8 +20,8 @@ import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
-import processor.util.AnnotatedElementsCollector;
-import processor.util.CodeEntry;
+import com.zelaux.bcd.asm_commons.AnnotatedElementsCollector;
+import com.zelaux.bcd.asm_commons.CodeEntry;
 import processor.debugOnly.NoDebugOnlyInRelease_Transformer;
 
 import java.util.HashSet;

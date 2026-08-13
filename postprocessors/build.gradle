@@ -13,6 +13,7 @@ static String asmExt(String module) {
 }
 
 dependencies {
+    implementation project(":asm-commons")
     implementation "it.unimi.dsi:fastutil:8.5.12"
 
     def asmVersion='9.8'
