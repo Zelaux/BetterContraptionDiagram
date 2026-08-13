@@ -5,19 +5,14 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.zelaux.betterdiagram.extend.WithClientData;
 import com.zelaux.betterdiagram.feature.leveldata.DiagramEntityData;
 import net.createmod.catnip.animation.AnimationTickHolder;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
-import java.util.UUID;
-
 @Mixin(targets = "com.rieno.gadgetsandgizmos.neoforge.client.CTPhysicsGogglesClient$SimulatedDiagramMiniRenderer")
 //@Mixin(BlockEntity.class)
-public class Stupid_Mini  {
+public class Mini {
     @Shadow
     private boolean failed;
 
