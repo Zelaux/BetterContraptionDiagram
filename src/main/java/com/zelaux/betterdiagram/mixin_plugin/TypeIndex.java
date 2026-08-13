@@ -27,6 +27,9 @@ public interface TypeIndex {
     Type CompatModule = bakeType(CompatModule.class);
     Type CompatHandles = bakeType(CompatHandles.class);
 
+    static Type bakedType(Class<?> typeName) {
+        return Type.getType(typeName);
+    }
     static Type type(String typeName) {
         return Type.getObjectType(typeName.replace('.', '/'));
     }

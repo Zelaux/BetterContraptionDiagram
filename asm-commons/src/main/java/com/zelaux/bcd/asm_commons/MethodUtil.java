@@ -58,6 +58,16 @@ public class MethodUtil {
         }
         return any;
     }
+    public static boolean processInstruction(InsnList instructions, FoundMethodInvokeHandler handler) {
+        AbstractInsnNode[] array = instructions.toArray();
+        boolean any = false;
+        for(int i = 0; i < array.length; i++) {
+            AbstractInsnNode insn = array[i];
+            if(!(insn instanceof MethodInsnNode node)) continue;
+            any |= handler.extracted(instructions, array, i, node, null);
+        }
+        return any;
+    }
 
     public static int indexOf(MethodInsnNode node, BoundMethod[] methods) {
         for(int i = 0; i < methods.length; i++) {

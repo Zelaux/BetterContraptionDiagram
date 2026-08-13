@@ -5,3 +5,4 @@ processor.DeleteIfNotDebug_Transformer
 processor.SilentDelete_Transformer
 processor.compileTool.ClassToString
 processor.compileTool.ClassToType
+processor.compileTool.LambdaToBoundMethod

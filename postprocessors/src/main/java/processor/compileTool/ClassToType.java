@@ -5,14 +5,14 @@ import asmlib.transform.LazyByteCodeProvider;
 import asmlib.transform.TransformationWriter;
 import asmlib.transform.context.TransformationContext;
 import asmlib.util.ClassFileMetaData;
+import com.zelaux.bcd.asm_commons.BoundMethod;
+import com.zelaux.bcd.asm_commons.MethodUtil;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import com.zelaux.bcd.asm_commons.BoundMethod;
-import com.zelaux.bcd.asm_commons.MethodUtil;
 
 import java.util.Arrays;
 
@@ -34,6 +34,10 @@ public class ClassToType extends AbstractClassFileTransformer {
         sampleMethod,
         sampleMethod.withMethod(new Method("classToType", sampleMethod.method().getDescriptor())),
         sampleMethod.withMethod(new Method("asType", sampleMethod.method().getDescriptor())),
+        BoundMethod.make(
+            Type.getObjectType("com.zelaux.betterdiagram.mixin_plugin.TypeIndex".replace('.', '/')),
+            "bakedType", sampleMethod.getReturnType(), sampleMethod.getArgumentTypes()),
+        getObjectType
 
     };
 

@@ -22,6 +22,16 @@ public record BoundMethod(Type owner, Method method) {
     public static BoundMethod make(Type owner, String methodName, Type returnType, Type... parameters) {
         return new BoundMethod(owner, methodName, returnType, parameters);
     }
+/*
+    public static BoundMethod fromIntellijString(String method, Type returnType) {
+        int open = method.indexOf('(');
+        int close = method.indexOf(')');
+        int methodNameStart = method.lastIndexOf('.', open);
+        return new BoundMethod(
+            Type.getObjectType(method.substring(methodNameStart).replace('.','/')),
+            method.substring(methodNameStart+1,open)
+        );
+    }*/
 
     public boolean matches(MethodInsnNode insn) {
         return insn.owner.equals(owner.getInternalName()) &&
@@ -55,7 +65,13 @@ public record BoundMethod(Type owner, Method method) {
 
     @Override
     public @NotNull String toString() {
-        return owner.getInternalName()+" "+method.toString();
+        return owner.getInternalName() + " " + method.toString();
+    }
+
+    public MethodInsnNode invokeInsn(@MagicConstant(intValues = {Opcodes.INVOKEVIRTUAL, Opcodes.INVOKESPECIAL, Opcodes.INVOKESTATIC, Opcodes.INVOKEINTERFACE}) int opcode) {
+        MethodInsnNode methodInsnNode = new MethodInsnNode(0, "", "", "");
+        setTo(methodInsnNode, opcode);
+        return methodInsnNode;
     }
 
     public void setTo(MethodInsnNode dest, @MagicConstant(intValues = {Opcodes.INVOKEVIRTUAL, Opcodes.INVOKESPECIAL, Opcodes.INVOKESTATIC, Opcodes.INVOKEINTERFACE}) int opcode) {
@@ -64,5 +80,9 @@ public record BoundMethod(Type owner, Method method) {
         dest.owner = owner().getInternalName();
         dest.name = getName();
         dest.desc = getDescriptor();
+    }
+
+    public String getOwner() {
+        return owner.getInternalName();
     }
 }

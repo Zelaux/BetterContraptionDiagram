@@ -12,25 +12,27 @@ import org.objectweb.asm.tree.MethodNode;
 public enum VanilaProcessorProvider implements ProcessorProvider {
     INSTANCE;
     private final ClassNode DUMMY = new ClassNode();
-    public Type RopeStrandHolderBlockEntity = CompileTool.bakeType(RopeStrandHolderBlockEntity.class);
-    public Type IRopeStrandHolderBlockEntity = CompileTool.bakeType(IRopeStrandHolderBlockEntity.class);
+    public Type ropeStrandHolderBlockEntity = CompileTool.bakeType(RopeStrandHolderBlockEntity.class);
+    public Type iRopeStrandHolderBlockEntity = CompileTool.bakeType(IRopeStrandHolderBlockEntity.class);
 
     //public static final Method generatedMethod = new Method("bcd$hasActor", BlockEntitySubLevelActor, new Type[0]);
-    public static final Method generatedMethod = new Method("bcd$sable$getConnectionDependencies", Type.getType(Iterable.class), new Type[0]);
+    //public static final Method generatedMethod = new Method("bcd$sable$getConnectionDependencies", Type.getType(Iterable.class), new Type[0]);
+    public static final Method generatedMethod = CompileTool.GetMethod.methodOf(IRopeStrandHolderBlockEntity::bcd$sable$getConnectionDependencies).method();
     //Iterable<@NotNull SubLevel> sable$getConnectionDependencies()
-    public static final Method searchMethod = new Method("sable$getConnectionDependencies", Type.getType(Iterable.class), new Type[0]);
+    //public static final Method searchMethod = new Method("sable$getConnectionDependencies", Type.getType(Iterable.class), new Type[0]);
+    public static final Method searchMethod = CompileTool.GetMethod.methodOf(RopeStrandHolderBlockEntity::sable$getConnectionDependencies).method();
 
     @Override
     public Transformations[] transformations() {
         return ProcessorProvider.types(
-            Transformations.of(RopeStrandHolderBlockEntity, targetClass -> {
+            Transformations.of(ropeStrandHolderBlockEntity, targetClass -> {
                 MethodNode found = GadgetsProcessorProvider.findMethod(targetClass, generatedMethod, searchMethod);
                 if(found == null) return false;
                 MethodNode clone = cloneMethod(found);
                 clone.name = generatedMethod.getName();
                 targetClass.methods.add(clone);
-                targetClass.interfaces.add(IRopeStrandHolderBlockEntity.getInternalName());
-                targetClass.signature += IRopeStrandHolderBlockEntity.getDescriptor();
+                targetClass.interfaces.add(iRopeStrandHolderBlockEntity.getInternalName());
+                targetClass.signature += iRopeStrandHolderBlockEntity.getDescriptor();
                 return true;
             })
         );
