@@ -63,7 +63,7 @@ public class WithPostMixinTransformer extends DelegateTransformer {
     @Override
     public boolean transformClass(MixinEnvironment environment, String name, ClassNode classNode) {
 
-        boolean b = super.transformClass(environment, name, classNode);
+        boolean b = delegate.transformClass(environment, name, classNode);
         if(predicate.test(name.replace('.','/'))){
             b|=extension.postprocess(classNode);
         }
@@ -73,7 +73,7 @@ public class WithPostMixinTransformer extends DelegateTransformer {
     @Override
     public byte[] transformClassBytes(String name, String transformedName, byte[] basicClass) {
 
-        byte[] bytes = super.transformClassBytes(name, transformedName, basicClass);
+        byte[] bytes = delegate.transformClassBytes(name, transformedName, basicClass);
         return postprocessBytes(transformedName, bytes);
     }
 
@@ -89,17 +89,18 @@ public class WithPostMixinTransformer extends DelegateTransformer {
 
     @Override
     public byte[] transformClass(MixinEnvironment environment, String name, byte[] classBytes) {
-        return postprocessBytes(name,super.transformClass(environment, name, classBytes));
+        return postprocessBytes(name,delegate.transformClass(environment, name, classBytes));
         //return super.transformClass(environment, name, classBytes);
     }
 
     @Override
     public byte[] generateClass(MixinEnvironment environment, String name) {
-        return super.generateClass(environment, name);
+        return delegate.generateClass(environment, name);
     }
 
     @Override
     public boolean generateClass(MixinEnvironment environment, String name, ClassNode classNode) {
-        return super.generateClass(environment, name, classNode);
+        return delegate.generateClass(environment, name, classNode);
     }
+
 }
