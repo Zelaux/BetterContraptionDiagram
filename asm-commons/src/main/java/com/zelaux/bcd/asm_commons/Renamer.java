@@ -74,6 +74,6 @@ public class Renamer extends MethodVisitor {
     @Override
     public void visitLocalVariable(String name, String descriptor, String signature, Label start, Label end, int index) {
         CodeEntry codeEntry = CodeEntry.classEntry(Type.getType(descriptor));
-        super.visitLocalVariable(name, all.getOrDefault(codeEntry,codeEntry).type.getDescriptor(), signature, start, end, index);
+        super.visitLocalVariable(name, all.getOrDefault(codeEntry,codeEntry).owner.getDescriptor(), signature, start, end, index);
     }
 }
