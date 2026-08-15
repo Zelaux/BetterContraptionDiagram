@@ -13,13 +13,17 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.analysis.Analyzer;
+import org.objectweb.asm.tree.analysis.AnalyzerException;
+import org.objectweb.asm.tree.analysis.BasicValue;
+import org.objectweb.asm.tree.analysis.SimpleVerifier;
 
 public class LambdaToBoundMethod extends AbstractClassFileTransformer {
 
     public static final BoundMethod BoundMethod_make = BoundMethod.make(
         Type.getType(BoundMethod.class),
         "make",
-        Type.getType(Type.class),
+        Type.getType(BoundMethod.class),
 
         Type.getType(Type.class),
         Type.getType(String.class),
@@ -69,7 +73,7 @@ public class LambdaToBoundMethod extends AbstractClassFileTransformer {
         return TransformationWriter.nodeTransformer(classNode -> {
             boolean any = false;
             for(MethodNode method : classNode.methods) {
-                any |= MethodUtil.processInstruction(method.instructions,
+                boolean transformed = MethodUtil.processInstruction(method.instructions,
                     (instructions, insnArr, location, methodInsn, nil) -> {
                         if(!methodInsn.owner.equals(sampleMethod.owner().getInternalName()) || !methodInsn.name.equals(sampleMethod.getName())) {
                             return false;
@@ -101,7 +105,7 @@ public class LambdaToBoundMethod extends AbstractClassFileTransformer {
                             nodes.add(new InsnNode(Opcodes.POP + type.getSize() - 1));
                         }
 
-                        typeGetInsn(nodes,Type.getObjectType(targetHandle.getOwner()));
+                        typeGetInsn(nodes, Type.getObjectType(targetHandle.getOwner()));
 
                         nodes.add(new LdcInsnNode(targetHandle.getName()));
 
@@ -127,6 +131,7 @@ public class LambdaToBoundMethod extends AbstractClassFileTransformer {
                         //instructions.remove(methodInsn);
                         return true;
                     });
+                any |= transformed;
             }
             return any ? classNode : null;
         });
