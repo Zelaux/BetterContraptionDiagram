@@ -47,6 +47,12 @@ public abstract class AbstractForceMapper {
         return isMergable;
     }
 
+    public void flipDirection() {
+        var a = originSubLevel;
+        var aGroup = originGroup;
+
+    }
+
     @With
     public record SubLevelInfo(
         SubLevel sourceSubLevel,
@@ -57,6 +63,15 @@ public abstract class AbstractForceMapper {
         public SubLevelInfo withTarget(SubLevel subLevel, SubLevelGroup group){
             return new SubLevelInfo(
                 sourceSubLevel,sourceGroup,subLevel,group
+            );
+        }
+
+        public SubLevelInfo flipped() {
+            return new SubLevelInfo(
+                targetSubLevel,
+                targetGroup,
+                sourceSubLevel,
+                sourceGroup
             );
         }
     }

@@ -2,6 +2,7 @@ package com.zelaux.betterdiagram.mixin_plugin;
 
 import com.llamalad7.mixinextras.utils.MixinInternals;
 import com.zelaux.betterdiagram.compat.CompatIndex;
+import com.zelaux.betterdiagram.mixin_plugin.postprocessors.AbsoluteKinematicsProcessor;
 import com.zelaux.betterdiagram.mixin_plugin.postprocessors.CoasterProcessorProvider;
 import com.zelaux.betterdiagram.mixin_plugin.postprocessors.GadgetsProcessorProvider;
 import com.zelaux.betterdiagram.mixin_plugin.system.BCDPostprocessors;
@@ -18,7 +19,7 @@ import java.util.Set;
 public class BetterContraptionDiagramCompatMixinPlugin implements IMixinConfigPlugin {
     private final FilterEntry[] filters = {
         filter(CompatIndex.gadgets, "gadgets", GadgetsProcessorProvider.INSTANCE),
-        filter(CompatIndex.absoluteKinematics, "absolute_kinematics", null),
+        filter(CompatIndex.absoluteKinematics, "absolute_kinematics", AbsoluteKinematicsProcessor.INSTANCE),
         filter(CompatIndex.compactflap, "compact_flap", null),
         filter(CompatIndex.coasters, "simulatedcoasters", CoasterProcessorProvider.INSTANCE),
     };
