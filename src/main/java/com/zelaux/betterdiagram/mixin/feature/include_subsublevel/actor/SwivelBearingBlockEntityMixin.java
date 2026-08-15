@@ -13,8 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 
 @Mixin(SwivelBearingBlockEntity.class)
 public abstract class SwivelBearingBlockEntityMixin {
+
     @SuppressWarnings("rawtypes")
-    @Inject(method = "attachConstraints", at = @At(
+    @Inject(method = "Ldev/simulated_team/simulated/content/blocks/swivel_bearing/SwivelBearingBlockEntity;attachConstraints(Ldev/ryanhcode/sable/sublevel/ServerSubLevel;Lorg/joml/Vector3d;)V", at = @At(
         value = "INVOKE",
         target = "Ldev/simulated_team/simulated/content/blocks/swivel_bearing/SwivelBearingBlockEntity;getLevel()Lnet/minecraft/world/level/Level;"
     ),
@@ -31,5 +32,23 @@ public abstract class SwivelBearingBlockEntityMixin {
             }
         }
     }
+
+    /*@SuppressWarnings("rawtypes")
+    @Inject(method = "Ldev/simulated_team/simulated/content/blocks/swivel_bearing/SwivelBearingBlockEntity;attachConstraints(Ldev/ryanhcode/sable/sublevel/ServerSubLevel;Lorg/joml/Vector3d;)V", at = @At(
+        value = "STORE",ordinal =
+    ),
+        cancellable = true)
+    public void bcd$attachConstraints(
+        ServerSubLevel plateSubLevel,
+        Vector3d attachPos,
+        CallbackInfo ci,
+        @Local(name = "constraint") RotaryConstraintConfiguration config) {
+        if(attachPos instanceof Vector3dWith vector3dWith) {
+            if(vector3dWith.second instanceof PhysicsConstraintConfiguration<?>) {
+                vector3dWith.second = config;
+                ci.cancel();
+            }
+        }
+    }*/
 
 }

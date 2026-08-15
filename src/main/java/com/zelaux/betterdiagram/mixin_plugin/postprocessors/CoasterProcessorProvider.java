@@ -1,9 +1,6 @@
 package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
-import com.zelaux.bcd.asm_commons.BoundMethod;
-import com.zelaux.bcd.asm_commons.CodeEntry;
-import com.zelaux.bcd.asm_commons.MethodUtil;
-import com.zelaux.bcd.asm_commons.Renamer;
+import com.zelaux.bcd.asm_commons.*;
 import com.zelaux.betterdiagram.annotations.CompileTool;
 import com.zelaux.betterdiagram.mixin_plugin.TypeIndex;
 import com.zelaux.betterdiagram.mixin_plugin.system.ProcessorProvider;
@@ -117,32 +114,18 @@ public enum CoasterProcessorProvider implements ProcessorProvider {
 
         private final InsnList instructions;
         private final Renamer renamer;
+        private final LabelCompleter labelFixer;
 
         public MyGenerator(MethodNode ownNode, MethodNode found) {
             super(Opcodes.ASM9, ServerToUnboundRenamer.make(ownNode), ownNode.access, ownNode.name, ownNode.desc);
             instructions = ownNode.instructions;
             renamer = (Renamer) mv;
+            mv=labelFixer=new LabelCompleter(api,mv);
             Type type = CoasterCartTrainLinkConstraint;
             renamer.addMapping(CodeEntry.methodEntry(localJointOrientation),CodeEntry.methodEntry(localJointOrientation_2));
 
         }
 
-        private final ObjectOpenHashSet<Label> visitedLabel = new ObjectOpenHashSet<>();
-        private final ObjectOpenHashSet<Label> labelQueue = new ObjectOpenHashSet<>();
-
-        @Override
-        public void visitLabel(Label label) {
-            super.visitLabel(label);
-            visitedLabel.add(label);
-            labelQueue.remove(label);
-        }
-
-        @Override
-        public void visitJumpInsn(int opcode, Label label) {
-            super.visitJumpInsn(opcode, label);
-            if(visitedLabel.contains(label)) return;
-            labelQueue.add(label);
-        }
 
         @Override
         public void visitInsn(int opcode) {
@@ -161,9 +144,7 @@ public enum CoasterProcessorProvider implements ProcessorProvider {
             if(opcode == Opcodes.INVOKESPECIAL && name.equals("<init>")) {
                 if(owner.equals(TypeIndex.GenericConstraintConfiguration.getInternalName())) {
                     returnValue();
-                    for(Label label : labelQueue) {
-                        visitLabel(label);
-                    }
+                    labelFixer.completeLabels();
                     push((String) null);
                     returnValue();
                     visitEnd();

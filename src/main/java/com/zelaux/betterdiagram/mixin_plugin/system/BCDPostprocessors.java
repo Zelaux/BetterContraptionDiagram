@@ -75,7 +75,7 @@ public class BCDPostprocessors {
         if(DebugRuntime.isDebug()) {
             String fileName = targetClass.name.substring(targetClass.name.lastIndexOf("/") + 1) + ".class";
             DebugRuntime.LOGGER.info("Debug save: {}", fileName);
-            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+            ClassWriter writer = new ClassWriter(0);
             targetClass.accept(writer);
             DebugRuntime.saveInFile(
                 fileName,

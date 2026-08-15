@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Quaterniond;
 
 import java.util.Map;
 
@@ -32,6 +34,10 @@ public abstract class LocalConstraint<Config extends PhysicsConstraintConfigurat
     public static @NotNull LocalConstraint<?> from(PhysicsConstraintConfiguration<?> configuration, SubLevel a, SubLevel b, Map<SubLevel, SubLevelGroup> subLevel2Group) {
         SubLevelGroup groupA = subLevel2Group.get(a);
         SubLevelGroup groupB = subLevel2Group.get(b);
+        return from(configuration, a, b, groupA, groupB);
+    }
+
+    public static @NotNull LocalConstraint<?> from(PhysicsConstraintConfiguration<?> configuration, SubLevel a, SubLevel b, SubLevelGroup groupA, SubLevelGroup groupB) {
         if(configuration instanceof RotaryConstraintConfiguration rotary) {
             return new RotationConstraintForceMapper(rotary, a, b, groupA, groupB);
         }
@@ -43,5 +49,39 @@ public abstract class LocalConstraint<Config extends PhysicsConstraintConfigurat
                 throw new IllegalStateException("Unexpected value: " + configuration);
         };
         return new DummyConstraintForceMapper<>(configuration, kind, a, b, groupA, groupB);
+    }
+
+    @SuppressWarnings("unchecked")
+    public LocalConstraint<Config> flip() {
+        return (LocalConstraint<Config>) from(
+            flipConfig(configuration()),
+            toAttachSubLevel(), originSubLevel(),
+            toAttachGroup(),originGroup()
+        );
+    }
+
+    public static @NotNull PhysicsConstraintConfiguration<?> flipConfig(PhysicsConstraintConfiguration<?> configuration) {
+        return switch(configuration) {
+            case FixedConstraintConfiguration config ->
+                new FixedConstraintConfiguration(config.pos2(), config.pos1(), config.orientation().conjugate(new Quaterniond()));
+            case RotaryConstraintConfiguration config -> new RotaryConstraintConfiguration(
+                config.pos2(),
+                config.pos1(),
+                config.normal2(),
+                config.normal1()
+            );
+
+            case FreeConstraintConfiguration config -> new FreeConstraintConfiguration(
+                config.pos2(), config.pos1(), config.orientation().conjugate(new Quaterniond())
+            );
+            case GenericConstraintConfiguration config -> new GenericConstraintConfiguration(
+                config.pos2(),
+                config.pos1(),
+                config.orientation2(),
+                config.orientation1(),
+                config.lockedAxes()
+            )
+            ;
+        };
     }
 }

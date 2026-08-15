@@ -3,7 +3,6 @@ package com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.LocalConstraint;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
-import com.zelaux.betterdiagram.feature.include_subsublevel.math.Vector3dWith;
 import com.zelaux.betterdiagram.mixin.accessors.ISwivelBearingBlockEntity;
 import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintConfiguration;
@@ -33,18 +32,25 @@ public class SwivelBearingActor implements ActorHandler {
 
     @Override
     public @Nullable List<LocalConstraint<?>> mapToConstraint(SubLevel a, Map<SubLevel, SubLevelGroup> subLevel2Group) {
+        LocalConstraint<?> from = constraint(a, subLevel2Group);
+        if(from == null) return null;
+        return List.of(from);
+    }
+
+    public @Nullable LocalConstraint<?> constraint(SubLevel a, Map<SubLevel, SubLevelGroup> subLevel2Group) {
         ISwivelBearingBlockEntity blockEntity = (ISwivelBearingBlockEntity) entity;
         SubLevel b = blockEntity.bcd$getAttachedSubLevel();
+        if(a == b) return null;
         SwivelBearingBlockEntity.LockingSetting setting = blockEntity.bcd$lockedDefaultOption().get();
         Level level = entity.getLevel();
         if(level == null) return null;
         final int bestSignal = level.getBestNeighborSignal(entity.getBlockPos());
         boolean shouldLock = setting.shouldLock(bestSignal);
 
-        RotaryConstraintConfiguration rotaryConstraintConfiguration = getRotary(level, blockEntity);
-        if(rotaryConstraintConfiguration == ROTARY_DUMMY) return null;
+        RotaryConstraintConfiguration rotary = getRotary(level, blockEntity);
+        if(rotary == null) return null;
 
-        PhysicsConstraintConfiguration<?> configuration = rotaryConstraintConfiguration;
+        PhysicsConstraintConfiguration<?> configuration = rotary;
 
         if(shouldLock) {
             Quaterniondc quatA = a.logicalPose().orientation();
@@ -55,27 +61,33 @@ public class SwivelBearingActor implements ActorHandler {
                 .conjugate()
                 .mul(quatB);
             configuration = new FixedConstraintConfiguration(
-                rotaryConstraintConfiguration.pos1(),
-                rotaryConstraintConfiguration.pos2(),
+                rotary.pos1(),
+                rotary.pos2(),
                 relativeQuat
             );
         }
-        return List.of(LocalConstraint.from(configuration, a, b, subLevel2Group));
+        LocalConstraint<?> from = LocalConstraint.from(configuration, a, b, subLevel2Group);
+        return from;
     }
 
     private @Nullable RotaryConstraintConfiguration getRotary(Level level, ISwivelBearingBlockEntity blockEntity) {
         BlockPos platePos = entity.getPlatePos();
-        if(platePos == null) return ROTARY_DUMMY;
+        if(platePos == null) return null;
 
 
         final BlockState plateState = level.getBlockState(platePos);
-        if(!plateState.is(SimBlocks.SWIVEL_BEARING_LINK_BLOCK)) return ROTARY_DUMMY;
+        if(!plateState.is(SimBlocks.SWIVEL_BEARING_LINK_BLOCK)) return null;
 
         final Direction plateFacing = plateState.getValue(SwivelBearingPlateBlock.FACING);
-        Vector3dWith<RotaryConstraintConfiguration> vector3dWith = new Vector3dWith<>(JOMLConversion.toJOML(platePos.relative(plateFacing).getCenter()));
-        vector3dWith.second = ROTARY_DUMMY;
-        blockEntity.bcd$attachConstraints(null, vector3dWith);
+        //Vector3dWith<RotaryConstraintConfiguration> vector3dWith = new Vector3dWith<>();
+        //vector3dWith.second = ROTARY_DUMMY;
+        return blockEntity.bcd$attachConstraints(null, JOMLConversion.toJOML(platePos.relative(plateFacing).getCenter()));
 
-        return vector3dWith.second;
+        //return vector3dWith.second;
+    }
+
+    public interface Access {
+        @Nullable
+        RotaryConstraintConfiguration bcd$attachConstraints(final SubLevel plateSubLevel, final Vector3d attachPos);
     }
 }
