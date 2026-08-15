@@ -1,10 +1,10 @@
 package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
+import com.zelaux.bcd.asm_commons.MethodUtil;
 import com.zelaux.betterdiagram.compat.CompatHandles;
 import com.zelaux.betterdiagram.mixin.compat.gadgets.Mini;
 import com.zelaux.betterdiagram.mixin_plugin.TypeIndex;
 import com.zelaux.betterdiagram.mixin_plugin.system.ProcessorProvider;
-import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -29,7 +29,7 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
         return new Transformations[]{
             Transformations.of(mini, it -> true),
             Transformations.of(physicsShaft, targetClass -> {
-                MethodNode found = findMethod(targetClass, generatedMethod, searchMethod);
+                MethodNode found = MethodUtil.findMethod(targetClass, searchMethod, generatedMethod);
                 if(found != null) {
                     addMethod(targetClass, found);
                     return true;
@@ -111,23 +111,6 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
         MethodNode e = new MethodNode(Opcodes.ACC_PUBLIC, prepareHead, "()V", null, null);
         e.instructions.add(new InsnNode(Opcodes.RETURN));
         targetClass.methods.add(e);
-    }
-
-    static @Nullable MethodNode findMethod(ClassNode targetClass, Method generatedMethod, Method searchMethod) {
-        MethodNode found = null;
-        for(MethodNode method : targetClass.methods) {
-            if(matches(method, generatedMethod)) {
-                found = null;
-                break;
-            }
-            if(matches(method, searchMethod)) found = method;
-
-        }
-        return found;
-    }
-
-    public static boolean matches(MethodNode method, Method searchMethod1) {
-        return method.name.equals(searchMethod1.getName()) && method.desc.equals(searchMethod1.getDescriptor());
     }
 
     private static void addMethod(ClassNode targetClass, MethodNode method) {

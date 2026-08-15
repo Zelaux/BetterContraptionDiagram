@@ -65,13 +65,13 @@ public enum CoasterProcessorProvider implements ProcessorProvider {
                 return true;
             }),
             Transformations.of(CoasterCartTrainLinkConstraint,targetClass -> {
-                MethodNode found = GadgetsProcessorProvider.findMethod(targetClass, generatedMethod, searchMethod);
+                MethodNode found = MethodUtil.findMethod(targetClass, searchMethod, generatedMethod);
                 if(found == null) return false;
                 makeActiveLinkPublic(targetClass);
                 List<MethodNode> methods = targetClass.methods;
                 for(int i = 0; i < methods.size(); i++) {
                     MethodNode method = methods.get(i);
-                    if(GadgetsProcessorProvider.matches(method, localJointOrientation.method())) {
+                    if(MethodUtil.matches(method, localJointOrientation.method())) {
                         ;
                         ClassNode classNode = MethodUtil.withWrappedMethodVisitor(ServerToUnboundRenamer::make);
                         method.accept(classNode);

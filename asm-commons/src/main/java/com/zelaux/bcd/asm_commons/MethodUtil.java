@@ -1,5 +1,6 @@
 package com.zelaux.bcd.asm_commons;
 
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.Method;
@@ -16,6 +17,23 @@ public class MethodUtil {
     }
     public static ClassNode withWrappedMethodVisitor(WrapVisitMethod.Simple wrappedMethodVisitor) {
         return withWrappedMethodVisitor((WrapVisitMethod) wrappedMethodVisitor);
+    }
+
+    public static @Nullable MethodNode findMethod(ClassNode targetClass, Method searchMethod, Method generatedMethod) {
+        MethodNode found = null;
+        for(MethodNode method : targetClass.methods) {
+            if(matches(method, generatedMethod)) {
+                found = null;
+                break;
+            }
+            if(matches(method, searchMethod)) found = method;
+
+        }
+        return found;
+    }
+
+    public static boolean matches(MethodNode method, Method searchMethod1) {
+        return method.name.equals(searchMethod1.getName()) && method.desc.equals(searchMethod1.getDescriptor());
     }
 
     ;

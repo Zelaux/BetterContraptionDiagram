@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
+import com.zelaux.bcd.asm_commons.MethodUtil;
 import com.zelaux.betterdiagram.annotations.CompileTool;
 import com.zelaux.betterdiagram.extend.IRopeStrandHolderBlockEntity;
 import com.zelaux.betterdiagram.mixin_plugin.system.ProcessorProvider;
@@ -27,6 +28,8 @@ public enum VanilaProcessorProvider implements ProcessorProvider {
         return ProcessorProvider.types(
             Transformations.of(ropeStrandHolderBlockEntity, targetClass -> {
                 MethodNode found = GadgetsProcessorProvider.findMethod(targetClass, generatedMethod, searchMethod);
+                MethodNode found = MethodUtil.findMethod(targetClass, generatedMethod, searchMethod);
+                MethodNode found = MethodUtil.findMethod(targetClass, searchMethod, generatedMethod);
                 if(found == null) return false;
                 MethodNode clone = cloneMethod(found);
                 clone.name = generatedMethod.getName();

@@ -9,7 +9,6 @@ import com.zelaux.betterdiagram.annotations.CompileTool;
 import com.zelaux.betterdiagram.compat.absolute_kinematics.AbsoluteKinematicsModule;
 import com.zelaux.betterdiagram.compat.absolute_kinematics.IBaseJointBlockEntity;
 import com.zelaux.betterdiagram.mixin_plugin.TypeIndex;
-import com.zelaux.betterdiagram.mixin_plugin.system.BCDPostprocessors;
 import com.zelaux.betterdiagram.mixin_plugin.system.ProcessorProvider;
 import com.zelaux.betterdiagram.mixin_plugin.util.ServerToUnboundRenamer;
 import org.jetbrains.annotations.NotNull;
@@ -19,8 +18,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.*;
-import org.objectweb.asm.util.Printer;
-import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.ByteArrayOutputStream;
@@ -48,7 +45,7 @@ public enum AbsoluteKinematicsProcessor implements ProcessorProvider {
     private static final BoundMethod configToHandle = CompileTool.GetMethod.methodOf(AbsoluteKinematicsModule::makeHandle);
 
     private boolean transform(ClassNode targetClass) {
-        MethodNode method = GadgetsProcessorProvider.findMethod(targetClass, bcd$attachConstraints,attachConstraints);
+        MethodNode method = MethodUtil.findMethod(targetClass, attachConstraints, bcd$attachConstraints);
         if(method == null) return false;
         ClassNode copyNode = MethodUtil.withWrappedMethodVisitor(
             targetClass.name.equals(BaseJointBlockEntity.getInternalName()) ? methodNode -> base(methodNode, method) : AbsoluteKinematicsProcessor::simpleRenamer
