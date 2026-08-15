@@ -1,13 +1,10 @@
 package com.zelaux.betterdiagram.annotations;
 
 import com.mojang.datafixers.util.Function3;
-import com.mojang.datafixers.util.Function4;
-import com.mojang.datafixers.util.Function5;
 import com.zelaux.bcd.asm_commons.BoundMethod;
 import org.apache.commons.lang3.function.TriConsumer;
 import org.objectweb.asm.Type;
 
-import java.lang.reflect.Method;
 import java.util.function.*;
 
 public class CompileTool {
@@ -17,6 +14,13 @@ public class CompileTool {
      */
     public static String classToString(Class<?> type) {
         return type.getCanonicalName();
+    }
+    /**
+     * Will be substituted in compile time
+     *
+     */
+    public static String classToInternal(Class<?> type) {
+        return type.getCanonicalName().replace('.','/');
     }
 
     /**
