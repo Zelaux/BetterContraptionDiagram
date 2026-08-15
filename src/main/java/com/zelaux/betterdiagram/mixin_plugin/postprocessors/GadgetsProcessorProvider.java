@@ -1,6 +1,7 @@
 package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
 import com.zelaux.betterdiagram.compat.CompatHandles;
+import com.zelaux.betterdiagram.mixin.compat.gadgets.Mini;
 import com.zelaux.betterdiagram.mixin_plugin.TypeIndex;
 import com.zelaux.betterdiagram.mixin_plugin.system.ProcessorProvider;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +39,7 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
             }),
         };
     }
+    private static final Type MiniMixin=TypeIndex.bakedType(Mini.class);
 
     /**
      * @see CompatHandles#onPackageUpdate(Object)
@@ -46,7 +48,7 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
      */
     @Override
     public void preMixin(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-        if(mixinClassName.endsWith("Stupid_Mini")) {
+        if(mixinClassName.replace('.','/').equals(MiniMixin.getInternalName())) {
 
             MethodInsnNode setScreen = new MethodInsnNode(
                 Opcodes.INVOKESTATIC, TypeIndex.CompatHandles.getInternalName(), "setGadgetsScreen", "(Ljava/lang/Object;)V", false
