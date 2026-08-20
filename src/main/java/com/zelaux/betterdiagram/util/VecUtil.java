@@ -168,31 +168,40 @@ public class VecUtil {
     }
 
     public static QueuedForceGroup.PointForce projectForce(Pose3dc poseB, Pose3dc poseA, QueuedForceGroup.PointForce forceInA) {
+        Vector3d point = new Vector3d(forceInA.point());
+        Vector3d force = new Vector3d(forceInA.force());
         //force to world
+        projectForce(poseB, poseA, point, force);
+
+        return new QueuedForceGroup.PointForce(point, force);
+    }
+
+    @Contract(mutates = "param3,param4")
+    public static void projectForce(Pose3dc poseB, Pose3dc poseA, Vector3d pointInA, Vector3d forceInA) {
         Quaterniondc orientationA = poseA.orientation();
-        Vector3d worldPoint = new Vector3d(forceInA.point())
+        Vector3d worldPoint = pointInA
             .sub(poseA.rotationPoint())
             .mul(poseA.scale())
             .rotate(orientationA)
             .add(poseA.position());
 
-        Vector3d worldForce = new Vector3d(forceInA.force())
+        Vector3d worldForce = forceInA
             .rotate(orientationA);
 
 
         //world to poseB
         Quaterniond invOrientB = new Quaterniond(poseB.orientation()).conjugate();
 
-        Vector3d localPointB = worldPoint
+        /*Vector3d localPointB =*/
+        worldPoint
             .sub(poseB.position())
             .rotate(invOrientB)
             .div((Vector3d) poseB.scale())
             .add(poseB.rotationPoint());
 
-        Vector3d localForceB = worldForce
+        /*Vector3d localForceB =*/
+        worldForce
             .rotate(invOrientB);
-
-        return new QueuedForceGroup.PointForce(localPointB, localForceB);
     }
 
     @Contract("_,_,_->new")

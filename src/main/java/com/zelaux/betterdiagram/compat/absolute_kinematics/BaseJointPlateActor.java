@@ -3,7 +3,7 @@ package com.zelaux.betterdiagram.compat.absolute_kinematics;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.AbstractForceMapper;
-import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.DummyGenericConstantForceMapper;
+import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.GenericConstantForceMapper;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +31,7 @@ public class BaseJointPlateActor implements ActorHandler {
         if(b.getLevel().getBlockEntity(entity.bcd$parent()) instanceof IBaseJointBlockEntity base) {
             AbstractForceMapper constraint = BaseJointActor.createConstraint(b, subLevel2Group, base, AbstractForceMapper.SubLevelInfo::flipped);
             if(constraint == null) return null;
-            if(constraint instanceof DummyGenericConstantForceMapper handle) {
+            if(constraint instanceof GenericConstantForceMapper handle) {
                 constraint=handle.flip();
             }
             return List.of(constraint);

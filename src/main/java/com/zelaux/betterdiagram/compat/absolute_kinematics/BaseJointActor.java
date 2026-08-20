@@ -3,7 +3,7 @@ package com.zelaux.betterdiagram.compat.absolute_kinematics;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.SubLevelGroup;
 import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.AbstractForceMapper;
-import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.DummyGenericConstantForceMapper;
+import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.GenericConstantForceMapper;
 import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.FixedForceMapper;
 import com.zelaux.betterdiagram.util.mock.MockGenericConstraintHandle;
 import dev.ryanhcode.sable.Sable;
@@ -55,7 +55,7 @@ public class BaseJointActor implements ActorHandler {
         entity.bcd$attachConstraints(b, JOMLConversion.toJOML(joint.getCenter()));
         GenericConstraintHandle raw = swapHandle(was, entity);
         if(raw instanceof MockGenericConstraintHandle handle) {
-            return new DummyGenericConstantForceMapper(info, handle);
+            return new GenericConstantForceMapper(info, handle);
         }
         return null;
     }

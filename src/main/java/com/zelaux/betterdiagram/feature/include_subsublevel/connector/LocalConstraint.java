@@ -2,7 +2,7 @@ package com.zelaux.betterdiagram.feature.include_subsublevel.connector;
 
 import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.AbstractForceMapper;
 import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.DummyConstraintForceMapper;
-import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.DummyGenericConstantForceMapper;
+import com.zelaux.betterdiagram.feature.include_subsublevel.force_mapper.GenericConstantForceMapper;
 import com.zelaux.betterdiagram.util.VecUtil;
 import dev.ryanhcode.sable.api.physics.constraint.*;
 import dev.ryanhcode.sable.sublevel.SubLevel;
@@ -55,7 +55,7 @@ public abstract class LocalConstraint<Config extends PhysicsConstraintConfigurat
             a, groupA, b, groupB
         );
         if(configuration instanceof RotaryConstraintConfiguration rotary) {
-            return new DummyGenericConstantForceMapper(info, new GenericConstraintConfiguration(
+            return new GenericConstantForceMapper(info, new GenericConstraintConfiguration(
                 rotary.pos1(),
                 rotary.pos2(),
                 VecUtil.X_V.rotationTo(rotary.normal1(), new Quaterniond()),
@@ -65,7 +65,7 @@ public abstract class LocalConstraint<Config extends PhysicsConstraintConfigurat
             //return new RotationConstraintForceMapper(rotary, a, b, groupA, groupB);
         }
         if(configuration instanceof GenericConstraintConfiguration generic) {
-            return new DummyGenericConstantForceMapper(info, generic, null);
+            return new GenericConstantForceMapper(info, generic, null);
         }
         ConstaintKind kind = switch(configuration) {
             case FixedConstraintConfiguration ignored -> ConstaintKind.Fixed;

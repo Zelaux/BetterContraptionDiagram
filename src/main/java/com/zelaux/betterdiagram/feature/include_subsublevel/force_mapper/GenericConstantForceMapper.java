@@ -10,6 +10,7 @@ import com.zelaux.betterdiagram.gui.screen.diagram_ext.CustomRenderedForce_Vecto
 import com.zelaux.betterdiagram.index.BForceGroups;
 import com.zelaux.betterdiagram.struct.BCDForceGroup;
 import com.zelaux.betterdiagram.util.MergedPointForceCalculator;
+import com.zelaux.betterdiagram.util.VecUtil;
 import com.zelaux.betterdiagram.util.mock.MockGenericConstraintHandle;
 import com.zelaux.betterdiagram.util.ui.GuiGraphicsUtil;
 import dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis;
@@ -30,7 +31,7 @@ import org.joml.Vector3d;
 import java.util.List;
 import java.util.Map;
 
-public class DummyGenericConstantForceMapper extends LocalConstraint<GenericConstraintConfiguration> {
+public class GenericConstantForceMapper extends LocalConstraint<GenericConstraintConfiguration> {
 
 
     public BCDForceGroup forceGroup;
@@ -38,15 +39,15 @@ public class DummyGenericConstantForceMapper extends LocalConstraint<GenericCons
     private MergedPointForceCalculator merger = new MergedPointForceCalculator();
     public Map<ConstraintJointAxis, DoubleRange> ranges;
 
-    public DummyGenericConstantForceMapper(SubLevelInfo info, MockGenericConstraintHandle handle) {
+    public GenericConstantForceMapper(SubLevelInfo info, MockGenericConstraintHandle handle) {
         this(info, handle.config, handle.ranges);
     }
 
-    public DummyGenericConstantForceMapper(SubLevelInfo info, GenericConstraintConfiguration config, @Nullable Map<ConstraintJointAxis, DoubleRange> ranges) {
+    public GenericConstantForceMapper(SubLevelInfo info, GenericConstraintConfiguration config, @Nullable Map<ConstraintJointAxis, DoubleRange> ranges) {
         this(info,config,ranges,BForceGroups.LINKAGE_FORCE);
     }
 
-    public DummyGenericConstantForceMapper(SubLevelInfo info, GenericConstraintConfiguration config, @Nullable Map<ConstraintJointAxis, DoubleRange> ranges, BCDForceGroup forceGroup) {
+    public GenericConstantForceMapper(SubLevelInfo info, GenericConstraintConfiguration config, @Nullable Map<ConstraintJointAxis, DoubleRange> ranges, BCDForceGroup forceGroup) {
         super(info, config, ConstaintKind.Generic);
         this.ranges = ranges;
         calculator = ConstraintCalculator.INSTANCE;
@@ -57,7 +58,7 @@ public class DummyGenericConstantForceMapper extends LocalConstraint<GenericCons
     public LocalConstraint<GenericConstraintConfiguration> flip() {
         var config = (GenericConstraintConfiguration) flipConfig(configuration);
 
-        return new DummyGenericConstantForceMapper(
+        return new GenericConstantForceMapper(
             sublevelInfo().flipped(),
             config,
             ranges
@@ -76,7 +77,26 @@ public class DummyGenericConstantForceMapper extends LocalConstraint<GenericCons
         toAttach.forEachForce(merger::add);
         merger.endPlusCOM();
 
+
+        Vector3d force = new GenericForceRenderer(aPose, bPose, configuration);
+        Vector3d point = new Vector3d();
+
+        if(configuration.lockedAxes().size()==ConstraintJointAxis.ALL.length){//fixed
+            VecUtil.projectForce(aPose,bPose,
+                point.set(merger.displacement),
+                force.set(merger.totalForce)
+            );
+        }else {
+            calculateRealGeneric(aPose, bPose, force, point);
+        }
+        origin.addForce(forceGroup,
+            new QueuedForceGroup.PointForce(point, force)
+        );
+    }
+
+    private void calculateRealGeneric(Pose3d aPose, Pose3d bPose, Vector3d force, Vector3d point) {
         GenericConstraintConfiguration config = configuration;
+
         calculator.generic(
             aPose,
             bPose,
@@ -90,12 +110,7 @@ public class DummyGenericConstantForceMapper extends LocalConstraint<GenericCons
         );
 
 
-        Vector3d force = new GenericForceRenderer(aPose, bPose, config);
-        Vector3d point = new Vector3d();
         calculator.getForceAndPoint(aPose, force, point);
-        origin.addForce(forceGroup,
-            new QueuedForceGroup.PointForce(point, force)
-        );
     }
 
     @AllArgsConstructor
