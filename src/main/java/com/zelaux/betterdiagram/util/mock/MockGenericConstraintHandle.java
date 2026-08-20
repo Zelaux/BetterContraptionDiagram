@@ -17,6 +17,8 @@ import java.util.EnumMap;
 public class MockGenericConstraintHandle extends MockConstantHandle implements GenericConstraintHandle {
     public GenericConstraintConfiguration config;
     public ObjectSet<ConstraintJointAxis> locked;
+
+    public EnumMap<ConstraintJointAxis, DoubleRange> ranges = new EnumMap<>(ConstraintJointAxis.class);
     public void flip(){
         this.config = new GenericConstraintConfiguration(
             config.pos2(),
@@ -60,7 +62,6 @@ public class MockGenericConstraintHandle extends MockConstantHandle implements G
         );
     }
 
-    public EnumMap<ConstraintJointAxis, DoubleRange> ranges = new EnumMap<>(ConstraintJointAxis.class);
 
     @Override
     public void setLimit(ConstraintJointAxis axis, double min, double max) {

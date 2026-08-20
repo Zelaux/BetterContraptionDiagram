@@ -12,6 +12,8 @@ import org.joml.Vector3d;
 
 public interface DiagramScreenAccessors extends ProjectionAccessor, IDiagramScreenWithDependencies {
 
+    boolean bcd$isDiagramScreen();
+
     int TOOLTIP_LABEL_COLOR();
 
     DiagramStickyNote bcd$note();

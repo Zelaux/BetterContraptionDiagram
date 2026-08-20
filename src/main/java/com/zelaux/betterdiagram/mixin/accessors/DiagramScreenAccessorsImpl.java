@@ -46,6 +46,11 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
         return null;
     }
 
+    @Override
+    public float bcd$viewportRadius() {
+        return viewportRadius;
+    }
+
     @Shadow
     @Final
     public static Quaternionf LOCAL_ORIENTATION;
@@ -65,6 +70,9 @@ public abstract class DiagramScreenAccessorsImpl implements DiagramScreenAccesso
     @Shadow
     @Final
     private static int TOOLTIP_LABEL_COLOR;
+
+    @Shadow
+    private float viewportRadius;
 
     @Override
     public int TOOLTIP_LABEL_COLOR() {return TOOLTIP_LABEL_COLOR;}

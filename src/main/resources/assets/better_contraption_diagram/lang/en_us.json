@@ -19,6 +19,7 @@
   "bcd.rope-force.enabled": "Accounted",
   "bcd.rope-force.disabled": "Not Accounted",
   "bcd.balance-point": "Balance Point",
+  "bcd.linkage-force": "Linkage Force",
 
   "__COMMENT__": "--- DIAGRAM SECTION ---",
   "bcd.center_of_mass": "Center of Mass",

@@ -13,9 +13,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.util.strategy.IdentityStrategy;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public interface BForceGroups {
 
@@ -30,13 +30,18 @@ public interface BForceGroups {
     BCDForceGroup ROPE_MASS_FORCE = registerGroup("rope-mass", Component.translatable("force-group.rope-mass"), 0x946F3A, false);
     BCDForceGroup MERGED_FORCE_GROUP = registerGroup("merged-force", Component.translatable("force-group.merged-force"), Colors.DISPLACEMENT_GREEN_COLORS[3].getRGB(), false);
     BCDForceGroup BALANCE_FORCE_GROUP = registerGroup("balance-force", Component.translatable("bcd.balance-point"), Colors.DISPLACEMENT_GREEN_COLORS[3].getRGB(), false);
-    BCDForceGroup CONTRAPTION_GRAVITY = registerGroup("contraption_gravity", Component.translatable("force-group.contraption-gravity"), 0x32a580, false);
+    BCDForceGroup LINKAGE_FORCE = registerGroup("linkage-force", Component.translatable("bcd.linkage-force"), 0xd1626c, true);
+    //BCDForceGroup CONTRAPTION_GRAVITY = registerGroup("contraption_gravity", Component.translatable("force-group.contraption-gravity"), 0x32a580, false);
 
 
     BCDForceGroup[] AXIS_GROUPS = {AXIS_X_GROUP, AXIS_Y_GROUP, AXIS_Z_GROUP};
 
-    ObjectArrayList<BCDForceGroup> CUSTOM_FORCES = new ObjectArrayList<>(List.of(
-        MERGED_FORCE_GROUP,ROPE_FORCE, ROPE_MASS_FORCE
+    ObjectArrayList<BCDForceGroup> CUSTOM_FORCES = new ObjectArrayList<>(Set.of(
+        LINKAGE_FORCE,
+        MERGED_FORCE_GROUP,
+        ROPE_FORCE,
+        ROPE_MASS_FORCE
+
     ));
 
     static BCDForceGroup registerGroup(String innerName, Component name, Component description, int color, boolean defaultDisplayed, Component axisName) {

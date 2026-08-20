@@ -32,7 +32,7 @@ public class BaseJointPlateActor implements ActorHandler {
             AbstractForceMapper constraint = BaseJointActor.createConstraint(b, subLevel2Group, base, AbstractForceMapper.SubLevelInfo::flipped);
             if(constraint == null) return null;
             if(constraint instanceof DummyGenericConstantForceMapper handle) {
-                handle.handle.flip();
+                constraint=handle.flip();
             }
             return List.of(constraint);
         }

@@ -60,6 +60,11 @@ public class VecUtil {
             }
         };
     public static final Vector3d NAN_3 = new Vector3d(Double.NaN, Double.NaN, Double.NaN);
+    public static Vector3d displacementFromForceAndTorque(Vector3dc force,Vector3dc torque,Vector3d dest){
+        double scalar = force.lengthSquared();
+        if(scalar == 0) return dest.zero();
+        return force.cross(torque,dest).div(scalar);
+    }
 
     @SafeVarargs
     private static <T> T[] genArr(T... arr) {
@@ -201,6 +206,13 @@ public class VecUtil {
 
 
         return unprojectPosToLocal(poseB, worldPoint);
+    }
+    @Contract("_,_->new")
+    public static QueuedForceGroup.PointForce unprojectForceToLocal(Pose3dc pose, QueuedForceGroup.PointForce force) {
+        return new QueuedForceGroup.PointForce(
+            pose.transformPositionInverse(force.point(),new Vector3d()),
+            pose.transformNormalInverse(force.force(),new Vector3d())
+        );
     }
     @Contract("_,_->param2")
     public static Vector3d unprojectPosToLocal(Pose3dc pose, Vector3d worldPoint) {

@@ -11,6 +11,8 @@ public interface ProjectionAccessor {
 
     Vector3d bcd$getPlotCoords(Vector2d point, Vector3d cameraPos);
 
+    float bcd$viewportRadius();
+
     default Vector3d bcd$getPlotCoords(Vector2d point) {return bcd$getPlotCoords(point, null);}
 
     boolean bcd$canDrawAt(int x, int y);

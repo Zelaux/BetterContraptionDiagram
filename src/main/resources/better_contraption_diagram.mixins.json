@@ -44,6 +44,8 @@
     "feature.easy_balloon_access.StoreBlockEntityLiftingGasProvider_LevelPlot",
     "feature.extra_info_deliver.DiagramEntityMixin",
     "feature.extra_info_deliver.FloatingBlockControllerExt",
+    "feature.extra_render.ExtraRender_DiagramScreen",
+    "feature.extra_render.ExtraRender_ForceClusterFinderMixin",
     "feature.force_to_mass.DiagramScreenMixin",
     "feature.include_subsublevel.DiagramDataPacketMixin",
     "feature.include_subsublevel.actor.SwivelBearingBlockEntityMixin",

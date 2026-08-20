@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class Forces extends Object2ObjectOpenHashMap<ForceGroup, List<QueuedForceGroup.PointForce>> {
     public double mass;
@@ -49,5 +50,11 @@ public class Forces extends Object2ObjectOpenHashMap<ForceGroup, List<QueuedForc
 
     public void addProjectedForce(ForceGroup forceGroup, Pose3dc from, Pose3dc to,@NotNull QueuedForceGroup.PointForce pointForce) {
         forcesForGroup(forceGroup).add(pointForce);
+    }
+
+    public void forEachForce(Consumer<QueuedForceGroup.PointForce> forceConsumer) {
+        for(List<QueuedForceGroup.PointForce> list : values()) {
+            list.forEach(forceConsumer);
+        }
     }
 }

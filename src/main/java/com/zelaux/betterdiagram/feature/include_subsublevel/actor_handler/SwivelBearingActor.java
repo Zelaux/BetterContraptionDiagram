@@ -40,7 +40,7 @@ public class SwivelBearingActor implements ActorHandler {
     public @Nullable LocalConstraint<?> constraint(SubLevel a, Map<SubLevel, SubLevelGroup> subLevel2Group) {
         ISwivelBearingBlockEntity blockEntity = (ISwivelBearingBlockEntity) entity;
         SubLevel b = blockEntity.bcd$getAttachedSubLevel();
-        if(a == b) return null;
+        if(a == b || b==null) return null;
         SwivelBearingBlockEntity.LockingSetting setting = blockEntity.bcd$lockedDefaultOption().get();
         Level level = entity.getLevel();
         if(level == null) return null;

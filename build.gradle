@@ -220,6 +220,7 @@ neoForge {
         // multi mod projects should define one per mod
         "${mod_id}" {
             sourceSet(sourceSets.main)
+            sourceSet(sourceSets.test)
         }
     }
 }
@@ -230,8 +231,19 @@ neoForge {
 // "optional", meaning it will not be pulled by dependents of this mod.
 configurations {
     runtimeClasspath.extendsFrom localRuntime
+    testCompileClasspath.extendsFrom(implementation)
+    testRuntimeClasspath.extendsFrom(implementation)
+    testCompileClasspath.extendsFrom(compileOnly)
 }
 
+sourceSets.test.compileClasspath+=sourceSets.main.compileClasspath
+sourceSets.test.runtimeClasspath+=sourceSets.main.runtimeClasspath
+test {
+    useJUnitPlatform()
+
+//    classpath += sourceSets.main.runtimeClasspath
+//    classpath += sourceSets.main.compileClasspath
+}
 dependencies {
 //    compileOnly(project.childProjects["postprocessors"])
     postprocessor(childProjects["postprocessors"])
@@ -253,7 +265,14 @@ dependencies {
         exclude group: "mezz.jei"
 //        exclude group: "maven.modrinth"
     }
+    testImplementation ("dev.simulated_team.simulated:simulated-neoforge-1.21.1:$aeronautics_version"){
+        exclude group: "cc.tweaked"
+        exclude group: "net.createmod.ponder"
+        exclude group: "mezz.jei"
+//        exclude group: "maven.modrinth"
+    }
     compileOnly "dev.ryanhcode.sable:sable-sable_rapier-1.21.1:$sable_rapier_version"
+    testImplementation "dev.ryanhcode.sable:sable-sable_rapier-1.21.1:$sable_rapier_version"
 //    compileOnly "dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:1.6.0"
     api("dev.engine-room.flywheel:flywheel-neoforge-1.21.1:1.0.6"){
         exclude group: "org.ow2.asm"
@@ -270,6 +289,19 @@ dependencies {
     compileOnly("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
     compileOnly("com.tterrag.registrate:Registrate:${registrate_version}")
+
+
+    def jetbrainsAnno="24.0.1"
+//    compileOnly "org.jetbrains:annotations:$jetbrainsAnno"
+    testCompileOnly "org.jetbrains:annotations:$jetbrainsAnno"
+
+    implementation "net.neoforged:neoforge:${neo_version}"
+    testImplementation platform("org.junit:junit-bom:5.10.0")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testImplementation "org.apache.commons:commons-lang3:3.14.0"
+    testImplementation "org.joml:joml:1.10.5"
 //    api ("maven.modrinth:create:${create_version}+mc${minecraft_version}") { transitive = false }
 //    api("com.simibubi.create:create-")
 /*    implementation("foundry.veil:veil-neoforge-${minecraft_version}:${project.veil_version}") {
@@ -347,7 +379,7 @@ idea {
         downloadJavadoc = true
     }
 }
-def isReleaseRequested = true|| gradle.startParameter.taskNames.any { it.toLowerCase().contains("build") }
+def isReleaseRequested = gradle.startParameter.taskNames.any { it.toLowerCase().contains("build") }
 
 tasks.named("runPostprocessors", asmext.plugin.RunPostProcessors) {
     if(isReleaseRequested){

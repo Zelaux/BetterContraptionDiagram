@@ -3,6 +3,7 @@ package com.zelaux.betterdiagram.mixin.calculator;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zelaux.betterdiagram.data.BCDData;
 import com.zelaux.betterdiagram.extend.WithClientData;
+import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.extend.accessors.ProjectionAccessor;
 import com.zelaux.betterdiagram.feature.balance.BalanceModel;
 import com.zelaux.betterdiagram.gui.CenterMassMovingScreen;
@@ -52,7 +53,7 @@ import java.util.Map;
 import static com.zelaux.betterdiagram.util.VecUtil.*;
 
 @Mixin(DiagramScreen.class)
-public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implements ProjectionAccessor {
+public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implements ProjectionAccessor, DiagramScreenAccessors {
 
     @Shadow
     private @Nullable DiagramDataPacket serverData;
@@ -146,6 +147,10 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
     @Unique
     private boolean bcd$isDiagramScreen = false;
 
+    public boolean bcd$isDiagramScreen() {
+        return bcd$isDiagramScreen;
+    }
+
     @Inject(at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Ldev/simulated_team/simulated/content/entities/diagram/screen/DiagramScreen;renderArrows(Lnet/minecraft/client/gui/GuiGraphics;IIIILorg/joml/Quaternionfc;Lorg/joml/Vector3dc;Lorg/joml/Matrix4fc;II)V"), method = "renderWindow")
     private void markRenderArrowsFromDiagramScreen(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         bcd$isDiagramScreen = true;
@@ -212,6 +217,7 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
     private void renderWeightAfterArrows(GuiGraphics graphics, int mouseX, int mouseY, int areaOriginX, int areaOriginY, Quaternionfc orientation, Vector3dc cameraPos, Matrix4fc projMatrix, int areaWidth, int areaHeight, CallbackInfo ci) {
         //var stacks = ((WithClientData) diagram).bcd$getClientData(DataKeys.MASS_STACKS, null);
         var stacks = BalanceModel.recalculateStacks(self());
+
         boolean shouldClipWeights = !this.bcd$isDiagramScreen;
 
         ProjectionAccessor accessor = shouldClipWeights ? (ProjectionAccessor) note : this;

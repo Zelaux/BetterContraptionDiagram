@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.With;
 import lombok.experimental.FieldDefaults;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -57,9 +58,18 @@ public class EnabledForces {
         return resourceLocations;
     }
 
-    public static EnabledForces empty() {
-        return new EnabledForces(ImmutableSet.of(), new BalanceForceFilterTree());
+    public static EnabledForces defaultValue() {
+        return new EnabledForces(defaultDisplay.get(), new BalanceForceFilterTree());
     }
+    public static Lazy<ImmutableSet<BCDForceGroup>> defaultDisplay= Lazy.of(()->{
+        var builder = ImmutableSet.<BCDForceGroup>builder();
+        for(BCDForceGroup force : BForceGroups.CUSTOM_FORCES) {
+            if(force.group.defaultDisplayed()) {
+                builder.add(force);
+            }
+        }
+        return builder.build();
+    });
 
     public EnabledForces removeDisplay(BCDForceGroup group) {
         if(!display.contains(group)) return this;

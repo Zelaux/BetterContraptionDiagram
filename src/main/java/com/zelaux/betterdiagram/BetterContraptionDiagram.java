@@ -4,7 +4,10 @@ import com.mojang.logging.LogUtils;
 import com.zelaux.betterdiagram.command.server.BCDCommand;
 import com.zelaux.betterdiagram.compat.CompatModule;
 import com.zelaux.betterdiagram.feature.balloon_volume_calculator.BalloonIndexUpdate;
-import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.*;
+import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.DockingConnectorActor;
+import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.RopeActor;
+import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.SwivelBearingActor;
+import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.SwivelBearingPlateActor;
 import com.zelaux.betterdiagram.feature.include_subsublevel.connector.ActorHandler;
 import com.zelaux.betterdiagram.network.BCDPacketManager;
 import com.zelaux.betterdiagram.network.HelloMessage;
@@ -30,6 +33,10 @@ import org.slf4j.Logger;
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(BetterContraptionDiagram.MODID)
 public class BetterContraptionDiagram {
+    public static boolean isDebug_test() {
+        return DebugRuntime.isDebug();
+    }
+
     // Define mod id in a common place for everything to reference
     public static final String MODID = "better_contraption_diagram";
     // Directly reference a slf4j logger

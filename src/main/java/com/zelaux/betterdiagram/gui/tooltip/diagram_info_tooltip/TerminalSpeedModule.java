@@ -103,7 +103,7 @@ public class TerminalSpeedModule implements DiagramInfoModule {
         Set<ForceGroup> blackList = new ObjectOpenCustomHashSet<>(Set.of(
             ForceGroups.DRAG.get(),
             BForceGroups.MERGED_FORCE_GROUP.group,
-            BForceGroups.CONTRAPTION_GRAVITY.group,
+            //BForceGroups.CONTRAPTION_GRAVITY.group,
             BForceGroups.ROPE_FORCE.group,
             BForceGroups.ROPE_MASS_FORCE.group
         ), IdentityStrategy.IDENTITY);

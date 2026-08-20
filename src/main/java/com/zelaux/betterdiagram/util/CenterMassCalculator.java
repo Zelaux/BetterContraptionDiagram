@@ -38,7 +38,7 @@ public class CenterMassCalculator {
         var forceGroupBlacklist = new ObjectOpenCustomHashSet<ForceGroup>(IdentityStrategy.IDENTITY);
         //forceGroupBlacklist.add(ForceGroups.GRAVITY.get());
         forceGroupBlacklist.add(BForceGroups.MERGED_FORCE_GROUP.group);
-        forceGroupBlacklist.add(BForceGroups.CONTRAPTION_GRAVITY.group);
+        //forceGroupBlacklist.add(BForceGroups.CONTRAPTION_GRAVITY.group);
 
         FORCE_GROUP_BLACKLIST = forceGroupBlacklist;
     }

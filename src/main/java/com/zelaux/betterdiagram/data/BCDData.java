@@ -48,7 +48,7 @@ public class BCDData {
         (byte) 7,
         OffCenterBlocksShowState.none,
         false,
-        EnabledForces.empty(),
+        EnabledForces.defaultValue(),
         BalloonCalculatorSettings.DEFAULT,
         new CompoundTag(0)
     );

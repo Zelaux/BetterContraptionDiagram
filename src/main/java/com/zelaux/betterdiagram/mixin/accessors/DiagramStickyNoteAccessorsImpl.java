@@ -1,5 +1,6 @@
 package com.zelaux.betterdiagram.mixin.accessors;
 
+import com.zelaux.betterdiagram.extend.accessors.DiagramScreenAccessors;
 import com.zelaux.betterdiagram.extend.accessors.DiagramStickyNoteAccessors;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
@@ -47,6 +48,14 @@ public abstract class DiagramStickyNoteAccessorsImpl implements DiagramStickyNot
     @Final
     private int renderXStart;
 
+
+    @Shadow
+    private DiagramScreen parent;
+
+    @Override
+    public float bcd$viewportRadius() {
+        return ((DiagramScreenAccessors) this.parent).bcd$viewportRadius();
+    }
 
     @Override
     public Vector2d bcd$getScreenCoords(Vector3d point, Vector3d cameraPos) {
