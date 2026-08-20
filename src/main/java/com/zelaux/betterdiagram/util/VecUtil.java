@@ -137,22 +137,6 @@ public class VecUtil {
     }
 
 
-    private static @NotNull String vecToString(Quaterniond force) {
-        return vecToString(force.x, force.y, force.z, force.w);
-    }
-
-    private static @NotNull String vecToString(double x, double y, double z, double... extra) {
-        String[] strings = new String[extra.length + 3];
-        strings[0] = StringUtil.plainDouble(x);
-        strings[1] = StringUtil.plainDouble(y);
-        strings[2] = StringUtil.plainDouble(z);
-        for(int i = 0; i < extra.length; i++) {
-            strings[i + 3] = StringUtil.plainDouble(extra[i]);
-        }
-
-        return "(" + String.join(",", strings) + ")";
-    }
-
     public static void applyTransforms(Vector3d tmp, Mirror mirror, Rotation rotation) {
         switch(mirror) {
             case NONE -> {}

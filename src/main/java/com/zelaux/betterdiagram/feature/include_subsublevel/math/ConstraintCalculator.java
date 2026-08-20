@@ -23,22 +23,20 @@ public class ConstraintCalculator {
     protected final Vector3d mask = new Vector3d();
     protected final Vector3d forceTorque = new Vector3d();
     protected final Vector3d forceTorque_A = new Vector3d();
+
     protected final Quaterniond full_1_to_world = new Quaterniond();
     protected final Quaterniond full_world_to_1 = new Quaterniond();
-    //protected final Vector3d tmpV = new Quaterniond();
     protected final Quaterniond tmpQ = new Quaterniond();
+
     private final Vector3d worldPos1 = new Vector3d();
     private final Vector3d worldPos2 = new Vector3d();
+
     private final Vector3d currentAnglesLocal = new Vector3d();
-    private Pose3d calculatedPoseB =new Pose3d(new Vector3d(),new Quaterniond(),new Vector3d(),new Vector3d(1,1,1));
+    public static double constraintRangeDelta = 0.001;
 
-    public Vector3dc worldForce() {
-        return forceDirection;
-    }
+    public Vector3dc worldForce() {return forceDirection;}
 
-    public Vector3dc worldForceTorque() {
-        return forceTorque;
-    }
+    public Vector3dc worldForceTorque() {return forceTorque;}
 
     public void getForceAndPoint(Pose3dc pose, Vector3d forceDest, Vector3d pointDest) {
         pose.transformNormalInverse(forceDirection, forceDest);
@@ -56,41 +54,7 @@ public class ConstraintCalculator {
             );
         }
     }
-    public void generic(
-        Pose3dc a,
-        Vector3dc rotationPointB,
-        Vector3dc pos1,
-        Vector3dc pos2,
-        Quaterniondc orientation1,
-        Quaterniondc orientation2,
-        QueuedForceGroup.PointForce worldForceFor2,
-        Set<ConstraintJointAxis> lockedAxesSet,
-        @Nullable Map<ConstraintJointAxis, DoubleRange> ranges
-    ) {
-        Pose3d poseB = calculatePoseB(a, pos1, pos2, orientation1, orientation2, rotationPointB);
 
-        generic(a, poseB, pos1, pos2, orientation1, orientation2,
-            VecUtil.unprojectForceToLocal(poseB,worldForceFor2),
-            lockedAxesSet, ranges);
-    }
-
-    private Pose3d calculatePoseB(Pose3dc a, Vector3dc pos1, Vector3dc pos2, Quaterniondc orientation1, Quaterniondc orientation2, Vector3dc rotationPointB) {
-        Quaterniond qB = a.orientation()
-                          .mul(orientation1, calculatedPoseB.orientation())
-                          .mul(tmpQ.set(orientation2).invert());
-
-        Vector3d worldAnchor = a.orientation().transform(
-            pos1.sub(a.rotationPoint(),worldPos1)
-        ).add(a.position());
-
-        // pB = Anchor - Q_b * (pos2 - rotationPointB)
-        qB.transform(
-            pos2.sub(rotationPointB,calculatedPoseB.position())
-        ).negate().add(worldAnchor);
-
-        calculatedPoseB.rotationPoint().set(rotationPointB);
-        return calculatedPoseB;
-    }
 
     public void generic(
         Pose3dc a,
@@ -103,6 +67,20 @@ public class ConstraintCalculator {
         Set<ConstraintJointAxis> lockedAxesSet,
         @Nullable Map<ConstraintJointAxis, DoubleRange> ranges
     ) {
+        generic(a, b, pos1, pos2, orientation1, orientation2, forceFrom2, bakeLocked(lockedAxesSet), ranges);
+    }
+
+    public void generic(
+        Pose3dc a,
+        Pose3dc b,
+        Vector3dc pos1,
+        Vector3dc pos2,
+        Quaterniondc orientation1,
+        Quaterniondc orientation2,
+        QueuedForceGroup.PointForce forceFrom2,
+        int lockedAxes,
+        @Nullable Map<ConstraintJointAxis, DoubleRange> ranges
+    ) {
         full_1_to_world.set(a.orientation()).mul(orientation1).invert(full_world_to_1);
 
         Vector3d worldPos1 = a.transformPosition(pos1, this.worldPos1);
@@ -112,7 +90,6 @@ public class ConstraintCalculator {
 
         b.transformNormal(forceFrom2.force(), forceDirection);
 
-        int lockedAxes = bakeLocked(lockedAxesSet);
         filter(lockedAxes, ranges, forceDirection, currentPosLocal, ConstraintJointAxis.LINEAR);
 
         forceTorque.set(forceFrom2.point())
@@ -152,7 +129,7 @@ public class ConstraintCalculator {
         worldVector.rotate(full_1_to_world);
     }
 
-    private int bakeLocked(Set<ConstraintJointAxis> lockedAxes) {
+    public static int bakeLocked(Set<ConstraintJointAxis> lockedAxes) {
         int index = 0;
         for(ConstraintJointAxis axis : lockedAxes) {
             index |= 1 << axis.ordinal();
@@ -167,8 +144,9 @@ public class ConstraintCalculator {
         Vector3dc compValues,
         ConstraintJointAxis[] axes
     ) {
-        mask.set(MASK[lockedAxes & 0b111]);
-        if(ranges == null) return mask;
+        lockedAxes&= 0b111;
+        mask.set(MASK[lockedAxes]);
+        if(ranges == null || lockedAxes==0b111) return mask;
 
         for(ConstraintJointAxis axis : axes) {
             int idx = axis.ordinal() % 3;
@@ -179,8 +157,10 @@ public class ConstraintCalculator {
             double currentVal = compValues.get(idx);
             double forceVal = vector.get(idx);
 
-            if(currentVal >= range.getMaximum()-0.001 && forceVal > -0.001) active = true;
-            else if(currentVal <= range.getMinimum()+0.001 && forceVal < 0.001) active = true;
+            if(currentVal >= range.getMaximum() - constraintRangeDelta && forceVal > -constraintRangeDelta)
+                active = true;
+            else if(currentVal <= range.getMinimum() + constraintRangeDelta && forceVal < constraintRangeDelta)
+                active = true;
             if(active) mask.setComponent(idx, 1);
 
         }
