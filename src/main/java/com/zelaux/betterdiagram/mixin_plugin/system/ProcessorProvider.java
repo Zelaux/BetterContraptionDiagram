@@ -9,10 +9,15 @@ public interface ProcessorProvider {
         boolean transform(ClassNode targetClass);
     }
 
+    /**
+     * @param mixinClassName a class name (see {@link Class#getName()})
+     */
     default void preMixin(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-
     }
 
+    /**
+     * @param mixinClassName a class name (see {@link Class#getName()})
+     */
     default void postMixin(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
 
     }
@@ -25,6 +30,7 @@ public interface ProcessorProvider {
         public static Transformations of(Type type, ClassTransform transform) {
             return new Transformations(transform, type);
         }
+
         public static Transformations of(Type[] type, ClassTransform transform) {
             return new Transformations(transform, type);
         }

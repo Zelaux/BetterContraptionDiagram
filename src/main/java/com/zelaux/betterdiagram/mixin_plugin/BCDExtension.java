@@ -37,7 +37,11 @@ public class BCDExtension implements IExtension{
 
     public boolean postprocess(ClassNode classNode) {
         boolean[] any = {false};
-        BCDPostprocessors.postprocessorsFor(classNode.name).forEach(transform -> any[0] |= transform.transform(classNode));
+        try {
+            BCDPostprocessors.postprocessorsFor(classNode.name).forEach(transform -> any[0] |= transform.transform(classNode));
+        } catch(Exception e) {
+            BCDPostprocessors.error(e);
+        }
         if(any[0]) {
             BCDPostprocessors.debugSave(classNode);
         }

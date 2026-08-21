@@ -5,6 +5,9 @@ import com.zelaux.betterdiagram.compat.CompatHandles;
 import com.zelaux.betterdiagram.mixin.compat.gadgets.Mini;
 import com.zelaux.betterdiagram.mixin_plugin.TypeIndex;
 import com.zelaux.betterdiagram.mixin_plugin.system.ProcessorProvider;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -13,6 +16,8 @@ import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.*;
 import org.spongepowered.asm.mixin.extensibility.*;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -39,7 +44,8 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
             }),
         };
     }
-    private static final Type MiniMixin=TypeIndex.bakedType(Mini.class);
+
+    private static final Type MiniMixin = TypeIndex.bakedType(Mini.class);
 
     /**
      * @see CompatHandles#onPackageUpdate(Object)
@@ -48,7 +54,7 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
      */
     @Override
     public void preMixin(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-        if(mixinClassName.replace('.','/').equals(MiniMixin.getInternalName())) {
+        if(mixinClassName.replace('.', '/').equals(MiniMixin.getInternalName())) {
 
             MethodInsnNode setScreen = new MethodInsnNode(
                 Opcodes.INVOKESTATIC, TypeIndex.CompatHandles.getInternalName(), "setGadgetsScreen", "(Ljava/lang/Object;)V", false
@@ -107,6 +113,7 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
         instructions.insertBefore(instructions.getFirst(), new MethodInsnNode(
             Opcodes.INVOKEVIRTUAL, targetClass.name, prepareHead, "()V", false
         ));
+
         instructions.insertBefore(instructions.getFirst(), new VarInsnNode(Opcodes.ALOAD, 0));
         MethodNode e = new MethodNode(Opcodes.ACC_PUBLIC, prepareHead, "()V", null, null);
         e.instructions.add(new InsnNode(Opcodes.RETURN));
@@ -124,6 +131,7 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
     private static class MyMethodVisitor extends GeneratorAdapter {
         private final MethodNode node;
         private final InsnList instructions;
+        private IntList list;
         private int carriageIndex = -1;
 
         public MyMethodVisitor(MethodNode node, MethodNode original) {
@@ -135,6 +143,41 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
                     this.carriageIndex = localVariable.index;
                 }
             }
+            if(carriageIndex >= 0) return;
+
+            Int2IntMap candidates = new Int2IntOpenHashMap();
+            for(LocalVariableNode localVariable : original.localVariables) {
+                if(Type.getType(localVariable.desc).equals(getReturnType())) {
+                    candidates.put(localVariable.index, 0);
+                }
+            }
+            if(candidates.size() == 1) {
+                carriageIndex = candidates.int2IntEntrySet().iterator().next().getIntKey();
+                return;
+            }
+            if(candidates.isEmpty()) {
+
+                return;
+            }
+            var array = original.instructions.toArray();
+            for(var insn : array) {
+                if(insn instanceof VarInsnNode var) {
+                    if(!candidates.containsKey(var.var)) continue;
+                    if(var.getOpcode() != Opcodes.ASTORE) continue;
+                    int i = candidates.get(var.var);
+                    candidates.put(var.var, i + 1);
+                }
+            }
+            Int2IntMap.Entry[] entries = candidates.int2IntEntrySet().toArray(Int2IntMap.Entry[]::new);
+            Arrays.sort(entries, Comparator.comparingInt(entry -> -entry.getIntValue()));
+
+            Int2IntMap.Entry e1 = entries[0];
+            Int2IntMap.Entry e2 = entries[1];
+            if(e1.getIntValue() == e2.getIntValue()) {
+                list = IntList.of(e1.getIntKey(), e1.getIntKey());
+                return;
+            }
+            carriageIndex = e1.getIntKey();
 
         }
 
@@ -172,7 +215,22 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
         }
 
         private void loadCarriage() {
-            loadLocal(carriageIndex + firstLocal);
+            if(carriageIndex < 0) {
+                if(list != null) {
+                    Label next = null;
+                    for(int i = 0; i < list.size(); i++) {
+                        if(next != null) visitLabel(next);
+                        int var = list.getInt(i);
+                        visitVarInsn(Opcodes.ALOAD, var);
+                        if(i + 1 >= list.size()) return;
+                        visitJumpInsn(Opcodes.IFNULL, next = new Label());
+                    }
+                    //if(next!=null) visitLabel(next);
+                }
+                pushNull();
+                return;
+            }
+            visitVarInsn(Opcodes.ALOAD, carriageIndex);
         }
 
         private void pushNull() {

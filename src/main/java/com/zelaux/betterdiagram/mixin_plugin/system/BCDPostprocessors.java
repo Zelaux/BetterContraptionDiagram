@@ -4,9 +4,11 @@ import com.zelaux.betterdiagram.DebugRuntime;
 import com.zelaux.betterdiagram.mixin_plugin.postprocessors.VanilaProcessorProvider;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectLists;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
+import org.spongepowered.asm.mixin.throwables.*;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,23 @@ public class BCDPostprocessors {
 
     public static Stream<ProcessorProvider> all() {
         return postprocessors.stream().map(Entry::processorProvider);
+    }
+    static List<Exception> exceptions=ObjectLists.synchronize(new ObjectArrayList<>());
+    public static void error(Exception e) {
+        exceptions.add(e);
+    }
+
+    public static void pushErrors() {
+        if(exceptions.isEmpty()) return;
+        List<Exception> list=new ObjectArrayList<>(exceptions.size());
+        exceptions.removeIf(list::add);
+        MixinError error =list.size()==1?  new MixinError(list.getFirst()):new MixinError();
+        if(list.size() > 1) {
+            for(Exception exception : list) {
+                error.addSuppressed(exception);
+            }
+        }
+        throw error;
     }
 
     //private static Pattern globalPattern = null;
