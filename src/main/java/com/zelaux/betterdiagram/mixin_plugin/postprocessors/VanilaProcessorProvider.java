@@ -1,18 +1,23 @@
 package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
+import com.zelaux.bcd.asm_commons.BoundMethod;
 import com.zelaux.bcd.asm_commons.LabelCompleter;
 import com.zelaux.bcd.asm_commons.MethodUtil;
 import com.zelaux.betterdiagram.annotations.CompileTool;
 import com.zelaux.betterdiagram.extend.IRopeStrandHolderBlockEntity;
 import com.zelaux.betterdiagram.feature.include_subsublevel.actor_handler.SwivelBearingActor;
+import com.zelaux.betterdiagram.mixin.feature.client_mass_tracker.MassTracker_ClientLevelPlot;
 import com.zelaux.betterdiagram.mixin.feature.include_subsublevel.actor.SwivelBearingBlockEntityMixin;
 import com.zelaux.betterdiagram.mixin_plugin.system.ProcessorProvider;
 import com.zelaux.betterdiagram.mixin_plugin.util.ServerToUnboundRenamer;
 import dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintConfiguration;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
-import dev.ryanhcode.sable.sublevel.SubLevel;
+import dev.ryanhcode.sable.sublevel.plot.ClientLevelPlot;
+import dev.ryanhcode.sable.sublevel.plot.LevelPlot;
 import dev.simulated_team.simulated.content.blocks.rope.RopeStrandHolderBlockEntity;
 import dev.simulated_team.simulated.content.blocks.swivel_bearing.SwivelBearingBlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3d;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -33,7 +38,6 @@ public enum VanilaProcessorProvider implements ProcessorProvider {
     //Iterable<@NotNull SubLevel> sable$getConnectionDependencies()
     //public static final Method searchMethod = new Method("sable$getConnectionDependencies", Type.getType(Iterable.class), new Type[0]);
     public static final Method searchMethod = CompileTool.GetMethod.methodOf(RopeStrandHolderBlockEntity::sable$getConnectionDependencies).method();
-    private Type bearingMixin = CompileTool.bakeType(SwivelBearingBlockEntityMixin.class);
     private final Method attachConstraints = new Method("attachConstraints", Type.VOID_TYPE, new Type[]{
         CompileTool.bakeType(ServerSubLevel.class),
         CompileTool.bakeType(Vector3d.class),
@@ -46,7 +50,7 @@ public enum VanilaProcessorProvider implements ProcessorProvider {
 
     @Override
     public void preMixin(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-        if(mixinClassName.replace('.', '/').equals(bearingMixin.getInternalName())) {
+        if(mixinClassName.equals(CompileTool.classToString(SwivelBearingBlockEntityMixin.class))) {
             MethodNode method = MethodUtil.findMethod(targetClass, attachConstraints, bcd$attachConstraints_);
             if(method != null) {
                 ClassNode classNode = MethodUtil.withWrappedMethodVisitor(AttachConstraintsVisitor::new);
@@ -57,14 +61,38 @@ public enum VanilaProcessorProvider implements ProcessorProvider {
                 clone.desc = bcd$attachConstraints_.getDescriptor();
                 targetClass.methods.add(clone);
             }
+        } else add:if(mixinClassName.equals(CompileTool.classToString(MassTracker_ClientLevelPlot.class))) {
+            //noinspection RedundantTypeArguments
+            BoundMethod boundMethod = CompileTool.GetMethod.<LevelPlot, BlockPos, BlockState>methodOf(LevelPlot::onBlockChange);
+
+            Method method = boundMethod.method();
+            for(MethodNode existed : targetClass.methods) {
+                if(MethodUtil.matches(existed, method)) {
+                    break add;
+                }
+            }
+            MethodNode node = new MethodNode(
+                Opcodes.ACC_PUBLIC, method.getName(), method.getDescriptor(), null, null
+            );
+            node.visitVarInsn(Opcodes.ALOAD, 0);
+            node.visitVarInsn(Opcodes.ALOAD, 1);
+            node.visitVarInsn(Opcodes.ALOAD, 2);
+            node.instructions.add(boundMethod.invokeInsn(Opcodes.INVOKESPECIAL));
+            node.visitInsn(Opcodes.RETURN);
+
+            targetClass.methods.add(node);
         }
-        ProcessorProvider.super.preMixin(targetClassName, targetClass, mixinClassName, mixinInfo);
     }
 
     @Override
     public Transformations[] transformations() {
+        Type[] justSave = {
+            CompileTool.bakeType(SwivelBearingBlockEntity.class),
+            CompileTool.bakeType(ClientLevelPlot.class),
+            CompileTool.bakeType(LevelPlot.class)
+        };
         return ProcessorProvider.types(
-            Transformations.of(CompileTool.bakeType(SwivelBearingBlockEntity.class), targetClass -> true),
+            Transformations.of(justSave, targetClass -> true),
             Transformations.of(CompileTool.bakeType(RopeStrandHolderBlockEntity.class), targetClass -> {
                 MethodNode found = MethodUtil.findMethod(targetClass, searchMethod, generatedMethod);
                 if(found == null) return false;

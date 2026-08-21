@@ -34,7 +34,7 @@
     "feature.balloon_volume_calculator.BalloonCalc_Balloon_Mixin",
     "feature.balloon_volume_calculator.BalloonCalc_ClientBalloon_Mixin",
     "feature.balloon_volume_calculator.BalloonCalc_SubLevel_Mixin",
-    "feature.client_mass_tracker.MassTracker_LevelPlot",
+    "feature.client_mass_tracker.MassTracker_ClientLevelPlot",
     "feature.client_mass_tracker.MassTracker_MassTracker",
     "feature.client_mass_tracker.MassTracker_ServerLevelPlot",
     "feature.clientside_forces.DiagramScreenMixin",

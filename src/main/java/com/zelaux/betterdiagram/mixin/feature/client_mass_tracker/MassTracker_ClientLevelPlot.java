@@ -7,6 +7,7 @@ import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3ic;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
+import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.ryanhcode.sable.sublevel.plot.ClientLevelPlot;
 import dev.ryanhcode.sable.sublevel.plot.LevelPlot;
@@ -23,22 +24,19 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
-@Mixin(LevelPlot.class)
-public abstract class MassTracker_LevelPlot implements MassTrackerLevelPlotI {
-    protected MassTracker_LevelPlot() {
-        bcd$shouldTrackMass = isClient() && (!ModFeature.SHARE_MASS_TRACKER.supportsOnServer());
-    }
+@Mixin(ClientLevelPlot.class)
+public abstract class MassTracker_ClientLevelPlot implements MassTrackerLevelPlotI {
+
 
     @Shadow
     public abstract SubLevel getSubLevel();
 
-    @Shadow
-    @Final
-    private @NotNull SubLevel subLevel;
+    @Unique
+    private @NotNull ClientSubLevel bcd$subLevel;
     @Unique
     MassTracker bcd$massTracker;
     @Unique
-    final boolean bcd$shouldTrackMass;
+    final boolean bcd$shouldTrackMass=!ModFeature.SHARE_MASS_TRACKER.supportsOnServer();
 
 
     @Override
@@ -47,20 +45,24 @@ public abstract class MassTracker_LevelPlot implements MassTrackerLevelPlotI {
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    void x(SubLevelContainer container, int x, int z, int logSize, SubLevel subLevel, CallbackInfo ci) {
+    void x(SubLevelContainer plotContainer, int x, int z, int logSize, ClientSubLevel subLevel, CallbackInfo ci) {
         if(bcd$shouldTrackMass) {
             bcd$massTracker = new MassTracker();
         }
+        bcd$subLevel=subLevel;
     }
 
     private boolean isClient() {
         return ((Object) this) instanceof ClientLevelPlot;
     }
 
+    /**
+     * @see com.zelaux.betterdiagram.mixin_plugin.postprocessors.VanilaProcessorProvider
+     * */
     @Inject(method = "onBlockChange", at = @At("HEAD"))
     private void onBlockChange(BlockPos pos, BlockState state, CallbackInfo ci) {
         if(!bcd$shouldTrackMass) return;
-        Level level = subLevel.getLevel();
+        Level level = bcd$subLevel.getLevel();
         BlockState prevState = level.getBlockState(pos);
 
         bcd$accountForBlocks(new LevelAccelerator(level), new BlockPos(pos), state, prevState);
@@ -99,7 +101,7 @@ public abstract class MassTracker_LevelPlot implements MassTrackerLevelPlotI {
             boundingBox = holder.getBoundingBox();
             if(boundingBox == null) return;
         }
-        LevelAccelerator levelAccelerator = new LevelAccelerator(subLevel.getLevel());
+        LevelAccelerator levelAccelerator = new LevelAccelerator(bcd$subLevel.getLevel());
         BlockPos.betweenClosedStream(boundingBox.toMojang()).forEachOrdered(blockPos -> {
             BlockState state = chunk.getBlockState(blockPos);
             if(state.isAir()) return;
