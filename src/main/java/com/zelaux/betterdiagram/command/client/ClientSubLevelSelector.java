@@ -4,7 +4,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.ryanhcode.sable.ActiveSableCompanion;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.sublevel.ClientSubLevelContainer;
-import dev.ryanhcode.sable.command.argument.SubLevelSelector;
 import dev.ryanhcode.sable.command.argument.SubLevelSelectorType;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -38,13 +37,6 @@ public class ClientSubLevelSelector {
         }*/
     }
 
-    @SuppressWarnings("unchecked")
-    @SneakyThrows
-    public ClientSubLevelSelector(SubLevelSelector selector) {
-        this.type = selector.getSelectorType();
-        //modifiers = (List<Pair<SubLevelSelectorModifierType, SubLevelSelectorModifierType.Modifier>>) MODIFIERS_GETTER.invoke(selector);
-
-    }
 
     public Collection<ClientSubLevel> getSubLevels(final CommandSourceStack source) throws CommandSyntaxException {
         if(this.type == null) {
