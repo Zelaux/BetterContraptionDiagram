@@ -59,6 +59,9 @@ public abstract class AbstractContraptionEntityMixin extends Entity implements K
         }
     }
 
+    /**
+     * @see dev.ryanhcode.sable.neoforge.mixin.compatibility.create.contraptions.AbstractContraptionEntityMixin#setRemoved(RemovalReason)
+     */
     @Inject(method = "setRemoved", at = @At("RETURN"))
     public void setRemoved(final RemovalReason removalReason, final CallbackInfo ci) {
         if(this.level() instanceof ClientLevel) {
