@@ -5,38 +5,39 @@ import com.zelaux.bcd.asm_commons.BoundMethod;
 import org.apache.commons.lang3.function.TriConsumer;
 import org.objectweb.asm.Type;
 
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class CompileTool {
     /**
      * Will be substituted in compile time
      *
+     * @return {@link Class#getName()}
      */
     public static String classToString(Class<?> type) {
         return type.getCanonicalName();
     }
+
     /**
      * Will be substituted in compile time
      *
+     * @return {@link Type#getInternalName(Class)}
      */
     public static String classToInternal(Class<?> type) {
-        return type.getCanonicalName().replace('.','/');
+        return type.getCanonicalName().replace('.', '/');
     }
 
     /**
      * Will be substituted in compile time
      *
+     * @return {@link Type#getType(Class)}
      */
     public static Type bakeType(Class<?> type) {
         return Type.getType(type);
     }
-    static  {
 
-
-        GetMethod.<String>methodOf(System.out::println);
-        GetMethod.methodOf(CompileTool::proc);
-    }
-    static void proc(int x){}
     public interface GetMethod {
 
         /**
@@ -49,24 +50,27 @@ public class CompileTool {
         static <T> BoundMethod methodOf(Consumer<T> type) {
             throw new UnsupportedOperationException();
         }*/
+        static <T1, R> BoundMethod methodOf(Function<T1, R> type) {
+            throw new UnsupportedOperationException();
+        }
 
-        static <T1,R> BoundMethod methodOf(Function<T1, R> type) {
+        static <T1, T2, R> BoundMethod methodOf(BiFunction<T1, T2, R> type) {
             throw new UnsupportedOperationException();
         }
-        static <T1,T2,R> BoundMethod methodOf(BiFunction<T1,T2, R> type) {
-            throw new UnsupportedOperationException();
-        }
-        static <T1,T2,T3,R> BoundMethod methodOf(Function3<T1,T2,T3, R> type) {
+
+        static <T1, T2, T3, R> BoundMethod methodOf(Function3<T1, T2, T3, R> type) {
             throw new UnsupportedOperationException();
         }
 
         static <T1> BoundMethod methodOf(Consumer<T1> type) {
             throw new UnsupportedOperationException();
         }
-        static <T1,T2> BoundMethod methodOf(BiConsumer<T1,T2> type) {
+
+        static <T1, T2> BoundMethod methodOf(BiConsumer<T1, T2> type) {
             throw new UnsupportedOperationException();
         }
-        static <T1,T2,T3> BoundMethod methodOf(TriConsumer<T1,T2,T3> type) {
+
+        static <T1, T2, T3> BoundMethod methodOf(TriConsumer<T1, T2, T3> type) {
             throw new UnsupportedOperationException();
         }
     }
