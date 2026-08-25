@@ -403,3 +403,8 @@ tasks.named('jar') {
 //    dependsOn(tasks.named("runPostprocessors").outputs)
     outputs.upToDateWhen{true}
 }
+tasks.named('testClasses') {
+    dependsOn(tasks.named("runPostprocessors"))
+//    dependsOn(tasks.named("runPostprocessors").outputs)
+    outputs.upToDateWhen{true}
+}
