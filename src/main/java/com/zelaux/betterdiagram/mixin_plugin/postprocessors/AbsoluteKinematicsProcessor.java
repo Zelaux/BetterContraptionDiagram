@@ -1,9 +1,7 @@
 package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
-import com.zelaux.bcd.asm_commons.BoundMethod;
-import com.zelaux.bcd.asm_commons.CodeEntry;
-import com.zelaux.bcd.asm_commons.MethodUtil;
-import com.zelaux.bcd.asm_commons.Renamer;
+import com.llamalad7.mixinextras.lib.apache.commons.ClassUtils;
+import com.zelaux.bcd.asm_commons.*;
 import com.zelaux.betterdiagram.DebugRuntime;
 import com.zelaux.betterdiagram.annotations.CompileTool;
 import com.zelaux.betterdiagram.compat.absolute_kinematics.AbsoluteKinematicsModule;
@@ -18,10 +16,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.*;
-import org.objectweb.asm.util.TraceClassVisitor;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
 
 public enum AbsoluteKinematicsProcessor implements ProcessorProvider {
     INSTANCE;
@@ -59,17 +53,7 @@ public enum AbsoluteKinematicsProcessor implements ProcessorProvider {
         node.desc = bcd$attachConstraints.getDescriptor();
 
         if(DebugRuntime.isDebug()){
-
-            ByteArrayOutputStream str = new ByteArrayOutputStream();
-            PrintWriter printWriter = new PrintWriter(str);
-            TraceClassVisitor classVisitor = new TraceClassVisitor(printWriter);
-            node.accept(classVisitor);
-            classVisitor.visitEnd();
-            printWriter.flush();
-
-            String name = targetClass.name;
-            String simpleName = name.substring(name.lastIndexOf('/') + 1);
-            DebugRuntime.saveInFile(simpleName+".txt",str.toByteArray());
+            DebugRuntime.saveMethodInFile(targetClass.name, node);
         }
 
 

@@ -1,7 +1,10 @@
 package com.zelaux.betterdiagram.mixin_plugin.postprocessors;
 
 import com.zelaux.bcd.asm_commons.MethodUtil;
+import com.zelaux.betterdiagram.DebugRuntime;
+import com.zelaux.betterdiagram.annotations.CompileTool;
 import com.zelaux.betterdiagram.compat.CompatHandles;
+import com.zelaux.betterdiagram.compat.gadgetsandgizmos.IPhysicsGantryShaft;
 import com.zelaux.betterdiagram.mixin.compat.gadgets.Mini;
 import com.zelaux.betterdiagram.mixin_plugin.TypeIndex;
 import com.zelaux.betterdiagram.mixin_plugin.system.ProcessorProvider;
@@ -26,17 +29,27 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
     private static final Type physicsShaft = Type.getObjectType("com/rieno/gadgetsandgizmos/content/PhysicsGantryShaftBlockEntity");
     private static final Type mini = TypeIndex.type("com.rieno.gadgetsandgizmos.neoforge.client.CTPhysicsGogglesClient$SimulatedDiagramMiniRenderer");
 
-    public static final Method generatedMethod = new Method("bcd$hasActor", TypeIndex.BlockEntitySubLevelActor, new Type[0]);
-    public static final Method searchMethod = new Method("hasActiveAttachedCarriage", Type.BOOLEAN_TYPE, new Type[0]);
+    public static final Method bcd$hasActor = new Method("bcd$hasActor", TypeIndex.BlockEntitySubLevelActor, new Type[0]);
+    public static final Method hasActiveAttachedCarriage = new Method("hasActiveAttachedCarriage", Type.BOOLEAN_TYPE, new Type[0]);
+    public static final Method getConnectedCarriages = CompileTool.GetMethod.methodOf(IPhysicsGantryShaft::getConnectedCarriages).method();
 
     @Override
     public Transformations[] transformations() {
         return new Transformations[]{
             Transformations.of(mini, it -> true),
             Transformations.of(physicsShaft, targetClass -> {
-                MethodNode found = MethodUtil.findMethod(targetClass, searchMethod, generatedMethod);
+                MethodNode found = MethodUtil.findMethod(targetClass, hasActiveAttachedCarriage, bcd$hasActor);
                 if(found != null) {
-                    addMethod(targetClass, found);
+                    MethodNode connectedCarriage = MethodUtil.findMethod(targetClass, getConnectedCarriages);
+                    if(connectedCarriage == null || true) {
+                        addCopyOfHasActor(targetClass, found);
+                    } else {
+                        MethodNode node = new MethodNode(Opcodes.ACC_PUBLIC, bcd$hasActor.getName(), bcd$hasActor.getDescriptor(), null, null);
+                        node.visitInsn(Opcodes.ACONST_NULL);
+                        node.visitInsn(Opcodes.ARETURN);
+                        node.visitMaxs(2, 1);
+                        targetClass.methods.add(node);
+                    }
                     return true;
                 }
 
@@ -120,12 +133,17 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
         targetClass.methods.add(e);
     }
 
-    private static void addMethod(ClassNode targetClass, MethodNode method) {
-        MethodNode node = new MethodNode(Opcodes.ACC_PUBLIC, generatedMethod.getName(), generatedMethod.getDescriptor(), null, null);
+    private static void addCopyOfHasActor(ClassNode targetClass, MethodNode method) {
+
+        MethodNode node = new MethodNode(Opcodes.ACC_PUBLIC, bcd$hasActor.getName(), bcd$hasActor.getDescriptor(), null, null);
 
         method.accept(new MyMethodVisitor(node, method));
         targetClass.methods.add(node);
 
+        if(DebugRuntime.isDebug()) {
+            DebugRuntime.saveMethodInFile(targetClass.name + "_orig", method);
+            DebugRuntime.saveMethodInFile(targetClass.name, node);
+        }
     }
 
     private static class MyMethodVisitor extends GeneratorAdapter {
@@ -200,7 +218,7 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
 
                 Label isTrue = new Label(), goAfter = new Label();
 
-                ifICmp(Opcodes.IFGT, isTrue);
+                ifZCmp(Opcodes.IFNE, isTrue);
                 pushNull();
                 goTo(goAfter);
 
@@ -215,22 +233,23 @@ public class GadgetsProcessorProvider implements ProcessorProvider {
         }
 
         private void loadCarriage() {
-            if(carriageIndex < 0) {
-                if(list != null) {
-                    Label next = null;
-                    for(int i = 0; i < list.size(); i++) {
-                        if(next != null) visitLabel(next);
-                        int var = list.getInt(i);
-                        visitVarInsn(Opcodes.ALOAD, var);
-                        if(i + 1 >= list.size()) return;
-                        visitJumpInsn(Opcodes.IFNULL, next = new Label());
-                    }
-                    //if(next!=null) visitLabel(next);
-                }
+            if(carriageIndex >= 0) {
+                visitVarInsn(Opcodes.ALOAD, carriageIndex);
+                return;
+            }
+            if(list == null) {
                 pushNull();
                 return;
             }
-            visitVarInsn(Opcodes.ALOAD, carriageIndex);
+            Label next = null;
+            for(int i = 0; i < list.size(); i++) {
+                if(next != null) visitLabel(next);
+                int var = list.getInt(i);
+                visitVarInsn(Opcodes.ALOAD, var);
+                if(i + 1 >= list.size()) return;
+                visitJumpInsn(Opcodes.IFNULL, next = new Label());
+            }
+            pushNull();
         }
 
         private void pushNull() {

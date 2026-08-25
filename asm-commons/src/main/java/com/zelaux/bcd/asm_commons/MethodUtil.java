@@ -1,10 +1,16 @@
 package com.zelaux.bcd.asm_commons;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.*;
+import org.objectweb.asm.util.TraceClassVisitor;
+
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 
 public class MethodUtil {
     public static ClassNode withWrappedMethodVisitor(WrapVisitMethod wrappedMethodVisitor) {
@@ -15,6 +21,7 @@ public class MethodUtil {
             }
         };
     }
+
     public static ClassNode withWrappedMethodVisitor(WrapVisitMethod.Simple wrappedMethodVisitor) {
         return withWrappedMethodVisitor((WrapVisitMethod) wrappedMethodVisitor);
     }
@@ -23,27 +30,46 @@ public class MethodUtil {
         MethodNode found = null;
         for(MethodNode method : targetClass.methods) {
             if(matches(method, generatedMethod)) {
-                found = null;
-                break;
+                return null;
             }
             if(matches(method, searchMethod)) found = method;
 
         }
         return found;
     }
+    public static @Nullable MethodNode findMethod(ClassNode targetClass, Method searchMethod) {
+        for(MethodNode method : targetClass.methods) {
+            if(matches(method, searchMethod)) return method;
+
+        }
+        return null;
+    }
 
     public static boolean matches(MethodNode method, Method searchMethod1) {
         return method.name.equals(searchMethod1.getName()) && method.desc.equals(searchMethod1.getDescriptor());
     }
 
-    ;
+    public static byte @NotNull [] methodInsnToString(MethodNode node) {
+        ByteArrayOutputStream str = new ByteArrayOutputStream();
+        printMethodInstruction(node, str);
+        return str.toByteArray();
+    }
 
+    public static void printMethodInstruction(MethodNode node, OutputStream str) {
+        PrintWriter printWriter = new PrintWriter(str);
+        TraceClassVisitor classVisitor = new TraceClassVisitor(printWriter);
+        node.accept(classVisitor);
+        classVisitor.visitEnd();
+        printWriter.flush();
+    }
+
+    ;
 
 
     @FunctionalInterface
     public interface WrapVisitMethod {
         @FunctionalInterface
-         interface Simple extends WrapVisitMethod {
+        interface Simple extends WrapVisitMethod {
 
             MethodVisitor visitMethod(MethodNode createdVisitor);
 
@@ -76,6 +102,7 @@ public class MethodUtil {
         }
         return any;
     }
+
     public static boolean processInstruction(InsnList instructions, FoundMethodInvokeHandler handler) {
         AbstractInsnNode[] array = instructions.toArray();
         boolean any = false;

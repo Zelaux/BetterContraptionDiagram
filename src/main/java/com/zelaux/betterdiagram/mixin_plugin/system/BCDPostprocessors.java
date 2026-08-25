@@ -98,7 +98,7 @@ public class BCDPostprocessors {
             targetClass.accept(writer);
             DebugRuntime.saveInFile(
                 fileName,
-                writer.toByteArray()
+                writer.toByteArray(), false
             );
         }
     }

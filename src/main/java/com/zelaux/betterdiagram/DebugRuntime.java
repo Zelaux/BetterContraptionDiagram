@@ -1,9 +1,12 @@
 package com.zelaux.betterdiagram;
 
-import com.mojang.logging.LogUtils;
+import com.zelaux.bcd.asm_commons.ClassUtil;
+import com.zelaux.bcd.asm_commons.MethodUtil;
 import com.zelaux.betterdiagram.annotations.DebugOnly;
 import com.zelaux.betterdiagram.annotations.DeleteInRelease;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.function.FailableConsumer;
+import org.objectweb.asm.tree.MethodNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 @DeleteInRelease
 public class DebugRuntime {
 
-    public static final File FOLDER = new File("hello_world.log").getAbsoluteFile();
+    public static final File FOLDER = new File(".bcd/stuff").getAbsoluteFile();
     public static final File THREAD_FOLDER = new File(FOLDER,"thread").getAbsoluteFile();
     public static final File FILE = new File(FOLDER, "common.txt");
     public static boolean disableAirflowScaling=false && isDebug();
@@ -44,20 +47,19 @@ public class DebugRuntime {
     }
     @SneakyThrows
     public static void logFile(String fileName, String message){
-        var file=new File(FOLDER,fileName);
-        file.getParentFile().mkdirs();
-        System.out.println(file.getAbsolutePath());
-        try(FileOutputStream stream = new FileOutputStream(file, true)) {
-            stream.write(message.getBytes(StandardCharsets.UTF_8));
-        }
+        saveInFile(fileName, message.getBytes(StandardCharsets.UTF_8), true);
     }
     @SneakyThrows
-    public static void saveInFile(String fileName, byte[] bytes){
-        var file=new File(FOLDER,fileName);
+    public static void saveInFile(String fileName, byte[] bytes, boolean append){
+        saveInFile(fileName, append, stream -> stream.write(bytes));
+    }
+
+    public static void saveInFile(String fileName, boolean append, FailableConsumer<FileOutputStream, Exception> consumer) throws Exception {
+        var file=new File(FOLDER, fileName);
         file.getParentFile().mkdirs();
         System.out.println(file.getAbsolutePath());
-        try(FileOutputStream stream = new FileOutputStream(file, false)) {
-            stream.write(bytes);
+        try(FileOutputStream stream = new FileOutputStream(file, append)) {
+            consumer.accept(stream);
         }
     }
 
@@ -77,5 +79,9 @@ public class DebugRuntime {
 
     public static boolean centerOfMass() {
         return addThreadToFile(new File(THREAD_FOLDER, "centerOfMass.txt"),"");
+    }
+
+    public static void saveMethodInFile(String className, MethodNode node) {
+        saveInFile(ClassUtil.simpleName(className) + ".txt", MethodUtil.methodInsnToString(node), false);
     }
 }
