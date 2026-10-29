@@ -24,16 +24,19 @@ import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramConfig;
 import dev.simulated_team.simulated.content.entities.diagram.DiagramEntity;
+import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramButton;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramScreen;
 import dev.simulated_team.simulated.content.entities.diagram.screen.DiagramStickyNote;
 import dev.simulated_team.simulated.content.entities.diagram.screen.ForceClusterFinder;
 import dev.simulated_team.simulated.index.SimGUITextures;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import org.jetbrains.annotations.NotNull;
@@ -101,15 +104,38 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
     @Shadow
     @Final
     private static int TOOLTIP_LABEL_COLOR;
+    int amountOfButtons =0;
+    @Inject(at = @At(value = "TAIL"), method = "init", order = 500)
+    private void button_counter(CallbackInfo ci) {
+        int amount=0;
+        for(var child : children()) {
+            if(child instanceof DiagramButton btn) {
+                amount++;
+            }
+        }
+        amountOfButtons=amount;
+    }
 
-    @Inject(at = @At(value = "TAIL"), method = "init")
+    @Inject(at = @At(value = "TAIL"), method = "init", order = 2000)
     private void inject(CallbackInfo ci) {
-
         final int diagramX = this.width / 2 - DIAGRAM_TEXTURE.width / 2;
         final int diagramY = this.height / 2 - DIAGRAM_TEXTURE.height / 2;
         WithClientData clientData = (WithClientData) diagram;
         DiagramInfoTooltip diagramTooltip = new DiagramInfoTooltip(self(), this.subLevel, this.serverData);
-        var layout = UIUtil.vertical(4,
+        var elements = new ObjectArrayList<LayoutElement>();
+        {
+            int amount=0;
+            for(var child : children()) {
+                if(child instanceof DiagramButton btn) {
+                    amount++;
+                    if(amount>amountOfButtons){
+                        elements.add(btn);
+                    }
+                }
+            }
+        }
+        int startOfMyButtons=0;
+        elements.addAll(List.of(
             new BDiagramButton(BTextures.Diagram.ICON_CALCULATOR, 0, 0, Component.translatable("bcd.diagram-button"), () -> CenterMassMovingScreen.toggle(self()))
                 .setColorSelector((active, hover, texture) -> hover | Minecraft.getInstance().screen instanceof CenterMassMovingScreen ? 1 : 0)
                 .withTooltip(() -> Component.translatable("bcd.diagram-button"))
@@ -136,11 +162,17 @@ public abstract class Calculator_DiagramScreen extends AbstractSimiScreen implem
                 Component.translatable("bcd.extra-info.diagram-button"), diagramTooltip::onClick)
                 .supportedButtons(diagramTooltip.canClick() ? ButtonKind.leftArr() : ButtonKind.EMPTY_ARRAY)
                 .withTooltip(diagramTooltip)
+        ));
+        var layout = UIUtil.vertical(4,elements.toArray(LayoutElement[]::new));
 
-        );
         layout.setPosition(diagramX + 9, diagramY + 9 + 20 * 4);
         layout.arrangeElements();
-        layout.visitWidgets(this::addRenderableWidget);
+        for(int i = startOfMyButtons; i < elements.size(); i++) {
+            if(elements.get(i) instanceof BDiagramButton button) {
+                addRenderableWidget(button);
+            }
+        }
+        //layout.visitWidgets(this::addRenderableWidget);
     }
 
     @Unique
