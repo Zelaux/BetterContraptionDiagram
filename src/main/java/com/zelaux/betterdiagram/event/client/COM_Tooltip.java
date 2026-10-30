@@ -112,7 +112,7 @@ public class COM_Tooltip {
             return;
         }
         if(!shouldShow) return;
-        toolTips.set(indexOf++, translatable("bcd.item.tooltip.com.title").withStyle(ChatFormatting.DARK_GRAY));
+        toolTips.set(indexOf, translatable("bcd.item.tooltip.com.title").withStyle(ChatFormatting.DARK_GRAY));
 
 
         ObjectArrayList<SymmetryEntry> added = null;
