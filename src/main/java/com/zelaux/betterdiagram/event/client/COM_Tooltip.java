@@ -112,7 +112,7 @@ public class COM_Tooltip {
             return;
         }
         if(!shouldShow) return;
-        toolTips.set(indexOf, translatable("bcd.item.tooltip.com.title").withStyle(ChatFormatting.DARK_GRAY));
+        toolTips.set(indexOf++, translatable("bcd.item.tooltip.com.title").withStyle(ChatFormatting.DARK_GRAY));
 
 
         ObjectArrayList<SymmetryEntry> added = null;
@@ -126,7 +126,7 @@ public class COM_Tooltip {
             for(var entry : list) {
                 added.add(new SymmetryEntry(entry.getKey()));
             }
-            toolTips.add(indexOf + 1,
+            toolTips.add(indexOf++,
                 Component.translatable("bcd.mass-tooltip.error").withStyle(
                     FMLLoader.isProduction() ?
                         ChatFormatting.DARK_GRAY :
